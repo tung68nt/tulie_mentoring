@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { redirect } from "next/navigation";
+import { getNotifications, getUnreadCount } from "@/lib/actions/notification";
 
 export default async function DashboardLayout({
     children,
@@ -22,25 +23,31 @@ export default async function DashboardLayout({
         avatar: session.user.image,
     };
 
+    const [notifications, unreadCount] = await Promise.all([
+        getNotifications(15),
+        getUnreadCount(),
+    ]);
+
     return (
         <div className="min-h-screen bg-white">
             <Sidebar role={user.role} />
 
-            {/* Main Content Area */}
             <div className="lg:ml-[var(--sidebar-width)] min-h-screen flex flex-col">
                 <Header
                     userName={`${user.firstName} ${user.lastName || ""}`}
                     userRole={user.role}
                     avatar={user.avatar}
+                    notifications={JSON.parse(JSON.stringify(notifications))}
+                    unreadCount={unreadCount}
                 />
 
-                <main className="flex-1 px-6 sm:px-8 lg:px-10 pt-20 pb-10 max-w-7xl mx-auto w-full">
+                <main className="flex-1 px-4 sm:px-6 lg:px-8 pt-[72px] pb-10 max-w-[1200px] mx-auto w-full">
                     <div className="animate-fade-in">
                         {children}
                     </div>
                 </main>
 
-                <footer className="p-6 text-center text-xs text-[#999] border-t border-[#eaeaea]">
+                <footer className="py-6 text-center text-xs text-[#999] border-t border-[#eaeaea]">
                     © {new Date().getFullYear()} ISME Mentoring Program (IMP) - Đại học Kinh tế Quốc dân. All rights reserved.
                 </footer>
             </div>
