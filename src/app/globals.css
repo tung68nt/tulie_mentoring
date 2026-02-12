@@ -7,7 +7,6 @@
 }
 
 :root {
-
   /* Vercel Color Palette */
   --geist-background: #ffffff;
   --geist-foreground: #000000;
@@ -21,59 +20,24 @@
   --grey-700: #333333;
   --grey-800: #111111;
 
-  --geist-success: #0070f3;
-  /* Vercel uses blue for success/action often */
-  --geist-error: #ee0000;
-  --geist-warning: #f5a623;
-  --geist-cyan: #50e3c2;
-  --geist-purple: #7928ca;
-  --geist-violet: #7928ca;
-  --geist-alert: #ff0080;
-
-  /* Legacy Mapping for compatibility while transition */
-  --color-black: #000000;
-  --color-white: #ffffff;
-  --color-gray-50: var(--grey-100);
-  --color-gray-100: var(--grey-100);
-  --color-gray-200: var(--grey-200);
-  --color-gray-300: #d1d5db;
-  --color-gray-400: var(--grey-300);
-  --color-gray-500: var(--grey-500);
-  --color-gray-600: var(--grey-600);
-  --color-gray-700: var(--grey-700);
-  --color-gray-800: var(--grey-800);
-  --color-gray-900: #000000;
-
-  /* Text Colors */
-  --text-primary: var(--geist-foreground);
-  --text-secondary: var(--grey-500);
-  --text-tertiary: var(--grey-400);
-  --text-disabled: var(--grey-300);
-  --text-inverse: var(--geist-background);
-
-  /* Backgrounds */
-  --bg-primary: var(--geist-background);
-  --bg-secondary: var(--grey-100);
-  --bg-tertiary: var(--grey-200);
-
-  /* Borders */
-  --border-color: var(--grey-200);
-  --border-hover: var(--grey-300);
-  --border-focus: var(--geist-foreground);
-
-  /* Shadows (Vercel uses very subtle shadows) */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 5px 10px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.12);
-
-  /* Transitions */
-  --transition-fast: 100ms ease;
-  --transition-normal: 200ms ease;
+  --geist-success: #000000;
+  --geist-error: #444444;
+  --geist-warning: #666666;
+  --geist-info: #fafafa;
 
   /* Layout */
   --sidebar-width: 240px;
   --header-height: 56px;
   --border-radius: 6px;
+
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms ease;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
 /* ─── Base Styles ─────────────────────────────────────────────── */
@@ -82,7 +46,6 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   background-color: var(--geist-background);
   color: var(--geist-foreground);
   scroll-behavior: smooth;
@@ -91,16 +54,12 @@ html {
 body {
   margin: 0;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
   letter-spacing: normal;
-  /* Explicitly no letter spacing */
   text-transform: none;
-  /* Explicitly no uppercase */
 }
 
-/* ─── Typography (Vercel UI Rules) ───────────────────────────── */
-/* No uppercase | No letter-spacing | Max weight 700 */
-
+/* ─── Typography ─────────────────────────────────────────────── */
 h1,
 h2,
 h3,
@@ -116,64 +75,97 @@ h6 {
 }
 
 h1 {
-  font-size: 2.5rem;
-  letter-spacing: -0.05rem;
+  font-size: 2rem;
 }
 
-/* Vercel headings sometimes have slight negative spacing, but user asked for NO letter spacing, so sticking to normal */
 h2 {
   font-size: 1.5rem;
-  font-weight: 600;
 }
 
 h3 {
   font-size: 1.25rem;
-  font-weight: 600;
 }
 
 h4 {
   font-size: 1rem;
-  font-weight: 600;
 }
 
 p {
-  color: var(--grey-600);
-  font-size: 0.875rem;
-  line-height: 1.6;
-}
-
-label {
-  font-size: 0.75rem;
-  font-weight: 500;
   color: var(--grey-500);
-  text-transform: none !important;
-  letter-spacing: normal !important;
+  font-size: 0.875rem;
 }
 
-span,
-small,
-button,
-a {
-  text-transform: none !important;
-  letter-spacing: normal !important;
+/* ─── Layout Utilities ───────────────────────────────────────── */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
-/* ─── Selection ───────────────────────────────────────────────── */
-::selection {
-  background-color: var(--geist-foreground);
-  color: var(--geist-background);
+.section-spacing {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
 }
 
-/* ─── Focus Styles ────────────────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--geist-foreground);
-  outline-offset: 1px;
+/* ─── Specialized Components ──────────────────────────────────── */
+.geist-card {
+  background: var(--geist-background);
+  border: 1px solid var(--grey-200);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  transition: all var(--transition-fast);
 }
 
-/* ─── Scrollbar ───────────────────────────────────────────────── */
+.geist-card:hover {
+  border-color: var(--grey-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.geist-border {
+  border: 1px solid var(--grey-200);
+}
+
+.geist-divider {
+  height: 1px;
+  background-color: var(--grey-200);
+  width: 100%;
+}
+
+/* ─── Animations ─────────────────────────────────────────────── */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+/* ─── Custom Accents ─────────────────────────────────────────── */
+.stat-card-accent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--geist-foreground);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -187,183 +179,4 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--grey-300);
-}
-
-/* ─── Utilities ───────────────────────────────────────────────── */
-.geist-card {
-  background: var(--geist-background);
-  border: 1px solid var(--grey-200);
-  border-radius: var(--border-radius);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.geist-card:hover {
-  border-color: var(--grey-300);
-  box-shadow: var(--shadow-md);
-}
-
-.geist-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--border-radius);
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all var(--transition-fast);
-  cursor: pointer;
-  padding: 0 12px;
-  height: 32px;
-  border: 1px solid transparent;
-}
-
-.geist-button-primary {
-  background: var(--geist-foreground);
-  color: var(--geist-background);
-}
-
-.geist-button-primary:hover {
-  background: var(--grey-800);
-}
-
-.geist-button-secondary {
-  background: var(--geist-background);
-  color: var(--grey-600);
-  border-color: var(--grey-200);
-}
-
-.geist-button-secondary:hover {
-  border-color: var(--geist-foreground);
-  color: var(--geist-foreground);
-}
-
-/* ─── Skeleton ───────────────────────────────────────────────── */
-.skeleton {
-  background: var(--grey-100);
-  background-image: linear-gradient(90deg,
-      var(--grey-100) 0px,
-      var(--grey-200) 40px,
-      var(--grey-100) 80px);
-  background-size: 600px;
-  animation: shine-lines 1.6s infinite linear;
-}
-
-@keyframes shine-lines {
-  0% {
-    background-position: -100px;
-  }
-
-  40%,
-  100% {
-    background-position: 140px;
-  }
-}
-
-/* ─── Animations ──────────────────────────────────────────────── */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.4s ease-out both;
-}
-
-.animate-scale-in {
-  animation: scale-in 0.25s ease-out both;
-}
-
-/* ─── Stat Card Accent ────────────────────────────────────────── */
-.stat-card-accent {
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card-accent::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: #000000;
-  border-radius: var(--border-radius) var(--border-radius) 0 0;
-}
-
-/* ─── Page Transition Animations ─────────────────────────────── */
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-in {
-  animation: slide-up 0.3s ease-out both;
-}
-
-.animate-in.fade-in {
-  animation: fade-in 0.3s ease-out both;
-}
-
-/* Stagger children animation */
-.stagger-children>* {
-  animation: slide-up 0.3s ease-out both;
-}
-
-.stagger-children>*:nth-child(1) {
-  animation-delay: 0ms;
-}
-
-.stagger-children>*:nth-child(2) {
-  animation-delay: 50ms;
-}
-
-.stagger-children>*:nth-child(3) {
-  animation-delay: 100ms;
-}
-
-.stagger-children>*:nth-child(4) {
-  animation-delay: 150ms;
-}
-
-.stagger-children>*:nth-child(5) {
-  animation-delay: 200ms;
-}
-
-.stagger-children>*:nth-child(6) {
-  animation-delay: 250ms;
-}
-
-/* Smooth hover lift */
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }

@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Card } from "@/components/ui/card";
+import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -105,77 +105,70 @@ export default async function AdminReportsPage() {
     });
 
     return (
-        <div className="space-y-8 pb-10">
+        <div className="space-y-10 pb-12 animate-fade-in">
             <div className="space-y-1">
-                <h1 className="text-2xl font-semibold text-black">Báo cáo & Thống kê</h1>
-                <p className="text-[#666] text-sm">Phân tích hiệu quả hoạt động chương trình Mentoring</p>
+                <h1 className="text-3xl font-semibold tracking-tight text-black">Báo cáo & Thống kê</h1>
+                <p className="text-sm text-[#666]">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
             </div>
 
             {/* Metric Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="p-5 space-y-3" hover>
-                    <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium text-[#666]">Tỉ lệ tham gia</p>
-                        <ArrowUpRight className="w-4 h-4 text-[#999]" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-black">{attendanceRate}%</h3>
-                    <Progress value={attendanceRate} size="xs" color="success" />
-                </Card>
-
-                <Card className="p-5 space-y-3" hover>
-                    <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium text-[#666]">Hoàn thành mục tiêu</p>
-                        <TrendingUp className="w-4 h-4 text-[#999]" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-black">{completedGoals}<span className="text-sm font-normal text-[#999]">/{totalGoals}</span></h3>
-                    <Progress value={goalCompletionRate} size="xs" color="default" />
-                </Card>
-
-                <Card className="p-5 space-y-3" hover>
-                    <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium text-[#666]">Buổi sinh hoạt</p>
-                        <Calendar className="w-4 h-4 text-[#999]" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-black">{totalMeetings}</h3>
-                    <Progress value={Math.min(totalMeetings * 10, 100)} size="xs" color="default" />
-                </Card>
-
-                <Card className="p-5 space-y-3" hover>
-                    <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium text-[#666]">Chương trình đang chạy</p>
-                        <Users className="w-4 h-4 text-[#999]" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-black">{activeCycles}</h3>
-                    <Progress value={100} size="xs" color="success" />
-                </Card>
+                <StatCard
+                    title="Tỉ lệ tham gia"
+                    value={`${attendanceRate}%`}
+                    icon={<ArrowUpRight className="w-4 h-4" />}
+                />
+                <StatCard
+                    title="Hoàn thành mục tiêu"
+                    value={completedGoals}
+                    subtitle={`Trên tổng số ${totalGoals}`}
+                    icon={<TrendingUp className="w-4 h-4" />}
+                />
+                <StatCard
+                    title="Buổi sinh hoạt"
+                    value={totalMeetings}
+                    icon={<Calendar className="w-4 h-4" />}
+                />
+                <StatCard
+                    title="Chương trình đang chạy"
+                    value={activeCycles}
+                    icon={<Users className="w-4 h-4" />}
+                />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Program Performance - Real Data */}
-                <Card className="p-6">
-                    <h3 className="text-base font-semibold text-black mb-6 flex items-center gap-2">
-                        <BarChart3 className="w-4 h-4 text-[#999]" />
-                        Hiệu suất theo chương trình
-                    </h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Program Performance */}
+                <Card className="p-8">
+                    <CardHeader className="mb-8">
+                        <CardTitle className="text-lg flex items-center gap-2.5">
+                            <BarChart3 className="w-5 h-5 text-[#999]" />
+                            Hiệu suất theo chương trình
+                        </CardTitle>
+                    </CardHeader>
                     {programPerformance.length === 0 ? (
                         <EmptyState
-                            icon={<BarChart3 className="w-5 h-5" />}
+                            icon={<BarChart3 className="w-6 h-6" />}
                             title="Chưa có dữ liệu chương trình"
-                            className="py-8"
+                            className="py-12"
                         />
                     ) : (
-                        <div className="space-y-5">
+                        <div className="space-y-8">
                             {programPerformance.map(cycle => (
-                                <div key={cycle.name} className="space-y-2">
-                                    <div className="flex justify-between items-center text-sm">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium text-black">{cycle.name}</span>
-                                            <span className={`text-[10px] px-1.5 py-0.5 rounded ${cycle.status === 'active' ? 'bg-black text-white' : 'bg-[#f5f5f5] text-[#999]'}`}>
-                                                {cycle.status === 'active' ? 'Đang chạy' : 'Hoàn thành'}
-                                            </span>
+                                <div key={cycle.name} className="space-y-3">
+                                    <div className="flex justify-between items-end">
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold text-black tracking-tight">{cycle.name}</span>
+                                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] uppercase tracking-wider ${cycle.status === 'active' ? 'bg-black text-white' : 'bg-[#fafafa] text-[#999] border border-[#eaeaea]'}`}>
+                                                    {cycle.status === 'active' ? 'Đang chạy' : 'Hoàn thành'}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-[#999]">
+                                                {cycle.mentorshipCount} nhóm đang tham gia
+                                            </p>
                                         </div>
-                                        <span className="text-xs text-[#666]">
-                                            {cycle.meetingsCompleted}/{cycle.meetingsTotal} buổi · {cycle.mentorshipCount} nhóm
+                                        <span className="text-xs font-medium text-[#666]">
+                                            {cycle.meetingsCompleted}/{cycle.meetingsTotal} buổi ({cycle.completionRate}%)
                                         </span>
                                     </div>
                                     <Progress value={cycle.completionRate} size="sm" color={cycle.completionRate === 100 ? "success" : "default"} />
@@ -185,25 +178,27 @@ export default async function AdminReportsPage() {
                     )}
                 </Card>
 
-                {/* Top Mentees - Real Data */}
-                <Card className="p-6">
-                    <h3 className="text-base font-semibold text-black mb-6 flex items-center gap-2">
-                        <Award className="w-4 h-4 text-[#999]" />
-                        Mentees tiêu biểu
-                    </h3>
+                {/* Top Mentees */}
+                <Card className="p-8">
+                    <CardHeader className="mb-8">
+                        <CardTitle className="text-lg flex items-center gap-2.5">
+                            <Award className="w-5 h-5 text-[#999]" />
+                            Mentees tiêu biểu
+                        </CardTitle>
+                    </CardHeader>
                     {menteesWithProgress.length === 0 ? (
                         <EmptyState
-                            icon={<Award className="w-5 h-5" />}
+                            icon={<Award className="w-6 h-6" />}
                             title="Chưa có đủ dữ liệu"
                             description="Khi Mentees bắt đầu đạt được mục tiêu, bảng xếp hạng sẽ được tạo tự động"
-                            className="py-8"
+                            className="py-12"
                         />
                     ) : (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             {menteesWithProgress.map((mentee, idx) => (
-                                <div key={mentee.id} className="flex items-center justify-between p-3 rounded-md border border-[#eaeaea] bg-white hover:border-black/20 transition-all">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-7 h-7 rounded-full bg-[#fafafa] border border-[#eaeaea] flex items-center justify-center text-[#999] font-medium text-xs">
+                                <div key={mentee.id} className="flex items-center justify-between p-4 rounded-[8px] border border-[#eaeaea] bg-white hover:border-black transition-all group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-6 h-6 rounded-full bg-[#fafafa] border border-[#eaeaea] flex items-center justify-center text-[#666] font-bold text-[10px]">
                                             {idx + 1}
                                         </div>
                                         <Avatar
@@ -213,12 +208,14 @@ export default async function AdminReportsPage() {
                                             size="sm"
                                         />
                                         <div>
-                                            <p className="text-sm font-medium text-black">{mentee.firstName} {mentee.lastName}</p>
-                                            <p className="text-[10px] text-[#999]">{mentee.goalCompleted}/{mentee.goalTotal} mục tiêu đạt</p>
+                                            <p className="text-sm font-semibold text-black leading-none mb-1">{mentee.firstName} {mentee.lastName}</p>
+                                            <p className="text-[11px] text-[#999] font-medium">{mentee.goalCompleted}/{mentee.goalTotal} mục tiêu hoàn tất</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-semibold text-black">{mentee.rate}%</span>
+                                    <div className="flex items-center gap-3">
+                                        <div className="text-right">
+                                            <span className="text-sm font-bold text-black">{mentee.rate}%</span>
+                                        </div>
                                         {mentee.rate >= 80 && <CheckCircle2 className="w-4 h-4 text-black" />}
                                     </div>
                                 </div>

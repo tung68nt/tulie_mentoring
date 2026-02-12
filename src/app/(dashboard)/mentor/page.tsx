@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Card, StatCard } from "@/components/ui/card";
+import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Users, Calendar, CheckCircle, Clock } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -31,19 +31,19 @@ export default async function MentorDashboard() {
     const totalMentees = mentorships.reduce((acc, m) => acc + m.mentees.length, 0);
 
     const stats = [
-        { title: "Mentees của tôi", value: totalMentees, icon: <Users />, color: "black" },
-        { title: "Buổi họp sắp tới", value: upcomingMeetings.length, icon: <Calendar />, color: "black" },
-        { title: "Hoàn thành", value: 12, icon: <CheckCircle />, color: "black" },
+        { title: "Mentees của tôi", value: totalMentees, icon: <Users /> },
+        { title: "Buổi họp sắp tới", value: upcomingMeetings.length, icon: <Calendar /> },
+        { title: "Hoàn thành", value: 12, icon: <CheckCircle /> }, // Placeholder for now or calculate from actual meetings
     ];
 
     return (
-        <div className="space-y-10 pb-10">
-            <div className="space-y-2">
-                <h1 className="text-3xl font-semibold text-black">Bảng điều khiển Mentor</h1>
-                <p className="text-[#666] text-sm">Chào buổi sáng, {session?.user?.name || "Mentor"}</p>
+        <div className="space-y-12 pb-12 animate-fade-in">
+            <div className="space-y-1">
+                <h1 className="text-3xl font-semibold tracking-tight text-black">Bảng điều khiển Mentor</h1>
+                <p className="text-sm text-[#666]">Chào buổi sáng, {session?.user?.name || "Mentor"}.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {stats.map((stat) => (
                     <StatCard key={stat.title} {...stat} />
                 ))}
@@ -51,10 +51,12 @@ export default async function MentorDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 <div className="lg:col-span-2 space-y-8">
-                    <h3 className="text-lg font-semibold text-black">Danh sách Mentees</h3>
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold tracking-tight text-black">Danh sách Mentees</h3>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {mentorships.flatMap(m => m.mentees).map((mt) => (
-                            <Card key={mt.id} className="p-5 flex items-center justify-between group" hover>
+                            <Card key={mt.id} className="p-6 flex items-center justify-between group" hover>
                                 <div className="flex items-center gap-4">
                                     <Avatar
                                         firstName={mt.mentee.firstName}
@@ -63,13 +65,13 @@ export default async function MentorDashboard() {
                                         size="md"
                                     />
                                     <div className="min-w-0">
-                                        <p className="text-sm font-bold text-black truncate leading-tight mb-0.5">
+                                        <p className="text-sm font-semibold text-black truncate leading-tight mb-1">
                                             {mt.mentee.firstName} {mt.mentee.lastName}
                                         </p>
-                                        <p className="text-xs text-[#666]">{mt.status}</p>
+                                        <p className="text-[11px] font-medium text-[#999] uppercase tracking-wider">{mt.status}</p>
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button variant="outline" size="sm" asChild className="opacity-0 group-hover:opacity-100 transition-opacity">
                                     <Link href={`/admin/mentorships/${mt.mentorshipId}`}>Hồ sơ</Link>
                                 </Button>
                             </Card>
@@ -78,30 +80,32 @@ export default async function MentorDashboard() {
                 </div>
 
                 <div className="space-y-8">
-                    <h3 className="text-lg font-semibold text-black">Lịch họp sắp tới</h3>
+                    <h3 className="text-lg font-semibold tracking-tight text-black">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
                         {upcomingMeetings.length === 0 ? (
                             <p className="text-sm text-[#999] italic">Chưa có lịch họp nào.</p>
                         ) : (
                             upcomingMeetings.map((meeting) => (
-                                <div key={meeting.id} className="flex gap-5 p-4 rounded-[8px] border border-[#eaeaea] bg-white group hover:border-black transition-all">
+                                <div key={meeting.id} className="flex gap-5 p-5 rounded-[8px] border border-[#eaeaea] bg-white group hover:border-black transition-all">
                                     <div className="w-12 h-12 rounded-[6px] bg-black text-white flex flex-col items-center justify-center shrink-0">
-                                        <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
+                                        <span className="text-[10px] font-bold leading-none uppercase tracking-tighter">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                         <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                     </div>
-                                    <div className="flex-1 min-w-0 space-y-1.5">
-                                        <p className="text-sm font-bold text-black truncate leading-tight">{meeting.title}</p>
-                                        <div className="flex items-center gap-2 text-[11px] text-[#666] font-medium">
-                                            <Clock className="w-3.5 h-3.5" />
-                                            {formatDate(meeting.scheduledAt, "HH:mm")}
-                                            <Badge status={meeting.status} size="sm" className="ml-1" />
+                                    <div className="flex-1 min-w-0 space-y-2">
+                                        <p className="text-sm font-semibold text-black truncate tracking-tight">{meeting.title}</p>
+                                        <div className="flex items-center gap-3 text-[11px] text-[#666] font-medium">
+                                            <div className="flex items-center gap-1">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                {formatDate(meeting.scheduledAt, "HH:mm")}
+                                            </div>
+                                            <Badge status={meeting.status} size="sm" />
                                         </div>
                                     </div>
                                 </div>
                             ))
                         )}
-                        <Button className="w-full" variant="outline" asChild>
-                            <Link href="/calendar">Tất cả lịch</Link>
+                        <Button className="w-full mt-4" variant="outline" asChild>
+                            <Link href="/calendar">Xem tất cả lịch trình</Link>
                         </Button>
                     </div>
                 </div>

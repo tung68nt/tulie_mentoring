@@ -6,7 +6,7 @@ import { Slot } from "@radix-ui/react-slot";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary" | "ghost" | "destructive" | "outline";
-    size?: "sm" | "md" | "lg" | "icon";
+    size?: "xs" | "sm" | "md" | "lg" | "icon";
     isLoading?: boolean;
     asChild?: boolean;
 }
@@ -16,20 +16,21 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const Comp = asChild ? Slot : "button";
 
         const base =
-            "inline-flex items-center justify-center gap-2 rounded-[6px] font-medium transition-all duration-200 focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none";
+            "inline-flex items-center justify-center gap-2 rounded-[6px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none";
 
         const variants = {
-            primary: "bg-black text-white hover:bg-[#333] border border-black",
-            secondary: "bg-white text-[#666] border border-[#eaeaea] hover:border-black hover:text-black",
+            primary: "bg-black text-white hover:bg-[#111] border border-black",
+            secondary: "bg-white text-[#666] border border-[#eaeaea] hover:border-[#666] hover:text-black",
             ghost: "text-[#666] hover:bg-[#fafafa] hover:text-black",
-            destructive: "bg-[#000] text-[#ee0000] border border-[#ee0000] hover:bg-[#ee0000] hover:text-white hover:border-[#ee0000]",
+            destructive: "bg-white text-[#ee0000] border border-[#ee0000] hover:bg-[#ee0000] hover:text-white",
             outline: "border border-[#eaeaea] bg-white text-[#666] hover:border-black hover:text-black",
         };
 
         const sizes = {
+            xs: "h-7 px-2 text-[11px]",
             sm: "h-8 px-3 text-xs",
             md: "h-10 px-4 text-sm",
-            lg: "h-12 px-6 text-base",
+            lg: "h-11 px-8 text-sm font-semibold",
             icon: "h-10 w-10",
         };
 

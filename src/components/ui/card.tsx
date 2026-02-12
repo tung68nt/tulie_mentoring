@@ -19,8 +19,8 @@ export function Card({ children, className, hover = false, padding = "md" }: Car
     return (
         <div
             className={cn(
-                "bg-white rounded-[8px] border border-[#eaeaea]",
-                hover && "transition-all duration-200 hover:border-[#000] hover:shadow-[0_5px_10px_rgba(0,0,0,0.12)] cursor-pointer",
+                "bg-white rounded-[6px] border border-[#eaeaea] transition-all duration-200",
+                hover && "hover:border-[#999] hover:shadow-sm cursor-pointer",
                 paddings[padding],
                 className
             )}
@@ -30,30 +30,20 @@ export function Card({ children, className, hover = false, padding = "md" }: Car
     );
 }
 
-interface CardHeaderProps {
-    children: ReactNode;
-    className?: string;
+export function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
+    return <div className={cn("flex flex-col space-y-1.5 mb-6", className)}>{children}</div>;
 }
 
-export function CardHeader({ children, className }: CardHeaderProps) {
-    return (
-        <div className={cn("flex items-center justify-between mb-4", className)}>
-            {children}
-        </div>
-    );
+export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
+    return <h3 className={cn("text-base font-semibold leading-none tracking-tight text-black", className)}>{children}</h3>;
 }
 
-interface CardTitleProps {
-    children: ReactNode;
-    className?: string;
+export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
+    return <p className={cn("text-sm text-[#666]", className)}>{children}</p>;
 }
 
-export function CardTitle({ children, className }: CardTitleProps) {
-    return (
-        <h3 className={cn("text-lg font-semibold text-black", className)}>
-            {children}
-        </h3>
-    );
+export function CardContent({ children, className }: { children: ReactNode; className?: string }) {
+    return <div className={cn("", className)}>{children}</div>;
 }
 
 interface StatCardProps {
@@ -62,30 +52,24 @@ interface StatCardProps {
     subtitle?: string;
     icon?: ReactNode;
     trend?: { value: number; label: string };
-    accentColor?: string;
 }
 
-export function StatCard({ title, value, subtitle, icon, trend, accentColor }: StatCardProps) {
+export function StatCard({ title, value, subtitle, icon, trend }: StatCardProps) {
     return (
-        <Card className="relative overflow-hidden group stat-card-accent hover:border-[#999] hover:shadow-[0_5px_10px_rgba(0,0,0,0.08)] transition-all duration-200">
+        <Card className="relative overflow-hidden group stat-card-accent" hover>
             <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                    <p className="text-xs font-medium text-[#666]">{title}</p>
-                    <p className="text-3xl font-bold text-black tracking-tight">{value}</p>
-                    {subtitle && (
-                        <p className="text-xs text-[#999]">{subtitle}</p>
-                    )}
+                <div className="space-y-1.5">
+                    <p className="text-[12px] font-medium text-[#666] tracking-tight">{title}</p>
+                    <p className="text-2xl font-bold text-black tracking-tighter">{value}</p>
+                    {subtitle && <p className="text-[11px] text-[#999]">{subtitle}</p>}
                     {trend && (
-                        <p className={cn(
-                            "text-xs font-semibold",
-                            trend.value >= 0 ? "text-[#0070f3]" : "text-[#ee0000]"
-                        )}>
+                        <p className={cn("text-[11px] font-medium mt-1", trend.value >= 0 ? "text-black" : "text-[#666]")}>
                             {trend.value >= 0 ? "+" : ""}{trend.value}% {trend.label}
                         </p>
                     )}
                 </div>
                 {icon && (
-                    <div className="p-2.5 rounded-[8px] bg-[#fafafa] text-[#999] group-hover:text-black group-hover:bg-black/5 border border-[#eaeaea] group-hover:border-[#999] transition-all duration-200">
+                    <div className="p-2 rounded-md bg-[#fafafa] text-[#999] group-hover:text-black group-hover:bg-black/5 border border-[#eaeaea] transition-all">
                         {icon}
                     </div>
                 )}
