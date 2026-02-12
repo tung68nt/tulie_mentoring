@@ -88,7 +88,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                         <span className="text-gray-400">Tiến độ</span>
                         <span className="text-gray-900">{goal.currentValue}%</span>
                     </div>
-                    <Progress value={goal.currentValue} size="sm" color={goal.currentValue === 100 ? "emerald" : "default"} />
+                    <Progress value={goal.currentValue} size="sm" color={goal.currentValue === 100 ? "success" : "default"} />
                 </div>
 
                 {goal.description && (

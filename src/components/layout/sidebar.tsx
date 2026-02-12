@@ -76,10 +76,10 @@ export function Sidebar({ role, isCollapsed = false }: SidebarProps) {
                             key={item.id}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 px-3 py-2 rounded-[6px] text-sm transition-all relative group",
+                                "flex items-center gap-3 px-3 py-2 rounded-[6px] text-sm transition-all duration-200 relative group",
                                 isActive
                                     ? "bg-[#fafafa] text-black border border-[#eaeaea] font-medium"
-                                    : "text-[#666] hover:bg-[#fafafa] hover:text-black"
+                                    : "text-[#666] hover:bg-[#fafafa] hover:text-black hover:translate-x-0.5"
                             )}
                         >
                             <span className={cn(

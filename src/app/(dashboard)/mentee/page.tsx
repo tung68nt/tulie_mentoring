@@ -36,8 +36,8 @@ export default async function MenteeDashboard() {
 
     return (
         <div className="space-y-10 pb-10">
-            <div className="space-y-1">
-                <h1 className="text-3xl font-bold text-black">Bảng điều khiển Mentee</h1>
+            <div className="space-y-2">
+                <h1 className="text-3xl font-semibold text-black">Bảng điều khiển Mentee</h1>
                 <p className="text-[#666] text-sm">Chào mừng bạn trở lại, {session?.user?.name || "Mentee"}</p>
             </div>
 
@@ -90,7 +90,7 @@ export default async function MenteeDashboard() {
                                         <p className="text-sm font-bold text-black truncate leading-tight flex-1 pr-4">{goal.title}</p>
                                         <span className="text-[12px] font-bold text-[#666]">{goal.currentValue}%</span>
                                     </div>
-                                    <Progress value={goal.currentValue} size="xs" color="bg-black" />
+                                    <Progress value={goal.currentValue} size="xs" color="default" />
                                 </Card>
                             ))}
                         </div>

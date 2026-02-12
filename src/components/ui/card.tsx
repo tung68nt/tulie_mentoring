@@ -67,13 +67,13 @@ interface StatCardProps {
 
 export function StatCard({ title, value, subtitle, icon, trend, accentColor }: StatCardProps) {
     return (
-        <Card className="relative overflow-hidden group">
+        <Card className="relative overflow-hidden group stat-card-accent hover:border-[#999] hover:shadow-[0_5px_10px_rgba(0,0,0,0.08)] transition-all duration-200">
             <div className="flex items-start justify-between">
-                <div className="space-y-1">
+                <div className="space-y-2">
                     <p className="text-xs font-medium text-[#666]">{title}</p>
-                    <p className="text-2xl font-bold text-black">{value}</p>
+                    <p className="text-3xl font-bold text-black tracking-tight">{value}</p>
                     {subtitle && (
-                        <p className="text-xs text-[#888]">{subtitle}</p>
+                        <p className="text-xs text-[#999]">{subtitle}</p>
                     )}
                     {trend && (
                         <p className={cn(
@@ -85,7 +85,7 @@ export function StatCard({ title, value, subtitle, icon, trend, accentColor }: S
                     )}
                 </div>
                 {icon && (
-                    <div className="p-2 rounded-[6px] bg-[#fafafa] text-[#666] group-hover:text-black border border-transparent group-hover:border-[#eaeaea] transition-all">
+                    <div className="p-2.5 rounded-[8px] bg-[#fafafa] text-[#999] group-hover:text-black group-hover:bg-black/5 border border-[#eaeaea] group-hover:border-[#999] transition-all duration-200">
                         {icon}
                     </div>
                 )}

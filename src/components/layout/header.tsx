@@ -17,7 +17,7 @@ export function Header({ userName, userRole, avatar, onMenuClick }: HeaderProps)
     const [isSearchFocused, setIsSearchFocused] = useState(false);
 
     return (
-        <header className="fixed top-0 right-0 left-0 bg-white/80 backdrop-blur-md border-b border-[#eaeaea] z-40 transition-all">
+        <header className="fixed top-0 right-0 left-0 lg:left-[var(--sidebar-width)] bg-white/80 backdrop-blur-md border-b border-[#eaeaea] z-40 transition-all">
             <div className="h-14 px-4 flex items-center justify-between max-w-[1400px] mx-auto">
                 <div className="flex items-center gap-4 flex-1">
                     <button

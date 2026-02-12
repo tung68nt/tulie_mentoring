@@ -38,8 +38,8 @@ export default async function MentorDashboard() {
 
     return (
         <div className="space-y-10 pb-10">
-            <div className="space-y-1">
-                <h1 className="text-3xl font-bold text-black">Bảng điều khiển Mentor</h1>
+            <div className="space-y-2">
+                <h1 className="text-3xl font-semibold text-black">Bảng điều khiển Mentor</h1>
                 <p className="text-[#666] text-sm">Chào buổi sáng, {session?.user?.name || "Mentor"}</p>
             </div>
 
