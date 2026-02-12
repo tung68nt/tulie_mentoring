@@ -53,13 +53,13 @@ export function RegisterForm() {
     return (
         <Card className="w-full max-w-md p-8">
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Tham gia chương trình</h1>
-                <p className="text-gray-500 mt-2">Dành cho cả Mentors và Mentees</p>
+                <h1 className="text-2xl font-semibold text-black">Tham gia chương trình</h1>
+                <p className="text-[#666] mt-2 text-sm">Dành cho cả Mentors và Mentees</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {error && (
-                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
+                    <div className="p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
                         {error}
                     </div>
                 )}
@@ -118,12 +118,12 @@ export function RegisterForm() {
                 </Button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                <p className="text-sm text-gray-500">
+            <div className="mt-8 pt-6 border-t border-[#eaeaea] text-center">
+                <p className="text-sm text-[#666]">
                     Đã có tài khoản?{" "}
                     <button
                         onClick={() => router.push("/login")}
-                        className="font-semibold text-gray-900 hover:underline"
+                        className="font-semibold text-black hover:underline"
                     >
                         Đăng nhập
                     </button>

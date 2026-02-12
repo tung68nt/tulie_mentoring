@@ -34,12 +34,12 @@ export function QRSentry({ meetingId }: QRSentryProps) {
         <Card className="p-10 flex flex-col items-center text-center space-y-6">
             {status === "idle" && (
                 <>
-                    <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center text-white">
+                    <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center text-white">
                         <Camera className="w-8 h-8" />
                     </div>
                     <div className="space-y-2">
-                        <h3 className="text-xl font-bold text-gray-900">Điểm danh buổi họp</h3>
-                        <p className="text-sm text-gray-500 max-w-xs">
+                        <h3 className="text-xl font-semibold text-black">Điểm danh buổi họp</h3>
+                        <p className="text-sm text-[#666] max-w-xs">
                             Vui lòng sử dụng camera để quét mã QR được hiển thị bởi Mentor của bạn.
                         </p>
                     </div>
@@ -51,19 +51,19 @@ export function QRSentry({ meetingId }: QRSentryProps) {
 
             {status === "loading" && (
                 <div className="py-10 flex flex-col items-center space-y-4">
-                    <Loader2 className="w-10 h-10 text-gray-900 animate-spin" />
-                    <p className="text-sm font-medium text-gray-600">Đang xác thực check-in...</p>
+                    <Loader2 className="w-10 h-10 text-black animate-spin" />
+                    <p className="text-sm font-medium text-[#666]">Đang xác thực check-in...</p>
                 </div>
             )}
 
             {status === "success" && (
                 <div className="py-6 flex flex-col items-center space-y-4 animate-scale-in">
-                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+                    <div className="w-16 h-16 bg-[#0070f3]/10 rounded-full flex items-center justify-center text-[#0070f3]">
                         <CheckCircle className="w-10 h-10" />
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-xl font-bold text-gray-900">Điểm danh thành công!</h3>
-                        <p className="text-sm text-gray-500">Thông tin tham gia của bạn đã được ghi lại.</p>
+                        <h3 className="text-xl font-semibold text-black">Điểm danh thành công!</h3>
+                        <p className="text-sm text-[#666]">Thông tin tham gia của bạn đã được ghi lại.</p>
                     </div>
                     <Button variant="outline" onClick={() => setStatus("idle")}>Xong</Button>
                 </div>
@@ -71,12 +71,12 @@ export function QRSentry({ meetingId }: QRSentryProps) {
 
             {status === "error" && (
                 <div className="py-6 flex flex-col items-center space-y-4">
-                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                    <div className="w-16 h-16 bg-[#ee0000]/10 rounded-full flex items-center justify-center text-[#ee0000]">
                         <AlertCircle className="w-10 h-10" />
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-xl font-bold text-gray-900">Lỗi điểm danh</h3>
-                        <p className="text-sm text-red-600 font-medium">{errorMsg}</p>
+                        <h3 className="text-xl font-semibold text-black">Lỗi điểm danh</h3>
+                        <p className="text-sm text-[#ee0000] font-medium">{errorMsg}</p>
                     </div>
                     <Button variant="outline" onClick={() => setStatus("idle")}>Thử lại</Button>
                 </div>

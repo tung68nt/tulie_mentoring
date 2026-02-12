@@ -76,7 +76,7 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
         <Card className="w-full max-w-2xl mx-auto p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {error && (
-                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
+                    <div className="p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
                         {error}
                     </div>
                 )}
@@ -110,16 +110,16 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
                 />
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-[12px] font-medium text-[#666]">
                         Chọn Mentees ({selectedMentees.length})
                     </label>
-                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-50 rounded-lg border border-gray-100">
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-[#fafafa] rounded-[8px] border border-[#eaeaea]">
                         {mentees.map((m) => (
                             <label
                                 key={m.id}
-                                className={`flex items-center gap-2 p-2 rounded-md cursor-pointer transition-colors ${selectedMentees.includes(m.id)
-                                    ? "bg-gray-900 text-white"
-                                    : "bg-white hover:bg-gray-100 text-gray-700"
+                                className={`flex items-center gap-2 p-2 rounded-[6px] cursor-pointer transition-colors ${selectedMentees.includes(m.id)
+                                    ? "bg-black text-white"
+                                    : "bg-white hover:bg-[#fafafa] text-[#444] border border-[#eaeaea]"
                                     }`}
                             >
                                 <input
@@ -135,7 +135,7 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
                         ))}
                     </div>
                     {errors.menteeIds && (
-                        <p className="text-sm text-red-500">{errors.menteeIds.message}</p>
+                        <p className="text-sm text-[#ee0000]">{errors.menteeIds.message}</p>
                     )}
                 </div>
 

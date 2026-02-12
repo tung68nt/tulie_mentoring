@@ -28,28 +28,28 @@ export default async function FeedbackPage() {
     return (
         <div className="space-y-8 pb-10">
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">Hệ thống Phản hồi</h1>
-                <p className="text-gray-500 mt-1">Đánh giá và đóng góp ý kiến để cải thiện chất lượng đào tạo</p>
+                <h1 className="text-2xl font-semibold text-black">Hệ thống Phản hồi</h1>
+                <p className="text-[#666] mt-1 text-sm">Đánh giá và đóng góp ý kiến để cải thiện chất lượng đào tạo</p>
             </div>
 
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8">
                 {/* Main Feed */}
                 <div className="lg:col-span-2 space-y-8">
                     <div className="space-y-6">
-                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <h3 className="text-lg font-semibold text-black flex items-center gap-2">
                             <MessageSquare className="w-5 h-5" />
                             Phản hồi nhận được
                         </h3>
 
                         {received.length === 0 ? (
                             <Card className="py-12 flex flex-col items-center justify-center text-center">
-                                <p className="text-gray-400 font-medium italic">Chưa có phản hồi nào dành cho bạn.</p>
+                                <p className="text-[#999] font-medium italic">Chưa có phản hồi nào dành cho bạn.</p>
                             </Card>
                         ) : (
                             <div className="space-y-6">
                                 {received.map(fb => (
                                     <Card key={fb.id} className="relative overflow-visible">
-                                        <div className="absolute -top-3 -left-3 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white shadow-lg">
+                                        <div className="absolute -top-3 -left-3 w-8 h-8 bg-black rounded-full flex items-center justify-center text-white shadow-lg">
                                             <Quote className="w-4 h-4 fill-current" />
                                         </div>
                                         <div className="space-y-4">
@@ -62,20 +62,20 @@ export default async function FeedbackPage() {
                                                         size="md"
                                                     />
                                                     <div>
-                                                        <p className="text-sm font-bold text-gray-900">
+                                                        <p className="text-sm font-semibold text-black">
                                                             {fb.fromUser.firstName} {fb.fromUser.lastName}
                                                         </p>
-                                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{fb.fromUser.role}</p>
+                                                        <p className="text-[10px] font-medium text-[#999]">{fb.fromUser.role}</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-1">
                                                     {[...Array(5)].map((_, i) => (
-                                                        <Star key={i} className={`w-3.5 h-3.5 ${i < (fb.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-200"}`} />
+                                                        <Star key={i} className={`w-3.5 h-3.5 ${i < (fb.rating || 0) ? "text-black fill-current" : "text-[#eaeaea]"}`} />
                                                     ))}
                                                 </div>
                                             </div>
 
-                                            <blockquote className="text-sm text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-xl border-l-4 border-gray-900 italic">
+                                            <blockquote className="text-sm text-[#444] leading-relaxed bg-[#fafafa] p-4 rounded-[8px] border-l-4 border-black italic">
                                                 "{fb.content}"
                                             </blockquote>
 
@@ -83,22 +83,22 @@ export default async function FeedbackPage() {
                                                 <div className="grid grid-cols-2 gap-4 pt-2">
                                                     {fb.strengths && (
                                                         <div className="space-y-1">
-                                                            <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Điểm mạnh</p>
-                                                            <p className="text-xs text-gray-600">{fb.strengths}</p>
+                                                            <p className="text-[10px] font-medium text-[#0070f3]">Điểm mạnh</p>
+                                                            <p className="text-xs text-[#666]">{fb.strengths}</p>
                                                         </div>
                                                     )}
                                                     {fb.improvements && (
                                                         <div className="space-y-1">
-                                                            <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">Góp ý</p>
-                                                            <p className="text-xs text-gray-600">{fb.improvements}</p>
+                                                            <p className="text-[10px] font-medium text-[#f5a623]">Góp ý</p>
+                                                            <p className="text-xs text-[#666]">{fb.improvements}</p>
                                                         </div>
                                                     )}
                                                 </div>
                                             )}
 
-                                            <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{fb.mentorship.programCycle.name}</span>
-                                                <span className="text-[10px] text-gray-400">{formatDate(fb.createdAt)}</span>
+                                            <div className="flex items-center justify-between pt-4 border-t border-[#eaeaea]">
+                                                <span className="text-[10px] font-medium text-[#999]">{fb.mentorship.programCycle.name}</span>
+                                                <span className="text-[10px] text-[#999]">{formatDate(fb.createdAt)}</span>
                                             </div>
                                         </div>
                                     </Card>
@@ -108,13 +108,13 @@ export default async function FeedbackPage() {
                     </div>
 
                     <div className="space-y-6">
-                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <h3 className="text-lg font-semibold text-black flex items-center gap-2">
                             <Send className="w-5 h-5" />
                             Lịch sử gửi phản hồi
                         </h3>
                         <div className="space-y-4">
                             {given.map(fb => (
-                                <div key={fb.id} className="p-4 rounded-xl border border-gray-50 flex items-center justify-between bg-white shadow-sm">
+                                <div key={fb.id} className="p-4 rounded-[8px] border border-[#eaeaea] flex items-center justify-between bg-white">
                                     <div className="flex items-center gap-3">
                                         <Avatar
                                             firstName={fb.toUser.firstName}
@@ -123,13 +123,13 @@ export default async function FeedbackPage() {
                                             size="sm"
                                         />
                                         <div>
-                                            <p className="text-sm font-bold text-gray-900 leading-none mb-1">Đến: {fb.toUser.firstName} {fb.toUser.lastName}</p>
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{formatDate(fb.createdAt)}</p>
+                                            <p className="text-sm font-semibold text-black leading-none mb-1">Đến: {fb.toUser.firstName} {fb.toUser.lastName}</p>
+                                            <p className="text-[10px] text-[#999] font-medium">{formatDate(fb.createdAt)}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1">
                                         {[...Array(fb.rating || 0)].map((_, i) => (
-                                            <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                                            <Star key={i} className="w-3 h-3 text-black fill-current" />
                                         ))}
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@ export default async function FeedbackPage() {
                 {/* Sidebar: Give Feedback */}
                 <div className="space-y-6">
                     <div className="space-y-4">
-                        <h3 className="text-lg font-bold text-gray-900">Gửi phản hồi mới</h3>
+                        <h3 className="text-lg font-semibold text-black">Gửi phản hồi mới</h3>
                         {relevantMentorships.map(m => {
                             // Determine who to send feedback to
                             const targetMentees = m.mentees.filter(mt => mt.menteeId !== userId).map(mt => mt.mentee);
@@ -151,7 +151,7 @@ export default async function FeedbackPage() {
 
                             return (
                                 <div key={m.id} className="space-y-4">
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
+                                    <p className="text-xs font-medium text-[#999] px-1">
                                         {m.programCycle.name} - {m.mentor.lastName} ➔ {m.mentees[0]?.mentee.lastName}...
                                     </p>
                                     {targets.map(target => (

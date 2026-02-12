@@ -52,13 +52,13 @@ export function LoginForm() {
     return (
         <Card className="w-full max-w-md p-8">
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Chào mừng trở lại</h1>
-                <p className="text-gray-500 mt-2">Đăng nhập vào hệ thống IMP Mentoring</p>
+                <h1 className="text-2xl font-semibold text-black">Chào mừng trở lại</h1>
+                <p className="text-[#666] mt-2 text-sm">Đăng nhập vào hệ thống IMP Mentoring</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {error && (
-                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
+                    <div className="p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
                         {error}
                     </div>
                 )}
@@ -84,23 +84,23 @@ export function LoginForm() {
                 </Button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                <p className="text-sm text-gray-500">
+            <div className="mt-8 pt-6 border-t border-[#eaeaea] text-center">
+                <p className="text-sm text-[#666]">
                     Chưa có tài khoản?{" "}
                     <button
                         onClick={() => router.push("/register")}
-                        className="font-semibold text-gray-900 hover:underline"
+                        className="font-semibold text-black hover:underline"
                     >
                         Đăng ký tham gia
                     </button>
                 </p>
             </div>
 
-            <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
+            <div className="mt-6 p-4 bg-[#fafafa] rounded-[8px] border border-[#eaeaea]">
+                <p className="text-xs font-medium text-[#999] mb-2">
                     Tài khoản Demo
                 </p>
-                <div className="space-y-1 text-xs text-gray-600">
+                <div className="space-y-1 text-xs text-[#666]">
                     <p>Admin: admin@imp.edu.vn / password123</p>
                     <p>Mentor: mentor1@imp.edu.vn / password123</p>
                     <p>Mentee: mentee1@imp.edu.vn / password123</p>

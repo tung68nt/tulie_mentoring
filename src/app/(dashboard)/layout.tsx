@@ -40,7 +40,7 @@ export default async function DashboardLayout({
                     </div>
                 </main>
 
-                <footer className="p-6 text-center text-xs text-gray-400 border-t border-gray-100">
+                <footer className="p-6 text-center text-xs text-[#999] border-t border-[#eaeaea]">
                     © {new Date().getFullYear()} ISME Mentoring Program (IMP) - Đại học Kinh tế Quốc dân. All rights reserved.
                 </footer>
             </div>
