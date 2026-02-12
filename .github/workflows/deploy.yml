@@ -41,6 +41,15 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Copy docker-compose to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "docker-compose.prod.yml"
+          target: "/srv/mentoring"
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.2.0
         env:
@@ -58,13 +67,8 @@ jobs:
           script: |
             set -xe
             mkdir -p /srv/mentoring
-            echo $G_TOKEN | docker login ghcr.io -u $G_ACTOR --password-stdin
             cd /srv/mentoring
-            # Check if docker-compose file exists, if not, wait for scp or fail gracefully
-            if [ ! -f "docker-compose.prod.yml" ]; then
-              echo "Waiting for docker-compose.prod.yml..."
-              sleep 5
-            fi
+            echo "$G_TOKEN" | docker login ghcr.io -u "$G_ACTOR" --password-stdin
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
