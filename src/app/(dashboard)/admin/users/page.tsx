@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trash2, Shield, User } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import Link from "next/link";
 
 export default async function AdminUsersPage() {
     const session = await auth();
@@ -46,7 +47,9 @@ export default async function AdminUsersPage() {
                                             size="sm"
                                         />
                                         <div>
-                                            <p className="font-semibold text-black">{user.firstName} {user.lastName}</p>
+                                            <Link href={`/admin/users/${user.id}`} className="font-semibold text-black hover:underline">
+                                                {user.firstName} {user.lastName}
+                                            </Link>
                                             <p className="text-xs text-[#666]">{user.email}</p>
                                         </div>
                                     </div>

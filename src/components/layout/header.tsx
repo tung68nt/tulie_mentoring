@@ -1,10 +1,10 @@
 "use client";
 
-import { Bell, Search, Menu, HelpCircle } from "lucide-react";
+import { Menu, HelpCircle } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { NotificationPanel } from "@/components/features/notifications/notification-panel";
+import { GlobalSearch } from "@/components/features/search/global-search";
 import Link from "next/link";
 
 interface Notification {
@@ -33,8 +33,6 @@ const roleLabels: Record<string, string> = {
 };
 
 export function Header({ userName, userRole, avatar, onMenuClick, notifications = [], unreadCount = 0 }: HeaderProps) {
-    const [isSearchFocused, setIsSearchFocused] = useState(false);
-
     return (
         <header className="fixed top-0 right-0 left-0 lg:left-[var(--sidebar-width)] bg-white/80 backdrop-blur-md border-b border-[#eaeaea] z-40 transition-all">
             <div className="h-14 px-4 sm:px-6 flex items-center justify-between max-w-[1400px] mx-auto">
@@ -47,18 +45,8 @@ export function Header({ userName, userRole, avatar, onMenuClick, notifications 
                         <Menu className="w-5 h-5" />
                     </button>
 
-                    <div className={cn(
-                        "relative hidden md:block transition-all duration-300",
-                        isSearchFocused ? "w-[400px]" : "w-[260px]"
-                    )}>
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999]" />
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm nhanh..."
-                            className="w-full h-9 pl-10 pr-4 bg-[#fafafa] border border-[#eaeaea] rounded-md text-sm text-black placeholder:text-[#999] focus:outline-none focus:border-black focus:ring-1 focus:ring-black/10 transition-all"
-                            onFocus={() => setIsSearchFocused(true)}
-                            onBlur={() => setIsSearchFocused(false)}
-                        />
+                    <div className="hidden md:block">
+                        <GlobalSearch />
                     </div>
                 </div>
 

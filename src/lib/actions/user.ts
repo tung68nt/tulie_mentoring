@@ -42,6 +42,46 @@ export async function getAllUsers() {
     });
 }
 
+export async function getUserDetail(userId: string) {
+    const session = await auth();
+    if ((session?.user as any).role !== "admin") throw new Error("Unauthorized");
+
+    return await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+            mentorProfile: true,
+            menteeProfile: true,
+            mentorships: {
+                include: {
+                    mentees: { include: { mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } } } },
+                    programCycle: { select: { name: true } },
+                    _count: { select: { meetings: true, goals: true } },
+                },
+                orderBy: { createdAt: "desc" },
+            },
+            menteeships: {
+                include: {
+                    mentorship: {
+                        include: {
+                            mentor: { select: { id: true, firstName: true, lastName: true, avatar: true } },
+                            programCycle: { select: { name: true } },
+                            _count: { select: { meetings: true, goals: true } },
+                        },
+                    },
+                },
+            },
+            attendances: {
+                select: { status: true },
+            },
+            feedbackReceived: {
+                select: { rating: true, content: true, createdAt: true, fromUser: { select: { firstName: true, lastName: true } } },
+                orderBy: { createdAt: "desc" },
+                take: 5,
+            },
+        },
+    });
+}
+
 export async function deleteUser(userId: string) {
     const session = await auth();
     if ((session?.user as any).role !== "admin") {

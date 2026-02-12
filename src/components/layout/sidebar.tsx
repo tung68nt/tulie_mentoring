@@ -12,7 +12,8 @@ import {
     User,
     LayoutDashboard,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    FolderOpen
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -44,6 +45,7 @@ export function Sidebar({ role }: SidebarProps) {
             { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentee" },
             { id: "goals", label: "Mục tiêu & Tiến độ", icon: Target, href: "/goals" },
             { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
+            { id: "portfolio", label: "Hồ sơ năng lực", icon: FolderOpen, href: "/portfolio" },
             { id: "feedback", label: "Phản hồi", icon: MessageSquare, href: "/feedback" },
             { id: "resources", label: "Thư viện tài liệu", icon: BookOpen, href: "/resources" },
         ]
@@ -119,7 +121,7 @@ export function Sidebar({ role }: SidebarProps) {
 
                 <button
                     className="flex items-center gap-3 w-full px-3 py-2 rounded-md text-[13px] text-[#666] hover:bg-red-50 hover:text-red-600 transition-all group"
-                    onClick={() => {/* Sign out logic */ }}
+                    onClick={() => { window.location.href = "/api/auth/signout"; }}
                     title={isCollapsed ? "Đăng xuất" : undefined}
                 >
                     <LogOut className="w-[18px] h-[18px] shrink-0 text-[#999] group-hover:text-red-500 transition-colors" />
