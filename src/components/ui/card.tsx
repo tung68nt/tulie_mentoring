@@ -19,8 +19,8 @@ export function Card({ children, className, hover = false, padding = "md" }: Car
     return (
         <div
             className={cn(
-                "bg-white rounded-[6px] border border-[#eaeaea] transition-all duration-200",
-                hover && "hover:border-[#999] hover:shadow-sm cursor-pointer",
+                "bg-white rounded-[12px] border border-[#eaeaea] transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_1px_2px_rgba(0,0,0,0.04)]",
+                hover && "hover:border-black/10 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.1)] cursor-pointer",
                 paddings[padding],
                 className
             )}
@@ -31,15 +31,15 @@ export function Card({ children, className, hover = false, padding = "md" }: Car
 }
 
 export function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
-    return <div className={cn("flex flex-col space-y-1.5 mb-6", className)}>{children}</div>;
+    return <div className={cn("flex flex-col space-y-2 mb-6", className)}>{children}</div>;
 }
 
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
-    return <h3 className={cn("text-base font-semibold leading-none tracking-tight text-black", className)}>{children}</h3>;
+    return <h3 className={cn("text-[17px] font-semibold leading-none tracking-tight text-black", className)}>{children}</h3>;
 }
 
 export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
-    return <p className={cn("text-sm text-[#666]", className)}>{children}</p>;
+    return <p className={cn("text-sm text-[#888] font-medium", className)}>{children}</p>;
 }
 
 export function CardContent({ children, className }: { children: ReactNode; className?: string }) {
@@ -56,20 +56,20 @@ interface StatCardProps {
 
 export function StatCard({ title, value, subtitle, icon, trend }: StatCardProps) {
     return (
-        <Card className="relative overflow-hidden group stat-card-accent" hover>
-            <div className="flex items-start justify-between">
-                <div className="space-y-1.5">
-                    <p className="text-[12px] font-medium text-[#666] tracking-tight">{title}</p>
-                    <p className="text-2xl font-bold text-black tracking-tighter">{value}</p>
-                    {subtitle && <p className="text-[11px] text-[#999]">{subtitle}</p>}
+        <Card className="relative overflow-hidden group border-none bg-[#fafafa] hover:bg-white" hover padding="sm">
+            <div className="flex items-start justify-between p-2">
+                <div className="space-y-2">
+                    <p className="text-[11px] font-bold text-[#999] uppercase tracking-widest">{title}</p>
+                    <p className="text-3xl font-bold text-black tracking-tightest leading-none">{value}</p>
+                    {subtitle && <p className="text-[11px] text-[#999] font-medium">{subtitle}</p>}
                     {trend && (
-                        <p className={cn("text-[11px] font-medium mt-1", trend.value >= 0 ? "text-black" : "text-[#666]")}>
+                        <p className={cn("text-[11px] font-bold mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/5", trend.value >= 0 ? "text-black" : "text-[#666]")}>
                             {trend.value >= 0 ? "+" : ""}{trend.value}% {trend.label}
                         </p>
                     )}
                 </div>
                 {icon && (
-                    <div className="p-2 rounded-md bg-[#fafafa] text-[#999] group-hover:text-black group-hover:bg-black/5 border border-[#eaeaea] transition-all">
+                    <div className="p-2.5 rounded-xl bg-white text-[#999] group-hover:text-black shadow-sm group-hover:shadow-md transition-all border border-[#eee]">
                         {icon}
                     </div>
                 )}

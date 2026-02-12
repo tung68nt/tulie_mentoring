@@ -35,19 +35,20 @@ export function Progress({
     };
 
     return (
-        <div className={cn("w-full space-y-1.5", className)}>
-            <div className={cn("w-full bg-[#eaeaea] rounded-full overflow-hidden", sizes[size])}>
+        <div className={cn("w-full space-y-2", className)}>
+            <div className={cn("w-full bg-[#f0f0f0] rounded-full overflow-hidden border border-[#eaeaea]", sizes[size])}>
                 <div
                     className={cn(
-                        "h-full rounded-full transition-all duration-500 ease-out",
+                        "h-full rounded-full transition-all duration-700 ease-[cubic-bezier(0.65,0,0.35,1)]",
                         colors[color]
                     )}
                     style={{ width: `${percentage}%` }}
                 />
             </div>
             {showValue && (
-                <div className="flex justify-end">
-                    <span className="text-[12px] font-medium text-[#666]">{percentage}%</span>
+                <div className="flex justify-between items-center px-0.5">
+                    <span className="text-[10px] font-bold text-[#999] uppercase tracking-wider">{percentage}% complete</span>
+                    <span className="text-[10px] font-bold text-black">{value}/{max}</span>
                 </div>
             )}
         </div>
