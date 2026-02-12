@@ -18,7 +18,7 @@ services:
       retries: 5
 
   app:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER_LC}/tulie-mentoring:latest
+    image: ${M_IMAGE:-ghcr.io/tung68nt/tulie-mentoring:latest}
     container_name: mentoring_app
     restart: always
     ports:

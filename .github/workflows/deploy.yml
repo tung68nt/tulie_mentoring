@@ -61,15 +61,18 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           NEXTAUTH_URL: "https://mentoring.tulie.vn"
+          M_IMAGE: "ghcr.io/${{ env.OWNER_LC }}/tulie-mentoring:latest"
+          G_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          G_ACTOR: ${{ github.actor }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          envs: POSTGRES_PASSWORD,AUTH_SECRET,NEXTAUTH_URL
+          envs: POSTGRES_PASSWORD,AUTH_SECRET,NEXTAUTH_URL,M_IMAGE,G_TOKEN,G_ACTOR
           script: |
             cd /srv/mentoring
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            export IMAGE_NAME="ghcr.io/${{ env.OWNER_LC }}/tulie-mentoring:latest"
+            echo $G_TOKEN | docker login ghcr.io -u $G_ACTOR --password-stdin
+            export M_IMAGE=$M_IMAGE
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
