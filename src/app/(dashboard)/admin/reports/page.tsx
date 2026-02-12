@@ -43,7 +43,7 @@ export default async function AdminReportsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card className="p-6 space-y-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Tỉ lệ tham gia</p>
+                    <p className="text-xs font-bold text-gray-400">Tỉ lệ tham gia</p>
                     <div className="flex items-end justify-between">
                         <h3 className="text-3xl font-bold text-emerald-600">{attendanceRate}%</h3>
                         <ArrowUpRight className="w-5 h-5 text-emerald-500 mb-1" />
@@ -51,26 +51,26 @@ export default async function AdminReportsPage() {
                     <Progress value={attendanceRate} size="xs" color="emerald" />
                 </Card>
                 <Card className="p-6 space-y-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Mục tiêu hoàn thành</p>
+                    <p className="text-xs font-bold text-gray-400">Mục tiêu hoàn thành</p>
                     <div className="flex items-end justify-between">
                         <h3 className="text-3xl font-bold text-purple-600">{completedGoals}</h3>
-                        <span className="text-xs font-bold text-gray-300 mb-1">Items</span>
+                        <span className="text-xs font-bold text-gray-300 mb-1">Mục tiêu</span>
                     </div>
                     <Progress value={65} size="xs" color="purple" />
                 </Card>
                 <Card className="p-6 space-y-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Buổi sinh hoạt</p>
+                    <p className="text-xs font-bold text-gray-400">Buổi sinh hoạt</p>
                     <div className="flex items-end justify-between">
                         <h3 className="text-3xl font-bold text-blue-600">{totalMeetings}</h3>
-                        <span className="text-xs font-bold text-gray-300 mb-1">Sessions</span>
+                        <span className="text-xs font-bold text-gray-300 mb-1">Buổi họp</span>
                     </div>
                     <Progress value={80} size="xs" color="blue" />
                 </Card>
                 <Card className="p-6 space-y-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Chương trình chạy</p>
+                    <p className="text-xs font-bold text-gray-400">Chương trình chạy</p>
                     <div className="flex items-end justify-between">
                         <h3 className="text-3xl font-bold text-amber-600">{activeCycles}</h3>
-                        <span className="text-xs font-bold text-gray-300 mb-1">Cycles</span>
+                        <span className="text-xs font-bold text-gray-300 mb-1">Chu kỳ</span>
                     </div>
                     <Progress value={100} size="xs" color="amber" />
                 </Card>
@@ -111,7 +111,7 @@ export default async function AdminReportsPage() {
                                     <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-xs ring-2 ring-white ring-offset-2 ring-offset-amber-50">#{i}</div>
                                     <div>
                                         <p className="text-sm font-bold text-gray-900">Mentee Top Perform {i}</p>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Tiến độ 95%</p>
+                                        <p className="text-[10px] text-gray-400 font-bold">Tiến độ 95%</p>
                                     </div>
                                 </div>
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />

@@ -37,7 +37,7 @@ export default async function MenteeDashboard() {
     return (
         <div className="space-y-10 pb-10">
             <div className="space-y-1">
-                <h1 className="text-3xl font-bold text-black tracking-tight">Bảng điều khiển Mentee</h1>
+                <h1 className="text-3xl font-bold text-black">Bảng điều khiển Mentee</h1>
                 <p className="text-[#666] text-sm">Chào mừng bạn trở lại, {session?.user?.name || "Mentee"}</p>
             </div>
 
@@ -63,7 +63,7 @@ export default async function MenteeDashboard() {
                                 <div className="text-center md:text-left space-y-4 flex-1">
                                     <div>
                                         <span className="text-[12px] font-semibold text-[#888] leading-none mb-1 block">Mentor của tôi</span>
-                                        <h3 className="text-2xl font-bold text-white tracking-tight">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
+                                        <h3 className="text-2xl font-bold text-white">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
                                     </div>
                                     <p className="text-sm text-[#888] line-clamp-2 max-w-lg leading-relaxed">{mentorship.mentor.bio || "No bio available."}</p>
                                     <Button variant="outline" className="text-white border-[#333] hover:border-white hover:bg-transparent" asChild>

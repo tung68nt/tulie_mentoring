@@ -62,7 +62,7 @@ export default async function GoalsPage() {
                                             <h2 className="text-lg font-bold text-gray-900">
                                                 {mentorship.programCycle.name} - {mentorship.mentor.lastName} ➔ {mentorship.mentees[0]?.mentee.lastName}...
                                             </h2>
-                                            <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">{mentorshipGoals.length} mục tiêu</p>
+                                            <p className="text-xs text-gray-500 font-bold">{mentorshipGoals.length} mục tiêu</p>
                                         </div>
                                     </div>
                                     {role !== "mentee" && (

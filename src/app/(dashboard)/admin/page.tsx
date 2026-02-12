@@ -38,7 +38,7 @@ export default async function AdminDashboard() {
     return (
         <div className="space-y-10 pb-10">
             <div className="space-y-1">
-                <h1 className="text-3xl font-bold text-black tracking-tight">Tổng quan hệ thống</h1>
+                <h1 className="text-3xl font-bold text-black">Tổng quan hệ thống</h1>
                 <p className="text-[#666] text-sm">Chào mừng quay lại, {session?.user?.name || "Admin"}</p>
             </div>
 
