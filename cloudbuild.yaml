@@ -1,0 +1,35 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/tulie-mentoring:${_IMAGE_TAG}', '.']
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/tulie-mentoring:${_IMAGE_TAG}']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'tulie-mentoring'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/tulie-mentoring:${_IMAGE_TAG}'
+      - '--region'
+      - 'asia-southeast1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'DATABASE_URL=${_DATABASE_URL},DIRECT_URL=${_DIRECT_URL},AUTH_SECRET=${_AUTH_SECRET},NEXTAUTH_URL=${_NEXTAUTH_URL}'
+
+images:
+  - 'gcr.io/$PROJECT_ID/tulie-mentoring:${_IMAGE_TAG}'
+
+substitutions:
+  _IMAGE_TAG: 'latest'
+  _DATABASE_URL: ''
+  _DIRECT_URL: ''
+  _AUTH_SECRET: ''
+  _NEXTAUTH_URL: ''
