@@ -24,12 +24,12 @@ export default async function PortfolioPage() {
 
             {/* Progress indicator */}
             <div className="flex items-center gap-4">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasInitialAssessment ? 'bg-emerald-50 text-emerald-600' : 'bg-[#fafafa] text-[#999]'}`}>
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasInitialAssessment ? 'bg-black text-white' : 'bg-[#fafafa] text-[#999]'}`}>
                     {hasInitialAssessment ? <CheckCircle2 className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 rounded-full border border-[#ccc]" />}
                     Đánh giá ban đầu
                 </div>
                 <ArrowRight className="w-3 h-3 text-[#ccc]" />
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasFinalPortfolio ? 'bg-emerald-50 text-emerald-600' : 'bg-[#fafafa] text-[#999]'}`}>
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasFinalPortfolio ? 'bg-black text-white' : 'bg-[#fafafa] text-[#999]'}`}>
                     {hasFinalPortfolio ? <CheckCircle2 className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 rounded-full border border-[#ccc]" />}
                     Portfolio cuối kỳ
                 </div>

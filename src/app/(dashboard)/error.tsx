@@ -13,8 +13,8 @@ export default function Error({
     return (
         <div className="min-h-[60vh] flex items-center justify-center">
             <div className="text-center space-y-6 max-w-md px-4">
-                <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto">
-                    <AlertTriangle className="w-7 h-7 text-red-500" />
+                <div className="w-16 h-16 rounded-full bg-[#fafafa] border border-[#eaeaea] flex items-center justify-center mx-auto">
+                    <AlertTriangle className="w-7 h-7 text-[#666]" />
                 </div>
                 <div className="space-y-2">
                     <h1 className="text-xl font-semibold text-black">Đã có lỗi xảy ra</h1>

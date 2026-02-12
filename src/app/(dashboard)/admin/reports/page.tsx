@@ -170,7 +170,7 @@ export default async function AdminReportsPage() {
                                     <div className="flex justify-between items-center text-sm">
                                         <div className="flex items-center gap-2">
                                             <span className="font-medium text-black">{cycle.name}</span>
-                                            <span className={`text-[10px] px-1.5 py-0.5 rounded ${cycle.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 'bg-[#f5f5f5] text-[#999]'}`}>
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded ${cycle.status === 'active' ? 'bg-black text-white' : 'bg-[#f5f5f5] text-[#999]'}`}>
                                                 {cycle.status === 'active' ? 'Đang chạy' : 'Hoàn thành'}
                                             </span>
                                         </div>
@@ -219,7 +219,7 @@ export default async function AdminReportsPage() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm font-semibold text-black">{mentee.rate}%</span>
-                                        {mentee.rate >= 80 && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+                                        {mentee.rate >= 80 && <CheckCircle2 className="w-4 h-4 text-black" />}
                                     </div>
                                 </div>
                             ))}

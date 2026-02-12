@@ -67,7 +67,7 @@ export function DropdownItem({ children, onClick, icon, destructive, className }
             className={cn(
                 "flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors",
                 destructive
-                    ? "text-red-600 hover:bg-red-50"
+                    ? "text-[#666] hover:bg-[#fafafa] hover:text-black"
                     : "text-[#333] hover:bg-[#fafafa]",
                 className
             )}

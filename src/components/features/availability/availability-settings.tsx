@@ -102,7 +102,7 @@ export function AvailabilitySettings({ initialSlots }: AvailabilitySettingsProps
 
                     <button
                         onClick={() => removeSlot(idx)}
-                        className="p-2 text-[#999] hover:text-red-600 hover:bg-red-50 rounded-md transition-all"
+                        className="p-2 text-[#999] hover:text-black hover:bg-[#fafafa] rounded-md transition-all"
                         disabled={slots.length <= 1}
                     >
                         <Trash2 className="w-4 h-4" />

@@ -120,11 +120,11 @@ export function Sidebar({ role }: SidebarProps) {
                 </Link>
 
                 <button
-                    className="flex items-center gap-3 w-full px-3 py-2 rounded-md text-[13px] text-[#666] hover:bg-red-50 hover:text-red-600 transition-all group"
+                    className="flex items-center gap-3 w-full px-3 py-2 rounded-md text-[13px] text-[#666] hover:bg-[#fafafa] hover:text-black transition-all group"
                     onClick={() => { window.location.href = "/api/auth/signout"; }}
                     title={isCollapsed ? "Đăng xuất" : undefined}
                 >
-                    <LogOut className="w-[18px] h-[18px] shrink-0 text-[#999] group-hover:text-red-500 transition-colors" />
+                    <LogOut className="w-[18px] h-[18px] shrink-0 text-[#999] group-hover:text-black transition-colors" />
                     {!isCollapsed && <span>Đăng xuất</span>}
                 </button>
 

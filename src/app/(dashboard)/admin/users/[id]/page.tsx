@@ -60,7 +60,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                 <h1 className="text-2xl font-semibold text-black">{user.firstName} {user.lastName}</h1>
                                 <p className="text-sm text-[#666] mt-0.5">{getRoleLabel(user.role)}</p>
                             </div>
-                            <Badge className={user.isActive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}>
+                            <Badge className={user.isActive ? "bg-black text-white" : "bg-[#fafafa] text-[#999] border border-[#eaeaea]"}>
                                 {user.isActive ? "Đang hoạt động" : "Ngừng hoạt động"}
                             </Badge>
                         </div>
@@ -186,7 +186,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                         <p className="text-xs font-medium text-black">{fb.fromUser.firstName} {fb.fromUser.lastName}</p>
                                         {fb.rating && (
                                             <div className="flex items-center gap-1">
-                                                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                                                <Star className="w-3 h-3 text-black fill-black" />
                                                 <span className="text-xs font-medium text-black">{fb.rating}/5</span>
                                             </div>
                                         )}
