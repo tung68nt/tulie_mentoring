@@ -47,7 +47,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                             <div className="space-y-1">
                                 <div className="flex items-center gap-3 mb-2">
                                     <Badge status={meeting.status} />
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{meeting.meetingType}</span>
+                                    <span className="text-xs font-bold text-gray-400">{meeting.meetingType}</span>
                                 </div>
                                 <h1 className="text-3xl font-bold text-gray-900 leading-tight">{meeting.title}</h1>
                             </div>
@@ -59,7 +59,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                     <Calendar className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-none mb-1">Thời gian</p>
+                                    <p className="text-xs font-bold text-gray-400 leading-none mb-1">Thời gian</p>
                                     <p className="text-sm font-bold text-gray-900">{formatDate(meeting.scheduledAt, "EEEE, dd/MM/yyyy")}</p>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                     <Clock className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-none mb-1">Giờ họp</p>
+                                    <p className="text-xs font-bold text-gray-400 leading-none mb-1">Giờ họp</p>
                                     <p className="text-sm font-bold text-gray-900">{formatDate(meeting.scheduledAt, "HH:mm")} ({meeting.duration} phút)</p>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                     {meeting.type === "online" ? <Video className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-none mb-1">Địa điểm</p>
+                                    <p className="text-xs font-bold text-gray-400 leading-none mb-1">Địa điểm</p>
                                     <p className="text-sm font-bold text-gray-900 truncate">
                                         {meeting.location || (meeting.type === "online" ? "Link họp trực tuyến" : "Chưa xác định")}
                                     </p>
@@ -88,7 +88,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                     <Users className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider leading-none mb-1">Mentorship</p>
+                                    <p className="text-xs font-bold text-gray-400 leading-none mb-1">Mentorship</p>
                                     <p className="text-sm font-bold text-gray-900">
                                         {meeting.mentorship.mentor.firstName} ➔ {meeting.mentorship.mentees.length} Mentees
                                     </p>
@@ -121,7 +121,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                             <p className="text-sm font-bold text-gray-900">
                                                 {attendance.user.firstName} {attendance.user.lastName}
                                             </p>
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mentee</p>
+                                            <p className="text-[10px] font-bold text-gray-400">Mentee</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -151,7 +151,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                     )}
 
                     <Card className="bg-gray-50 border-dashed border-2">
-                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Biên bản cuộc họp</h4>
+                        <h4 className="text-xs font-bold text-gray-400 mb-4">Biên bản cuộc họp</h4>
                         <div className="space-y-4">
                             <p className="text-sm text-gray-600 leading-relaxed italic">
                                 Buổi họp này chưa có biên bản. {isMentor ? "Bạn có thể tạo biên bản ngay bây giờ." : "Đang chờ Mentor cập nhật biên bản."}

@@ -30,6 +30,7 @@ export function Sidebar({ role, isCollapsed = false }: SidebarProps) {
     const menuItems = {
         admin: [
             { id: "dash", label: "Tổng quan", icon: <LayoutDashboard />, href: "/admin" },
+            { id: "users", label: "Người dùng", icon: <User />, href: "/admin/users" },
             { id: "mentorships", label: "Quản lý Mentorship", icon: <Users />, href: "/admin/mentorships" },
             { id: "programs", label: "Chương trình", icon: <Target />, href: "/admin/mentorships/new" },
             { id: "reports", label: "Báo cáo & Thống kê", icon: <BarChart />, href: "/admin/reports" },
@@ -59,7 +60,7 @@ export function Sidebar({ role, isCollapsed = false }: SidebarProps) {
             {/* Brand */}
             <div className="h-14 flex items-center px-4 border-b border-[#eaeaea]">
                 <div className="w-8 h-8 bg-black rounded-[6px] flex items-center justify-center shrink-0">
-                    <span className="text-white font-bold text-xs tracking-tight">IMP</span>
+                    <span className="text-white font-bold text-xs">IMP</span>
                 </div>
                 {!isCollapsed && (
                     <span className="ml-3 font-semibold text-black text-sm">ISME Mentoring</span>

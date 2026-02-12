@@ -32,3 +32,25 @@ export async function getUserProfile(userId: string) {
         },
     });
 }
+
+export async function getAllUsers() {
+    const session = await auth();
+    if ((session?.user as any).role !== "admin") return [];
+
+    return await prisma.user.findMany({
+        orderBy: { createdAt: "desc" },
+    });
+}
+
+export async function deleteUser(userId: string) {
+    const session = await auth();
+    if ((session?.user as any).role !== "admin") {
+        throw new Error("Unauthorized");
+    }
+
+    await prisma.user.delete({
+        where: { id: userId },
+    });
+
+    revalidatePath("/admin/users");
+}

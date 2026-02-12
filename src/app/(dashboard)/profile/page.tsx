@@ -41,8 +41,8 @@ export default async function ProfilePage() {
                             className="w-32 h-32 text-4xl mb-6 shadow-xl border-4 border-white"
                         />
                         <h2 className="text-xl font-bold text-gray-900">{user.firstName} {user.lastName}</h2>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1 mb-4">{user.role}</p>
-                        <Badge status={user.isActive ? "active" : "offline"} className="mb-6 uppercase text-[10px]" />
+                        <p className="text-xs font-bold text-gray-400 mt-1 mb-4">{user.role}</p>
+                        <Badge status={user.isActive ? "active" : "offline"} className="mb-6 text-[10px]" />
 
                         <div className="w-full pt-6 border-t border-gray-50 space-y-4">
                             <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -59,7 +59,7 @@ export default async function ProfilePage() {
                     </Card>
 
                     <Card className="bg-gray-50 p-6">
-                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Hoạt động</h3>
+                        <h3 className="text-xs font-bold text-gray-400 mb-4">Hoạt động</h3>
                         <div className="space-y-4">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-500 font-medium">Tham gia từ</span>

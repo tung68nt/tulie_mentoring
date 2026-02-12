@@ -62,7 +62,7 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
                 )}
 
                 <div className="space-y-4">
-                    <label className="block text-sm font-bold text-gray-900 uppercase tracking-widest">Đánh giá chung</label>
+                    <label className="block text-sm font-bold text-gray-900">Đánh giá chung</label>
                     <div className="flex gap-2">
                         {[1, 2, 3, 4, 5].map((s) => (
                             <button
@@ -107,7 +107,7 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest">Điểm mạnh</label>
+                        <label className="block text-xs font-bold text-gray-400">Điểm mạnh</label>
                         <textarea
                             {...register("strengths")}
                             className="w-full p-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-900"
@@ -115,7 +115,7 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest">Cần cải thiện</label>
+                        <label className="block text-xs font-bold text-gray-400">Cần cải thiện</label>
                         <textarea
                             {...register("improvements")}
                             className="w-full p-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-900"

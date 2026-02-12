@@ -59,7 +59,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
         return (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-xl font-bold text-black tracking-tight capitalize min-w-[140px]">
+                    <h2 className="text-xl font-bold text-black capitalize min-w-[140px]">
                         {format(currentDate, "MMMM yyyy", { locale: vi })}
                     </h2>
                     <div className="flex items-center border border-[#eaeaea] rounded-[6px] p-0.5 bg-[#fafafa]">
@@ -142,7 +142,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
             <div className="border border-[#eaeaea] rounded-[8px] overflow-hidden bg-white shadow-sm">
                 <div className="grid grid-cols-7 border-b border-[#eaeaea] bg-[#fafafa]">
                     {dayLabels.map(day => (
-                        <div key={day} className="py-2.5 text-center text-[10px] font-bold text-[#999] uppercase tracking-widest">
+                        <div key={day} className="py-2.5 text-center text-[10px] font-bold text-[#999]">
                             {day}
                         </div>
                     ))}
@@ -198,7 +198,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                 <div className="grid grid-cols-7 border-b border-[#eaeaea] bg-[#fafafa]">
                     {days.map(day => (
                         <div key={day.toString()} className="py-4 text-center">
-                            <p className="text-[10px] font-bold text-[#999] uppercase tracking-widest mb-1">
+                            <p className="text-[10px] font-bold text-[#999] mb-2">
                                 {format(day, "EEE", { locale: vi })}
                             </p>
                             <p className={cn(
@@ -250,7 +250,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                     <div className="w-20 h-20 bg-[#fafafa] rounded-full flex items-center justify-center text-[#999] mb-6 border border-[#eaeaea]">
                         <CalendarIcon className="w-10 h-10" />
                     </div>
-                    <h3 className="text-xl font-bold text-black tracking-tight">Không có sự kiện nào</h3>
+                    <h3 className="text-xl font-bold text-black">Không có sự kiện nào</h3>
                     <p className="text-[#666] max-w-sm mt-2 text-sm font-medium">
                         Bạn chưa có buổi họp nào được lên lịch trong thời gian tới.
                     </p>
@@ -265,7 +265,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                         <div className="p-6 flex-1 space-y-4">
                             <div className="flex items-start justify-between">
                                 <div className="w-12 h-12 rounded-[8px] bg-black flex flex-col items-center justify-center text-white shrink-0">
-                                    <span className="text-[10px] font-bold uppercase leading-none">{format(new Date(meeting.scheduledAt), "MMM", { locale: vi })}</span>
+                                    <span className="text-[10px] font-bold leading-none">{format(new Date(meeting.scheduledAt), "MMM", { locale: vi })}</span>
                                     <span className="text-lg font-bold leading-none mt-1">{format(new Date(meeting.scheduledAt), "dd")}</span>
                                 </div>
                                 <Badge status={meeting.status} />
@@ -299,7 +299,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                         </div>
 
                         <div className="px-6 py-4 bg-[#fafafa] border-t border-[#eaeaea] flex items-center justify-between group-hover:bg-white transition-colors">
-                            <span className="text-[10px] font-bold text-[#999] uppercase tracking-widest">{meeting.meetingType}</span>
+                            <span className="text-[10px] font-bold text-[#999]">{meeting.meetingType}</span>
                             <Button variant="ghost" size="sm" asChild className="h-8 text-[11px] font-bold">
                                 <Link href={`/meetings/${meeting.id}`}>Chi tiết</Link>
                             </Button>

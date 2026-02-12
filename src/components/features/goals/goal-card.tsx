@@ -62,10 +62,10 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                 <div className="flex items-start justify-between">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${getPriorityColor(goal.priority)}`}>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${getPriorityColor(goal.priority)}`}>
                                 {goal.priority}
                             </span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-100 text-gray-600">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600">
                                 {goal.category}
                             </span>
                         </div>
@@ -85,7 +85,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
 
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-gray-400 uppercase tracking-widest">Tiến độ</span>
+                        <span className="text-gray-400">Tiến độ</span>
                         <span className="text-gray-900">{goal.currentValue}%</span>
                     </div>
                     <Progress value={goal.currentValue} size="sm" color={goal.currentValue === 100 ? "emerald" : "default"} />
@@ -140,7 +140,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
 
                 {showHistory && goal.progressNotes.length > 0 && (
                     <div className="border-t border-gray-100 pt-4 mt-2 space-y-3 animate-in fade-in">
-                        <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Lịch sử cập nhật</h5>
+                        <h5 className="text-[10px] font-bold text-gray-400">Lịch sử cập nhật</h5>
                         {goal.progressNotes.map((note: any) => (
                             <div key={note.id} className="flex gap-3">
                                 <div className="w-1 h-auto bg-gray-200 rounded-full shrink-0" />

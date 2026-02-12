@@ -93,7 +93,18 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                             </div>
                                             <div className="flex items-center gap-1.5 text-xs text-gray-500">
                                                 <GraduationCap className="w-3.5 h-3.5" />
-                                                <span>{(mentorship.mentor.mentorProfile?.expertise as any)?.join(", ") || "Expertise"}</span>
+                                                <span>
+                                                    {(() => {
+                                                        const exp = mentorship.mentor.mentorProfile?.expertise;
+                                                        if (!exp) return "Expertise";
+                                                        try {
+                                                            const parsed = typeof exp === 'string' ? JSON.parse(exp) : exp;
+                                                            return Array.isArray(parsed) ? parsed.join(", ") : parsed;
+                                                        } catch (e) {
+                                                            return exp;
+                                                        }
+                                                    })()}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -141,7 +152,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                         <div key={meeting.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-lg bg-gray-900 flex flex-col items-center justify-center text-white">
-                                                    <span className="text-[10px] font-bold uppercase leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
+                                                    <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                                     <span className="text-sm font-bold leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
                                                 </div>
                                                 <div>
@@ -196,7 +207,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                 {/* Sidebar Info */}
                 <div className="space-y-6">
                     <Card>
-                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Thông tin chung</h4>
+                        <h4 className="text-sm font-bold text-gray-900 mb-4">Thông tin chung</h4>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-gray-500">Ngày bắt đầu</span>
@@ -214,7 +225,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                     </Card>
 
                     <Card className="bg-gray-900 text-white border-none">
-                        <h4 className="text-sm font-bold mb-4 uppercase tracking-wider opacity-70">Thống kê nhanh</h4>
+                        <h4 className="text-sm font-bold mb-4 opacity-70">Thống kê nhanh</h4>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs opacity-70">Số buổi họp</span>
