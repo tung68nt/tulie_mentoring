@@ -37,21 +37,22 @@ export function getRoleLabel(role: string) {
 }
 
 export function getStatusColor(status: string) {
+    // Pure Vercel BnW — no colors, only grayscale
     const colors: Record<string, string> = {
-        active: "bg-emerald-100 text-emerald-700",
-        pending: "bg-amber-100 text-amber-700",
-        completed: "bg-blue-100 text-blue-700",
-        cancelled: "bg-red-100 text-red-700",
-        draft: "bg-gray-100 text-gray-600",
-        scheduled: "bg-blue-100 text-blue-700",
-        in_progress: "bg-amber-100 text-amber-700",
-        present: "bg-emerald-100 text-emerald-700",
-        absent: "bg-red-100 text-red-700",
-        late: "bg-amber-100 text-amber-700",
-        submitted: "bg-blue-100 text-blue-700",
-        approved: "bg-emerald-100 text-emerald-700",
+        active: "bg-black text-white",
+        completed: "bg-[#fafafa] text-black border border-[#eaeaea]",
+        pending: "bg-[#fafafa] text-[#666] border border-[#eaeaea]",
+        cancelled: "bg-[#fafafa] text-[#999] border border-[#eaeaea] line-through",
+        draft: "bg-[#fafafa] text-[#999] border border-[#eaeaea]",
+        scheduled: "bg-black text-white",
+        in_progress: "bg-[#333] text-white",
+        present: "bg-black text-white",
+        absent: "bg-[#fafafa] text-[#999] border border-[#eaeaea]",
+        late: "bg-[#fafafa] text-[#666] border border-[#eaeaea]",
+        submitted: "bg-[#333] text-white",
+        approved: "bg-black text-white",
     };
-    return colors[status] || "bg-gray-100 text-gray-600";
+    return colors[status] || "bg-[#fafafa] text-[#666] border border-[#eaeaea]";
 }
 
 export function getStatusLabel(status: string) {

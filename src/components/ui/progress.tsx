@@ -28,10 +28,10 @@ export function Progress({
 
     const colors = {
         default: "bg-black",
-        success: "bg-[#0070f3]",
-        warning: "bg-[#f5a623]",
-        error: "bg-[#ee0000]",
-        accent: "bg-[#7928ca]",
+        success: "bg-black",
+        warning: "bg-[#666]",
+        error: "bg-[#999]",
+        accent: "bg-[#333]",
     };
 
     return (
