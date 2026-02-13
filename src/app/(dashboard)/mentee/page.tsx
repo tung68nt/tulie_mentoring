@@ -35,10 +35,10 @@ export default async function MenteeDashboard() {
     ];
 
     return (
-        <div className="space-y-12 pb-12 animate-fade-in">
+        <div className="space-y-8 pb-10 animate-fade-in">
             <div className="space-y-1">
-                <h1 className="text-3xl font-semibold tracking-tight text-black">Bảng điều khiền Mentee</h1>
-                <p className="text-sm text-[#666]">Chào mừng bạn trở lại, {session?.user?.name || "Mentee"}.</p>
+                <h1 className="text-2xl font-semibold text-black">Bảng điều khiền Mentee</h1>
+                <p className="text-sm text-[#666] mt-1">Chào mừng bạn trở lại, {session?.user?.name || "Mentee"}.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -47,7 +47,7 @@ export default async function MenteeDashboard() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-12">
                     {/* Mentor Profile */}
                     {mentorship && (

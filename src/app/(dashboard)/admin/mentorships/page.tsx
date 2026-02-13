@@ -13,9 +13,9 @@ export default async function MentorshipsPage() {
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <div>
+                <div className="space-y-1">
                     <h1 className="text-2xl font-semibold text-black">Quản lý Mentorship</h1>
-                    <p className="text-[#666] mt-1 text-sm">Danh sách các cặp mentor và mentee trong chương trình</p>
+                    <p className="text-sm text-[#666] mt-1">Danh sách các cặp mentor và mentee trong chương trình</p>
                 </div>
                 <Button asChild>
                     <Link href="/admin/mentorships/new">

@@ -66,8 +66,8 @@ export default async function AdminDashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-bold text-black">Dashboard</h1>
-                    <p className="text-sm font-medium text-[#888]">Tổng quan hoạt động của {session?.user?.name || "Admin"}</p>
+                    <h1 className="text-2xl font-semibold text-black">Dashboard</h1>
+                    <p className="text-sm text-[#666] mt-1">Tổng quan hoạt động của {session?.user?.name || "Admin"}</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" size="md" className="shadow-sm font-semibold bg-[#fafafa]" asChild>

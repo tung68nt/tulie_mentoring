@@ -15,9 +15,9 @@ export default async function ResourcesPage() {
     return (
         <div className="space-y-8 pb-10">
             <div className="flex items-center justify-between">
-                <div className="space-y-2">
+                <div className="space-y-1">
                     <h1 className="text-2xl font-semibold text-black">Thư viện Tài nguyên</h1>
-                    <p className="text-[#666] text-sm">Tổng hợp tài liệu, biểu mẫu và hướng dẫn trong chương trình</p>
+                    <p className="text-sm text-[#666] mt-1">Tổng hợp tài liệu, biểu mẫu và hướng dẫn trong chương trình</p>
                 </div>
                 {(role === "admin" || role === "mentor") && (
                     <Button asChild>

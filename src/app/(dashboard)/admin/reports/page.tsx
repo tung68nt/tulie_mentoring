@@ -106,11 +106,11 @@ export default async function AdminReportsPage() {
     });
 
     return (
-        <div className="space-y-12 pb-16 animate-fade-in max-w-7xl mx-auto">
+        <div className="space-y-8 pb-10 animate-fade-in">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div className="space-y-1.5">
-                    <h1 className="text-4xl font-bold text-black mb-1">Báo cáo & Thống kê</h1>
-                    <p className="text-sm font-medium text-[#888]">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
+                <div className="space-y-1">
+                    <h1 className="text-2xl font-semibold text-black">Báo cáo & Thống kê</h1>
+                    <p className="text-sm text-[#666] mt-1">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-black bg-[#fafafa] border border-[#eee] px-3 py-1.5 rounded-full shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
@@ -119,7 +119,7 @@ export default async function AdminReportsPage() {
             </div>
 
             {/* Metric Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                     title="Tỉ lệ tham gia"
                     value={`${attendanceRate}%`}

@@ -21,9 +21,9 @@ export default async function GoalsPage() {
 
     return (
         <div className="space-y-8">
-            <div className="space-y-2">
+            <div className="space-y-1">
                 <h1 className="text-2xl font-semibold text-black">Mục tiêu đào tạo</h1>
-                <p className="text-[#666] text-sm">Theo dõi tiến độ phát triển năng lực của Mentee</p>
+                <p className="text-sm text-[#666] mt-1">Theo dõi tiến độ phát triển năng lực của Mentee</p>
             </div>
 
             <GoalsList

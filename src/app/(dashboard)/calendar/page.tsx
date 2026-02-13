@@ -18,9 +18,9 @@ export default async function CalendarPage() {
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <div>
+                <div className="space-y-1">
                     <h1 className="text-2xl font-semibold text-black">Lịch hoạt động</h1>
-                    <p className="text-[#666] mt-1 text-sm">Quản lý và theo dõi các buổi họp sắp tới</p>
+                    <p className="text-sm text-[#666] mt-1">Quản lý và theo dõi các buổi họp sắp tới</p>
                 </div>
                 {(role === "admin" || role === "mentor") && (
                     <Button asChild>
