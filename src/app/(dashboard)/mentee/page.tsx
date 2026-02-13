@@ -11,34 +11,48 @@ import { Button } from "@/components/ui/button";
 export default async function MenteeDashboard() {
     const session = await auth();
     const userId = session?.user?.id;
+    const role = (session?.user as any).role;
+    const isAdmin = role === "admin";
 
-    // Fetch mentee stats
+    // Admin sees first active mentorship + all goals; mentee sees only theirs
+    const menteeFilter = isAdmin ? {} : { menteeId: userId };
+
     const [mentorship, goals, upcomingMeetings] = await Promise.all([
         prisma.mentorship.findFirst({
-            where: { mentees: { some: { menteeId: userId } }, status: "active" },
+            where: isAdmin ? { status: "active" } : { mentees: { some: { menteeId: userId } }, status: "active" },
             include: { mentor: true, programCycle: true }
         }),
         prisma.goal.findMany({
-            where: { mentorship: { mentees: { some: { menteeId: userId } } } },
+            where: isAdmin ? {} : { mentorship: { mentees: { some: { menteeId: userId } } } },
+            take: 20,
         }),
         prisma.meeting.findMany({
-            where: { mentorship: { mentees: { some: { menteeId: userId } } }, status: "scheduled" },
+            where: isAdmin ? { status: "scheduled" } : { mentorship: { mentees: { some: { menteeId: userId } } }, status: "scheduled" },
             orderBy: { scheduledAt: "asc" },
-            take: 3
+            take: 5
         })
     ]);
+
+    const completedGoals = goals.filter(g => g.currentValue >= 100).length;
+    const completionRate = goals.length > 0 ? Math.round((completedGoals / goals.length) * 100) : 0;
 
     const stats = [
         { title: "Mục tiêu", value: goals.length, icon: <Target /> },
         { title: "Sắp tới", value: upcomingMeetings.length, icon: <Calendar /> },
-        { title: "Tỉ lệ đạt", value: "65%", icon: <CheckCircle /> },
+        { title: "Tỉ lệ đạt", value: `${completionRate}%`, icon: <CheckCircle /> },
     ];
 
     return (
         <div className="space-y-8 pb-10 animate-fade-in">
+            {isAdmin && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-[#fafafa] border border-[#eaeaea] rounded-lg text-xs text-[#666]">
+                    <span className="w-2 h-2 rounded-full bg-[#0070f3]" />
+                    Bạn đang xem ở chế độ Admin Preview — dữ liệu hiển thị toàn bộ hệ thống
+                </div>
+            )}
             <div className="space-y-1">
-                <h1 className="text-2xl font-semibold text-black">Bảng điều khiền Mentee</h1>
-                <p className="text-sm text-[#666] mt-1">Chào mừng bạn trở lại, {session?.user?.name || "Mentee"}.</p>
+                <h1 className="text-2xl font-semibold text-black">Bảng điều khiển Mentee</h1>
+                <p className="text-sm text-[#666] mt-1">{isAdmin ? "Xem trước giao diện Mentee (tổng hợp dữ liệu toàn hệ thống)" : `Chào mừng bạn trở lại, ${session?.user?.name || "Mentee"}.`}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

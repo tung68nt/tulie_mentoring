@@ -11,36 +11,50 @@ import { Button } from "@/components/ui/button";
 export default async function MentorDashboard() {
     const session = await auth();
     const userId = session?.user?.id;
+    const role = (session?.user as any).role;
+    const isAdmin = role === "admin";
 
-    // Fetch real mentor stats
+    // Admin sees all, mentor sees only theirs
+    const mentorFilter = isAdmin ? { status: "active" as const } : { mentorId: userId, status: "active" as const };
+    const meetingFilter = isAdmin
+        ? { status: "scheduled" as const }
+        : { mentorship: { mentorId: userId }, status: "scheduled" as const };
+
     const [mentorships, upcomingMeetings] = await Promise.all([
         prisma.mentorship.findMany({
-            where: { mentorId: userId, status: "active" },
+            where: mentorFilter,
             include: {
                 mentees: { include: { mentee: true } },
                 programCycle: true,
+                mentor: true,
             }
         }),
         prisma.meeting.findMany({
-            where: { mentorship: { mentorId: userId }, status: "scheduled" },
+            where: meetingFilter,
             orderBy: { scheduledAt: "asc" },
-            take: 3
+            take: 5
         })
     ]);
 
     const totalMentees = mentorships.reduce((acc, m) => acc + m.mentees.length, 0);
 
     const stats = [
-        { title: "Mentees của tôi", value: totalMentees, icon: <Users /> },
+        { title: "Mentees", value: totalMentees, icon: <Users /> },
         { title: "Buổi họp sắp tới", value: upcomingMeetings.length, icon: <Calendar /> },
-        { title: "Hoàn thành", value: 12, icon: <CheckCircle /> }, // Placeholder for now or calculate from actual meetings
+        { title: "Mentorship", value: mentorships.length, icon: <CheckCircle /> },
     ];
 
     return (
         <div className="space-y-8 pb-10 animate-fade-in">
+            {isAdmin && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-[#fafafa] border border-[#eaeaea] rounded-lg text-xs text-[#666]">
+                    <span className="w-2 h-2 rounded-full bg-[#0070f3]" />
+                    Bạn đang xem ở chế độ Admin Preview — dữ liệu hiển thị toàn bộ hệ thống
+                </div>
+            )}
             <div className="space-y-1">
                 <h1 className="text-2xl font-semibold text-black">Bảng điều khiển Mentor</h1>
-                <p className="text-sm text-[#666] mt-1">Chào buổi sáng, {session?.user?.name || "Mentor"}.</p>
+                <p className="text-sm text-[#666] mt-1">{isAdmin ? "Xem trước giao diện Mentor (tổng hợp dữ liệu toàn hệ thống)" : `Chào buổi sáng, ${session?.user?.name || "Mentor"}.`}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

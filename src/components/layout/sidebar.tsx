@@ -13,7 +13,8 @@ import {
     LayoutDashboard,
     ChevronLeft,
     ChevronRight,
-    FolderOpen
+    FolderOpen,
+    Eye
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -23,35 +24,71 @@ interface SidebarProps {
     role: "admin" | "mentor" | "mentee";
 }
 
+interface MenuItem {
+    id: string;
+    label: string;
+    icon: any;
+    href: string;
+}
+
+interface MenuSection {
+    title?: string;
+    items: MenuItem[];
+}
+
 export function Sidebar({ role }: SidebarProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
-    const menuItems = {
+    const menuSections: Record<string, MenuSection[]> = {
         admin: [
-            { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/admin" },
-            { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
-            { id: "mentorships", label: "Quản lý Mentorship", icon: Users, href: "/admin/mentorships" },
-            { id: "programs", label: "Chương trình", icon: Target, href: "/admin/mentorships/new" },
-            { id: "reports", label: "Báo cáo & Thống kê", icon: BarChart, href: "/admin/reports" },
+            {
+                items: [
+                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/admin" },
+                    { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
+                    { id: "mentorships", label: "Quản lý Mentorship", icon: Users, href: "/admin/mentorships" },
+                    { id: "programs", label: "Chương trình", icon: Target, href: "/admin/mentorships/new" },
+                    { id: "reports", label: "Báo cáo & Thống kê", icon: BarChart, href: "/admin/reports" },
+                ],
+            },
+            {
+                title: "Xem trước",
+                items: [
+                    { id: "mentor-view", label: "Giao diện Mentor", icon: Eye, href: "/mentor" },
+                    { id: "mentee-view", label: "Giao diện Mentee", icon: Eye, href: "/mentee" },
+                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
+                    { id: "goals", label: "Mục tiêu & Tiến độ", icon: Target, href: "/goals" },
+                    { id: "feedback", label: "Phản hồi", icon: MessageSquare, href: "/feedback" },
+                    { id: "resources", label: "Thư viện tài liệu", icon: BookOpen, href: "/resources" },
+                    { id: "portfolio", label: "Hồ sơ năng lực", icon: FolderOpen, href: "/portfolio" },
+                ],
+            },
         ],
         mentor: [
-            { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentor" },
-            { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
-            { id: "resources", label: "Thư viện tài liệu", icon: BookOpen, href: "/resources" },
-            { id: "feedback", label: "Phản hồi", icon: MessageSquare, href: "/feedback" },
+            {
+                items: [
+                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentor" },
+                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
+                    { id: "resources", label: "Thư viện tài liệu", icon: BookOpen, href: "/resources" },
+                    { id: "feedback", label: "Phản hồi", icon: MessageSquare, href: "/feedback" },
+                ],
+            },
         ],
         mentee: [
-            { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentee" },
-            { id: "goals", label: "Mục tiêu & Tiến độ", icon: Target, href: "/goals" },
-            { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
-            { id: "portfolio", label: "Hồ sơ năng lực", icon: FolderOpen, href: "/portfolio" },
-            { id: "feedback", label: "Phản hồi", icon: MessageSquare, href: "/feedback" },
-            { id: "resources", label: "Thư viện tài liệu", icon: BookOpen, href: "/resources" },
-        ]
+            {
+                items: [
+                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentee" },
+                    { id: "goals", label: "Mục tiêu & Tiến độ", icon: Target, href: "/goals" },
+                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
+                    { id: "portfolio", label: "Hồ sơ năng lực", icon: FolderOpen, href: "/portfolio" },
+                    { id: "feedback", label: "Phản hồi", icon: MessageSquare, href: "/feedback" },
+                    { id: "resources", label: "Thư viện tài liệu", icon: BookOpen, href: "/resources" },
+                ],
+            },
+        ],
     };
 
-    const items = menuItems[role] || [];
+    const sections = menuSections[role] || [];
 
     const isActive = (href: string) => {
         if (href === "/admin" || href === "/mentor" || href === "/mentee") {
@@ -77,30 +114,42 @@ export function Sidebar({ role }: SidebarProps) {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-                {items.map((item) => {
-                    const active = isActive(item.href);
-                    const Icon = item.icon;
-                    return (
-                        <Link
-                            key={item.id}
-                            href={item.href}
-                            className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all duration-150 relative group",
-                                active
-                                    ? "bg-black text-white font-medium"
-                                    : "text-[#666] hover:bg-[#f5f5f5] hover:text-black"
-                            )}
-                            title={isCollapsed ? item.label : undefined}
-                        >
-                            <Icon className={cn(
-                                "w-[18px] h-[18px] shrink-0 transition-colors",
-                                active ? "text-white" : "text-[#888] group-hover:text-black"
-                            )} />
-                            {!isCollapsed && <span className="truncate">{item.label}</span>}
-                        </Link>
-                    );
-                })}
+            <nav className="flex-1 py-4 px-3 overflow-y-auto">
+                {sections.map((section, sIdx) => (
+                    <div key={sIdx} className={sIdx > 0 ? "mt-4" : ""}>
+                        {section.title && !isCollapsed && (
+                            <div className="px-3 mb-2">
+                                <span className="text-[10px] font-semibold text-[#999] uppercase tracking-wider">{section.title}</span>
+                            </div>
+                        )}
+                        {sIdx > 0 && <div className="border-t border-[#eaeaea] mb-3" />}
+                        <div className="space-y-1">
+                            {section.items.map((item) => {
+                                const active = isActive(item.href);
+                                const Icon = item.icon;
+                                return (
+                                    <Link
+                                        key={item.id}
+                                        href={item.href}
+                                        className={cn(
+                                            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all duration-150 relative group",
+                                            active
+                                                ? "bg-black text-white font-medium"
+                                                : "text-[#666] hover:bg-[#f5f5f5] hover:text-black"
+                                        )}
+                                        title={isCollapsed ? item.label : undefined}
+                                    >
+                                        <Icon className={cn(
+                                            "w-[18px] h-[18px] shrink-0 transition-colors",
+                                            active ? "text-white" : "text-[#888] group-hover:text-black"
+                                        )} />
+                                        {!isCollapsed && <span className="truncate">{item.label}</span>}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
             </nav>
 
             {/* Footer */}
