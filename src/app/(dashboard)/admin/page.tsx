@@ -90,98 +90,102 @@ export default async function AdminDashboard() {
                 ))}
             </div>
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {/* Recent Activities - Real Data */}
-                <Card className="lg:col-span-8 bg-white shadow-xl shadow-black/[0.02]" padding="lg">
-                    <div className="flex items-center justify-between mb-10">
-                        <h3 className="text-xl font-semibold text-black flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-black rounded-full" />
-                            Hoạt động gần đây
-                        </h3>
-                        <Link href="/admin/reports" className="text-xs font-medium text-[#888] hover:text-black transition-all flex items-center gap-1.5 bg-[#fafafa] px-3 py-1.5 rounded-full border border-[#eee]">
-                            Xem tất cả báo cáo <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
+            {/* Main Content Grid - Single container with shared borders */}
+            <div className="rounded-[12px] border border-[#eaeaea] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02),0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-12">
+                    {/* Recent Activities - Left Panel */}
+                    <div className="lg:col-span-8 p-8">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-base font-semibold text-black flex items-center gap-2">
+                                <span className="w-1 h-5 bg-black rounded-full" />
+                                Hoạt động gần đây
+                            </h3>
+                            <Link href="/admin/reports" className="text-xs font-medium text-[#888] hover:text-black transition-all flex items-center gap-1.5 bg-[#fafafa] px-3 py-1.5 rounded-full border border-[#eee]">
+                                Xem tất cả báo cáo <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                        </div>
+
+                        {recentMeetings.length === 0 && recentMentorships.length === 0 ? (
+                            <EmptyState
+                                icon={<TrendingUp className="w-8 h-8 text-[#ccc]" />}
+                                title="Chưa có hoạt động nào"
+                                description="Các hoạt động sẽ xuất hiện khi có dữ liệu mới trong hệ thống"
+                                className="py-16"
+                            />
+                        ) : (
+                            <div className="space-y-0">
+                                {/* Recent Meetings */}
+                                {recentMeetings.slice(0, 3).map((meeting, idx) => (
+                                    <div key={meeting.id}>
+                                        {idx > 0 && <div className="h-px bg-[#eaeaea] ml-[68px]" />}
+                                        <Link
+                                            href={`/meetings/${meeting.id}`}
+                                            className="flex items-center gap-5 py-4 hover:bg-[#fafafa] transition-all group -mx-2 px-2 rounded-xl"
+                                        >
+                                            <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0 shadow-lg shadow-black/10 group-hover:scale-105 transition-transform">
+                                                <Calendar className="w-5 h-5" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-black truncate mb-0.5">{meeting.title}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <Avatar
+                                                        firstName={meeting.creator.firstName}
+                                                        lastName={meeting.creator.lastName}
+                                                        src={meeting.creator.avatar}
+                                                        size="xs"
+                                                    />
+                                                    <p className="text-[11px] font-medium text-[#aaa]">
+                                                        {meeting.creator.firstName} {meeting.creator.lastName} · {meeting.mentorship.mentor.firstName}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right shrink-0">
+                                                <Badge status={meeting.status} size="sm" className="mb-1" />
+                                                <p className="text-[10px] font-medium text-[#ccc]">{formatRelative(meeting.createdAt)}</p>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                ))}
+
+                                <div className="h-px bg-[#eaeaea] ml-[68px]" />
+
+                                {/* Recent Mentorships */}
+                                {recentMentorships.slice(0, 2).map((ms, idx) => (
+                                    <div key={ms.id}>
+                                        {idx > 0 && <div className="h-px bg-[#eaeaea] ml-[68px]" />}
+                                        <Link
+                                            href={`/admin/mentorships/${ms.id}`}
+                                            className="flex items-center gap-5 py-4 hover:bg-[#fafafa] transition-all group -mx-2 px-2 rounded-xl"
+                                        >
+                                            <div className="w-12 h-12 rounded-xl bg-[#fafafa] border border-[#eee] text-[#999] flex items-center justify-center shrink-0 group-hover:bg-black group-hover:text-white group-hover:border-black shadow-sm group-hover:shadow-lg transition-all">
+                                                <Users className="w-5 h-5" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-black truncate mb-0.5">
+                                                    {ms.mentor.firstName} ➔ {ms.mentees.length} Mentees
+                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    <Badge variant="default" className="text-[9px] font-medium">{ms.programCycle?.name || "Program"}</Badge>
+                                                </div>
+                                            </div>
+                                            <div className="text-right shrink-0">
+                                                <Badge status={ms.status} size="sm" className="mb-1" />
+                                                <p className="text-[10px] font-medium text-[#ccc]">{formatRelative(ms.createdAt)}</p>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
-                    {recentMeetings.length === 0 && recentMentorships.length === 0 ? (
-                        <EmptyState
-                            icon={<TrendingUp className="w-8 h-8 text-[#ccc]" />}
-                            title="Chưa có hoạt động nào"
-                            description="Các hoạt động sẽ xuất hiện khi có dữ liệu mới trong hệ thống"
-                            className="py-16"
-                        />
-                    ) : (
-                        <div className="space-y-1">
-                            {/* Recent Meetings */}
-                            {recentMeetings.slice(0, 3).map((meeting) => (
-                                <Link
-                                    key={meeting.id}
-                                    href={`/meetings/${meeting.id}`}
-                                    className="flex items-center gap-5 p-4 rounded-2xl hover:bg-[#fafafa] transition-all group border border-transparent hover:border-[#eee] hover:shadow-lg hover:shadow-black/[0.02]"
-                                >
-                                    <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0 shadow-lg shadow-black/10 group-hover:scale-110 transition-transform">
-                                        <Calendar className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[15px] font-semibold text-black truncate mb-1 group-hover:text-black transition-colors">{meeting.title}</p>
-                                        <div className="flex items-center gap-2">
-                                            <Avatar
-                                                firstName={meeting.creator.firstName}
-                                                lastName={meeting.creator.lastName}
-                                                src={meeting.creator.avatar}
-                                                size="xs"
-                                            />
-                                            <p className="text-[11px] font-medium text-[#aaa]">
-                                                {meeting.creator.firstName} {meeting.creator.lastName} · {meeting.mentorship.mentor.firstName}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right shrink-0">
-                                        <Badge status={meeting.status} size="sm" className="mb-2" />
-                                        <p className="text-[10px] font-medium text-[#ccc] group-hover:text-[#999] transition-colors">{formatRelative(meeting.createdAt)}</p>
-                                    </div>
-                                </Link>
-                            ))}
-
-                            <div className="h-px bg-[#f0f0f0] my-2 ml-[68px]" />
-
-                            {/* Recent Mentorships */}
-                            {recentMentorships.slice(0, 2).map((ms) => (
-                                <Link
-                                    key={ms.id}
-                                    href={`/admin/mentorships/${ms.id}`}
-                                    className="flex items-center gap-5 p-4 rounded-2xl hover:bg-[#fafafa] transition-all group border border-transparent hover:border-[#eee] hover:shadow-lg hover:shadow-black/[0.02]"
-                                >
-                                    <div className="w-12 h-12 rounded-xl bg-[#fafafa] border border-[#eee] text-[#999] flex items-center justify-center shrink-0 group-hover:bg-black group-hover:text-white group-hover:border-black shadow-sm group-hover:shadow-lg transition-all">
-                                        <Users className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[15px] font-semibold text-black truncate mb-1 group-hover:text-black transition-colors">
-                                            {ms.mentor.firstName} ➔ {ms.mentees.length} Mentees
-                                        </p>
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant="default" className="text-[9px] font-medium">{ms.programCycle?.name || "Program"}</Badge>
-                                        </div>
-                                    </div>
-                                    <div className="text-right shrink-0">
-                                        <Badge status={ms.status} size="sm" className="mb-2" />
-                                        <p className="text-[10px] font-medium text-[#ccc] group-hover:text-[#999] transition-colors">{formatRelative(ms.createdAt)}</p>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    )}
-                </Card>
-
-                {/* Quick Stats Sidebar */}
-                <div className="lg:col-span-4">
-                    <Card padding="lg">
-                        <h3 className="text-xs font-medium text-[#999] mb-4 flex items-center gap-2">
+                    {/* Quick Stats Sidebar - Right Panel */}
+                    <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-[#eaeaea] p-8">
+                        <h3 className="text-xs font-medium text-[#999] mb-5 flex items-center gap-2">
                             <Award className="w-3.5 h-3.5" />
                             Chỉ số hiệu quả
                         </h3>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             <div className="flex items-center justify-between group">
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-lg bg-[#f5f5f5] flex items-center justify-center text-[#666] border border-[#eaeaea] group-hover:border-[#ccc] transition-all">
@@ -203,16 +207,16 @@ export default async function AdminDashboard() {
                             </div>
                         </div>
 
-                        <div className="h-px bg-[#eaeaea] my-5" />
+                        <div className="h-px bg-[#eaeaea] my-6" />
 
                         <h3 className="text-xs font-medium text-[#999] mb-4">Mentorship mới nhất</h3>
                         <div className="space-y-0">
                             {recentMentorships.slice(0, 3).map((ms, idx) => (
                                 <div key={ms.id}>
-                                    {idx > 0 && <div className="h-px bg-[#eee] ml-14" />}
+                                    {idx > 0 && <div className="h-px bg-[#eee] ml-12" />}
                                     <Link
                                         href={`/admin/mentorships/${ms.id}`}
-                                        className="flex items-center gap-4 group py-3"
+                                        className="flex items-center gap-3 group py-3"
                                     >
                                         <Avatar
                                             firstName={ms.mentor.firstName}
@@ -222,7 +226,7 @@ export default async function AdminDashboard() {
                                             className="border-2 border-white shadow-sm ring-1 ring-black/5 group-hover:ring-black group-hover:scale-110 transition-all"
                                         />
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-semibold text-black truncate group-hover:text-black transition-colors">
+                                            <p className="text-sm font-semibold text-black truncate">
                                                 {ms.mentor.firstName} {ms.mentor.lastName}
                                             </p>
                                             <p className="text-[10px] font-medium text-[#aaa]">{ms.mentees.length} mentees enrolled</p>
@@ -232,7 +236,7 @@ export default async function AdminDashboard() {
                                 </div>
                             ))}
                         </div>
-                    </Card>
+                    </div>
                 </div>
             </div>
         </div>
