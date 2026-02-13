@@ -144,7 +144,7 @@ export default async function AdminDashboard() {
                                 </Link>
                             ))}
 
-                            <div className="h-px bg-[#f0f0f0] my-4" />
+                            <div className="h-px bg-[#f0f0f0] my-2 ml-[68px]" />
 
                             {/* Recent Mentorships */}
                             {recentMentorships.slice(0, 2).map((ms) => (
@@ -175,13 +175,13 @@ export default async function AdminDashboard() {
                 </Card>
 
                 {/* Quick Stats Sidebar */}
-                <div className="lg:col-span-4 space-y-8">
+                <div className="lg:col-span-4 space-y-6">
                     <Card className="bg-black text-white border-none shadow-2xl shadow-black/20" padding="lg">
-                        <h3 className="text-lg font-semibold mb-8 flex items-center gap-2 text-white">
+                        <h3 className="text-sm font-medium mb-5 flex items-center gap-2 text-white/70">
                             <Award className="w-4 h-4" />
                             Chỉ số hiệu quả
                         </h3>
-                        <div className="space-y-8">
+                        <div className="space-y-5">
                             <div className="flex items-center justify-between group">
                                 <div className="flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white backdrop-blur-sm border border-white/10 group-hover:bg-white/20 transition-all">
@@ -189,7 +189,7 @@ export default async function AdminDashboard() {
                                     </div>
                                     <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Họp hoàn thành</span>
                                 </div>
-                                <p className="text-3xl font-bold">{totalMeetings}</p>
+                                <p className="text-2xl font-bold">{totalMeetings}</p>
                             </div>
 
                             <div className="flex items-center justify-between group">
@@ -199,35 +199,37 @@ export default async function AdminDashboard() {
                                     </div>
                                     <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Mục tiêu đạt được</span>
                                 </div>
-                                <p className="text-3xl font-bold">{totalGoals}</p>
+                                <p className="text-2xl font-bold">{totalGoals}</p>
                             </div>
                         </div>
                     </Card>
 
                     <Card className="bg-[#fafafa] border-none shadow-inner" padding="lg">
-                        <h3 className="text-sm font-semibold text-black mb-6 border-b border-[#eee] pb-4">Mentorship mới nhất</h3>
-                        <div className="space-y-5">
-                            {recentMentorships.slice(0, 3).map((ms) => (
-                                <Link
-                                    key={ms.id}
-                                    href={`/admin/mentorships/${ms.id}`}
-                                    className="flex items-center gap-4 group"
-                                >
-                                    <Avatar
-                                        firstName={ms.mentor.firstName}
-                                        lastName={ms.mentor.lastName}
-                                        src={ms.mentor.avatar}
-                                        size="sm"
-                                        className="border-2 border-white shadow-sm ring-1 ring-black/5 group-hover:ring-black group-hover:scale-110 transition-all"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-black truncate group-hover:text-black transition-colors">
-                                            {ms.mentor.firstName} {ms.mentor.lastName}
-                                        </p>
-                                        <p className="text-[10px] font-medium text-[#aaa]">{ms.mentees.length} mentees enrolled</p>
-                                    </div>
-                                    <ArrowRight className="w-3.5 h-3.5 text-[#ccc] group-hover:text-black group-hover:translate-x-1 transition-all" />
-                                </Link>
+                        <h3 className="text-xs font-medium text-[#999] mb-5">Mentorship mới nhất</h3>
+                        <div className="space-y-0">
+                            {recentMentorships.slice(0, 3).map((ms, idx) => (
+                                <div key={ms.id}>
+                                    {idx > 0 && <div className="h-px bg-[#eee] ml-14" />}
+                                    <Link
+                                        href={`/admin/mentorships/${ms.id}`}
+                                        className="flex items-center gap-4 group py-3"
+                                    >
+                                        <Avatar
+                                            firstName={ms.mentor.firstName}
+                                            lastName={ms.mentor.lastName}
+                                            src={ms.mentor.avatar}
+                                            size="sm"
+                                            className="border-2 border-white shadow-sm ring-1 ring-black/5 group-hover:ring-black group-hover:scale-110 transition-all"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-black truncate group-hover:text-black transition-colors">
+                                                {ms.mentor.firstName} {ms.mentor.lastName}
+                                            </p>
+                                            <p className="text-[10px] font-medium text-[#aaa]">{ms.mentees.length} mentees enrolled</p>
+                                        </div>
+                                        <ArrowRight className="w-3.5 h-3.5 text-[#ccc] group-hover:text-black group-hover:translate-x-1 transition-all" />
+                                    </Link>
+                                </div>
                             ))}
                         </div>
                     </Card>
