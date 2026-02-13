@@ -175,37 +175,37 @@ export default async function AdminDashboard() {
                 </Card>
 
                 {/* Quick Stats Sidebar */}
-                <div className="lg:col-span-4 space-y-6">
-                    <Card className="bg-black text-white border-none shadow-2xl shadow-black/20" padding="lg">
-                        <h3 className="text-sm font-medium mb-5 flex items-center gap-2 text-white/70">
-                            <Award className="w-4 h-4" />
+                <div className="lg:col-span-4">
+                    <Card padding="lg">
+                        <h3 className="text-xs font-medium text-[#999] mb-4 flex items-center gap-2">
+                            <Award className="w-3.5 h-3.5" />
                             Chỉ số hiệu quả
                         </h3>
-                        <div className="space-y-5">
+                        <div className="space-y-3">
                             <div className="flex items-center justify-between group">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white backdrop-blur-sm border border-white/10 group-hover:bg-white/20 transition-all">
-                                        <Calendar className="w-5 h-5" />
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-lg bg-[#f5f5f5] flex items-center justify-center text-[#666] border border-[#eaeaea] group-hover:border-[#ccc] transition-all">
+                                        <Calendar className="w-4 h-4" />
                                     </div>
-                                    <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Họp hoàn thành</span>
+                                    <span className="text-sm font-medium text-[#666] group-hover:text-black transition-colors">Họp hoàn thành</span>
                                 </div>
-                                <p className="text-2xl font-bold">{totalMeetings}</p>
+                                <p className="text-xl font-bold text-black">{totalMeetings}</p>
                             </div>
 
                             <div className="flex items-center justify-between group">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white backdrop-blur-sm border border-white/10 group-hover:bg-white/20 transition-all">
-                                        <TrendingUp className="w-5 h-5" />
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-lg bg-[#f5f5f5] flex items-center justify-center text-[#666] border border-[#eaeaea] group-hover:border-[#ccc] transition-all">
+                                        <TrendingUp className="w-4 h-4" />
                                     </div>
-                                    <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Mục tiêu đạt được</span>
+                                    <span className="text-sm font-medium text-[#666] group-hover:text-black transition-colors">Mục tiêu đạt được</span>
                                 </div>
-                                <p className="text-2xl font-bold">{totalGoals}</p>
+                                <p className="text-xl font-bold text-black">{totalGoals}</p>
                             </div>
                         </div>
-                    </Card>
 
-                    <Card className="bg-[#fafafa] border-none shadow-inner" padding="lg">
-                        <h3 className="text-xs font-medium text-[#999] mb-5">Mentorship mới nhất</h3>
+                        <div className="h-px bg-[#eaeaea] my-5" />
+
+                        <h3 className="text-xs font-medium text-[#999] mb-4">Mentorship mới nhất</h3>
                         <div className="space-y-0">
                             {recentMentorships.slice(0, 3).map((ms, idx) => (
                                 <div key={ms.id}>
