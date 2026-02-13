@@ -59,8 +59,8 @@ export function StatCard({ title, value, subtitle, icon, trend }: StatCardProps)
         <Card className="relative overflow-hidden group border-none bg-[#fafafa] hover:bg-white" hover padding="sm">
             <div className="flex items-start justify-between p-2">
                 <div className="space-y-2">
-                    <p className="text-[11px] font-bold text-[#999] uppercase tracking-widest">{title}</p>
-                    <p className="text-3xl font-bold text-black tracking-tightest leading-none">{value}</p>
+                    <p className="text-[11px] font-medium text-[#999]">{title}</p>
+                    <p className="text-3xl font-bold text-black leading-none">{value}</p>
                     {subtitle && <p className="text-[11px] text-[#999] font-medium">{subtitle}</p>}
                     {trend && (
                         <p className={cn("text-[11px] font-bold mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/5", trend.value >= 0 ? "text-black" : "text-[#666]")}>

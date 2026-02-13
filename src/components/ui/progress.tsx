@@ -47,7 +47,7 @@ export function Progress({
             </div>
             {showValue && (
                 <div className="flex justify-between items-center px-0.5">
-                    <span className="text-[10px] font-bold text-[#999] uppercase tracking-wider">{percentage}% complete</span>
+                    <span className="text-[10px] font-medium text-[#999]">{percentage}% complete</span>
                     <span className="text-[10px] font-bold text-black">{value}/{max}</span>
                 </div>
             )}

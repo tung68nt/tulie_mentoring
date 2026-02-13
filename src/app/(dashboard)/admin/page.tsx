@@ -66,14 +66,14 @@ export default async function AdminDashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1.5">
-                    <h1 className="text-4xl font-black tracking-tightest text-black mb-1">Tổng quan hệ thống</h1>
-                    <p className="text-sm font-medium text-[#888]">Chào mừng quay lại, <span className="text-black font-bold">{session?.user?.name || "Admin"}</span></p>
+                    <h1 className="text-4xl font-bold text-black mb-1">Tổng quan hệ thống</h1>
+                    <p className="text-sm font-medium text-[#888]">Chào mừng quay lại, <span className="text-black font-semibold">{session?.user?.name || "Admin"}</span></p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" size="md" className="shadow-sm font-bold bg-[#fafafa]" asChild>
+                    <Button variant="outline" size="md" className="shadow-sm font-semibold bg-[#fafafa]" asChild>
                         <Link href="/admin/users">Quản lý người dùng</Link>
                     </Button>
-                    <Button size="md" className="shadow-lg shadow-black/10 font-bold" asChild>
+                    <Button size="md" className="shadow-lg shadow-black/10 font-semibold" asChild>
                         <Link href="/admin/mentorships/new">Tạo Mentorship</Link>
                     </Button>
                 </div>
@@ -95,11 +95,11 @@ export default async function AdminDashboard() {
                 {/* Recent Activities - Real Data */}
                 <Card className="lg:col-span-8 bg-white shadow-xl shadow-black/[0.02]" padding="lg">
                     <div className="flex items-center justify-between mb-10">
-                        <h3 className="text-xl font-bold text-black tracking-tight flex items-center gap-2">
+                        <h3 className="text-xl font-semibold text-black flex items-center gap-2">
                             <span className="w-1.5 h-6 bg-black rounded-full" />
                             Hoạt động gần đây
                         </h3>
-                        <Link href="/admin/reports" className="text-xs font-black text-[#888] hover:text-black transition-all flex items-center gap-1.5 bg-[#fafafa] px-3 py-1.5 rounded-full border border-[#eee]">
+                        <Link href="/admin/reports" className="text-xs font-medium text-[#888] hover:text-black transition-all flex items-center gap-1.5 bg-[#fafafa] px-3 py-1.5 rounded-full border border-[#eee]">
                             Xem tất cả báo cáo <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
@@ -124,7 +124,7 @@ export default async function AdminDashboard() {
                                         <Calendar className="w-5 h-5" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[15px] font-bold text-black truncate mb-1 group-hover:text-black transition-colors">{meeting.title}</p>
+                                        <p className="text-[15px] font-semibold text-black truncate mb-1 group-hover:text-black transition-colors">{meeting.title}</p>
                                         <div className="flex items-center gap-2">
                                             <Avatar
                                                 firstName={meeting.creator.firstName}
@@ -132,14 +132,14 @@ export default async function AdminDashboard() {
                                                 src={meeting.creator.avatar}
                                                 size="xs"
                                             />
-                                            <p className="text-[11px] font-bold text-[#aaa] uppercase tracking-wider">
-                                                {meeting.creator.firstName} · {meeting.mentorship.mentor.firstName}
+                                            <p className="text-[11px] font-medium text-[#aaa]">
+                                                {meeting.creator.firstName} {meeting.creator.lastName} · {meeting.mentorship.mentor.firstName}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
                                         <Badge status={meeting.status} size="sm" className="mb-2" />
-                                        <p className="text-[10px] font-black text-[#ccc] group-hover:text-[#999] transition-colors">{formatRelative(meeting.createdAt)}</p>
+                                        <p className="text-[10px] font-medium text-[#ccc] group-hover:text-[#999] transition-colors">{formatRelative(meeting.createdAt)}</p>
                                     </div>
                                 </Link>
                             ))}
@@ -157,16 +157,16 @@ export default async function AdminDashboard() {
                                         <Users className="w-5 h-5" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[15px] font-bold text-black truncate mb-1 group-hover:text-black transition-colors">
+                                        <p className="text-[15px] font-semibold text-black truncate mb-1 group-hover:text-black transition-colors">
                                             {ms.mentor.firstName} ➔ {ms.mentees.length} Mentees
                                         </p>
                                         <div className="flex items-center gap-2">
-                                            <Badge variant="default" className="text-[9px] font-black">{ms.programCycle?.name || "Program"}</Badge>
+                                            <Badge variant="default" className="text-[9px] font-medium">{ms.programCycle?.name || "Program"}</Badge>
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
                                         <Badge status={ms.status} size="sm" className="mb-2" />
-                                        <p className="text-[10px] font-black text-[#ccc] group-hover:text-[#999] transition-colors">{formatRelative(ms.createdAt)}</p>
+                                        <p className="text-[10px] font-medium text-[#ccc] group-hover:text-[#999] transition-colors">{formatRelative(ms.createdAt)}</p>
                                     </div>
                                 </Link>
                             ))}
@@ -177,8 +177,8 @@ export default async function AdminDashboard() {
                 {/* Quick Stats Sidebar */}
                 <div className="lg:col-span-4 space-y-8">
                     <Card className="bg-black text-white border-none shadow-2xl shadow-black/20" padding="lg">
-                        <h3 className="text-lg font-bold mb-8 flex items-center gap-2 opacity-80">
-                            <Award className="w-4 h-4 text-white" />
+                        <h3 className="text-lg font-semibold mb-8 flex items-center gap-2 text-white">
+                            <Award className="w-4 h-4" />
                             Chỉ số hiệu quả
                         </h3>
                         <div className="space-y-8">
@@ -187,9 +187,9 @@ export default async function AdminDashboard() {
                                     <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white backdrop-blur-sm border border-white/10 group-hover:bg-white/20 transition-all">
                                         <Calendar className="w-5 h-5" />
                                     </div>
-                                    <span className="text-sm font-bold opacity-70 group-hover:opacity-100 transition-opacity">Họp hoàn thành</span>
+                                    <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Họp hoàn thành</span>
                                 </div>
-                                <p className="text-3xl font-black">{totalMeetings}</p>
+                                <p className="text-3xl font-bold">{totalMeetings}</p>
                             </div>
 
                             <div className="flex items-center justify-between group">
@@ -197,15 +197,15 @@ export default async function AdminDashboard() {
                                     <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white backdrop-blur-sm border border-white/10 group-hover:bg-white/20 transition-all">
                                         <TrendingUp className="w-5 h-5" />
                                     </div>
-                                    <span className="text-sm font-bold opacity-70 group-hover:opacity-100 transition-opacity">Mục tiêu đạt được</span>
+                                    <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Mục tiêu đạt được</span>
                                 </div>
-                                <p className="text-3xl font-black">{totalGoals}</p>
+                                <p className="text-3xl font-bold">{totalGoals}</p>
                             </div>
                         </div>
                     </Card>
 
                     <Card className="bg-[#fafafa] border-none shadow-inner" padding="lg">
-                        <h3 className="text-sm font-black text-black uppercase tracking-widest mb-6 border-b border-[#eee] pb-4">Mentorship mới nhất</h3>
+                        <h3 className="text-sm font-semibold text-black mb-6 border-b border-[#eee] pb-4">Mentorship mới nhất</h3>
                         <div className="space-y-5">
                             {recentMentorships.slice(0, 3).map((ms) => (
                                 <Link
@@ -221,10 +221,10 @@ export default async function AdminDashboard() {
                                         className="border-2 border-white shadow-sm ring-1 ring-black/5 group-hover:ring-black group-hover:scale-110 transition-all"
                                     />
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-black truncate group-hover:text-black transition-colors">
+                                        <p className="text-sm font-semibold text-black truncate group-hover:text-black transition-colors">
                                             {ms.mentor.firstName} {ms.mentor.lastName}
                                         </p>
-                                        <p className="text-[10px] font-black text-[#aaa] uppercase tracking-tighter">{ms.mentees.length} mentees enrolled</p>
+                                        <p className="text-[10px] font-medium text-[#aaa]">{ms.mentees.length} mentees enrolled</p>
                                     </div>
                                     <ArrowRight className="w-3.5 h-3.5 text-[#ccc] group-hover:text-black group-hover:translate-x-1 transition-all" />
                                 </Link>
