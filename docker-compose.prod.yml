@@ -28,8 +28,8 @@ services:
       - DATABASE_URL=postgresql://mentoring:${POSTGRES_PASSWORD}@postgres:5432/mentoring_db
       - DIRECT_URL=postgresql://mentoring:${POSTGRES_PASSWORD}@postgres:5432/mentoring_db
       - AUTH_SECRET=${AUTH_SECRET:?AUTH_SECRET is required}
-      - AUTH_URL=${AUTH_URL:-https://mentoring.tulie.vn}
-      - NEXTAUTH_URL=${AUTH_URL:-https://mentoring.tulie.vn}
+      - AUTH_URL=${AUTH_URL:-http://mentoring.tulie.vn}
+      - NEXTAUTH_URL=${AUTH_URL:-http://mentoring.tulie.vn}
       - AUTH_TRUST_HOST=true
     depends_on:
       postgres:
