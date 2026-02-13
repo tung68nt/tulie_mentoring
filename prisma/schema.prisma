@@ -10,7 +10,7 @@ datasource db {
 model User {
   id             String    @id @default(cuid())
   email          String    @unique
-  passwordHash   String
+  passwordHash   String?
   firstName      String
   lastName       String
   avatar         String?
@@ -23,6 +23,7 @@ model User {
 
   mentorProfile  MentorProfile?
   menteeProfile  MenteeProfile?
+  accounts       Account[]
 
   // Relations
   mentorships        Mentorship[]     @relation("MentorUser")
@@ -42,6 +43,26 @@ model User {
   @@index([email])
 }
 
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
 model MentorProfile {
   id          String   @id @default(cuid())
   userId      String   @unique
@@ -58,17 +79,24 @@ model MentorProfile {
 }
 
 model MenteeProfile {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  studentId   String?  // MSSV
-  major       String?
-  year        Int?     // 1, 2, 3, 4
-  careerGoals String?
-  skills      String?  // JSON array stored as string
-  strengths   String?
-  weaknesses  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  studentId             String?  // MSSV
+  major                 String?
+  year                  Int?     // 1, 2, 3, 4
+  careerGoals           String?
+  skills                String?  // JSON array stored as string
+  strengths             String?
+  weaknesses            String?
+  currentChallenges     String?  // Current difficulties
+  expectations          String?  // Expectations from program
+  background            String?  // Personal background
+  experience            String?  // Personal/work experience
+  endGoals              String?  // Desired outcomes after program
+  isOnboardingComplete  Boolean  @default(false)
+  onboardingCompletedAt DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

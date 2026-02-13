@@ -99,6 +99,22 @@ export const mentorshipSchema = z.object({
     menteeIds: z.array(z.string()).min(1, "Vui lòng chọn ít nhất 1 mentee"),
 });
 
+// ─── Mentee Onboarding ───────────────────────────────────────────
+export const menteeOnboardingSchema = z.object({
+    studentId: z.string().optional(),
+    major: z.string().min(1, "Vui lòng nhập ngành học"),
+    year: z.coerce.number().min(1).max(6).optional(),
+    background: z.string().optional(),
+    experience: z.string().optional(),
+    skills: z.string().optional(),
+    strengths: z.string().optional(),
+    weaknesses: z.string().optional(),
+    currentChallenges: z.string().optional(),
+    careerGoals: z.string().min(1, "Vui lòng nhập mục tiêu nghề nghiệp"),
+    endGoals: z.string().optional(),
+    expectations: z.string().optional(),
+});
+
 // ─── Availability ────────────────────────────────────────────────
 export const availabilitySchema = z.object({
     dayOfWeek: z.coerce.number().min(0).max(6),
@@ -117,3 +133,4 @@ export type ResourceInput = z.infer<typeof resourceSchema>;
 export type PortfolioInput = z.infer<typeof portfolioSchema>;
 export type MentorshipInput = z.infer<typeof mentorshipSchema>;
 export type AvailabilityInput = z.infer<typeof availabilitySchema>;
+export type MenteeOnboardingInput = z.infer<typeof menteeOnboardingSchema>;

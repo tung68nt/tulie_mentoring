@@ -1,33 +1,20 @@
 import type { NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { loginSchema } from "./validators";
-import bcrypt from "bcryptjs";
 
 // This is the Edge-compatible part of the auth config
 export const authConfig = {
-    providers: [
-        Credentials({
-            async authorize(credentials) {
-                const validatedData = loginSchema.safeParse(credentials);
-
-                if (!validatedData.success) return null;
-
-                // Note: Database check MUST happen in auth.ts (Node context)
-                // because middleware cannot import Prisma/better-sqlite3.
-                // However, NextAuth v5 handles this by having the authorize
-                // function run in a Node.js context for the Credentials provider
-                // UNLESS middleware itself triggers it. 
-                // In practice, we'll keep the logic in auth.ts for authorize.
-                return null; // Placeholder, real logic stays in auth.ts
-            },
-        }),
-    ],
+    providers: [], // Providers are defined in auth.ts
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
             const isOnDashboard = nextUrl.pathname.startsWith("/admin") ||
                 nextUrl.pathname.startsWith("/mentor") ||
-                nextUrl.pathname.startsWith("/mentee");
+                nextUrl.pathname.startsWith("/mentee") ||
+                nextUrl.pathname.startsWith("/calendar") ||
+                nextUrl.pathname.startsWith("/goals") ||
+                nextUrl.pathname.startsWith("/portfolio") ||
+                nextUrl.pathname.startsWith("/feedback") ||
+                nextUrl.pathname.startsWith("/resources") ||
+                nextUrl.pathname.startsWith("/profile");
 
             if (isOnDashboard) {
                 if (isLoggedIn) return true;
@@ -35,12 +22,18 @@ export const authConfig = {
             }
             return true;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id;
                 token.role = (user as any).role;
                 token.firstName = (user as any).firstName;
                 token.lastName = (user as any).lastName;
+            }
+            // Handle session updates
+            if (trigger === "update" && session) {
+                token.role = session.role || token.role;
+                token.firstName = session.firstName || token.firstName;
+                token.lastName = session.lastName || token.lastName;
             }
             return token;
         },
