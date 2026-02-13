@@ -62,12 +62,12 @@ export default async function AdminDashboard() {
     ];
 
     return (
-        <div className="space-y-12 pb-16 animate-fade-in max-w-7xl mx-auto">
+        <div className="space-y-8 pb-16 animate-fade-in max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-1.5">
-                    <h1 className="text-4xl font-bold text-black mb-1">Tổng quan hệ thống</h1>
-                    <p className="text-sm font-medium text-[#888]">Chào mừng quay lại, <span className="text-black font-semibold">{session?.user?.name || "Admin"}</span></p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="space-y-1">
+                    <h1 className="text-2xl font-bold text-black">Dashboard</h1>
+                    <p className="text-sm font-medium text-[#888]">Tổng quan hoạt động của {session?.user?.name || "Admin"}</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" size="md" className="shadow-sm font-semibold bg-[#fafafa]" asChild>
@@ -79,15 +79,31 @@ export default async function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, idx) => (
-                    <StatCard
-                        key={stat.title}
-                        {...stat}
-                        trend={idx % 2 === 0 ? { value: 5 + idx, label: "tăng trưởng" } : undefined}
-                    />
-                ))}
+            {/* Stats Row - Single container with shared borders */}
+            <div className="rounded-[12px] border border-[#eaeaea] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02),0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                    {stats.map((stat, idx) => (
+                        <div
+                            key={stat.title}
+                            className={`p-6 ${idx < stats.length - 1 ? "border-b sm:border-b-0 sm:border-r border-[#eaeaea]" : ""} ${idx === 2 ? "sm:border-b lg:border-b-0" : ""}`}
+                        >
+                            <div className="flex items-start justify-between">
+                                <div className="space-y-2">
+                                    <p className="text-[11px] font-medium text-[#999]">{stat.title}</p>
+                                    <p className="text-3xl font-bold text-black leading-none">{stat.value}</p>
+                                    {idx % 2 === 0 && (
+                                        <p className="text-[11px] font-bold text-black inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/5">
+                                            +{5 + idx}% tăng trưởng
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="p-2.5 rounded-xl bg-[#fafafa] text-[#999] border border-[#eee]">
+                                    {stat.icon}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* Main Content Grid - Single container with shared borders */}
