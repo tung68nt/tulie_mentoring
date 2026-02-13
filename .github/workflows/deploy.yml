@@ -47,7 +47,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "docker-compose.prod.yml"
+          source: "docker-compose.prod.yml,nginx,scripts"
           target: "/srv/mentoring"
 
       - name: Deploy to VPS
@@ -72,3 +72,5 @@ jobs:
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
+            chmod +x /srv/mentoring/scripts/install_ssl.sh
+            sudo /srv/mentoring/scripts/install_ssl.sh

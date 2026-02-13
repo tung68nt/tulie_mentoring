@@ -1,7 +1,16 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, StatCard } from "@/components/ui/card";
-import { Users, UserCheck, Calendar, Bookmark, TrendingUp, ArrowRight, Award } from "lucide-react";
+import {
+    Users,
+    UserCheck,
+    Calendar,
+    Bookmark,
+    FileText,
+    BarChart,
+    TrendingUp,
+    ArrowRight
+} from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -91,11 +100,7 @@ export default async function AdminDashboard() {
                                 <div className="space-y-2">
                                     <p className="text-[11px] font-medium text-[#999]">{stat.title}</p>
                                     <p className="text-3xl font-bold text-black leading-none">{stat.value}</p>
-                                    {idx % 2 === 0 && (
-                                        <p className="text-[11px] font-bold text-black inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/5">
-                                            +{5 + idx}% tăng trưởng
-                                        </p>
-                                    )}
+                                    {/* Growth percentage removed as per feedback */}
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-[#fafafa] text-[#999] border border-[#eee]">
                                     {stat.icon}
@@ -197,8 +202,8 @@ export default async function AdminDashboard() {
 
                     {/* Quick Stats Sidebar - Right Panel */}
                     <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-[#eaeaea] p-8">
-                        <h3 className="text-xs font-medium text-[#999] mb-7 flex items-center gap-2">
-                            <Award className="w-3.5 h-3.5" />
+                        <h3 className="text-[11px] font-bold text-black uppercase tracking-wider mb-8 flex items-center gap-2">
+                            <BarChart className="w-3.5 h-3.5" />
                             Chỉ số hiệu quả
                         </h3>
                         <div className="space-y-4">
@@ -225,7 +230,10 @@ export default async function AdminDashboard() {
 
                         <div className="h-px bg-[#eaeaea] my-6" />
 
-                        <h3 className="text-xs font-medium text-[#999] mb-4">Mentorship mới nhất</h3>
+                        <h3 className="text-[11px] font-bold text-black uppercase tracking-wider mb-5 flex items-center gap-2">
+                            <Users className="w-3.5 h-3.5" />
+                            Mentorship mới nhất
+                        </h3>
                         <div className="space-y-0">
                             {recentMentorships.slice(0, 3).map((ms, idx) => (
                                 <div key={ms.id}>
