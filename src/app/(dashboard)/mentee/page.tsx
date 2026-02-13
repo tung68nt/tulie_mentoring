@@ -62,8 +62,8 @@ export default async function MenteeDashboard() {
                                 />
                                 <div className="text-center md:text-left space-y-5 flex-1">
                                     <div className="space-y-1">
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] leading-none mb-2 block">Mentor của tôi</span>
-                                        <h3 className="text-3xl font-bold text-white tracking-tight">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
+                                        <span className="text-[10px] font-medium text-[#888] leading-none mb-2 block">Mentor của tôi</span>
+                                        <h3 className="text-3xl font-bold text-white">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
                                     </div>
                                     <p className="text-sm text-[#888] line-clamp-2 max-w-lg leading-relaxed font-medium">{mentorship.mentor.bio || "No bio available."}</p>
                                     <Button variant="outline" className="text-white border-[#333] hover:border-white hover:bg-white hover:text-black transition-all duration-300" asChild>
@@ -78,7 +78,7 @@ export default async function MenteeDashboard() {
                     {/* Goal Progress */}
                     <div className="space-y-8">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold tracking-tight text-black">Tiến độ mục tiêu</h3>
+                            <h3 className="text-lg font-semibold text-black">Tiến độ mục tiêu</h3>
                             <Button variant="outline" size="sm" asChild>
                                 <Link href="/goals">Xem tất cả</Link>
                             </Button>
@@ -87,7 +87,7 @@ export default async function MenteeDashboard() {
                             {goals.slice(0, 4).map(goal => (
                                 <Card key={goal.id} className="p-6 space-y-5" hover>
                                     <div className="flex items-center justify-between">
-                                        <p className="text-sm font-semibold text-black truncate leading-tight flex-1 pr-4 tracking-tight">{goal.title}</p>
+                                        <p className="text-sm font-semibold text-black truncate leading-tight flex-1 pr-4">{goal.title}</p>
                                         <span className="text-xs font-bold text-[#666]">{goal.currentValue}%</span>
                                     </div>
                                     <Progress value={goal.currentValue} size="sm" color="default" />
@@ -99,7 +99,7 @@ export default async function MenteeDashboard() {
 
                 {/* Sidebar: Upcoming Meetings */}
                 <div className="space-y-8">
-                    <h3 className="text-lg font-semibold tracking-tight text-black">Lịch họp sắp tới</h3>
+                    <h3 className="text-lg font-semibold text-black">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
                         {upcomingMeetings.length === 0 ? (
                             <p className="text-sm text-[#999] italic">Hiện tại bạn không có lịch họp.</p>
@@ -110,8 +110,8 @@ export default async function MenteeDashboard() {
                                         <Calendar className="w-5 h-5" />
                                     </div>
                                     <div className="flex-1 min-w-0 space-y-1">
-                                        <p className="text-sm font-semibold text-black truncate tracking-tight">{meeting.title}</p>
-                                        <p className="text-[11px] text-[#999] font-bold uppercase tracking-wider">{formatDate(meeting.scheduledAt, "dd/MM · HH:mm")}</p>
+                                        <p className="text-sm font-semibold text-black truncate">{meeting.title}</p>
+                                        <p className="text-[11px] text-[#999] font-medium">{formatDate(meeting.scheduledAt, "dd/MM · HH:mm")}</p>
                                     </div>
                                 </div>
                             ))

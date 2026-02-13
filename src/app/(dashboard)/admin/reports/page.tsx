@@ -109,7 +109,7 @@ export default async function AdminReportsPage() {
         <div className="space-y-12 pb-16 animate-fade-in max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1.5">
-                    <h1 className="text-4xl font-bold tracking-tightest text-black mb-1">Báo cáo & Thống kê</h1>
+                    <h1 className="text-4xl font-bold text-black mb-1">Báo cáo & Thống kê</h1>
                     <p className="text-sm font-medium text-[#888]">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-black bg-[#fafafa] border border-[#eee] px-3 py-1.5 rounded-full shadow-sm">
@@ -170,18 +170,18 @@ export default async function AdminReportsPage() {
                                     <div className="flex justify-between items-end">
                                         <div className="space-y-1.5">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-lg font-bold text-black tracking-tight">{cycle.name}</span>
+                                                <span className="text-lg font-bold text-black">{cycle.name}</span>
                                                 <Badge variant={cycle.status === 'active' ? 'solid' : 'default'} size="sm">
                                                     {cycle.status === 'active' ? 'Đang chạy' : 'Hoàn thành'}
                                                 </Badge>
                                             </div>
-                                            <p className="text-xs font-bold text-[#aaa] uppercase tracking-widest">
+                                            <p className="text-xs font-medium text-[#aaa]">
                                                 {cycle.mentorshipCount} nhóm đang hoạt động tích cực
                                             </p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-lg font-black text-black leading-none mb-1">{cycle.completionRate}%</p>
-                                            <p className="text-[10px] font-bold text-[#bbb] uppercase tracking-tighter">
+                                            <p className="text-lg font-bold text-black leading-none mb-1">{cycle.completionRate}%</p>
+                                            <p className="text-[10px] font-medium text-[#bbb]">
                                                 {cycle.meetingsCompleted}/{cycle.meetingsTotal} buổi học
                                             </p>
                                         </div>
@@ -215,7 +215,7 @@ export default async function AdminReportsPage() {
                             {menteesWithProgress.map((mentee, idx) => (
                                 <div key={mentee.id} className="flex items-center justify-between p-5 rounded-[16px] bg-white shadow-sm border border-[#eee] hover:border-black/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-0.5 transition-all group">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-black shadow-lg shadow-black/10">
+                                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shadow-lg shadow-black/10">
                                             {idx + 1}
                                         </div>
                                         <Avatar
@@ -226,18 +226,18 @@ export default async function AdminReportsPage() {
                                             className="border-2 border-[#fafafa]"
                                         />
                                         <div>
-                                            <p className="text-[15px] font-bold text-black leading-none mb-1.5">{mentee.firstName} {mentee.lastName}</p>
+                                            <p className="text-[15px] font-semibold text-black leading-none mb-1.5">{mentee.firstName} {mentee.lastName}</p>
                                             <div className="flex items-center gap-2">
                                                 <Badge variant="default" className="bg-[#f0f0f0] border-none text-[9px] px-1.5 py-0">
                                                     Top Performer
                                                 </Badge>
-                                                <p className="text-[10px] text-[#aaa] font-bold uppercase tracking-tighter">{mentee.goalCompleted}/{mentee.goalTotal} goals</p>
+                                                <p className="text-[10px] text-[#aaa] font-medium">{mentee.goalCompleted}/{mentee.goalTotal} goals</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <div className="text-right">
-                                            <p className="text-lg font-black text-black leading-none">{mentee.rate}%</p>
+                                            <p className="text-lg font-bold text-black leading-none">{mentee.rate}%</p>
                                         </div>
                                         {mentee.rate >= 80 ? (
                                             <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center">

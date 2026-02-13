@@ -68,7 +68,7 @@ export default async function MentorDashboard() {
                                         <p className="text-sm font-semibold text-black truncate leading-tight mb-1">
                                             {mt.mentee.firstName} {mt.mentee.lastName}
                                         </p>
-                                        <p className="text-[11px] font-medium text-[#999] uppercase tracking-wider">{mt.status}</p>
+                                        <p className="text-[11px] font-medium text-[#999]">{mt.status}</p>
                                     </div>
                                 </div>
                                 <Button variant="outline" size="sm" asChild className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -80,7 +80,7 @@ export default async function MentorDashboard() {
                 </div>
 
                 <div className="space-y-8">
-                    <h3 className="text-lg font-semibold tracking-tight text-black">Lịch họp sắp tới</h3>
+                    <h3 className="text-lg font-semibold text-black">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
                         {upcomingMeetings.length === 0 ? (
                             <p className="text-sm text-[#999] italic">Chưa có lịch họp nào.</p>
@@ -88,11 +88,11 @@ export default async function MentorDashboard() {
                             upcomingMeetings.map((meeting) => (
                                 <div key={meeting.id} className="flex gap-5 p-5 rounded-[8px] border border-[#eaeaea] bg-white group hover:border-black transition-all">
                                     <div className="w-12 h-12 rounded-[6px] bg-black text-white flex flex-col items-center justify-center shrink-0">
-                                        <span className="text-[10px] font-bold leading-none uppercase tracking-tighter">{formatDate(meeting.scheduledAt, "MMM")}</span>
+                                        <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                         <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                     </div>
                                     <div className="flex-1 min-w-0 space-y-2">
-                                        <p className="text-sm font-semibold text-black truncate tracking-tight">{meeting.title}</p>
+                                        <p className="text-sm font-semibold text-black truncate">{meeting.title}</p>
                                         <div className="flex items-center gap-3 text-[11px] text-[#666] font-medium">
                                             <div className="flex items-center gap-1">
                                                 <Clock className="w-3.5 h-3.5" />
