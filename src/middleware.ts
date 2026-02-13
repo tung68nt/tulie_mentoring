@@ -36,9 +36,14 @@ export default auth((req) => {
         );
     }
 
-    // Role-based access control
+    // Role-based access control (admin can access everything)
     if (isLoggedIn) {
         const role = (req.auth?.user as any).role;
+
+        // Admin can access all routes
+        if (role === "admin") {
+            return NextResponse.next();
+        }
 
         if (nextUrl.pathname.startsWith("/admin") && role !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
