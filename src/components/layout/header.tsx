@@ -34,7 +34,7 @@ const roleLabels: Record<string, string> = {
 
 export function Header({ userName, userRole, avatar, onMenuClick, notifications = [], unreadCount = 0 }: HeaderProps) {
     return (
-        <header className="fixed top-0 right-0 left-0 lg:left-[var(--sidebar-width)] bg-white/80 backdrop-blur-md border-b border-[#eaeaea] z-40 transition-all">
+        <header className="fixed top-0 right-0 left-0 lg:left-[var(--sidebar-width)] h-14 bg-white/80 backdrop-blur-md border-b border-[#eaeaea] z-40 transition-all">
             <div className="h-14 px-4 sm:px-6 flex items-center justify-between max-w-[1400px] mx-auto">
                 {/* Left: Menu + Search */}
                 <div className="flex items-center gap-3 flex-1">

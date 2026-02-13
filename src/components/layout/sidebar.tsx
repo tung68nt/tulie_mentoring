@@ -19,6 +19,9 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
+import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
     role: "admin" | "mentor" | "mentee";
@@ -39,6 +42,7 @@ interface MenuSection {
 export function Sidebar({ role }: SidebarProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
     const menuSections: Record<string, MenuSection[]> = {
         admin: [
@@ -170,7 +174,7 @@ export function Sidebar({ role }: SidebarProps) {
 
                 <button
                     className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-[13px] text-[#666] hover:bg-[#f5f5f5] hover:text-black transition-all group"
-                    onClick={() => { window.location.href = "/api/auth/signout"; }}
+                    onClick={() => setShowLogoutDialog(true)}
                     title={isCollapsed ? "Đăng xuất" : undefined}
                 >
                     <LogOut className="w-[18px] h-[18px] shrink-0 text-[#888] group-hover:text-black transition-colors" />
@@ -188,6 +192,17 @@ export function Sidebar({ role }: SidebarProps) {
                     {!isCollapsed && <span className="text-[#999]">Thu gọn</span>}
                 </button>
             </div>
+
+            <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+                <DialogHeader>
+                    <DialogTitle>Đăng xuất</DialogTitle>
+                    <DialogDescription>Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?</DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setShowLogoutDialog(false)}>Hủy</Button>
+                    <Button variant="destructive" onClick={() => signOut({ callbackUrl: "/login" })}>Đăng xuất</Button>
+                </DialogFooter>
+            </Dialog>
         </aside>
     );
 }

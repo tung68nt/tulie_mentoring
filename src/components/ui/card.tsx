@@ -35,7 +35,7 @@ export function CardHeader({ children, className }: { children: ReactNode; class
 }
 
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
-    return <h3 className={cn("text-[17px] font-semibold leading-none tracking-tight text-black", className)}>{children}</h3>;
+    return <h3 className={cn("text-[17px] font-semibold leading-none tracking-tight", className)}>{children}</h3>;
 }
 
 export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
@@ -62,11 +62,6 @@ export function StatCard({ title, value, subtitle, icon, trend }: StatCardProps)
                     <p className="text-[11px] font-medium text-[#999]">{title}</p>
                     <p className="text-3xl font-bold text-black leading-none">{value}</p>
                     {subtitle && <p className="text-[11px] text-[#999] font-medium">{subtitle}</p>}
-                    {trend && (
-                        <p className={cn("text-[11px] font-bold mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/5", trend.value >= 0 ? "text-black" : "text-[#666]")}>
-                            {trend.value >= 0 ? "+" : ""}{trend.value}% {trend.label}
-                        </p>
-                    )}
                 </div>
                 {icon && (
                     <div className="p-2.5 rounded-xl bg-white text-[#999] group-hover:text-black shadow-sm group-hover:shadow-md transition-all border border-[#eee]">
