@@ -181,7 +181,7 @@ export default async function AdminDashboard() {
 
                     {/* Quick Stats Sidebar - Right Panel */}
                     <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-[#eaeaea] p-8">
-                        <h3 className="text-xs font-medium text-[#999] mb-5 flex items-center gap-2">
+                        <h3 className="text-xs font-medium text-[#999] mb-7 flex items-center gap-2">
                             <Award className="w-3.5 h-3.5" />
                             Chỉ số hiệu quả
                         </h3>
