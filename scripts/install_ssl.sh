@@ -29,13 +29,26 @@ else
 fi
 
 # Link the new Nginx configuration
-# We assume the file is deployed to /srv/mentoring/nginx/mentoring.tulie.vn.conf
+# Check for aaPanel Nginx path first
+if [ -d "/www/server/panel/vhost/nginx" ]; then
+    echo "aaPanel detected. Using /www/server/panel/vhost/nginx/"
+    CONFIG_DEST="/www/server/panel/vhost/nginx/mentoring.tulie.vn.conf"
+elif [ -d "/etc/nginx/sites-enabled" ]; then
+    echo "Standard Nginx detected. Using /etc/nginx/sites-enabled/"
+    CONFIG_DEST="/etc/nginx/sites-enabled/mentoring.tulie.vn.conf"
+else
+    echo "Error: Could not determine Nginx configuration directory."
+    echo "Checked: /www/server/panel/vhost/nginx and /etc/nginx/sites-enabled"
+    exit 1
+fi
+
 CONFIG_SRC="/srv/mentoring/nginx/mentoring.tulie.vn.conf"
-CONFIG_DEST="/etc/nginx/sites-enabled/mentoring.tulie.vn.conf"
 
 if [ -f "$CONFIG_SRC" ]; then
-    echo "Linking Nginx configuration..."
-    ln -sf "$CONFIG_SRC" "$CONFIG_DEST"
+    echo "Linking Nginx configuration to $CONFIG_DEST..."
+    # Remove existing file/link if it exists to ensure clean link
+    rm -f "$CONFIG_DEST"
+    ln -s "$CONFIG_SRC" "$CONFIG_DEST"
 else
     echo "Error: Configuration file not found at $CONFIG_SRC"
     exit 1
