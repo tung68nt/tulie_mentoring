@@ -76,10 +76,10 @@ export default async function MenteeDashboard() {
                                 />
                                 <div className="text-center md:text-left space-y-5 flex-1">
                                     <div className="space-y-1">
-                                        <span className="text-[10px] font-medium text-[#888] leading-none mb-2 block">Mentor của tôi</span>
-                                        <h3 className="text-3xl font-bold text-white">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
+                                        <span className="text-[10px] font-medium !text-gray-400 leading-none mb-2 block">Mentor của tôi</span>
+                                        <h3 className="text-3xl font-bold !text-white">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
                                     </div>
-                                    <p className="text-sm text-[#888] line-clamp-2 max-w-lg leading-relaxed font-medium">{mentorship.mentor.bio || "No bio available."}</p>
+                                    <p className="text-sm !text-gray-300 line-clamp-2 max-w-lg leading-relaxed font-medium">{mentorship.mentor.bio || "No bio available."}</p>
                                     <Button variant="outline" className="text-white border-[#333] hover:border-white hover:bg-white hover:text-black transition-all duration-300" asChild>
                                         <Link href={`/admin/mentorships/${mentorship.id}`}>Hồ sơ & Trao đổi</Link>
                                     </Button>
