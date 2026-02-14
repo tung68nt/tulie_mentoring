@@ -32,6 +32,13 @@ jobs:
         env:
           OWNER: "${{ github.repository_owner }}"
 
+      - name: Create .env for build
+        run: |
+          echo "DATABASE_URL=postgresql://build:build@localhost:5432/mentoring_db" >> .env
+          echo "AUTH_SECRET=build_secret_for_build_step" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+          echo "POSTGRES_PASSWORD=build_password" >> .env
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
