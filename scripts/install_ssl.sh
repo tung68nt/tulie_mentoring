@@ -56,12 +56,16 @@ fi
 
 # Test and Reload Nginx
 echo "Testing Nginx configuration..."
-nginx -t
+NGINX_TEST=$(nginx -t 2>&1)
 if [ $? -eq 0 ]; then
     echo "Reloading Nginx..."
     systemctl reload nginx
     echo "SSL setup complete!"
 else
-    echo "Nginx configuration test failed. Please check the config."
+    echo "CRITICAL ERROR: Nginx configuration test failed."
+    echo "This usually happens if OTHER sites on this VPS have broken SSL paths or invalid configs."
+    echo "Nginx Output:"
+    echo "$NGINX_TEST"
+    echo "Please fix the global Nginx issues in aaPanel (e.g., check 'thelab.tulie.vn' SSL) and rerun this deploy."
     exit 1
 fi
