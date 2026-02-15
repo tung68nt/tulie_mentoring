@@ -149,7 +149,7 @@ export default async function AdminReportsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Program Performance */}
                 <Card className="lg:col-span-7 bg-white shadow-xl shadow-black/[0.02]" padding="lg">
-                    <CardHeader className="mb-10">
+                    <CardHeader className="mb-6">
                         <CardTitle className="text-xl flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-black text-white shadow-lg shadow-black/20">
                                 <BarChart3 className="w-5 h-5" />
@@ -195,7 +195,7 @@ export default async function AdminReportsPage() {
 
                 {/* Top Mentees */}
                 <Card className="lg:col-span-5 bg-[#fafafa] border-none shadow-inner" padding="lg">
-                    <CardHeader className="mb-10">
+                    <CardHeader className="mb-6">
                         <CardTitle className="text-xl flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-white text-black shadow-md border border-[#eee]">
                                 <Award className="w-5 h-5" />

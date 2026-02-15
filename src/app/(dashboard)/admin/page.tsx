@@ -116,7 +116,7 @@ export default async function AdminDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-12">
                     {/* Recent Activities - Left Panel */}
                     <div className="lg:col-span-8 p-8">
-                        <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center justify-between mb-6">
                             <h3 className="text-base font-semibold text-black flex items-center gap-2">
                                 <span className="w-1 h-5 bg-black rounded-full" />
                                 Hoạt động gần đây
@@ -202,7 +202,7 @@ export default async function AdminDashboard() {
 
                     {/* Quick Stats Sidebar - Right Panel */}
                     <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-[#eaeaea] p-8">
-                        <h3 className="text-[11px] font-bold text-black uppercase tracking-wider mb-8 flex items-center gap-2">
+                        <h3 className="text-[11px] font-bold text-black uppercase tracking-wider mb-6 flex items-center gap-2">
                             <BarChart className="w-3.5 h-3.5" />
                             Chỉ số hiệu quả
                         </h3>
@@ -230,7 +230,7 @@ export default async function AdminDashboard() {
 
                         <div className="h-px bg-[#eaeaea] my-6" />
 
-                        <h3 className="text-[11px] font-bold text-black uppercase tracking-wider mb-5 flex items-center gap-2">
+                        <h3 className="text-[11px] font-bold text-black uppercase tracking-wider mb-6 flex items-center gap-2">
                             <Users className="w-3.5 h-3.5" />
                             Mentorship mới nhất
                         </h3>

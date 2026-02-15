@@ -64,7 +64,7 @@ export default async function MentorDashboard() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-semibold tracking-tight text-black">Danh sách Mentees</h3>
                     </div>
@@ -93,7 +93,7 @@ export default async function MentorDashboard() {
                     </div>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-black">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
                         {upcomingMeetings.length === 0 ? (

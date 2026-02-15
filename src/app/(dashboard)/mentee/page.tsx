@@ -90,7 +90,7 @@ export default async function MenteeDashboard() {
                     )}
 
                     {/* Goal Progress */}
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-black">Tiến độ mục tiêu</h3>
                             <Button variant="outline" size="sm" asChild>
@@ -112,7 +112,7 @@ export default async function MenteeDashboard() {
                 </div>
 
                 {/* Sidebar: Upcoming Meetings */}
-                <div className="space-y-8">
+                <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-black">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
                         {upcomingMeetings.length === 0 ? (
