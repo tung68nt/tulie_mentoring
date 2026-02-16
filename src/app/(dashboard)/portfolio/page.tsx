@@ -15,7 +15,13 @@ export default async function PortfolioPage() {
         redirect("/login");
     }
     const role = (session.user as any).role;
-    const portfolio = await getPortfolio();
+    let portfolio = null;
+
+    try {
+        portfolio = await getPortfolio();
+    } catch (error) {
+        console.error("Failed to fetch portfolio:", error);
+    }
 
     const hasInitialAssessment = !!portfolio?.initialCompletedAt;
     const hasFinalPortfolio = !!portfolio?.finalCompletedAt;

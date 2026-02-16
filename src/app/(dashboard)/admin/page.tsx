@@ -26,59 +26,74 @@ export default async function AdminDashboard() {
         redirect("/login");
     }
 
-    // Fetch real statistics and recent data
-    const [
-        totalUsers,
-        activeMentors,
-        activeMentees,
-        totalMentorships,
-        totalMeetings,
-        totalGoals,
-        recentMeetings,
-        recentMentorships,
-        recentNotifications,
-    ] = await Promise.all([
-        prisma.user.count(),
-        prisma.user.count({ where: { role: "mentor", isActive: true } }),
-        prisma.user.count({ where: { role: "mentee", isActive: true } }),
-        prisma.mentorship.count({ where: { status: "active" } }),
-        prisma.meeting.count({ where: { status: "completed" } }),
-        prisma.goal.count({ where: { status: "completed" } }),
-        prisma.meeting.findMany({
-            orderBy: { createdAt: "desc" },
-            take: 5,
-            include: {
-                creator: { select: { firstName: true, lastName: true, avatar: true } },
-                mentorship: { include: { mentor: { select: { firstName: true, lastName: true } } } },
-            },
-        }),
-        prisma.mentorship.findMany({
-            orderBy: { createdAt: "desc" },
-            take: 5,
-            include: {
-                mentor: { select: { firstName: true, lastName: true, avatar: true } },
-                mentees: { include: { mentee: { select: { firstName: true, lastName: true } } } },
-                programCycle: { select: { name: true } },
-            },
-        }),
-        prisma.notification.findMany({
-            where: { userId: session.user.id! },
-            orderBy: { createdAt: "desc" },
-            take: 5,
-        }),
-    ]);
-
-    // Serialize data to prevent "Server Component render" errors with Date objects
-    const serializedRecentMeetings = JSON.parse(JSON.stringify(recentMeetings));
-    const serializedRecentMentorships = JSON.parse(JSON.stringify(recentMentorships));
-    const serializedRecentNotifications = JSON.parse(JSON.stringify(recentNotifications));
-
-    const stats = [
-        { title: "Tổng người dùng", value: totalUsers, icon: <Users />, color: "black" as const },
-        { title: "Mentor hoạt động", value: activeMentors, icon: <UserCheck />, color: "black" as const },
-        { title: "Mentee hoạt động", value: activeMentees, icon: <Users />, color: "black" as const },
-        { title: "Cặp Mentoring", value: totalMentorships, icon: <Bookmark />, color: "black" as const },
+    let stats = [
+        { title: "Tổng người dùng", value: 0, icon: <Users />, color: "black" as const },
+        { title: "Mentor hoạt động", value: 0, icon: <UserCheck />, color: "black" as const },
+        { title: "Mentee hoạt động", value: 0, icon: <Users />, color: "black" as const },
+        { title: "Cặp Mentoring", value: 0, icon: <Bookmark />, color: "black" as const },
     ];
+    let serializedRecentMeetings: any[] = [];
+    let serializedRecentMentorships: any[] = [];
+    let serializedRecentNotifications: any[] = [];
+
+    try {
+        // Fetch real statistics and recent data
+        const [
+            totalUsers,
+            activeMentors,
+            activeMentees,
+            totalMentorships,
+            totalMeetings,
+            totalGoals,
+            recentMeetings,
+            recentMentorships,
+            recentNotifications,
+        ] = await Promise.all([
+            prisma.user.count(),
+            prisma.user.count({ where: { role: "mentor", isActive: true } }),
+            prisma.user.count({ where: { role: "mentee", isActive: true } }),
+            prisma.mentorship.count({ where: { status: "active" } }),
+            prisma.meeting.count({ where: { status: "completed" } }),
+            prisma.goal.count({ where: { status: "completed" } }),
+            prisma.meeting.findMany({
+                orderBy: { createdAt: "desc" },
+                take: 5,
+                include: {
+                    creator: { select: { firstName: true, lastName: true, avatar: true } },
+                    mentorship: { include: { mentor: { select: { firstName: true, lastName: true } } } },
+                },
+            }),
+            prisma.mentorship.findMany({
+                orderBy: { createdAt: "desc" },
+                take: 5,
+                include: {
+                    mentor: { select: { firstName: true, lastName: true, avatar: true } },
+                    mentees: { include: { mentee: { select: { firstName: true, lastName: true } } } },
+                    programCycle: { select: { name: true } },
+                },
+            }),
+            prisma.notification.findMany({
+                where: { userId: session.user.id! },
+                orderBy: { createdAt: "desc" },
+                take: 5,
+            }),
+        ]);
+
+        // Serialize data to prevent "Server Component render" errors with Date objects
+        serializedRecentMeetings = JSON.parse(JSON.stringify(recentMeetings));
+        serializedRecentMentorships = JSON.parse(JSON.stringify(recentMentorships));
+        serializedRecentNotifications = JSON.parse(JSON.stringify(recentNotifications));
+
+        stats = [
+            { title: "Tổng người dùng", value: totalUsers, icon: <Users />, color: "black" as const },
+            { title: "Mentor hoạt động", value: activeMentors, icon: <UserCheck />, color: "black" as const },
+            { title: "Mentee hoạt động", value: activeMentees, icon: <Users />, color: "black" as const },
+            { title: "Cặp Mentoring", value: totalMentorships, icon: <Bookmark />, color: "black" as const },
+        ];
+    } catch (error) {
+        console.error("Failed to fetch admin dashboard data:", error);
+        // Continue with default empty values to prevent page crash
+    }
 
     return (
         <div className="space-y-8 pb-16 animate-fade-in max-w-7xl mx-auto">
