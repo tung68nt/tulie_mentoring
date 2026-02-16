@@ -155,13 +155,13 @@ export default async function AdminDashboard() {
                                                 <p className="text-sm font-semibold text-foreground truncate mb-0.5">{meeting.title}</p>
                                                 <div className="flex items-center gap-2">
                                                     <Avatar
-                                                        firstName={meeting.creator.firstName}
-                                                        lastName={meeting.creator.lastName}
-                                                        src={meeting.creator.avatar}
+                                                        firstName={meeting.creator?.firstName}
+                                                        lastName={meeting.creator?.lastName}
+                                                        src={meeting.creator?.avatar}
                                                         size="xs"
                                                     />
                                                     <p className="text-[11px] font-medium text-muted-foreground">
-                                                        {meeting.creator.firstName} {meeting.creator.lastName} · {meeting.mentorship.mentor.firstName}
+                                                        {meeting.creator?.firstName} {meeting.creator?.lastName} · {meeting.mentorship?.mentor?.firstName}
                                                     </p>
                                                 </div>
                                             </div>
@@ -188,7 +188,7 @@ export default async function AdminDashboard() {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-semibold text-foreground truncate mb-0.5">
-                                                    {ms.mentor.firstName} ➔ {ms.mentees.length} Mentees
+                                                    {ms.mentor?.firstName} ➔ {ms.mentees?.length || 0} Mentees
                                                 </p>
                                                 <div className="flex items-center gap-2">
                                                     <Badge variant="default" className="text-[9px] font-medium">{ms.programCycle?.name || "Program"}</Badge>
@@ -248,17 +248,17 @@ export default async function AdminDashboard() {
                                         className="flex items-center gap-3 group py-3"
                                     >
                                         <Avatar
-                                            firstName={ms.mentor.firstName}
-                                            lastName={ms.mentor.lastName}
-                                            src={ms.mentor.avatar}
+                                            firstName={ms.mentor?.firstName}
+                                            lastName={ms.mentor?.lastName}
+                                            src={ms.mentor?.avatar}
                                             size="sm"
                                             className="border-2 border-background shadow-sm ring-1 ring-ring group-hover:ring-primary group-hover:scale-110 transition-all"
                                         />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-semibold text-foreground truncate">
-                                                {ms.mentor.firstName} {ms.mentor.lastName}
+                                                {ms.mentor?.firstName} {ms.mentor?.lastName}
                                             </p>
-                                            <p className="text-[10px] font-medium text-muted-foreground">{ms.mentees.length} mentees enrolled</p>
+                                            <p className="text-[10px] font-medium text-muted-foreground">{ms.mentees?.length || 0} mentees enrolled</p>
                                         </div>
                                         <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
                                     </Link>

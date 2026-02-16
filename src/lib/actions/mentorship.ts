@@ -35,10 +35,24 @@ export async function createMentorship(data: MentorshipInput) {
 
 export async function getMentorships() {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    if (!session?.user) {
         throw new Error("Unauthorized");
     }
+
+    const userId = session.user.id;
+    const role = (session.user as any).role;
+
+    const where: any = {};
+    if (role !== "admin") {
+        if (role === "mentor") {
+            where.mentorId = userId;
+        } else if (role === "mentee") {
+            where.mentees = { some: { menteeId: userId } };
+        }
+    }
+
     return await prisma.mentorship.findMany({
+        where,
         include: {
             mentor: {
                 select: {
@@ -70,10 +84,14 @@ export async function getMentorships() {
 
 export async function getMentorshipDetail(id: string) {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    if (!session?.user) {
         throw new Error("Unauthorized");
     }
-    return await prisma.mentorship.findUnique({
+
+    const userId = session.user.id;
+    const role = (session.user as any).role;
+
+    const mentorship = await prisma.mentorship.findUnique({
         where: { id },
         include: {
             mentor: {
@@ -112,6 +130,19 @@ export async function getMentorshipDetail(id: string) {
             },
         },
     });
+
+    if (!mentorship) return null;
+
+    // Security check: Only admin or members of the mentorship can view details
+    if (role !== "admin") {
+        const isMentor = mentorship.mentorId === userId;
+        const isMentee = mentorship.mentees.some(m => m.menteeId === userId);
+        if (!isMentor && !isMentee) {
+            throw new Error("Unauthorized access to mentorship details");
+        }
+    }
+
+    return mentorship;
 }
 
 export async function getProgramCycles() {

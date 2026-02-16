@@ -14,7 +14,13 @@ export default async function ProfilePage() {
     const role = (session.user as any).role;
 
     const user = await getUserProfile(userId!);
-    if (!user) return null;
+    if (!user) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <p className="text-muted-foreground">Không tìm thấy thông tin người dùng.</p>
+            </div>
+        );
+    }
 
     // Get real meeting count
     const meetings = await getMeetings({ role, userId });

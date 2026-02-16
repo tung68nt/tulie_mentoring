@@ -52,7 +52,7 @@ export default async function MentorshipsPage() {
                                 <div className="flex items-start justify-between mb-6">
                                     <Badge status={m.status} />
                                     <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-[4px] border border-border">
-                                        {m.programCycle.name}
+                                        {m.programCycle?.name || "Program"}
                                     </span>
                                 </div>
 
@@ -60,15 +60,15 @@ export default async function MentorshipsPage() {
                                     {/* Mentor */}
                                     <div className="flex flex-col items-center text-center gap-2 flex-1">
                                         <Avatar
-                                            firstName={m.mentor.firstName}
-                                            lastName={m.mentor.lastName}
-                                            src={m.mentor.avatar}
+                                            firstName={m.mentor?.firstName}
+                                            lastName={m.mentor?.lastName}
+                                            src={m.mentor?.avatar}
                                             size="lg"
                                         />
                                         <div>
                                             <p className="text-xs text-muted-foreground font-medium mb-0.5">Mentor</p>
                                             <p className="text-sm font-semibold text-foreground">
-                                                {m.mentor.firstName} {m.mentor.lastName}
+                                                {m.mentor?.firstName} {m.mentor?.lastName}
                                             </p>
                                         </div>
                                     </div>
@@ -78,16 +78,16 @@ export default async function MentorshipsPage() {
                                     {/* Mentees */}
                                     <div className="flex flex-col items-center text-center gap-2 flex-1">
                                         <AvatarGroup>
-                                            {m.mentees.slice(0, 3).map((mt) => (
+                                            {m.mentees?.slice(0, 3).map((mt) => (
                                                 <Avatar
-                                                    key={mt.mentee.id}
-                                                    firstName={mt.mentee.firstName}
-                                                    lastName={mt.mentee.lastName}
-                                                    src={mt.mentee.avatar}
+                                                    key={mt.mentee?.id}
+                                                    firstName={mt.mentee?.firstName}
+                                                    lastName={mt.mentee?.lastName}
+                                                    src={mt.mentee?.avatar}
                                                     size="md"
                                                 />
                                             ))}
-                                            {m.mentees.length > 3 && (
+                                            {m.mentees?.length > 3 && (
                                                 <AvatarGroupCount>
                                                     +{m.mentees.length - 3}
                                                 </AvatarGroupCount>
@@ -95,7 +95,7 @@ export default async function MentorshipsPage() {
                                         </AvatarGroup>
                                         <div>
                                             <p className="text-xs text-muted-foreground font-medium mb-0.5">
-                                                {m.mentees.length} Mentees
+                                                {m.mentees?.length || 0} Mentees
                                             </p>
                                             <p className="text-sm font-semibold text-foreground">
                                                 {m.type === "one_on_one" ? "Cá nhân 1:1" : "Nhóm 1:n"}

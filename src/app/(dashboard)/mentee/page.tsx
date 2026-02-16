@@ -73,18 +73,18 @@ export default async function MenteeDashboard() {
                         <Card className="bg-primary text-primary-foreground border-none p-10 overflow-hidden relative group" padding="none">
                             <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
                                 <Avatar
-                                    firstName={mentorship.mentor.firstName}
-                                    lastName={mentorship.mentor.lastName}
-                                    src={mentorship.mentor.avatar}
+                                    firstName={mentorship.mentor?.firstName}
+                                    lastName={mentorship.mentor?.lastName}
+                                    src={mentorship.mentor?.avatar}
                                     size="xl"
                                     className="w-24 h-24 border-foreground/30 shadow-lg"
                                 />
                                 <div className="text-center md:text-left space-y-5 flex-1">
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-medium !text-gray-400 leading-none mb-2 block">Mentor của tôi</span>
-                                        <h3 className="text-3xl font-bold !text-primary-foreground">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
+                                        <h3 className="text-3xl font-bold !text-primary-foreground">{mentorship.mentor?.firstName} {mentorship.mentor?.lastName}</h3>
                                     </div>
-                                    <p className="text-sm !text-gray-300 line-clamp-2 max-w-lg leading-relaxed font-medium">{mentorship.mentor.bio || "No bio available."}</p>
+                                    <p className="text-sm !text-gray-300 line-clamp-2 max-w-lg leading-relaxed font-medium">{mentorship.mentor?.bio || "No bio available."}</p>
                                     <Button variant="outline" className="text-primary-foreground border-foreground/30 hover:border-background hover:bg-card hover:text-foreground transition-all duration-300" asChild>
                                         <Link href={`/admin/mentorships/${mentorship.id}`}>Hồ sơ & Trao đổi</Link>
                                     </Button>

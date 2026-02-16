@@ -80,11 +80,11 @@ export async function getMeetings(filters?: {
         include: {
             mentorship: {
                 include: {
-                    mentor: { select: { firstName: true, lastName: true } },
-                    mentees: { include: { mentee: { select: { firstName: true, lastName: true } } } },
+                    mentor: { select: { firstName: true, lastName: true, avatar: true } },
+                    mentees: { include: { mentee: { select: { firstName: true, lastName: true, avatar: true } } } },
                 },
             },
-            creator: { select: { firstName: true, lastName: true } },
+            creator: { select: { id: true, firstName: true, lastName: true, avatar: true } },
             attendances: true,
         },
         orderBy: { scheduledAt: "asc" },

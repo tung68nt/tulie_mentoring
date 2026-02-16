@@ -78,14 +78,14 @@ export default async function MentorDashboard() {
                             <Card key={mt.id} className="p-6 flex items-center justify-between group" hover>
                                 <div className="flex items-center gap-4">
                                     <Avatar
-                                        firstName={mt.mentee.firstName}
-                                        lastName={mt.mentee.lastName}
-                                        src={mt.mentee.avatar}
+                                        firstName={mt.mentee?.firstName}
+                                        lastName={mt.mentee?.lastName}
+                                        src={mt.mentee?.avatar}
                                         size="md"
                                     />
                                     <div className="min-w-0">
                                         <p className="text-sm font-semibold text-foreground truncate leading-tight mb-1">
-                                            {mt.mentee.firstName} {mt.mentee.lastName}
+                                            {mt.mentee?.firstName} {mt.mentee?.lastName}
                                         </p>
                                         <p className="text-[11px] font-medium text-muted-foreground">{mt.status}</p>
                                     </div>
