@@ -35,16 +35,22 @@ export default async function AdminDashboard() {
     let serializedRecentMeetings: any[] = [];
     let serializedRecentMentorships: any[] = [];
     let serializedRecentNotifications: any[] = [];
+    let totalUsers = 0;
+    let activeMentors = 0;
+    let activeMentees = 0;
+    let totalMentorships = 0;
+    let totalMeetings = 0;
+    let totalGoals = 0;
 
     try {
         // Fetch real statistics and recent data
         const [
-            totalUsers,
-            activeMentors,
-            activeMentees,
-            totalMentorships,
-            totalMeetings,
-            totalGoals,
+            usersCount,
+            mentorsCount,
+            menteesCount,
+            mentorshipsCount,
+            meetingsCount,
+            goalsCount,
             recentMeetings,
             recentMentorships,
             recentNotifications,
@@ -78,6 +84,14 @@ export default async function AdminDashboard() {
                 take: 5,
             }),
         ]);
+
+        // Assign to outer variables
+        totalUsers = usersCount;
+        activeMentors = mentorsCount;
+        activeMentees = menteesCount;
+        totalMentorships = mentorshipsCount;
+        totalMeetings = meetingsCount;
+        totalGoals = goalsCount;
 
         // Serialize data to prevent "Server Component render" errors with Date objects
         serializedRecentMeetings = JSON.parse(JSON.stringify(recentMeetings));
