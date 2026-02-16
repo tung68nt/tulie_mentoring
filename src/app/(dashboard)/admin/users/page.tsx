@@ -23,82 +23,91 @@ export default async function AdminUsersPage() {
         redirect("/login");
     }
 
-    const users = await getAllUsers();
-    const serializedUsers = JSON.parse(JSON.stringify(users));
+    try {
+        const users = await getAllUsers();
+        const serializedUsers = JSON.parse(JSON.stringify(users));
 
-    return (
-        <div className="space-y-8">
-            <div className="space-y-1">
-                <h1 className="text-2xl font-semibold text-foreground">Quản lý Người dùng</h1>
-                <p className="text-sm text-muted-foreground mt-1">Danh sách tất cả tài khoản trong hệ thống ({serializedUsers.length})</p>
-            </div>
+        return (
+            <div className="space-y-8">
+                <div className="space-y-1">
+                    <h1 className="text-2xl font-semibold text-foreground">Quản lý Người dùng</h1>
+                    <p className="text-sm text-muted-foreground mt-1">Danh sách tất cả tài khoản trong hệ thống ({serializedUsers.length})</p>
+                </div>
 
-            <div className="rounded-xl border border-border bg-card overflow-hidden">
-                <Table>
-                    <TableHeader className="bg-muted/50">
-                        <TableRow>
-                            <TableHead>Người dùng</TableHead>
-                            <TableHead>Vai trò</TableHead>
-                            <TableHead>Trạng thái</TableHead>
-                            <TableHead>Tham gia</TableHead>
-                            <TableHead className="text-right">Thao tác</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {serializedUsers.map((user: any) => (
-                            <TableRow key={user.id}>
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <Avatar
-                                            firstName={user.firstName}
-                                            lastName={user.lastName}
-                                            src={user.avatar}
-                                            size="sm"
-                                        />
-                                        <div>
-                                            <Link href={`/admin/users/${user.id}`} className="font-semibold text-foreground hover:underline">
-                                                {user.firstName} {user.lastName}
-                                            </Link>
-                                            <p className="text-xs text-muted-foreground">{user.email}</p>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-2">
-                                        {user.role === "admin" && <Shield className="w-4 h-4 text-primary" />}
-                                        <span className={`capitalize ${user.role === 'admin' ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
-                                            {user.role}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Badge status={user.isActive ? "active" : "inactive"} size="sm" />
-                                </TableCell>
-                                <TableCell className="text-muted-foreground">
-                                    {formatDate(user.createdAt)}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {user.role !== "admin" && (
-                                        <form action={async () => {
-                                            "use server";
-                                            await deleteUser(user.id);
-                                        }}>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
-                                                title="Xóa người dùng"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </form>
-                                    )}
-                                </TableCell>
+                <div className="rounded-xl border border-border bg-card overflow-hidden">
+                    <Table>
+                        <TableHeader className="bg-muted/50">
+                            <TableRow>
+                                <TableHead>Người dùng</TableHead>
+                                <TableHead>Vai trò</TableHead>
+                                <TableHead>Trạng thái</TableHead>
+                                <TableHead>Tham gia</TableHead>
+                                <TableHead className="text-right">Thao tác</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {serializedUsers.map((user: any) => (
+                                <TableRow key={user.id}>
+                                    <TableCell>
+                                        <div className="flex items-center gap-3">
+                                            <Avatar
+                                                firstName={user.firstName}
+                                                lastName={user.lastName}
+                                                src={user.avatar}
+                                                size="sm"
+                                            />
+                                            <div>
+                                                <Link href={`/admin/users/${user.id}`} className="font-semibold text-foreground hover:underline">
+                                                    {user.firstName} {user.lastName}
+                                                </Link>
+                                                <p className="text-xs text-muted-foreground">{user.email}</p>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            {user.role === "admin" && <Shield className="w-4 h-4 text-primary" />}
+                                            <span className={`capitalize ${user.role === 'admin' ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
+                                                {user.role}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge status={user.isActive ? "active" : "inactive"} size="sm" />
+                                    </TableCell>
+                                    <TableCell className="text-muted-foreground">
+                                        {formatDate(user.createdAt)}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {user.role !== "admin" && (
+                                            <form action={async () => {
+                                                "use server";
+                                                await deleteUser(user.id);
+                                            }}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
+                                                    title="Xóa người dùng"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </form>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
-        </div>
-    );
+        );
+    } catch (error) {
+        console.error("Failed to fetch users:", error);
+        return (
+            <div className="p-8 text-center">
+                <p className="text-muted-foreground">Không thể tải danh sách người dùng. Vui lòng thử lại sau.</p>
+            </div>
+        );
+    }
 }

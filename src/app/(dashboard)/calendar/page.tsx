@@ -18,26 +18,36 @@ export default async function CalendarPage() {
     const userId = session.user.id;
     const role = (session.user as any).role;
 
-    const meetings = await getMeetings({ role, userId });
+    try {
+        const meetings = await getMeetings({ role, userId });
+        const serializedMeetings = JSON.parse(JSON.stringify(meetings));
 
-    return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Lịch hoạt động</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Quản lý và theo dõi các buổi họp sắp tới</p>
+        return (
+            <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-semibold text-foreground">Lịch hoạt động</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Quản lý và theo dõi các buổi họp sắp tới</p>
+                    </div>
+                    {(role === "admin" || role === "mentor") && (
+                        <Button asChild>
+                            <Link href="/meetings/new">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Lên lịch mới
+                            </Link>
+                        </Button>
+                    )}
                 </div>
-                {(role === "admin" || role === "mentor") && (
-                    <Button asChild>
-                        <Link href="/meetings/new">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Lên lịch mới
-                        </Link>
-                    </Button>
-                )}
-            </div>
 
-            <CalendarView meetings={JSON.parse(JSON.stringify(meetings))} />
-        </div>
-    );
+                <CalendarView meetings={serializedMeetings} />
+            </div>
+        );
+    } catch (error) {
+        console.error("Failed to fetch meetings:", error);
+        return (
+            <div className="p-8 text-center">
+                <p className="text-muted-foreground">Không thể tải dữ liệu lịch. Vui lòng thử lại sau.</p>
+            </div>
+        );
+    }
 }

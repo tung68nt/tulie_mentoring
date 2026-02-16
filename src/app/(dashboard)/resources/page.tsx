@@ -15,27 +15,36 @@ export default async function ResourcesPage() {
     const role = (session.user as any).role;
     const categories = ["Tài liệu", "Biểu mẫu", "Video", "Sách điện tử", "Khác"];
 
-    const resources = await getResources();
-    const serializedResources = JSON.parse(JSON.stringify(resources));
+    try {
+        const resources = await getResources();
+        const serializedResources = JSON.parse(JSON.stringify(resources));
 
-    return (
-        <div className="space-y-8 pb-10">
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Thư viện Tài nguyên</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Tổng hợp tài liệu, biểu mẫu và hướng dẫn trong chương trình</p>
+        return (
+            <div className="space-y-8 pb-10">
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-semibold text-foreground">Thư viện Tài nguyên</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Tổng hợp tài liệu, biểu mẫu và hướng dẫn trong chương trình</p>
+                    </div>
+                    {(role === "admin" || role === "mentor") && (
+                        <Button asChild>
+                            <Link href="/resources/new">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Tải lên tài liệu
+                            </Link>
+                        </Button>
+                    )}
                 </div>
-                {(role === "admin" || role === "mentor") && (
-                    <Button asChild>
-                        <Link href="/resources/new">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Tải lên tài liệu
-                        </Link>
-                    </Button>
-                )}
-            </div>
 
-            <ResourceList resources={serializedResources} categories={categories} />
-        </div>
-    );
+                <ResourceList resources={serializedResources} categories={categories} />
+            </div>
+        );
+    } catch (error) {
+        console.error("Failed to fetch resources:", error);
+        return (
+            <div className="p-8 text-center">
+                <p className="text-muted-foreground">Không thể tải tài nguyên. Vui lòng thử lại sau.</p>
+            </div>
+        );
+    }
 }
