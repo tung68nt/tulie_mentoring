@@ -19,8 +19,8 @@ import Link from "next/link";
 
 export default async function AdminUsersPage() {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") {
-        redirect("/");
+    if (!session?.user || (session.user as any).role !== "admin") {
+        redirect("/login");
     }
 
     const users = await getAllUsers();

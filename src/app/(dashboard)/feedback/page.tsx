@@ -8,10 +8,15 @@ import { Star, MessageSquare, Send, Quote } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { FeedbackForm } from "@/components/features/feedback/feedback-form";
 
+import { redirect } from "next/navigation";
+
 export default async function FeedbackPage() {
     const session = await auth();
-    const userId = session?.user?.id;
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const userId = session.user.id;
+    const role = (session.user as any).role;
 
     const [received, given, mentorships] = await Promise.all([
         getReceivedFeedback(userId!),

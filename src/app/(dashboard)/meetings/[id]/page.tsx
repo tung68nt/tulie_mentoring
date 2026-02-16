@@ -17,10 +17,15 @@ interface PageProps {
     params: Promise<{ id: string }>;
 }
 
+import { redirect } from "next/navigation";
+
 export default async function MeetingDetailPage({ params }: PageProps) {
     const session = await auth();
-    const userId = session?.user?.id;
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const userId = session.user.id;
+    const role = (session.user as any).role;
 
     const { id } = await params;
     const meeting = await getMeetingDetail(id);

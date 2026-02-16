@@ -3,10 +3,15 @@ import { getUserProfile } from "@/lib/actions/user";
 import { getMeetings } from "@/lib/actions/meeting";
 import { ProfileEditor } from "@/components/features/profile/profile-editor";
 
+import { redirect } from "next/navigation";
+
 export default async function ProfilePage() {
     const session = await auth();
-    const userId = session?.user?.id;
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const userId = session.user.id;
+    const role = (session.user as any).role;
 
     const user = await getUserProfile(userId!);
     if (!user) return null;

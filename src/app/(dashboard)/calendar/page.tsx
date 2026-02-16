@@ -8,10 +8,15 @@ import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { CalendarView } from "@/components/features/meetings/calendar-view";
 
+import { redirect } from "next/navigation";
+
 export default async function CalendarPage() {
     const session = await auth();
-    const userId = session?.user?.id;
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const userId = session.user.id;
+    const role = (session.user as any).role;
 
     const meetings = await getMeetings({ role, userId });
 

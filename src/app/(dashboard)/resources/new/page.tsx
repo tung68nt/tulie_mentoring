@@ -4,7 +4,10 @@ import { ResourceForm } from "@/components/features/resources/resource-form";
 
 export default async function NewResourcePage() {
     const session = await auth();
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const role = (session.user as any).role;
 
     if (role !== "admin" && role !== "mentor") {
         redirect("/resources");

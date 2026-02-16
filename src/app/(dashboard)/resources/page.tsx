@@ -5,9 +5,14 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { ResourceList } from "@/components/features/resources/resource-list";
 
+import { redirect } from "next/navigation";
+
 export default async function ResourcesPage() {
     const session = await auth();
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const role = (session.user as any).role;
     const categories = ["Tài liệu", "Biểu mẫu", "Video", "Sách điện tử", "Khác"];
 
     const resources = await getResources();

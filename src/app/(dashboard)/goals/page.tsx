@@ -3,10 +3,15 @@ import { getMentorships } from "@/lib/actions/mentorship";
 import { getGoals } from "@/lib/actions/goal";
 import { GoalsList } from "@/components/features/goals/goals-list";
 
+import { redirect } from "next/navigation";
+
 export default async function GoalsPage() {
     const session = await auth();
-    const userId = session?.user?.id;
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const userId = session.user.id;
+    const role = (session.user as any).role;
 
     const mentorships = await getMentorships();
     const relevantMentorships = role === "admin"

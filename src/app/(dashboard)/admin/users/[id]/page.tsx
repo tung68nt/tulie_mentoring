@@ -20,7 +20,9 @@ interface PageProps {
 
 export default async function AdminUserDetailPage({ params }: PageProps) {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") redirect("/");
+    if (!session?.user || (session.user as any).role !== "admin") {
+        redirect("/login");
+    }
 
     const { id } = await params;
     const user = await getUserDetail(id);

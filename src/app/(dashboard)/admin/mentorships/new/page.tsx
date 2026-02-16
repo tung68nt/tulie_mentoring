@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 
 export default async function NewMentorshipPage() {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") {
-        redirect("/");
+    if (!session?.user || (session.user as any).role !== "admin") {
+        redirect("/login");
     }
 
     const [programs, mentors, mentees] = await Promise.all([

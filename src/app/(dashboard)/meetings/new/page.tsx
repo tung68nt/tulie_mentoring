@@ -5,7 +5,10 @@ import { redirect } from "next/navigation";
 
 export default async function NewMeetingPage() {
     const session = await auth();
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const role = (session.user as any).role;
 
     if (role === "mentee") {
         redirect("/calendar");

@@ -7,9 +7,14 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PortfolioForm } from "@/components/features/portfolio/portfolio-form";
 import { CheckCircle2, BookOpen, Target, Brain, Award, ArrowRight } from "lucide-react";
 
+import { redirect } from "next/navigation";
+
 export default async function PortfolioPage() {
     const session = await auth();
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const role = (session.user as any).role;
     const portfolio = await getPortfolio();
 
     const hasInitialAssessment = !!portfolio?.initialCompletedAt;
