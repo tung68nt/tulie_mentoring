@@ -8,10 +8,15 @@ import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+import { redirect } from "next/navigation";
+
 export default async function MenteeDashboard() {
     const session = await auth();
-    const userId = session?.user?.id;
-    const role = (session?.user as any).role;
+    if (!session?.user) {
+        redirect("/login");
+    }
+    const userId = session.user.id;
+    const role = (session.user as any).role;
     const isAdmin = role === "admin";
 
     // Admin sees first active mentorship + all goals; mentee sees only theirs

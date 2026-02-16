@@ -18,8 +18,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { formatRelative, getStatusLabel, getStatusColor } from "@/lib/utils";
 import Link from "next/link";
 
+import { redirect } from "next/navigation";
+
 export default async function AdminDashboard() {
     const session = await auth();
+    if (!session?.user || (session.user as any).role !== "admin") {
+        redirect("/login");
+    }
 
     // Fetch real statistics and recent data
     const [
@@ -57,7 +62,7 @@ export default async function AdminDashboard() {
             },
         }),
         prisma.notification.findMany({
-            where: { userId: session?.user?.id! },
+            where: { userId: session.user.id! },
             orderBy: { createdAt: "desc" },
             take: 5,
         }),

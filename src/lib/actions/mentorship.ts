@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth";
 
 export async function createMentorship(data: MentorshipInput) {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") {
+    if (!session?.user || (session.user as any).role !== "admin") {
         throw new Error("Unauthorized");
     }
 

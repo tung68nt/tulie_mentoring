@@ -95,8 +95,13 @@ export function Sidebar({ role }: SidebarProps) {
     const sections = menuSections[role] || [];
 
     const isActive = (href: string) => {
+        if (pathname === href) return true;
         if (href === "/admin" || href === "/mentor" || href === "/mentee") {
             return pathname === href;
+        }
+        // Special case for admin mentorships vs mentorships/new
+        if (href === "/admin/mentorships" && pathname.startsWith("/admin/mentorships/new")) {
+            return false;
         }
         return pathname.startsWith(href);
     };

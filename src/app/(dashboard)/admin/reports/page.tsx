@@ -11,7 +11,9 @@ import { formatDate } from "@/lib/utils";
 
 export default async function AdminReportsPage() {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") redirect("/");
+    if (!session?.user || (session.user as any).role !== "admin") {
+        redirect("/login");
+    }
 
     // Aggregate real metrics
     const [
