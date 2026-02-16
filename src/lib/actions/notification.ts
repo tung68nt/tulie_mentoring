@@ -6,22 +6,43 @@ import { revalidatePath } from "next/cache";
 
 export async function getNotifications(limit = 20) {
     const session = await auth();
-    if (!session?.user) return [];
+    if (!session?.user?.id) return [];
 
-    return await prisma.notification.findMany({
-        where: { userId: session.user.id! },
-        orderBy: { createdAt: "desc" },
-        take: limit,
-    });
+    // Safety guard: Ensure the ID format is supported by Prisma (CUID/UUID)
+    // If it's a long number-only string (Google ID) that hasn't been synced yet, 
+    // we return empty instead of letting Prisma crash.
+    if (!session.user.id.match(/^[a-z0-9]+$/i)) {
+        return [];
+    }
+
+    try {
+        return await prisma.notification.findMany({
+            where: { userId: session.user.id },
+            orderBy: { createdAt: "desc" },
+            take: limit,
+        });
+    } catch (e) {
+        console.error("Prisma error in getNotifications:", e);
+        return [];
+    }
 }
 
 export async function getUnreadCount() {
     const session = await auth();
-    if (!session?.user) return 0;
+    if (!session?.user?.id) return 0;
 
-    return await prisma.notification.count({
-        where: { userId: session.user.id!, isRead: false },
-    });
+    if (!session.user.id.match(/^[a-z0-9]+$/i)) {
+        return 0;
+    }
+
+    try {
+        return await prisma.notification.count({
+            where: { userId: session.user.id, isRead: false },
+        });
+    } catch (e) {
+        console.error("Prisma error in getUnreadCount:", e);
+        return 0;
+    }
 }
 
 export async function markAsRead(id: string) {

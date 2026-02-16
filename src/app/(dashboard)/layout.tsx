@@ -24,10 +24,20 @@ export default async function DashboardLayout({
         avatar: session.user.image,
     };
 
-    const [notifications, unreadCount] = await Promise.all([
-        getNotifications(15),
-        getUnreadCount(),
-    ]);
+    let notifications: any[] = [];
+    let unreadCount = 0;
+
+    try {
+        const [notifsResult, unreadResult] = await Promise.all([
+            getNotifications(15),
+            getUnreadCount(),
+        ]);
+        notifications = notifsResult;
+        unreadCount = unreadResult;
+    } catch (error) {
+        console.error("Failed to fetch layout data:", error);
+        // Fallback to empty data to prevent page crash
+    }
 
     return (
         <div className="min-h-screen bg-card">
@@ -38,7 +48,7 @@ export default async function DashboardLayout({
                     userName={`${user.firstName} ${user.lastName || ""}`}
                     userRole={user.role}
                     avatar={user.avatar}
-                    notifications={JSON.parse(JSON.stringify(notifications))}
+                    notifications={notifications}
                     unreadCount={unreadCount}
                 />
 

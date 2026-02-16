@@ -46,13 +46,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         ...authConfig.callbacks,
         async signIn({ user, account, profile }) {
             if (account?.provider === "google" && profile?.email) {
-                // Check if user exists
                 const existingUser = await prisma.user.findUnique({
                     where: { email: profile.email },
                 });
 
                 if (existingUser) {
-                    // Link Google account to existing user
                     await prisma.account.upsert({
                         where: {
                             provider_providerAccountId: {
@@ -79,13 +77,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         },
                     });
 
-                    // Inject custom fields into the user object for JWT
                     (user as any).id = existingUser.id;
                     (user as any).role = existingUser.role;
                     (user as any).firstName = existingUser.firstName;
                     (user as any).lastName = existingUser.lastName;
                 } else {
-                    // Create new user from Google profile
                     const firstName = (profile as any).given_name || profile.name?.split(" ")[0] || "";
                     const lastName = (profile as any).family_name || profile.name?.split(" ").slice(1).join(" ") || "";
 
@@ -114,7 +110,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         },
                     });
 
-                    // Create mentee profile
                     await prisma.menteeProfile.create({
                         data: { userId: newUser.id },
                     });
@@ -126,6 +121,43 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 }
             }
             return true;
+        },
+        async jwt({ token, user, trigger, session }) {
+            if (user) {
+                // If it's a sign-in, we use the user object we populated in signIn()
+                token.id = user.id;
+                token.role = (user as any).role;
+                token.firstName = (user as any).firstName;
+                token.lastName = (user as any).lastName;
+            } else if (token.email && !token.id) {
+                // Background check if ID is missing for some reason
+                const dbUser = await prisma.user.findUnique({
+                    where: { email: token.email },
+                    select: { id: true, role: true, firstName: true, lastName: true }
+                });
+                if (dbUser) {
+                    token.id = dbUser.id;
+                    token.role = dbUser.role;
+                    token.firstName = dbUser.firstName;
+                    token.lastName = dbUser.lastName;
+                }
+            }
+
+            if (trigger === "update" && session) {
+                token.role = session.role || token.role;
+                token.firstName = session.firstName || token.firstName;
+                token.lastName = session.lastName || token.lastName;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                session.user.id = token.id as string;
+                (session.user as any).role = token.role;
+                (session.user as any).firstName = token.firstName;
+                (session.user as any).lastName = token.lastName;
+            }
+            return session;
         },
     },
 });
