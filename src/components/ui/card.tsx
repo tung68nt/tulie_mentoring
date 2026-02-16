@@ -83,6 +83,45 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+function StatCard({
+  title,
+  value,
+  subtitle,
+  icon,
+  trend,
+  className,
+}: {
+  title: string
+  value: string | number
+  subtitle?: string
+  icon?: React.ReactNode
+  trend?: { value: number; label: string }
+  className?: string
+}) {
+  return (
+    <Card className={cn("p-5", className)}>
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground">{title}</p>
+          <p className="text-2xl font-bold text-foreground">{value}</p>
+          {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+        </div>
+        {icon && (
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0">
+            {icon}
+          </div>
+        )}
+      </div>
+      {trend && (
+        <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+          <span className="text-primary font-medium">+{trend.value}%</span>
+          <span>{trend.label}</span>
+        </div>
+      )}
+    </Card>
+  )
+}
+
 export {
   Card,
   CardHeader,
@@ -91,4 +130,5 @@ export {
   CardAction,
   CardDescription,
   CardContent,
+  StatCard,
 }
