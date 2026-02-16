@@ -59,9 +59,9 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
 
     const getIcon = (type: string) => {
         switch (type) {
-            case "link": return <LinkIcon className="w-5 h-5 text-[#666]" />;
-            case "document": return <FileText className="w-5 h-5 text-[#666]" />;
-            default: return <File className="w-5 h-5 text-[#666]" />;
+            case "link": return <LinkIcon className="w-5 h-5 text-muted-foreground" />;
+            case "document": return <FileText className="w-5 h-5 text-muted-foreground" />;
+            default: return <File className="w-5 h-5 text-muted-foreground" />;
         }
     };
 
@@ -71,18 +71,18 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
         <>
             {/* Search */}
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Tìm kiếm tài liệu theo tên, từ khóa..."
-                    className="w-full pl-10 pr-10 h-10 rounded-[8px] border border-[#eaeaea] bg-white text-sm text-black placeholder:text-[#999] focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 transition-all hover:border-[#999]"
+                    className="w-full pl-10 pr-10 h-10 rounded-[8px] border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 transition-all hover:border-foreground/30"
                 />
                 {search && (
                     <button
                         onClick={() => setSearch("")}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] hover:text-black transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -93,19 +93,19 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                 {/* Sidebar Categories */}
                 <div className="space-y-6">
                     <Card className="p-4">
-                        <h3 className="text-[11px] font-semibold text-[#999] mb-4 px-2">Danh mục</h3>
+                        <h3 className="text-[11px] font-semibold text-muted-foreground mb-4 px-2">Danh mục</h3>
                         <div className="space-y-1">
                             <button
                                 onClick={() => setActiveCategory(null)}
                                 className={cn(
                                     "w-full text-left px-3 py-2 rounded-[6px] text-sm font-medium flex items-center justify-between transition-colors",
-                                    !activeCategory ? "bg-black text-white" : "text-[#666] hover:bg-[#fafafa]"
+                                    !activeCategory ? "bg-black text-white" : "text-muted-foreground hover:bg-muted"
                                 )}
                             >
                                 Tất cả tài liệu
                                 <span className={cn(
                                     "text-[10px] px-1.5 py-0.5 rounded-[4px]",
-                                    !activeCategory ? "bg-white/20" : "bg-[#eaeaea] text-[#666]"
+                                    !activeCategory ? "bg-card/20" : "bg-border text-muted-foreground"
                                 )}>
                                     {resources.length}
                                 </span>
@@ -116,14 +116,14 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                                     onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
                                     className={cn(
                                         "w-full text-left px-3 py-2 rounded-[6px] text-sm font-medium flex items-center justify-between transition-colors",
-                                        activeCategory === cat ? "bg-black text-white" : "text-[#666] hover:bg-[#fafafa]"
+                                        activeCategory === cat ? "bg-black text-white" : "text-muted-foreground hover:bg-muted"
                                     )}
                                 >
                                     {cat}
                                     {getCategoryCount(cat) > 0 && (
                                         <span className={cn(
                                             "text-[10px] px-1.5 py-0.5 rounded-[4px]",
-                                            activeCategory === cat ? "bg-white/20" : "bg-[#eaeaea] text-[#666]"
+                                            activeCategory === cat ? "bg-card/20" : "bg-border text-muted-foreground"
                                         )}>
                                             {getCategoryCount(cat)}
                                         </span>
@@ -137,7 +137,7 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                         <div className="relative z-10">
                             <h4 className="text-sm font-semibold mb-2">Bạn có tài liệu hay?</h4>
                             <p className="text-xs text-white/60 leading-relaxed mb-4">Chia sẻ kiến thức của bạn với cộng đồng Mentoring ngay hôm nay.</p>
-                            <Button size="sm" variant="outline" className="text-white border-white/30 hover:bg-white/10" asChild>
+                            <Button size="sm" variant="outline" className="text-white border-white/30 hover:bg-card/10" asChild>
                                 <Link href="/resources/new">Chia sẻ ngay</Link>
                             </Button>
                         </div>
@@ -149,13 +149,13 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                 <div className="lg:col-span-3">
                     {filtered.length === 0 ? (
                         <Card className="py-20 flex flex-col items-center justify-center text-center">
-                            <div className="w-16 h-16 bg-[#fafafa] rounded-full flex items-center justify-center text-[#999] mb-6 border border-[#eaeaea]">
+                            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-6 border border-border">
                                 <FileText className="w-8 h-8" />
                             </div>
-                            <h3 className="text-lg font-semibold text-black">
+                            <h3 className="text-lg font-semibold text-foreground">
                                 {search || activeCategory ? "Không tìm thấy tài liệu" : "Chưa có tài liệu nào"}
                             </h3>
-                            <p className="text-sm text-[#666] max-w-xs mt-1">
+                            <p className="text-sm text-muted-foreground max-w-xs mt-1">
                                 {search || activeCategory
                                     ? "Hãy thử thay đổi từ khóa hoặc bộ lọc khác."
                                     : "Hãy là người đầu tiên đóng góp tài liệu cho thư viện."}
@@ -173,25 +173,25 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                         </Card>
                     ) : (
                         <div className="space-y-2">
-                            <p className="text-[11px] text-[#999] font-medium px-1">
+                            <p className="text-[11px] text-muted-foreground font-medium px-1">
                                 {filtered.length} tài liệu{activeCategory ? ` trong "${activeCategory}"` : ""}
                                 {search ? ` khớp "${search}"` : ""}
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {filtered.map(res => (
                                     <Card key={res.id} hover className="p-5 flex items-start gap-4">
-                                        <div className="w-12 h-12 rounded-[8px] flex items-center justify-center shrink-0 bg-[#fafafa] border border-[#eaeaea]">
+                                        <div className="w-12 h-12 rounded-[8px] flex items-center justify-center shrink-0 bg-muted border border-border">
                                             {getIcon(res.type)}
                                         </div>
                                         <div className="flex-1 min-w-0 space-y-1">
                                             <div className="flex items-start justify-between">
-                                                <h4 className="text-sm font-semibold text-black truncate pr-2">{res.title}</h4>
+                                                <h4 className="text-sm font-semibold text-foreground truncate pr-2">{res.title}</h4>
                                             </div>
-                                            <p className="text-xs text-[#666] line-clamp-1">{res.description || "Không có mô tả."}</p>
+                                            <p className="text-xs text-muted-foreground line-clamp-1">{res.description || "Không có mô tả."}</p>
                                             <div className="flex items-center gap-3 pt-2">
-                                                <span className="text-[10px] font-medium text-[#999]">{res.category}</span>
-                                                <span className="w-1 h-1 bg-[#eaeaea] rounded-full" />
-                                                <span className="text-[10px] text-[#999]">{formatDate(res.createdAt)}</span>
+                                                <span className="text-[10px] font-medium text-muted-foreground">{res.category}</span>
+                                                <span className="w-1 h-1 bg-border rounded-full" />
+                                                <span className="text-[10px] text-muted-foreground">{formatDate(res.createdAt)}</span>
                                             </div>
                                             <div className="flex items-center gap-2 pt-3">
                                                 {res.type === "link" ? (

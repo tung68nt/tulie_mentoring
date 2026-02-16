@@ -1,74 +1,94 @@
-import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+import * as React from "react"
 
-interface CardProps {
-    children: ReactNode;
-    className?: string;
-    hover?: boolean;
-    padding?: "none" | "sm" | "md" | "lg";
+import { cn } from "@/lib/utils"
+
+function Card({
+  className,
+  size = "default",
+  ...props
+}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+  return (
+    <div
+      data-slot="card"
+      data-size={size}
+      className={cn("ring-foreground/10 bg-card text-card-foreground gap-4 overflow-hidden rounded-xl py-4 text-sm ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl group/card flex flex-col", className)}
+      {...props}
+    />
+  )
 }
 
-export function Card({ children, className, hover = false, padding = "md" }: CardProps) {
-    const paddings = {
-        none: "",
-        sm: "p-4",
-        md: "p-6",
-        lg: "p-8",
-    };
-
-    return (
-        <div
-            className={cn(
-                "bg-white rounded-[12px] border border-[#eaeaea] transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_1px_2px_rgba(0,0,0,0.04)]",
-                hover && "hover:border-black/10 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.1)] cursor-pointer",
-                paddings[padding],
-                className
-            )}
-        >
-            {children}
-        </div>
-    );
+function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-header"
+      className={cn(
+        "gap-1 rounded-t-xl px-4 group-data-[size=sm]/card:px-3 [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3 group/card-header @container/card-header grid auto-rows-min items-start has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-export function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
-    return <div className={cn("flex flex-col space-y-2 mb-6", className)}>{children}</div>;
+function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-title"
+      className={cn("text-base leading-snug font-medium group-data-[size=sm]/card:text-sm", className)}
+      {...props}
+    />
+  )
 }
 
-export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
-    return <h3 className={cn("text-[17px] font-semibold leading-none tracking-tight", className)}>{children}</h3>;
+function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-description"
+      className={cn("text-muted-foreground text-sm", className)}
+      {...props}
+    />
+  )
 }
 
-export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
-    return <p className={cn("text-sm text-[#888] font-medium", className)}>{children}</p>;
+function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-export function CardContent({ children, className }: { children: ReactNode; className?: string }) {
-    return <div className={cn("", className)}>{children}</div>;
+function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn("px-4 group-data-[size=sm]/card:px-3", className)}
+      {...props}
+    />
+  )
 }
 
-interface StatCardProps {
-    title: string;
-    value: string | number;
-    subtitle?: string;
-    icon?: ReactNode;
-    trend?: { value: number; label: string };
+function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn("bg-muted/50 rounded-b-xl border-t p-4 group-data-[size=sm]/card:p-3 flex items-center", className)}
+      {...props}
+    />
+  )
 }
 
-export function StatCard({ title, value, subtitle, icon, trend }: StatCardProps) {
-    return (
-        <Card className="relative overflow-hidden group border-none bg-[#fafafa] hover:bg-white" hover padding="sm">
-            <div className="flex items-start justify-between p-2">
-                <div className="space-y-2">
-                    <p className="text-[11px] font-medium text-[#999]">{title}</p>
-                    <p className="text-3xl font-bold text-black leading-none">{value}</p>
-                    {subtitle && <p className="text-[11px] text-[#999] font-medium">{subtitle}</p>}
-                </div>
-                {icon && (
-                    <div className="p-2.5 rounded-xl bg-white text-[#999] group-hover:text-black shadow-sm group-hover:shadow-md transition-all border border-[#eee]">
-                        {icon}
-                    </div>
-                )}
-            </div>
-        </Card>
-    );
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
 }

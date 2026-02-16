@@ -109,10 +109,10 @@ export default async function AdminReportsPage() {
         <div className="space-y-8 pb-10 animate-fade-in">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-black">Báo cáo & Thống kê</h1>
-                    <p className="text-sm text-[#666] mt-1">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
+                    <h1 className="text-2xl font-semibold text-foreground">Báo cáo & Thống kê</h1>
+                    <p className="text-sm text-muted-foreground mt-1">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-black bg-[#fafafa] border border-[#eee] px-3 py-1.5 rounded-full shadow-sm">
+                <div className="flex items-center gap-2 text-xs font-bold text-foreground bg-muted border border-border px-3 py-1.5 rounded-full shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
                     Dữ liệu thời gian thực
                 </div>
@@ -148,7 +148,7 @@ export default async function AdminReportsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Program Performance */}
-                <Card className="lg:col-span-7 bg-white shadow-xl shadow-black/[0.02]" padding="lg">
+                <Card className="lg:col-span-7 bg-card shadow-xl shadow-black/[0.02]" padding="lg">
                     <CardHeader className="mb-6">
                         <CardTitle className="text-xl flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-black text-white shadow-lg shadow-black/20">
@@ -159,7 +159,7 @@ export default async function AdminReportsPage() {
                     </CardHeader>
                     {programPerformance.length === 0 ? (
                         <EmptyState
-                            icon={<BarChart3 className="w-8 h-8 text-[#ccc]" />}
+                            icon={<BarChart3 className="w-8 h-8 text-muted-foreground" />}
                             title="Chưa có dữ liệu chương trình"
                             className="py-16"
                         />
@@ -170,18 +170,18 @@ export default async function AdminReportsPage() {
                                     <div className="flex justify-between items-end">
                                         <div className="space-y-1.5">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-lg font-bold text-black">{cycle.name}</span>
+                                                <span className="text-lg font-bold text-foreground">{cycle.name}</span>
                                                 <Badge variant={cycle.status === 'active' ? 'solid' : 'default'} size="sm">
                                                     {cycle.status === 'active' ? 'Đang chạy' : 'Hoàn thành'}
                                                 </Badge>
                                             </div>
-                                            <p className="text-xs font-medium text-[#aaa]">
+                                            <p className="text-xs font-medium text-muted-foreground">
                                                 {cycle.mentorshipCount} nhóm đang hoạt động tích cực
                                             </p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-lg font-bold text-black leading-none mb-1">{cycle.completionRate}%</p>
-                                            <p className="text-[10px] font-medium text-[#bbb]">
+                                            <p className="text-lg font-bold text-foreground leading-none mb-1">{cycle.completionRate}%</p>
+                                            <p className="text-[10px] font-medium text-muted-foreground">
                                                 {cycle.meetingsCompleted}/{cycle.meetingsTotal} buổi học
                                             </p>
                                         </div>
@@ -194,10 +194,10 @@ export default async function AdminReportsPage() {
                 </Card>
 
                 {/* Top Mentees */}
-                <Card className="lg:col-span-5 bg-[#fafafa] border-none shadow-inner" padding="lg">
+                <Card className="lg:col-span-5 bg-muted border-none shadow-inner" padding="lg">
                     <CardHeader className="mb-6">
                         <CardTitle className="text-xl flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-white text-black shadow-md border border-[#eee]">
+                            <div className="p-2 rounded-lg bg-card text-foreground shadow-md border border-border">
                                 <Award className="w-5 h-5" />
                             </div>
                             Mentees tiêu biểu
@@ -205,7 +205,7 @@ export default async function AdminReportsPage() {
                     </CardHeader>
                     {menteesWithProgress.length === 0 ? (
                         <EmptyState
-                            icon={<Award className="w-8 h-8 text-[#ccc]" />}
+                            icon={<Award className="w-8 h-8 text-muted-foreground" />}
                             title="Chưa có đủ dữ liệu"
                             description="Khi Mentees bắt đầu đạt được mục tiêu, bảng xếp hạng sẽ được tạo tự động"
                             className="py-16"
@@ -213,7 +213,7 @@ export default async function AdminReportsPage() {
                     ) : (
                         <div className="space-y-4">
                             {menteesWithProgress.map((mentee, idx) => (
-                                <div key={mentee.id} className="flex items-center justify-between p-5 rounded-[16px] bg-white shadow-sm border border-[#eee] hover:border-black/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-0.5 transition-all group">
+                                <div key={mentee.id} className="flex items-center justify-between p-5 rounded-[16px] bg-card shadow-sm border border-border hover:border-foreground/20/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-0.5 transition-all group">
                                     <div className="flex items-center gap-4">
                                         <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shadow-lg shadow-black/10">
                                             {idx + 1}
@@ -223,29 +223,29 @@ export default async function AdminReportsPage() {
                                             lastName={mentee.lastName}
                                             src={mentee.avatar}
                                             size="md"
-                                            className="border-2 border-[#fafafa]"
+                                            className="border-2 border-muted"
                                         />
                                         <div>
-                                            <p className="text-[15px] font-semibold text-black leading-none mb-1.5">{mentee.firstName} {mentee.lastName}</p>
+                                            <p className="text-[15px] font-semibold text-foreground leading-none mb-1.5">{mentee.firstName} {mentee.lastName}</p>
                                             <div className="flex items-center gap-2">
-                                                <Badge variant="default" className="bg-[#f0f0f0] border-none text-[9px] px-1.5 py-0">
+                                                <Badge variant="default" className="bg-muted border-none text-[9px] px-1.5 py-0">
                                                     Top Performer
                                                 </Badge>
-                                                <p className="text-[10px] text-[#aaa] font-medium">{mentee.goalCompleted}/{mentee.goalTotal} goals</p>
+                                                <p className="text-[10px] text-muted-foreground font-medium">{mentee.goalCompleted}/{mentee.goalTotal} goals</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <div className="text-right">
-                                            <p className="text-lg font-bold text-black leading-none">{mentee.rate}%</p>
+                                            <p className="text-lg font-bold text-foreground leading-none">{mentee.rate}%</p>
                                         </div>
                                         {mentee.rate >= 80 ? (
                                             <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center">
                                                 <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                                             </div>
                                         ) : (
-                                            <div className="w-6 h-6 rounded-full bg-[#eee] flex items-center justify-center">
-                                                <TrendingUp className="w-3.5 h-3.5 text-[#ccc]" />
+                                            <div className="w-6 h-6 rounded-full bg-border flex items-center justify-center">
+                                                <TrendingUp className="w-3.5 h-3.5 text-muted-foreground" />
                                             </div>
                                         )}
                                     </div>

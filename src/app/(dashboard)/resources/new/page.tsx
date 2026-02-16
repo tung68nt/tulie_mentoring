@@ -13,8 +13,8 @@ export default async function NewResourcePage() {
     return (
         <div className="max-w-3xl mx-auto space-y-8">
             <div className="space-y-2">
-                <h1 className="text-2xl font-semibold text-black">Thêm tài liệu mới</h1>
-                <p className="text-[#666] text-sm">Chia sẻ tài liệu với cộng đồng Mentoring</p>
+                <h1 className="text-2xl font-semibold text-foreground">Thêm tài liệu mới</h1>
+                <p className="text-muted-foreground text-sm">Chia sẻ tài liệu với cộng đồng Mentoring</p>
             </div>
 
             <ResourceForm />

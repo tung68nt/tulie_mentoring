@@ -41,9 +41,9 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <Badge status={mentorship.status} />
-                        <span className="text-sm text-[#666] font-medium">{mentorship.programCycle.name}</span>
+                        <span className="text-sm text-muted-foreground font-medium">{mentorship.programCycle.name}</span>
                     </div>
-                    <h1 className="text-2xl font-semibold text-black">
+                    <h1 className="text-2xl font-semibold text-foreground">
                         {mentorship.type === "one_on_one" ? "Cặp Mentoring 1:1" : "Nhóm Mentoring"}
                     </h1>
                 </div>
@@ -83,17 +83,17 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                     />
                                     <div className="space-y-1 flex-1">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-lg font-semibold text-black">
+                                            <h3 className="text-lg font-semibold text-foreground">
                                                 Mentor: {mentorship.mentor.firstName} {mentorship.mentor.lastName}
                                             </h3>
                                         </div>
-                                        <p className="text-sm text-[#666] line-clamp-2">{mentorship.mentor.bio || "No bio available."}</p>
+                                        <p className="text-sm text-muted-foreground line-clamp-2">{mentorship.mentor.bio || "No bio available."}</p>
                                         <div className="flex flex-wrap gap-4 mt-3">
-                                            <div className="flex items-center gap-1.5 text-xs text-[#666]">
+                                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                                 <Briefcase className="w-3.5 h-3.5" />
                                                 <span>{mentorship.mentor.mentorProfile?.company || "Professional"}</span>
                                             </div>
-                                            <div className="flex items-center gap-1.5 text-xs text-[#666]">
+                                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                                 <GraduationCap className="w-3.5 h-3.5" />
                                                 <span>
                                                     {(() => {
@@ -115,7 +115,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
 
                             {/* Mentees Section */}
                             <div className="space-y-4">
-                                <h3 className="text-lg font-semibold text-black">Danh sách Mentees</h3>
+                                <h3 className="text-lg font-semibold text-foreground">Danh sách Mentees</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {mentorship.mentees.map((mt: any) => (
                                         <Card key={mt.id} className="p-4" hover>
@@ -127,14 +127,14 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                                     size="md"
                                                 />
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-semibold text-black truncate">
+                                                    <p className="text-sm font-semibold text-foreground truncate">
                                                         {mt.mentee.firstName} {mt.mentee.lastName}
                                                     </p>
-                                                    <p className="text-xs text-[#666] truncate">
+                                                    <p className="text-xs text-muted-foreground truncate">
                                                         {mt.mentee.menteeProfile?.major || "Student"} - Năm {mt.mentee.menteeProfile?.year || "1"}
                                                     </p>
                                                 </div>
-                                                <ChevronRight className="w-4 h-4 text-[#ccc]" />
+                                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
                                             </div>
                                         </Card>
                                     ))}
@@ -145,22 +145,22 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
 
                     {activeTab === "meetings" && (
                         <Card>
-                            <h3 className="text-lg font-semibold text-black mb-6">Lịch sử cuộc họp gần đây</h3>
+                            <h3 className="text-lg font-semibold text-foreground mb-6">Lịch sử cuộc họp gần đây</h3>
                             <div className="space-y-4">
                                 {mentorship.meetings.length === 0 ? (
-                                    <p className="text-sm text-[#666] italic text-center py-8">Chưa có cuộc họp nào được ghi lại.</p>
+                                    <p className="text-sm text-muted-foreground text-center py-8">Chưa có cuộc họp nào được ghi lại.</p>
                                 ) : (
                                     mentorship.meetings.map((meeting: any) => (
-                                        <div key={meeting.id} className="flex items-center justify-between p-4 rounded-[8px] border border-[#eaeaea] hover:bg-[#fafafa] transition-colors">
+                                        <div key={meeting.id} className="flex items-center justify-between p-4 rounded-[8px] border border-border hover:bg-muted transition-colors">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-[6px] bg-black flex flex-col items-center justify-center text-white">
                                                     <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                                     <span className="text-sm font-bold leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-semibold text-black">{meeting.title}</p>
+                                                    <p className="text-sm font-semibold text-foreground">{meeting.title}</p>
                                                     <div className="flex items-center gap-3 mt-0.5">
-                                                        <span className="text-xs text-[#666] flex items-center gap-1">
+                                                        <span className="text-xs text-muted-foreground flex items-center gap-1">
                                                             <Clock className="w-3 h-3" />
                                                             {formatDate(meeting.scheduledAt, "HH:mm")}
                                                         </span>
@@ -181,7 +181,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                     {activeTab === "goals" && (
                         <Card>
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-semibold text-black">Mục tiêu đào tạo</h3>
+                                <h3 className="text-lg font-semibold text-foreground">Mục tiêu đào tạo</h3>
                                 <Button variant="outline" size="sm" asChild>
                                     <Link href="/goals">
                                         <Plus className="w-3 h-3 mr-1.5" />
@@ -191,13 +191,13 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                             </div>
                             <div className="space-y-6">
                                 {mentorship.goals.length === 0 ? (
-                                    <p className="text-sm text-[#666] italic text-center py-8">Chưa có mục tiêu nào được thiết lập.</p>
+                                    <p className="text-sm text-muted-foreground text-center py-8">Chưa có mục tiêu nào được thiết lập.</p>
                                 ) : (
                                     mentorship.goals.map((goal: any) => (
                                         <div key={goal.id} className="space-y-2">
                                             <div className="flex items-center justify-between">
-                                                <p className="text-sm font-semibold text-black">{goal.title}</p>
-                                                <span className="text-xs font-medium text-[#666]">{goal.currentValue}/{goal.targetValue || 100}%</span>
+                                                <p className="text-sm font-semibold text-foreground">{goal.title}</p>
+                                                <span className="text-xs font-medium text-muted-foreground">{goal.currentValue}/{goal.targetValue || 100}%</span>
                                             </div>
                                             <Progress value={goal.currentValue} max={goal.targetValue || 100} size="sm" />
                                         </div>
@@ -211,19 +211,19 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                 {/* Sidebar Info */}
                 <div className="space-y-6">
                     <Card>
-                        <h4 className="text-sm font-semibold text-black mb-4">Thông tin chung</h4>
+                        <h4 className="text-sm font-semibold text-foreground mb-4">Thông tin chung</h4>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-[#666]">Ngày bắt đầu</span>
-                                <span className="font-medium text-black">{formatDate(mentorship.startDate)}</span>
+                                <span className="text-muted-foreground">Ngày bắt đầu</span>
+                                <span className="font-medium text-foreground">{formatDate(mentorship.startDate)}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-[#666]">Ngày kết thúc</span>
-                                <span className="font-medium text-black">{formatDate(mentorship.endDate)}</span>
+                                <span className="text-muted-foreground">Ngày kết thúc</span>
+                                <span className="font-medium text-foreground">{formatDate(mentorship.endDate)}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-[#666]">Thời gian còn lại</span>
-                                <span className="font-medium text-[#0070f3]">6 tháng</span>
+                                <span className="text-muted-foreground">Thời gian còn lại</span>
+                                <span className="font-medium text-primary">6 tháng</span>
                             </div>
                         </div>
                     </Card>

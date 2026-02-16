@@ -50,9 +50,9 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
 
     const getPriorityColor = (p: string) => {
         switch (p) {
-            case "high": return "text-[#ee0000] bg-[#ee0000]/5";
-            case "medium": return "text-[#f5a623] bg-[#f5a623]/5";
-            default: return "text-[#0070f3] bg-[#0070f3]/5";
+            case "high": return "text-destructive bg-destructive/5";
+            case "medium": return "text-amber-500 bg-amber-500/5";
+            default: return "text-primary bg-primary/5";
         }
     };
 
@@ -65,18 +65,18 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                             <span className={`text-[10px] font-medium px-2 py-0.5 rounded-[4px] ${getPriorityColor(goal.priority)}`}>
                                 {goal.priority}
                             </span>
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-[4px] bg-[#fafafa] text-[#666] border border-[#eaeaea]">
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-[4px] bg-muted text-muted-foreground border border-border">
                                 {goal.category}
                             </span>
                         </div>
-                        <h4 className="text-base font-semibold text-black leading-tight">{goal.title}</h4>
+                        <h4 className="text-base font-semibold text-foreground leading-tight">{goal.title}</h4>
                     </div>
                     {(userRole === "admin" || goal.creatorId === goal.creatorId) && (
                         <div className="flex items-center gap-1">
                             <Button variant="ghost" size="sm" onClick={() => setShowHistory(!showHistory)}>
                                 <History className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={handleDelete} className="text-[#ee0000] hover:text-[#ee0000] hover:bg-[#ee0000]/5">
+                            <Button variant="ghost" size="sm" onClick={handleDelete} className="text-destructive hover:text-destructive hover:bg-destructive/5">
                                 <Trash2 className="w-4 h-4" />
                             </Button>
                         </div>
@@ -85,18 +85,18 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
 
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-[#999]">Tiến độ</span>
-                        <span className="text-black">{goal.currentValue}%</span>
+                        <span className="text-muted-foreground">Tiến độ</span>
+                        <span className="text-foreground">{goal.currentValue}%</span>
                     </div>
                     <Progress value={goal.currentValue} size="sm" color={goal.currentValue === 100 ? "success" : "default"} />
                 </div>
 
                 {goal.description && (
-                    <p className="text-sm text-[#666] line-clamp-2 leading-relaxed">{goal.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{goal.description}</p>
                 )}
 
                 {goal.dueDate && (
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-[#999]">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                         <AlertCircle className="w-3.5 h-3.5" />
                         <span>Hạn chót: {formatDate(goal.dueDate)}</span>
                     </div>
@@ -113,7 +113,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                         {goal.status === "completed" ? "Đã hoàn thành" : "Cập nhật tiến độ"}
                     </Button>
                 ) : (
-                    <div className="bg-[#fafafa] p-4 rounded-[8px] space-y-3 border border-[#eaeaea] animate-in fade-in slide-in-from-top-2">
+                    <div className="bg-muted p-4 rounded-[8px] space-y-3 border border-border animate-in fade-in slide-in-from-top-2">
                         <div className="grid grid-cols-2 gap-3">
                             <Input
                                 label="Tiến độ mới (%)"
@@ -129,7 +129,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                             </div>
                         </div>
                         <textarea
-                            className="w-full p-2 text-xs border border-[#eaeaea] rounded-[6px] focus:outline-none focus:ring-4 focus:ring-black/5 focus:border-black text-black"
+                            className="w-full p-2 text-xs border border-border rounded-[6px] focus:outline-none focus:ring-4 focus:ring-foreground/5 focus:border-foreground text-foreground"
                             placeholder="Ghi chú tiến độ (tùy chọn)..."
                             value={note}
                             onChange={(e) => setNote(e.target.value)}
@@ -139,17 +139,17 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                 )}
 
                 {showHistory && goal.progressNotes.length > 0 && (
-                    <div className="border-t border-[#eaeaea] pt-4 mt-2 space-y-3 animate-in fade-in">
-                        <h5 className="text-[10px] font-medium text-[#999]">Lịch sử cập nhật</h5>
+                    <div className="border-t border-border pt-4 mt-2 space-y-3 animate-in fade-in">
+                        <h5 className="text-[10px] font-medium text-muted-foreground">Lịch sử cập nhật</h5>
                         {goal.progressNotes.map((note: any) => (
                             <div key={note.id} className="flex gap-3">
-                                <div className="w-1 h-auto bg-[#eaeaea] rounded-full shrink-0" />
+                                <div className="w-1 h-auto bg-border rounded-full shrink-0" />
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-semibold text-black">{note.value}%</span>
-                                        <span className="text-[10px] text-[#999]">{formatDate(note.createdAt, "dd/MM HH:mm")}</span>
+                                        <span className="text-[10px] font-semibold text-foreground">{note.value}%</span>
+                                        <span className="text-[10px] text-muted-foreground">{formatDate(note.createdAt, "dd/MM HH:mm")}</span>
                                     </div>
-                                    <p className="text-xs text-[#666] leading-tight">{note.note}</p>
+                                    <p className="text-xs text-muted-foreground leading-tight">{note.note}</p>
                                 </div>
                             </div>
                         ))}

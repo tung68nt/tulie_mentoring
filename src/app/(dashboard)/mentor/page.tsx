@@ -47,14 +47,14 @@ export default async function MentorDashboard() {
     return (
         <div className="space-y-8 pb-10 animate-fade-in">
             {isAdmin && (
-                <div className="flex items-center gap-2 px-3 py-2 bg-[#fafafa] border border-[#eaeaea] rounded-lg text-xs text-[#666]">
-                    <span className="w-2 h-2 rounded-full bg-[#0070f3]" />
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg text-xs text-muted-foreground">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
                     Bạn đang xem ở chế độ Admin Preview — dữ liệu hiển thị toàn bộ hệ thống
                 </div>
             )}
             <div className="space-y-1">
-                <h1 className="text-2xl font-semibold text-black">Bảng điều khiển Mentor</h1>
-                <p className="text-sm text-[#666] mt-1">{isAdmin ? "Xem trước giao diện Mentor (tổng hợp dữ liệu toàn hệ thống)" : `Chào buổi sáng, ${session?.user?.name || "Mentor"}.`}</p>
+                <h1 className="text-2xl font-semibold text-foreground">Bảng điều khiển Mentor</h1>
+                <p className="text-sm text-muted-foreground mt-1">{isAdmin ? "Xem trước giao diện Mentor (tổng hợp dữ liệu toàn hệ thống)" : `Chào buổi sáng, ${session?.user?.name || "Mentor"}.`}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -66,7 +66,7 @@ export default async function MentorDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold tracking-tight text-black">Danh sách Mentees</h3>
+                        <h3 className="text-lg font-semibold tracking-tight text-foreground">Danh sách Mentees</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {mentorships.flatMap(m => m.mentees).map((mt) => (
@@ -79,10 +79,10 @@ export default async function MentorDashboard() {
                                         size="md"
                                     />
                                     <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-black truncate leading-tight mb-1">
+                                        <p className="text-sm font-semibold text-foreground truncate leading-tight mb-1">
                                             {mt.mentee.firstName} {mt.mentee.lastName}
                                         </p>
-                                        <p className="text-[11px] font-medium text-[#999]">{mt.status}</p>
+                                        <p className="text-[11px] font-medium text-muted-foreground">{mt.status}</p>
                                     </div>
                                 </div>
                                 <Button variant="outline" size="sm" asChild className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -94,20 +94,20 @@ export default async function MentorDashboard() {
                 </div>
 
                 <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-black">Lịch họp sắp tới</h3>
+                    <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
                         {upcomingMeetings.length === 0 ? (
-                            <p className="text-sm text-[#999] italic">Chưa có lịch họp nào.</p>
+                            <p className="text-sm text-muted-foreground">Chưa có lịch họp nào.</p>
                         ) : (
                             upcomingMeetings.map((meeting) => (
-                                <div key={meeting.id} className="flex gap-5 p-5 rounded-[8px] border border-[#eaeaea] bg-white group hover:border-black transition-all">
+                                <div key={meeting.id} className="flex gap-5 p-5 rounded-[8px] border border-border bg-card group hover:border-foreground/20 transition-all">
                                     <div className="w-12 h-12 rounded-[6px] bg-black text-white flex flex-col items-center justify-center shrink-0">
                                         <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                         <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                     </div>
                                     <div className="flex-1 min-w-0 space-y-2">
-                                        <p className="text-sm font-semibold text-black truncate">{meeting.title}</p>
-                                        <div className="flex items-center gap-3 text-[11px] text-[#666] font-medium">
+                                        <p className="text-sm font-semibold text-foreground truncate">{meeting.title}</p>
+                                        <div className="flex items-center gap-3 text-[11px] text-muted-foreground font-medium">
                                             <div className="flex items-center gap-1">
                                                 <Clock className="w-3.5 h-3.5" />
                                                 {formatDate(meeting.scheduledAt, "HH:mm")}

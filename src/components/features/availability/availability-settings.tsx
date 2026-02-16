@@ -62,11 +62,11 @@ export function AvailabilitySettings({ initialSlots }: AvailabilitySettingsProps
     return (
         <div className="space-y-4">
             {slots.map((slot, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-[#fafafa] rounded-md border border-[#eaeaea]">
+                <div key={idx} className="flex items-center gap-3 p-3 bg-muted rounded-md border border-border">
                     <select
                         value={slot.dayOfWeek}
                         onChange={e => updateSlot(idx, "dayOfWeek", parseInt(e.target.value))}
-                        className="px-3 py-2 bg-white border border-[#eaeaea] rounded-md text-sm focus:outline-none focus:border-black transition-all"
+                        className="px-3 py-2 bg-card border border-border rounded-md text-sm focus:outline-none focus:border-foreground transition-all"
                     >
                         {DAYS.map(d => (
                             <option key={d.value} value={d.value}>{d.label}</option>
@@ -78,21 +78,21 @@ export function AvailabilitySettings({ initialSlots }: AvailabilitySettingsProps
                             type="time"
                             value={slot.startTime}
                             onChange={e => updateSlot(idx, "startTime", e.target.value)}
-                            className="px-3 py-2 bg-white border border-[#eaeaea] rounded-md text-sm focus:outline-none focus:border-black transition-all"
+                            className="px-3 py-2 bg-card border border-border rounded-md text-sm focus:outline-none focus:border-foreground transition-all"
                         />
-                        <span className="text-xs text-[#999]">→</span>
+                        <span className="text-xs text-muted-foreground">→</span>
                         <input
                             type="time"
                             value={slot.endTime}
                             onChange={e => updateSlot(idx, "endTime", e.target.value)}
-                            className="px-3 py-2 bg-white border border-[#eaeaea] rounded-md text-sm focus:outline-none focus:border-black transition-all"
+                            className="px-3 py-2 bg-card border border-border rounded-md text-sm focus:outline-none focus:border-foreground transition-all"
                         />
                     </div>
 
                     <select
                         value={slot.duration}
                         onChange={e => updateSlot(idx, "duration", parseInt(e.target.value))}
-                        className="px-3 py-2 bg-white border border-[#eaeaea] rounded-md text-sm focus:outline-none focus:border-black transition-all"
+                        className="px-3 py-2 bg-card border border-border rounded-md text-sm focus:outline-none focus:border-foreground transition-all"
                     >
                         <option value={30}>30 phút</option>
                         <option value={45}>45 phút</option>
@@ -102,7 +102,7 @@ export function AvailabilitySettings({ initialSlots }: AvailabilitySettingsProps
 
                     <button
                         onClick={() => removeSlot(idx)}
-                        className="p-2 text-[#999] hover:text-black hover:bg-[#fafafa] rounded-md transition-all"
+                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-all"
                         disabled={slots.length <= 1}
                     >
                         <Trash2 className="w-4 h-4" />

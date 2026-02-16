@@ -24,36 +24,36 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
         };
 
         return (
-            <Card className="border border-[#eaeaea]">
+            <Card className="border border-border">
                 <div className="flex items-center gap-2 mb-4">
-                    <CheckCircle2 className="w-4 h-4 text-[#0070f3]" />
-                    <h4 className="text-[11px] font-semibold text-[#999]">Biên bản cuộc họp</h4>
+                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <h4 className="text-[11px] font-semibold text-muted-foreground">Biên bản cuộc họp</h4>
                 </div>
                 <div className="space-y-4">
                     {initialMinutes.keyPoints && (
                         <div className="space-y-1">
-                            <p className="text-[11px] font-medium text-[#999]">Nội dung chính</p>
-                            <p className="text-sm text-black leading-relaxed">{initialMinutes.keyPoints}</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">Nội dung chính</p>
+                            <p className="text-sm text-foreground leading-relaxed">{initialMinutes.keyPoints}</p>
                         </div>
                     )}
                     {initialMinutes.agenda && (
                         <div className="space-y-1">
-                            <p className="text-[11px] font-medium text-[#999]">Agenda</p>
-                            <p className="text-sm text-[#666] leading-relaxed">{initialMinutes.agenda}</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">Agenda</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{initialMinutes.agenda}</p>
                         </div>
                     )}
                     {initialMinutes.actionItems && (
                         <div className="space-y-1">
-                            <p className="text-[11px] font-medium text-[#999]">Action items</p>
-                            <p className="text-sm text-[#666] leading-relaxed">{initialMinutes.actionItems}</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">Action items</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{initialMinutes.actionItems}</p>
                         </div>
                     )}
-                    <div className="pt-3 border-t border-[#eaeaea] flex items-center justify-between">
-                        <span className="text-[10px] text-[#999]">
+                    <div className="pt-3 border-t border-border flex items-center justify-between">
+                        <span className="text-[10px] text-muted-foreground">
                             Đánh giá: {outcomeLabel[initialMinutes.outcome] || initialMinutes.outcome}
                         </span>
                         {initialMinutes.author && (
-                            <span className="text-[10px] text-[#999]">
+                            <span className="text-[10px] text-muted-foreground">
                                 bởi {initialMinutes.author.firstName} {initialMinutes.author.lastName}
                             </span>
                         )}
@@ -64,17 +64,17 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
     }
 
     return (
-        <Card className="bg-[#fafafa] border-dashed border-2 border-[#eaeaea]">
+        <Card className="bg-muted border-dashed border-2 border-border">
             <div className="flex items-center gap-2 mb-4">
-                <FileText className="w-4 h-4 text-[#999]" />
-                <h4 className="text-[11px] font-semibold text-[#999]">Biên bản cuộc họp</h4>
+                <FileText className="w-4 h-4 text-muted-foreground" />
+                <h4 className="text-[11px] font-semibold text-muted-foreground">Biên bản cuộc họp</h4>
             </div>
 
             {showForm ? (
                 <MinutesForm meetingId={meetingId} onSuccess={() => setShowForm(false)} />
             ) : (
                 <div className="space-y-4">
-                    <p className="text-sm text-[#666] leading-relaxed italic">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                         Buổi họp này chưa có biên bản. {isMentor ? "Bạn có thể tạo biên bản ngay bây giờ." : "Đang chờ Mentor cập nhật biên bản."}
                     </p>
                     {isMentor && (

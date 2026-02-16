@@ -18,19 +18,19 @@ export default async function PortfolioPage() {
     return (
         <div className="space-y-8 pb-10">
             <div className="space-y-1">
-                <h1 className="text-2xl font-semibold text-black">Hồ sơ năng lực</h1>
-                <p className="text-sm text-[#666] mt-1">Đánh giá ban đầu và tổng kết quá trình phát triển</p>
+                <h1 className="text-2xl font-semibold text-foreground">Hồ sơ năng lực</h1>
+                <p className="text-sm text-muted-foreground mt-1">Đánh giá ban đầu và tổng kết quá trình phát triển</p>
             </div>
 
             {/* Progress indicator */}
             <div className="flex items-center gap-4">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasInitialAssessment ? 'bg-black text-white' : 'bg-[#fafafa] text-[#999]'}`}>
-                    {hasInitialAssessment ? <CheckCircle2 className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 rounded-full border border-[#ccc]" />}
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasInitialAssessment ? 'bg-black text-white' : 'bg-muted text-muted-foreground'}`}>
+                    {hasInitialAssessment ? <CheckCircle2 className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 rounded-full border border-foreground/20" />}
                     Đánh giá ban đầu
                 </div>
-                <ArrowRight className="w-3 h-3 text-[#ccc]" />
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasFinalPortfolio ? 'bg-black text-white' : 'bg-[#fafafa] text-[#999]'}`}>
-                    {hasFinalPortfolio ? <CheckCircle2 className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 rounded-full border border-[#ccc]" />}
+                <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${hasFinalPortfolio ? 'bg-black text-white' : 'bg-muted text-muted-foreground'}`}>
+                    {hasFinalPortfolio ? <CheckCircle2 className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 rounded-full border border-foreground/20" />}
                     Portfolio cuối kỳ
                 </div>
             </div>
@@ -41,12 +41,12 @@ export default async function PortfolioPage() {
                     {!hasInitialAssessment ? (
                         <Card className="p-8">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-10 h-10 rounded-md bg-[#fafafa] border border-[#eaeaea] flex items-center justify-center">
-                                    <Brain className="w-5 h-5 text-[#666]" />
+                                <div className="w-10 h-10 rounded-md bg-muted border border-border flex items-center justify-center">
+                                    <Brain className="w-5 h-5 text-muted-foreground" />
                                 </div>
                                 <div>
-                                    <h3 className="text-base font-semibold text-black">Đánh giá ban đầu</h3>
-                                    <p className="text-xs text-[#999]">Hoàn thành đánh giá để bắt đầu chương trình</p>
+                                    <h3 className="text-base font-semibold text-foreground">Đánh giá ban đầu</h3>
+                                    <p className="text-xs text-muted-foreground">Hoàn thành đánh giá để bắt đầu chương trình</p>
                                 </div>
                             </div>
                             <PortfolioForm type="initial" portfolio={portfolio ? JSON.parse(JSON.stringify(portfolio)) : null} />
@@ -55,40 +55,40 @@ export default async function PortfolioPage() {
                         <>
                             {/* Initial assessment result */}
                             <Card>
-                                <h3 className="text-base font-semibold text-black mb-4 flex items-center gap-2">
-                                    <Brain className="w-4 h-4 text-[#999]" />
+                                <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                                    <Brain className="w-4 h-4 text-muted-foreground" />
                                     Kết quả đánh giá ban đầu
                                 </h3>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                                     {portfolio?.personalityMbti && (
-                                        <div className="p-4 bg-[#fafafa] rounded-md text-center">
-                                            <p className="text-[10px] text-[#999] mb-1">MBTI</p>
-                                            <p className="text-lg font-bold text-black">{portfolio.personalityMbti}</p>
+                                        <div className="p-4 bg-muted rounded-md text-center">
+                                            <p className="text-[10px] text-muted-foreground mb-1">MBTI</p>
+                                            <p className="text-lg font-bold text-foreground">{portfolio.personalityMbti}</p>
                                         </div>
                                     )}
                                     {portfolio?.personalityDisc && (
-                                        <div className="p-4 bg-[#fafafa] rounded-md text-center">
-                                            <p className="text-[10px] text-[#999] mb-1">DISC</p>
-                                            <p className="text-lg font-bold text-black">{portfolio.personalityDisc}</p>
+                                        <div className="p-4 bg-muted rounded-md text-center">
+                                            <p className="text-[10px] text-muted-foreground mb-1">DISC</p>
+                                            <p className="text-lg font-bold text-foreground">{portfolio.personalityDisc}</p>
                                         </div>
                                     )}
                                     {portfolio?.personalityHolland && (
-                                        <div className="p-4 bg-[#fafafa] rounded-md text-center">
-                                            <p className="text-[10px] text-[#999] mb-1">Holland</p>
-                                            <p className="text-lg font-bold text-black">{portfolio.personalityHolland}</p>
+                                        <div className="p-4 bg-muted rounded-md text-center">
+                                            <p className="text-[10px] text-muted-foreground mb-1">Holland</p>
+                                            <p className="text-lg font-bold text-foreground">{portfolio.personalityHolland}</p>
                                         </div>
                                     )}
                                 </div>
 
                                 {portfolio?.competencies && (
                                     <div className="space-y-3">
-                                        <p className="text-xs font-medium text-[#999]">Năng lực đánh giá</p>
+                                        <p className="text-xs font-medium text-muted-foreground">Năng lực đánh giá</p>
                                         {Object.entries(JSON.parse(portfolio.competencies)).map(([key, val]) => (
                                             <div key={key} className="flex items-center gap-3">
-                                                <span className="text-xs text-[#666] w-28 capitalize">{key}</span>
+                                                <span className="text-xs text-muted-foreground w-28 capitalize">{key}</span>
                                                 <Progress value={(val as number) * 10} size="xs" color="default" />
-                                                <span className="text-xs font-medium text-black w-8 text-right">{val as number}/10</span>
+                                                <span className="text-xs font-medium text-foreground w-8 text-right">{val as number}/10</span>
                                             </div>
                                         ))}
                                     </div>
@@ -99,12 +99,12 @@ export default async function PortfolioPage() {
                             {!hasFinalPortfolio && role === "mentee" && (
                                 <Card className="p-8">
                                     <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-md bg-[#fafafa] border border-[#eaeaea] flex items-center justify-center">
-                                            <Award className="w-5 h-5 text-[#666]" />
+                                        <div className="w-10 h-10 rounded-md bg-muted border border-border flex items-center justify-center">
+                                            <Award className="w-5 h-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <h3 className="text-base font-semibold text-black">Portfolio cuối kỳ</h3>
-                                            <p className="text-xs text-[#999]">Tổng kết quá trình phát triển</p>
+                                            <h3 className="text-base font-semibold text-foreground">Portfolio cuối kỳ</h3>
+                                            <p className="text-xs text-muted-foreground">Tổng kết quá trình phát triển</p>
                                         </div>
                                     </div>
                                     <PortfolioForm type="final" portfolio={portfolio ? JSON.parse(JSON.stringify(portfolio)) : null} />
@@ -113,36 +113,36 @@ export default async function PortfolioPage() {
 
                             {hasFinalPortfolio && (
                                 <Card>
-                                    <h3 className="text-base font-semibold text-black mb-4 flex items-center gap-2">
-                                        <Award className="w-4 h-4 text-[#999]" />
+                                    <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                                        <Award className="w-4 h-4 text-muted-foreground" />
                                         Tổng kết cuối kỳ
                                     </h3>
                                     <div className="space-y-4">
                                         {portfolio?.finalGoalsAchieved != null && (
                                             <div>
-                                                <p className="text-xs text-[#999] mb-2">Mục tiêu đạt được</p>
+                                                <p className="text-xs text-muted-foreground mb-2">Mục tiêu đạt được</p>
                                                 <div className="flex items-center gap-3">
                                                     <Progress value={portfolio.finalGoalsAchieved} size="sm" color={portfolio.finalGoalsAchieved >= 80 ? "success" : "default"} />
-                                                    <span className="text-sm font-semibold text-black">{portfolio.finalGoalsAchieved}%</span>
+                                                    <span className="text-sm font-semibold text-foreground">{portfolio.finalGoalsAchieved}%</span>
                                                 </div>
                                             </div>
                                         )}
                                         {portfolio?.finalSelfAssessment && (
                                             <div>
-                                                <p className="text-xs text-[#999] mb-1">Tự đánh giá</p>
-                                                <p className="text-sm text-[#333] leading-relaxed bg-[#fafafa] p-3 rounded-md">{portfolio.finalSelfAssessment}</p>
+                                                <p className="text-xs text-muted-foreground mb-1">Tự đánh giá</p>
+                                                <p className="text-sm text-foreground leading-relaxed bg-muted p-3 rounded-md">{portfolio.finalSelfAssessment}</p>
                                             </div>
                                         )}
                                         {portfolio?.finalMentorFeedback && (
                                             <div>
-                                                <p className="text-xs text-[#999] mb-1">Nhận xét từ Mentor</p>
-                                                <p className="text-sm text-[#333] leading-relaxed bg-[#fafafa] p-3 rounded-md">{portfolio.finalMentorFeedback}</p>
+                                                <p className="text-xs text-muted-foreground mb-1">Nhận xét từ Mentor</p>
+                                                <p className="text-sm text-foreground leading-relaxed bg-muted p-3 rounded-md">{portfolio.finalMentorFeedback}</p>
                                             </div>
                                         )}
                                         {portfolio?.finalRecommendations && (
                                             <div>
-                                                <p className="text-xs text-[#999] mb-1">Đề xuất phát triển</p>
-                                                <p className="text-sm text-[#333] leading-relaxed bg-[#fafafa] p-3 rounded-md">{portfolio.finalRecommendations}</p>
+                                                <p className="text-xs text-muted-foreground mb-1">Đề xuất phát triển</p>
+                                                <p className="text-sm text-foreground leading-relaxed bg-muted p-3 rounded-md">{portfolio.finalRecommendations}</p>
                                             </div>
                                         )}
                                     </div>
@@ -155,18 +155,18 @@ export default async function PortfolioPage() {
                 {/* Sidebar: Goals */}
                 <div className="space-y-6">
                     <Card>
-                        <h3 className="text-base font-semibold text-black mb-4 flex items-center gap-2">
-                            <Target className="w-4 h-4 text-[#999]" />
+                        <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                            <Target className="w-4 h-4 text-muted-foreground" />
                             Mục tiêu cá nhân
                         </h3>
 
                         {portfolio?.shortTermGoals ? (
                             <div className="space-y-4">
                                 <div>
-                                    <p className="text-xs text-[#999] mb-2">Ngắn hạn</p>
+                                    <p className="text-xs text-muted-foreground mb-2">Ngắn hạn</p>
                                     <ul className="space-y-1.5">
                                         {JSON.parse(portfolio.shortTermGoals).map((goal: string, i: number) => (
-                                            <li key={i} className="flex items-start gap-2 text-sm text-[#333]">
+                                            <li key={i} className="flex items-start gap-2 text-sm text-foreground">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-black mt-1.5 shrink-0" />
                                                 {goal}
                                             </li>
@@ -175,11 +175,11 @@ export default async function PortfolioPage() {
                                 </div>
                                 {portfolio.longTermGoals && (
                                     <div>
-                                        <p className="text-xs text-[#999] mb-2">Dài hạn</p>
+                                        <p className="text-xs text-muted-foreground mb-2">Dài hạn</p>
                                         <ul className="space-y-1.5">
                                             {JSON.parse(portfolio.longTermGoals).map((goal: string, i: number) => (
-                                                <li key={i} className="flex items-start gap-2 text-sm text-[#333]">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#999] mt-1.5 shrink-0" />
+                                                <li key={i} className="flex items-start gap-2 text-sm text-foreground">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground mt-1.5 shrink-0" />
                                                     {goal}
                                                 </li>
                                             ))}
@@ -199,13 +199,13 @@ export default async function PortfolioPage() {
 
                     {portfolio?.finalSkillsGained && (
                         <Card>
-                            <h3 className="text-base font-semibold text-black mb-4 flex items-center gap-2">
-                                <BookOpen className="w-4 h-4 text-[#999]" />
+                            <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                                <BookOpen className="w-4 h-4 text-muted-foreground" />
                                 Kỹ năng đã đạt
                             </h3>
                             <div className="flex flex-wrap gap-1.5">
                                 {JSON.parse(portfolio.finalSkillsGained).map((skill: string) => (
-                                    <span key={skill} className="px-2 py-1 bg-[#fafafa] border border-[#eaeaea] rounded-md text-xs text-[#666]">{skill}</span>
+                                    <span key={skill} className="px-2 py-1 bg-muted border border-border rounded-md text-xs text-muted-foreground">{skill}</span>
                                 ))}
                             </div>
                         </Card>

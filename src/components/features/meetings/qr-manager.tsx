@@ -46,21 +46,21 @@ export function QRManager({ meetingId, qrToken, expiresAt }: QRManagerProps) {
     return (
         <Card className="flex flex-col items-center justify-center p-8 space-y-6 text-center">
             <div>
-                <h3 className="text-lg font-semibold text-black">Quét mã để điểm danh</h3>
-                <p className="text-sm text-[#666] mt-1">Mã QR sẽ tự động hết hạn sau khi kết thúc buổi họp</p>
+                <h3 className="text-lg font-semibold text-foreground">Quét mã để điểm danh</h3>
+                <p className="text-sm text-muted-foreground mt-1">Mã QR sẽ tự động hết hạn sau khi kết thúc buổi họp</p>
             </div>
 
             <div className="relative group">
-                <div className="bg-white p-4 rounded-[12px] shadow-sm border border-[#eaeaea]">
+                <div className="bg-card p-4 rounded-[12px] shadow-sm border border-border">
                     {qrDataUrl ? (
                         <img src={qrDataUrl} alt="Meeting QR Code" className="w-64 h-64" />
                     ) : (
-                        <div className="w-64 h-64 bg-[#fafafa] animate-pulse rounded-[8px]" />
+                        <div className="w-64 h-64 bg-muted animate-pulse rounded-[8px]" />
                     )}
                 </div>
                 {timeLeft === 0 && (
-                    <div className="absolute inset-0 bg-white/90 backdrop-blur-[2px] rounded-[12px] flex flex-col items-center justify-center p-4">
-                        <p className="text-sm font-semibold text-[#ee0000] mb-2">Mã QR đã hết hạn</p>
+                    <div className="absolute inset-0 bg-card/90 backdrop-blur-[2px] rounded-[12px] flex flex-col items-center justify-center p-4">
+                        <p className="text-sm font-semibold text-destructive mb-2">Mã QR đã hết hạn</p>
                         <Button size="sm" variant="outline">
                             <RefreshCw className="w-4 h-4 mr-2" />
                             Làm mới mã
@@ -69,9 +69,9 @@ export function QRManager({ meetingId, qrToken, expiresAt }: QRManagerProps) {
                 )}
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-2 bg-[#fafafa] rounded-full border border-[#eaeaea]">
-                <Clock className="w-4 h-4 text-[#999]" />
-                <span className="text-sm font-semibold text-[#444]">
+            <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-full border border-border">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-semibold text-foreground">
                     Còn lại: {minutes}:{seconds.toString().padStart(2, "0")}
                 </span>
             </div>

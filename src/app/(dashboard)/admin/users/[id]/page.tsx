@@ -57,15 +57,15 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                     <div className="flex-1 space-y-3">
                         <div className="flex items-start justify-between">
                             <div>
-                                <h1 className="text-2xl font-semibold text-black">{user.firstName} {user.lastName}</h1>
-                                <p className="text-sm text-[#666] mt-0.5">{getRoleLabel(user.role)}</p>
+                                <h1 className="text-2xl font-semibold text-foreground">{user.firstName} {user.lastName}</h1>
+                                <p className="text-sm text-muted-foreground mt-0.5">{getRoleLabel(user.role)}</p>
                             </div>
-                            <Badge className={user.isActive ? "bg-black text-white" : "bg-[#fafafa] text-[#999] border border-[#eaeaea]"}>
+                            <Badge className={user.isActive ? "bg-black text-white" : "bg-muted text-muted-foreground border border-border"}>
                                 {user.isActive ? "Đang hoạt động" : "Ngừng hoạt động"}
                             </Badge>
                         </div>
 
-                        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#666]">
+                        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" />{user.email}</span>
                             {user.phone && <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{user.phone}</span>}
                             {user.mentorProfile?.company && (
@@ -74,7 +74,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                             <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />Tham gia {formatDate(user.createdAt)}</span>
                         </div>
 
-                        {user.bio && <p className="text-sm text-[#666] leading-relaxed max-w-2xl">{user.bio}</p>}
+                        {user.bio && <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">{user.bio}</p>}
                     </div>
                 </div>
             </Card>
@@ -82,30 +82,30 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-5 text-center" hover>
-                    <p className="text-2xl font-bold text-black">
+                    <p className="text-2xl font-bold text-foreground">
                         {user.role === "mentor" ? user.mentorships.length : user.menteeships.length}
                     </p>
-                    <p className="text-xs text-[#999] mt-1">Mentorship</p>
+                    <p className="text-xs text-muted-foreground mt-1">Mentorship</p>
                 </Card>
                 <Card className="p-5 text-center" hover>
-                    <p className="text-2xl font-bold text-black">{attendanceRate}%</p>
-                    <p className="text-xs text-[#999] mt-1">Tỉ lệ tham gia</p>
+                    <p className="text-2xl font-bold text-foreground">{attendanceRate}%</p>
+                    <p className="text-xs text-muted-foreground mt-1">Tỉ lệ tham gia</p>
                 </Card>
                 <Card className="p-5 text-center" hover>
-                    <p className="text-2xl font-bold text-black">{avgRating || "—"}</p>
-                    <p className="text-xs text-[#999] mt-1">Đánh giá TB</p>
+                    <p className="text-2xl font-bold text-foreground">{avgRating || "—"}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Đánh giá TB</p>
                 </Card>
                 <Card className="p-5 text-center" hover>
-                    <p className="text-2xl font-bold text-black">{attendanceTotal}</p>
-                    <p className="text-xs text-[#999] mt-1">Buổi tham gia</p>
+                    <p className="text-2xl font-bold text-foreground">{attendanceTotal}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Buổi tham gia</p>
                 </Card>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                 {/* Mentorships */}
                 <Card className="lg:col-span-3">
-                    <h3 className="text-base font-semibold text-black mb-4 flex items-center gap-2">
-                        <Users className="w-4 h-4 text-[#999]" />
+                    <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                        <Users className="w-4 h-4 text-muted-foreground" />
                         {user.role === "mentor" ? "Các nhóm Mentoring" : "Mentor của tôi"}
                     </h3>
 
@@ -118,7 +118,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                     <Link
                                         key={ms.id}
                                         href={`/admin/mentorships/${ms.id}`}
-                                        className="flex items-center justify-between p-4 rounded-md border border-[#eaeaea] hover:border-black/20 transition-all group"
+                                        className="flex items-center justify-between p-4 rounded-md border border-border hover:border-foreground/20/20 transition-all group"
                                     >
                                         <div className="flex items-center gap-3">
                                             <div className="flex -space-x-2">
@@ -127,11 +127,11 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                                 ))}
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-black">{ms.mentees.length} Mentees</p>
-                                                <p className="text-xs text-[#999]">{ms.programCycle?.name}</p>
+                                                <p className="text-sm font-medium text-foreground">{ms.mentees.length} Mentees</p>
+                                                <p className="text-xs text-muted-foreground">{ms.programCycle?.name}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 text-xs text-[#999]">
+                                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                             <span>{ms._count.meetings} buổi</span>
                                             <span>{ms._count.goals} mục tiêu</span>
                                             <Badge className={getStatusColor(ms.status)} size="sm">{getStatusLabel(ms.status)}</Badge>
@@ -149,16 +149,16 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                     <Link
                                         key={ms.id}
                                         href={`/admin/mentorships/${ms.mentorship.id}`}
-                                        className="flex items-center justify-between p-4 rounded-md border border-[#eaeaea] hover:border-black/20 transition-all"
+                                        className="flex items-center justify-between p-4 rounded-md border border-border hover:border-foreground/20/20 transition-all"
                                     >
                                         <div className="flex items-center gap-3">
                                             <Avatar firstName={ms.mentorship.mentor.firstName} lastName={ms.mentorship.mentor.lastName} src={ms.mentorship.mentor.avatar} size="sm" />
                                             <div>
-                                                <p className="text-sm font-medium text-black">{ms.mentorship.mentor.firstName} {ms.mentorship.mentor.lastName}</p>
-                                                <p className="text-xs text-[#999]">{ms.mentorship.programCycle?.name}</p>
+                                                <p className="text-sm font-medium text-foreground">{ms.mentorship.mentor.firstName} {ms.mentorship.mentor.lastName}</p>
+                                                <p className="text-xs text-muted-foreground">{ms.mentorship.programCycle?.name}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 text-xs text-[#999]">
+                                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                             <span>{ms.mentorship._count.meetings} buổi</span>
                                             <Badge className={getStatusColor(ms.mentorship.status)} size="sm">{getStatusLabel(ms.mentorship.status)}</Badge>
                                         </div>
@@ -171,8 +171,8 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
 
                 {/* Feedback & Ratings */}
                 <Card className="lg:col-span-2">
-                    <h3 className="text-base font-semibold text-black mb-4 flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-[#999]" />
+                    <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-muted-foreground" />
                         Phản hồi gần đây
                     </h3>
 
@@ -181,18 +181,18 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                     ) : (
                         <div className="space-y-4">
                             {user.feedbackReceived.map((fb, i) => (
-                                <div key={i} className="p-3 bg-[#fafafa] rounded-md space-y-2">
+                                <div key={i} className="p-3 bg-muted rounded-md space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <p className="text-xs font-medium text-black">{fb.fromUser.firstName} {fb.fromUser.lastName}</p>
+                                        <p className="text-xs font-medium text-foreground">{fb.fromUser.firstName} {fb.fromUser.lastName}</p>
                                         {fb.rating && (
                                             <div className="flex items-center gap-1">
-                                                <Star className="w-3 h-3 text-black fill-black" />
-                                                <span className="text-xs font-medium text-black">{fb.rating}/5</span>
+                                                <Star className="w-3 h-3 text-foreground fill-black" />
+                                                <span className="text-xs font-medium text-foreground">{fb.rating}/5</span>
                                             </div>
                                         )}
                                     </div>
-                                    {fb.content && <p className="text-xs text-[#666] line-clamp-3">{fb.content}</p>}
-                                    <p className="text-[10px] text-[#bbb]">{formatDate(fb.createdAt)}</p>
+                                    {fb.content && <p className="text-xs text-muted-foreground line-clamp-3">{fb.content}</p>}
+                                    <p className="text-[10px] text-muted-foreground">{formatDate(fb.createdAt)}</p>
                                 </div>
                             ))}
                         </div>
@@ -203,26 +203,26 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
             {/* Role-specific Info */}
             {user.mentorProfile && (
                 <Card>
-                    <h3 className="text-base font-semibold text-black mb-4 flex items-center gap-2">
-                        <Briefcase className="w-4 h-4 text-[#999]" />
+                    <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-muted-foreground" />
                         Hồ sơ Mentor
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         {user.mentorProfile.jobTitle && (
-                            <div><span className="text-[#999]">Chức danh:</span> <span className="text-black font-medium">{user.mentorProfile.jobTitle}</span></div>
+                            <div><span className="text-muted-foreground">Chức danh:</span> <span className="text-foreground font-medium">{user.mentorProfile.jobTitle}</span></div>
                         )}
                         {user.mentorProfile.company && (
-                            <div><span className="text-[#999]">Công ty:</span> <span className="text-black font-medium">{user.mentorProfile.company}</span></div>
+                            <div><span className="text-muted-foreground">Công ty:</span> <span className="text-foreground font-medium">{user.mentorProfile.company}</span></div>
                         )}
                         {user.mentorProfile.experience && (
-                            <div><span className="text-[#999]">Kinh nghiệm:</span> <span className="text-black font-medium">{user.mentorProfile.experience}</span></div>
+                            <div><span className="text-muted-foreground">Kinh nghiệm:</span> <span className="text-foreground font-medium">{user.mentorProfile.experience}</span></div>
                         )}
                         {user.mentorProfile.expertise && (
                             <div className="md:col-span-2">
-                                <span className="text-[#999]">Chuyên môn:</span>
+                                <span className="text-muted-foreground">Chuyên môn:</span>
                                 <div className="flex flex-wrap gap-1.5 mt-2">
                                     {JSON.parse(user.mentorProfile.expertise || "[]").map((skill: string) => (
-                                        <span key={skill} className="px-2 py-0.5 bg-[#fafafa] border border-[#eaeaea] rounded-md text-xs text-[#666]">{skill}</span>
+                                        <span key={skill} className="px-2 py-0.5 bg-muted border border-border rounded-md text-xs text-muted-foreground">{skill}</span>
                                     ))}
                                 </div>
                             </div>

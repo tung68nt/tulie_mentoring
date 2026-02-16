@@ -75,8 +75,8 @@ export function LoginForm() {
     return (
         <Card className="w-full max-w-md p-8">
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-black">Chào mừng trở lại</h1>
-                <p className="text-[#666] mt-2 text-sm">Đăng nhập vào hệ thống IMP Mentoring</p>
+                <h1 className="text-2xl font-semibold text-foreground">Chào mừng trở lại</h1>
+                <p className="text-muted-foreground mt-2 text-sm">Đăng nhập vào hệ thống IMP Mentoring</p>
             </div>
 
             {/* Google Login */}
@@ -84,10 +84,10 @@ export function LoginForm() {
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={isGoogleLoading}
-                className="w-full flex items-center justify-center gap-3 h-10 px-4 rounded-[6px] border border-[#eaeaea] bg-white text-sm font-medium text-black hover:bg-[#fafafa] hover:border-[#999] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 h-10 px-4 rounded-[6px] border border-border bg-card text-sm font-medium text-foreground hover:bg-muted hover:border-foreground/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isGoogleLoading ? (
-                    <div className="w-4 h-4 border-2 border-[#eaeaea] border-t-black rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-border border-t-black rounded-full animate-spin" />
                 ) : (
                     <GoogleIcon />
                 )}
@@ -96,14 +96,14 @@ export function LoginForm() {
 
             {/* Divider */}
             <div className="flex items-center gap-3 my-6">
-                <div className="flex-1 h-px bg-[#eaeaea]" />
-                <span className="text-xs text-[#999] font-medium">hoặc</span>
-                <div className="flex-1 h-px bg-[#eaeaea]" />
+                <div className="flex-1 h-px bg-border" />
+                <span className="text-xs text-muted-foreground font-medium">hoặc</span>
+                <div className="flex-1 h-px bg-border" />
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {error && (
-                    <div className="p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
+                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
                         {error}
                     </div>
                 )}
@@ -129,23 +129,23 @@ export function LoginForm() {
                 </Button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-[#eaeaea] text-center">
-                <p className="text-sm text-[#666]">
+            <div className="mt-8 pt-6 border-t border-border text-center">
+                <p className="text-sm text-muted-foreground">
                     Chưa có tài khoản?{" "}
                     <button
                         onClick={() => router.push("/register")}
-                        className="font-semibold text-black hover:underline"
+                        className="font-semibold text-foreground hover:underline"
                     >
                         Đăng ký tham gia
                     </button>
                 </p>
             </div>
 
-            <div className="mt-6 p-4 bg-[#fafafa] rounded-[8px] border border-[#eaeaea]">
-                <p className="text-xs font-medium text-[#999] mb-2">
+            <div className="mt-6 p-4 bg-muted rounded-[8px] border border-border">
+                <p className="text-xs font-medium text-muted-foreground mb-2">
                     Tài khoản Demo
                 </p>
-                <div className="space-y-1 text-xs text-[#666]">
+                <div className="space-y-1 text-xs text-muted-foreground">
                     <p>Admin: admin@imp.edu.vn / password123</p>
                     <p>Mentor: mentor1@imp.edu.vn / password123</p>
                     <p>Mentee: mentee1@imp.edu.vn / password123</p>

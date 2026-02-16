@@ -51,49 +51,49 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                             <div className="space-y-1">
                                 <div className="flex items-center gap-3 mb-2">
                                     <Badge status={meeting.status} />
-                                    <span className="text-xs font-medium text-[#999]">{meeting.meetingType}</span>
+                                    <span className="text-xs font-medium text-muted-foreground">{meeting.meetingType}</span>
                                 </div>
-                                <h1 className="text-3xl font-semibold text-black leading-tight">{meeting.title}</h1>
+                                <h1 className="text-3xl font-semibold text-foreground leading-tight">{meeting.title}</h1>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-y border-[#eaeaea]">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-y border-border">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-[#fafafa] flex items-center justify-center text-[#666]">
+                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
                                     <Calendar className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-medium text-[#999] leading-none mb-1">Thời gian</p>
-                                    <p className="text-sm font-semibold text-black">{formatDate(meeting.scheduledAt, "EEEE, dd/MM/yyyy")}</p>
+                                    <p className="text-xs font-medium text-muted-foreground leading-none mb-1">Thời gian</p>
+                                    <p className="text-sm font-semibold text-foreground">{formatDate(meeting.scheduledAt, "EEEE, dd/MM/yyyy")}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-[#fafafa] flex items-center justify-center text-[#666]">
+                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
                                     <Clock className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-medium text-[#999] leading-none mb-1">Giờ họp</p>
-                                    <p className="text-sm font-semibold text-black">{formatDate(meeting.scheduledAt, "HH:mm")} ({meeting.duration} phút)</p>
+                                    <p className="text-xs font-medium text-muted-foreground leading-none mb-1">Giờ họp</p>
+                                    <p className="text-sm font-semibold text-foreground">{formatDate(meeting.scheduledAt, "HH:mm")} ({meeting.duration} phút)</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-[#fafafa] flex items-center justify-center text-[#666]">
+                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
                                     {meeting.type === "online" ? <Video className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-xs font-medium text-[#999] leading-none mb-1">Địa điểm</p>
-                                    <p className="text-sm font-semibold text-black truncate">
+                                    <p className="text-xs font-medium text-muted-foreground leading-none mb-1">Địa điểm</p>
+                                    <p className="text-sm font-semibold text-foreground truncate">
                                         {meeting.location || (meeting.type === "online" ? "Link họp trực tuyến" : "Chưa xác định")}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-[#fafafa] flex items-center justify-center text-[#666]">
+                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
                                     <Users className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-medium text-[#999] leading-none mb-1">Mentorship</p>
-                                    <p className="text-sm font-semibold text-black">
+                                    <p className="text-xs font-medium text-muted-foreground leading-none mb-1">Mentorship</p>
+                                    <p className="text-sm font-semibold text-foreground">
                                         {meeting.mentorship.mentor.firstName} ➔ {meeting.mentorship.mentees.length} Mentees
                                     </p>
                                 </div>
@@ -101,8 +101,8 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                         </div>
 
                         <div className="mt-8 space-y-4">
-                            <h3 className="text-lg font-semibold text-black">Nội dung buổi họp</h3>
-                            <div className="p-5 bg-[#fafafa] rounded-[8px] text-sm text-[#666] leading-relaxed min-h-[100px] border border-[#eaeaea]">
+                            <h3 className="text-lg font-semibold text-foreground">Nội dung buổi họp</h3>
+                            <div className="p-5 bg-muted rounded-[8px] text-sm text-muted-foreground leading-relaxed min-h-[100px] border border-border">
                                 {meeting.description || "Không có mô tả chi tiết."}
                             </div>
                         </div>
@@ -110,10 +110,10 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
                     {/* Attendance List (Visible to all participants) */}
                     <Card>
-                        <h3 className="text-lg font-semibold text-black mb-6">Danh sách điểm danh</h3>
+                        <h3 className="text-lg font-semibold text-foreground mb-6">Danh sách điểm danh</h3>
                         <div className="space-y-4">
                             {meeting.attendances.map((attendance) => (
-                                <div key={attendance.id} className="flex items-center justify-between p-4 rounded-[8px] border border-[#eaeaea] bg-white">
+                                <div key={attendance.id} className="flex items-center justify-between p-4 rounded-[8px] border border-border bg-card">
                                     <div className="flex items-center gap-3">
                                         <Avatar
                                             firstName={attendance.user.firstName}
@@ -122,16 +122,16 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                             size="md"
                                         />
                                         <div>
-                                            <p className="text-sm font-semibold text-black">
+                                            <p className="text-sm font-semibold text-foreground">
                                                 {attendance.user.firstName} {attendance.user.lastName}
                                             </p>
-                                            <p className="text-[10px] font-medium text-[#999]">Mentee</p>
+                                            <p className="text-[10px] font-medium text-muted-foreground">Mentee</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
                                         <Badge status={attendance.status} size="sm" />
                                         {attendance.checkInTime && (
-                                            <p className="text-[10px] font-medium text-[#666] mt-1">
+                                            <p className="text-[10px] font-medium text-muted-foreground mt-1">
                                                 Check-in: {formatDate(attendance.checkInTime, "HH:mm")}
                                             </p>
                                         )}

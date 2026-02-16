@@ -75,11 +75,11 @@ export function OnboardingForm() {
         <div className="max-w-2xl mx-auto">
             {/* Header */}
             <div className="text-center mb-8">
-                <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <h1 className="text-2xl font-bold text-black">Khai hồ sơ ban đầu</h1>
-                <p className="text-sm text-[#666] mt-2">Giúp chúng tôi hiểu bạn hơn để ghép đôi mentor phù hợp nhất</p>
+                <h1 className="text-2xl font-bold text-foreground">Khai hồ sơ ban đầu</h1>
+                <p className="text-sm text-muted-foreground mt-2">Giúp chúng tôi hiểu bạn hơn để ghép đôi mentor phù hợp nhất</p>
             </div>
 
             {/* Progress steps */}
@@ -90,16 +90,16 @@ export function OnboardingForm() {
                             type="button"
                             onClick={() => { if (i + 1 < step) setStep(i + 1); }}
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all ${i + 1 === step
-                                    ? "bg-black text-white"
-                                    : i + 1 < step
-                                        ? "bg-black/10 text-black"
-                                        : "bg-[#f5f5f5] text-[#999]"
+                                ? "bg-primary text-primary-foreground"
+                                : i + 1 < step
+                                    ? "bg-primary/10 text-primary"
+                                    : "bg-accent text-muted-foreground"
                                 }`}
                         >
                             {stepIcons[i]}
                         </button>
                         {i < totalSteps - 1 && (
-                            <div className={`w-8 h-px ${i + 1 < step ? "bg-black/20" : "bg-[#eaeaea]"}`} />
+                            <div className={`w-8 h-px ${i + 1 < step ? "bg-primary/20" : "bg-border"}`} />
                         )}
                     </div>
                 ))}
@@ -107,12 +107,12 @@ export function OnboardingForm() {
 
             <Card className="p-8">
                 <div className="mb-6">
-                    <h2 className="text-lg font-semibold text-black">{stepLabels[step - 1]}</h2>
-                    <p className="text-sm text-[#999] mt-1">Bước {step}/{totalSteps}</p>
+                    <h2 className="text-lg font-semibold text-foreground">{stepLabels[step - 1]}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Bước {step}/{totalSteps}</p>
                 </div>
 
                 {error && (
-                    <div className="mb-6 p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
+                    <div className="mb-6 p-3 text-sm text-destructive bg-destructive/10 rounded-lg border border-destructive/20">
                         {error}
                     </div>
                 )}
@@ -152,30 +152,30 @@ export function OnboardingForm() {
                     {step === 2 && (
                         <>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Giới thiệu bản thân</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Giới thiệu bản thân</label>
                                 <textarea
                                     {...register("background")}
                                     placeholder="Bạn là ai? Đến từ đâu? Đam mê và sở thích..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-lg border border-input bg-transparent text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-ring focus:ring-3 focus:ring-ring/50 hover:border-accent resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Kinh nghiệm cá nhân / làm việc</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Kinh nghiệm cá nhân / làm việc</label>
                                 <textarea
                                     {...register("experience")}
                                     placeholder="Dự án, thực tập, hoạt động ngoại khóa, công việc part-time..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-lg border border-input bg-transparent text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-ring focus:ring-3 focus:ring-ring/50 hover:border-accent resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Kỹ năng hiện có</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Kỹ năng hiện có</label>
                                 <textarea
                                     {...register("skills")}
                                     placeholder="VD: Excel, Python, thuyết trình, teamwork..."
                                     rows={2}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-lg border border-input bg-transparent text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-ring focus:ring-3 focus:ring-ring/50 hover:border-accent resize-none"
                                 />
                             </div>
                         </>
@@ -185,30 +185,30 @@ export function OnboardingForm() {
                     {step === 3 && (
                         <>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Điểm mạnh của bạn</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Điểm mạnh của bạn</label>
                                 <textarea
                                     {...register("strengths")}
                                     placeholder="Những điều bạn tự tin và làm tốt..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Điểm yếu / hạn chế</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Điểm yếu / hạn chế</label>
                                 <textarea
                                     {...register("weaknesses")}
                                     placeholder="Những điều bạn muốn cải thiện..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Khó khăn hiện tại</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Khó khăn hiện tại</label>
                                 <textarea
                                     {...register("currentChallenges")}
                                     placeholder="Những thách thức bạn đang gặp phải trong học tập, công việc, cuộc sống..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                         </>
@@ -218,40 +218,40 @@ export function OnboardingForm() {
                     {step === 4 && (
                         <>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Mục tiêu nghề nghiệp *</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Mục tiêu nghề nghiệp *</label>
                                 <textarea
                                     {...register("careerGoals")}
                                     placeholder="Bạn muốn trở thành gì? Làm việc trong lĩnh vực nào?"
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-lg border border-input bg-transparent text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-ring focus:ring-3 focus:ring-ring/50 hover:border-accent resize-none"
                                 />
                                 {errors.careerGoals && (
-                                    <p className="text-[12px] text-[#ee0000] font-medium">{errors.careerGoals.message}</p>
+                                    <p className="text-[12px] text-destructive font-medium">{errors.careerGoals.message}</p>
                                 )}
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Đích đến sau chương trình</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Đích đến sau chương trình</label>
                                 <textarea
                                     {...register("endGoals")}
                                     placeholder="Sau khi kết thúc mentoring, bạn kỳ vọng đạt được gì?"
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-[12px] font-medium text-[#666]">Kỳ vọng từ chương trình</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground">Kỳ vọng từ chương trình</label>
                                 <textarea
                                     {...register("expectations")}
                                     placeholder="Bạn mong muốn nhận được gì từ mentor và chương trình?"
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-[#eaeaea] bg-white text-black text-sm placeholder:text-[#999] transition-all duration-200 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/5 hover:border-[#999] resize-none"
+                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                         </>
                     )}
 
                     {/* Navigation */}
-                    <div className="flex items-center justify-between pt-4 border-t border-[#eaeaea]">
+                    <div className="flex items-center justify-between pt-4 border-t border-border">
                         {step > 1 ? (
                             <Button type="button" variant="outline" onClick={handleBack}>
                                 Quay lại

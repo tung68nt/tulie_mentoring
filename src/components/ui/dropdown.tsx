@@ -1,53 +1,42 @@
-"use client";
+"use client"
 
-import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { MoreHorizontal } from "lucide-react";
+import * as React from "react"
+import {
+    DropdownMenu as DropdownMenuRoot,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem as DropdownMenuItemPrimitive,
+    DropdownMenuSeparator as DropdownMenuSeparatorPrimitive,
+} from "@/components/ui/dropdown-menu"
+import { MoreHorizontal } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 /* ─── Dropdown Menu ─────────────────────────────────── */
 interface DropdownMenuProps {
     children: React.ReactNode;
     trigger?: React.ReactNode;
-    align?: "left" | "right";
+    align?: "left" | "right" | "start" | "end" | "center";
     className?: string;
 }
 
-export function DropdownMenu({ children, trigger, align = "right", className }: DropdownMenuProps) {
-    const [isOpen, setIsOpen] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        function handleClickOutside(e: MouseEvent) {
-            if (ref.current && !ref.current.contains(e.target as Node)) {
-                setIsOpen(false);
-            }
-        }
-        if (isOpen) document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [isOpen]);
+export function DropdownMenu({ children, trigger, align = "end", className }: DropdownMenuProps) {
+    // Map old align values to shadcn align values
+    const shadcnAlign = align === "left" ? "start" : align === "right" ? "end" : align;
 
     return (
-        <div ref={ref} className="relative inline-block">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="p-1.5 rounded-md hover:bg-[#fafafa] text-[#999] hover:text-black transition-all"
-            >
-                {trigger || <MoreHorizontal className="w-4 h-4" />}
-            </button>
-
-            {isOpen && (
-                <div className={cn(
-                    "absolute top-full mt-1 min-w-[160px] bg-white border border-[#eaeaea] rounded-lg shadow-lg py-1 z-50 animate-scale-in",
-                    align === "right" ? "right-0" : "left-0",
-                    className
-                )}>
-                    {/* Pass close handler to children */}
-                    <div onClick={() => setIsOpen(false)}>
-                        {children}
-                    </div>
-                </div>
-            )}
-        </div>
+        <DropdownMenuRoot>
+            <DropdownMenuTrigger asChild>
+                <button
+                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-all outline-none"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {trigger || <MoreHorizontal className="w-4 h-4" />}
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align={shadcnAlign} className={cn("min-w-[160px]", className)}>
+                {children}
+            </DropdownMenuContent>
+        </DropdownMenuRoot>
     );
 }
 
@@ -62,23 +51,18 @@ interface DropdownItemProps {
 
 export function DropdownItem({ children, onClick, icon, destructive, className }: DropdownItemProps) {
     return (
-        <button
+        <DropdownMenuItemPrimitive
             onClick={onClick}
-            className={cn(
-                "flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors",
-                destructive
-                    ? "text-[#666] hover:bg-[#fafafa] hover:text-black"
-                    : "text-[#333] hover:bg-[#fafafa]",
-                className
-            )}
+            variant={destructive ? "destructive" : "default"}
+            className={className}
         >
             {icon && <span className="w-4 h-4 shrink-0 flex items-center justify-center">{icon}</span>}
             {children}
-        </button>
+        </DropdownMenuItemPrimitive>
     );
 }
 
 /* ─── Dropdown Separator ────────────────────────────── */
 export function DropdownSeparator() {
-    return <div className="my-1 h-px bg-[#eaeaea]" />;
+    return <DropdownMenuSeparatorPrimitive />;
 }

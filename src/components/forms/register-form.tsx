@@ -77,8 +77,8 @@ export function RegisterForm() {
     return (
         <Card className="w-full max-w-md p-8">
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-black">Tham gia chương trình</h1>
-                <p className="text-[#666] mt-2 text-sm">Dành cho cả Mentors và Mentees</p>
+                <h1 className="text-2xl font-semibold text-foreground">Tham gia chương trình</h1>
+                <p className="text-muted-foreground mt-2 text-sm">Dành cho cả Mentors và Mentees</p>
             </div>
 
             {/* Google Register */}
@@ -86,10 +86,10 @@ export function RegisterForm() {
                 type="button"
                 onClick={handleGoogleRegister}
                 disabled={isGoogleLoading}
-                className="w-full flex items-center justify-center gap-3 h-10 px-4 rounded-[6px] border border-[#eaeaea] bg-white text-sm font-medium text-black hover:bg-[#fafafa] hover:border-[#999] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 h-10 px-4 rounded-[6px] border border-border bg-card text-sm font-medium text-foreground hover:bg-muted hover:border-foreground/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isGoogleLoading ? (
-                    <div className="w-4 h-4 border-2 border-[#eaeaea] border-t-black rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-border border-t-black rounded-full animate-spin" />
                 ) : (
                     <GoogleIcon />
                 )}
@@ -98,14 +98,14 @@ export function RegisterForm() {
 
             {/* Divider */}
             <div className="flex items-center gap-3 my-6">
-                <div className="flex-1 h-px bg-[#eaeaea]" />
-                <span className="text-xs text-[#999] font-medium">hoặc</span>
-                <div className="flex-1 h-px bg-[#eaeaea]" />
+                <div className="flex-1 h-px bg-border" />
+                <span className="text-xs text-muted-foreground font-medium">hoặc</span>
+                <div className="flex-1 h-px bg-border" />
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {error && (
-                    <div className="p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
+                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
                         {error}
                     </div>
                 )}
@@ -164,12 +164,12 @@ export function RegisterForm() {
                 </Button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-[#eaeaea] text-center">
-                <p className="text-sm text-[#666]">
+            <div className="mt-8 pt-6 border-t border-border text-center">
+                <p className="text-sm text-muted-foreground">
                     Đã có tài khoản?{" "}
                     <button
                         onClick={() => router.push("/login")}
-                        className="font-semibold text-black hover:underline"
+                        className="font-semibold text-foreground hover:underline"
                     >
                         Đăng nhập
                     </button>

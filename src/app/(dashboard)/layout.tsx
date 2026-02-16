@@ -29,7 +29,7 @@ export default async function DashboardLayout({
     ]);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-card">
             <Sidebar role={user.role} />
 
             <div className="lg:ml-[var(--sidebar-width)] min-h-screen flex flex-col">
@@ -47,7 +47,7 @@ export default async function DashboardLayout({
                     </div>
                 </main>
 
-                <footer className="py-6 text-center text-xs text-[#999] border-t border-[#eaeaea]">
+                <footer className="py-6 text-center text-xs text-muted-foreground border-t border-border">
                     © {new Date().getFullYear()} ISME Mentoring Program (IMP) - Đại học Kinh tế Quốc dân. All rights reserved.
                 </footer>
             </div>

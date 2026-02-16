@@ -84,7 +84,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
             {/* Bell Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2 rounded-md hover:bg-[#fafafa] text-[#666] hover:text-black transition-all"
+                className="relative p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
                 aria-label="Thông báo"
             >
                 <Bell className="w-[18px] h-[18px]" />
@@ -97,15 +97,15 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
 
             {/* Dropdown Panel */}
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 w-[380px] bg-white border border-[#eaeaea] rounded-lg shadow-lg overflow-hidden z-[100] animate-scale-in">
+                <div className="absolute right-0 top-full mt-2 w-[380px] bg-card border border-border rounded-lg shadow-lg overflow-hidden z-[100] animate-scale-in">
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-[#eaeaea]">
-                        <h3 className="text-sm font-semibold text-black">Thông báo</h3>
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                        <h3 className="text-sm font-semibold text-foreground">Thông báo</h3>
                         {localUnread > 0 && (
                             <button
                                 onClick={handleMarkAllAsRead}
                                 disabled={isPending}
-                                className="text-xs text-[#666] hover:text-black transition-colors flex items-center gap-1"
+                                className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                             >
                                 <CheckCheck className="w-3 h-3" />
                                 Đánh dấu đã đọc
@@ -117,16 +117,16 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
                     <div className="max-h-[400px] overflow-y-auto">
                         {localNotifs.length === 0 ? (
                             <div className="py-12 text-center">
-                                <Bell className="w-8 h-8 text-[#eaeaea] mx-auto mb-3" />
-                                <p className="text-sm text-[#999]">Chưa có thông báo</p>
+                                <Bell className="w-8 h-8 text-border mx-auto mb-3" />
+                                <p className="text-sm text-muted-foreground">Chưa có thông báo</p>
                             </div>
                         ) : (
                             localNotifs.map((notif) => (
                                 <div
                                     key={notif.id}
                                     className={cn(
-                                        "flex items-start gap-3 px-4 py-3 border-b border-[#f5f5f5] hover:bg-[#fafafa] transition-colors group",
-                                        !notif.isRead && "bg-[#fafafa]"
+                                        "flex items-start gap-3 px-4 py-3 border-b border-border hover:bg-muted transition-colors group",
+                                        !notif.isRead && "bg-muted"
                                     )}
                                 >
                                     {/* Type icon */}
@@ -140,14 +140,14 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
                                             <div className="min-w-0">
                                                 <p className={cn(
                                                     "text-sm leading-snug truncate",
-                                                    notif.isRead ? "text-[#666]" : "text-black font-medium"
+                                                    notif.isRead ? "text-muted-foreground" : "text-foreground font-medium"
                                                 )}>
                                                     {notif.title}
                                                 </p>
-                                                <p className="text-xs text-[#999] mt-0.5 line-clamp-2 leading-relaxed">
+                                                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
                                                     {notif.message}
                                                 </p>
-                                                <p className="text-[10px] text-[#bbb] mt-1">
+                                                <p className="text-[10px] text-muted-foreground mt-1">
                                                     {timeAgo(notif.createdAt)}
                                                 </p>
                                             </div>
@@ -162,7 +162,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
                                                     e.stopPropagation();
                                                     handleMarkAsRead(notif.id);
                                                 }}
-                                                className="p-1 rounded hover:bg-[#eaeaea] text-[#999] hover:text-black transition-all"
+                                                className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
                                                 title="Đánh dấu đã đọc"
                                             >
                                                 <Check className="w-3.5 h-3.5" />
@@ -175,7 +175,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
                                                     if (!notif.isRead) handleMarkAsRead(notif.id);
                                                     setIsOpen(false);
                                                 }}
-                                                className="p-1 rounded hover:bg-[#eaeaea] text-[#999] hover:text-black transition-all"
+                                                className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
                                             >
                                                 <ExternalLink className="w-3.5 h-3.5" />
                                             </Link>

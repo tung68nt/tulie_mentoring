@@ -113,8 +113,8 @@ export function GlobalSearch() {
     return (
         <div ref={containerRef} className="relative">
             {/* Inline search input - always visible */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#fafafa] border border-[#eaeaea] rounded-lg hover:border-[#ccc] focus-within:border-[#999] focus-within:bg-white transition-all w-[220px] sm:w-[260px]">
-                <Search className="w-3.5 h-3.5 text-[#999] shrink-0" />
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-muted border border-border rounded-lg hover:border-foreground/20 focus-within:border-foreground focus-within:bg-card transition-all w-[220px] sm:w-[260px]">
+                <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 <input
                     ref={inputRef}
                     value={query}
@@ -122,33 +122,33 @@ export function GlobalSearch() {
                     onKeyDown={handleKeyDown}
                     onFocus={() => { if (query.trim() && results.length > 0) setShowResults(true); }}
                     placeholder="Tìm kiếm..."
-                    className="w-full text-sm bg-transparent focus:outline-none placeholder:text-[#bbb] text-black"
+                    className="w-full text-sm bg-transparent focus:outline-none placeholder:text-muted-foreground text-foreground"
                 />
                 {query ? (
                     <button
                         onClick={() => { setQuery(""); setResults([]); setShowResults(false); }}
-                        className="p-0.5 text-[#999] hover:text-black transition-colors"
+                        className="p-0.5 text-muted-foreground hover:text-foreground transition-colors"
                     >
                         <X className="w-3.5 h-3.5" />
                     </button>
                 ) : (
-                    <kbd className="hidden md:inline text-[10px] bg-white border border-[#eaeaea] px-1.5 py-0.5 rounded text-[#bbb] shrink-0">⌘K</kbd>
+                    <kbd className="hidden md:inline text-[10px] bg-card border border-border px-1.5 py-0.5 rounded text-muted-foreground shrink-0">⌘K</kbd>
                 )}
             </div>
 
             {/* Dropdown results */}
             {showResults && query && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-lg border border-[#eaeaea] shadow-lg overflow-hidden z-50 w-[360px]">
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-card rounded-lg border border-border shadow-lg overflow-hidden z-50 w-[360px]">
                     <div className="max-h-[320px] overflow-y-auto py-1">
                         {isLoading ? (
                             <div className="px-4 py-6 text-center">
-                                <div className="w-4 h-4 border-2 border-[#eaeaea] border-t-black rounded-full animate-spin mx-auto" />
-                                <p className="text-xs text-[#999] mt-2">Đang tìm kiếm...</p>
+                                <div className="w-4 h-4 border-2 border-border border-t-black rounded-full animate-spin mx-auto" />
+                                <p className="text-xs text-muted-foreground mt-2">Đang tìm kiếm...</p>
                             </div>
                         ) : results.length === 0 ? (
                             <div className="px-4 py-6 text-center">
-                                <p className="text-sm text-[#666]">Không tìm thấy kết quả</p>
-                                <p className="text-xs text-[#999] mt-1">Thử từ khóa khác</p>
+                                <p className="text-sm text-muted-foreground">Không tìm thấy kết quả</p>
+                                <p className="text-xs text-muted-foreground mt-1">Thử từ khóa khác</p>
                             </div>
                         ) : (
                             results.map((result, idx) => {
@@ -160,17 +160,17 @@ export function GlobalSearch() {
                                         onMouseEnter={() => setSelectedIdx(idx)}
                                         className={cn(
                                             "w-full flex items-center gap-3 px-3 py-2 text-left transition-colors",
-                                            idx === selectedIdx ? "bg-[#fafafa]" : "hover:bg-[#fafafa]"
+                                            idx === selectedIdx ? "bg-muted" : "hover:bg-muted"
                                         )}
                                     >
-                                        <div className="w-7 h-7 rounded-md bg-[#f5f5f5] border border-[#eaeaea] flex items-center justify-center shrink-0">
-                                            <Icon className="w-3.5 h-3.5 text-[#666]" />
+                                        <div className="w-7 h-7 rounded-md bg-muted border border-border flex items-center justify-center shrink-0">
+                                            <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-black truncate">{result.title}</p>
-                                            {result.subtitle && <p className="text-xs text-[#999] truncate">{result.subtitle}</p>}
+                                            <p className="text-sm font-medium text-foreground truncate">{result.title}</p>
+                                            {result.subtitle && <p className="text-xs text-muted-foreground truncate">{result.subtitle}</p>}
                                         </div>
-                                        <span className="text-[10px] text-[#bbb] shrink-0">{typeLabels[result.type]}</span>
+                                        <span className="text-[10px] text-muted-foreground shrink-0">{typeLabels[result.type]}</span>
                                     </button>
                                 );
                             })

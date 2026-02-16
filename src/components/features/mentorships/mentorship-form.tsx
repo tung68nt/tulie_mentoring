@@ -76,7 +76,7 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
         <Card className="w-full max-w-2xl mx-auto p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {error && (
-                    <div className="p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
+                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
                         {error}
                     </div>
                 )}
@@ -110,16 +110,16 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
                 />
 
                 <div className="space-y-2">
-                    <label className="block text-[12px] font-medium text-[#666]">
+                    <label className="block text-[12px] font-medium text-muted-foreground">
                         Chọn Mentees ({selectedMentees.length})
                     </label>
-                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-[#fafafa] rounded-[8px] border border-[#eaeaea]">
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-muted rounded-[8px] border border-border">
                         {mentees.map((m) => (
                             <label
                                 key={m.id}
                                 className={`flex items-center gap-2 p-2 rounded-[6px] cursor-pointer transition-colors ${selectedMentees.includes(m.id)
                                     ? "bg-black text-white"
-                                    : "bg-white hover:bg-[#fafafa] text-[#444] border border-[#eaeaea]"
+                                    : "bg-card hover:bg-muted text-foreground border border-border"
                                     }`}
                             >
                                 <input
@@ -135,7 +135,7 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
                         ))}
                     </div>
                     {errors.menteeIds && (
-                        <p className="text-sm text-[#ee0000]">{errors.menteeIds.message}</p>
+                        <p className="text-sm text-destructive">{errors.menteeIds.message}</p>
                     )}
                 </div>
 

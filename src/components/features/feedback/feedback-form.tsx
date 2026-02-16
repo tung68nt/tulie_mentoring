@@ -56,13 +56,13 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
         <Card className="p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {error && (
-                    <div className="p-3 text-sm text-[#ee0000] bg-[#ee0000]/5 rounded-[6px] border border-[#ee0000]/10">
+                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
                         {error}
                     </div>
                 )}
 
                 <div className="space-y-4">
-                    <label className="block text-[12px] font-semibold text-black">Đánh giá chung</label>
+                    <label className="block text-[12px] font-semibold text-foreground">Đánh giá chung</label>
                     <div className="flex gap-2">
                         {[1, 2, 3, 4, 5].map((s) => (
                             <button
@@ -74,7 +74,7 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
                                 }}
                                 className={`p-2 rounded-[8px] border transition-all ${rating >= s
                                     ? "bg-black border-black text-white shadow-md"
-                                    : "bg-white border-[#eaeaea] text-[#ccc]"
+                                    : "bg-card border-border text-muted-foreground"
                                     }`}
                             >
                                 <Star className={`w-6 h-6 ${rating >= s ? "fill-current" : ""}`} />
@@ -97,28 +97,28 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="block text-[12px] font-medium text-[#666]">Nhận xét chi tiết</label>
+                    <label className="block text-[12px] font-medium text-muted-foreground">Nhận xét chi tiết</label>
                     <textarea
                         {...register("content")}
-                        className="w-full min-h-[120px] p-3 rounded-[8px] border border-[#eaeaea] focus:ring-4 focus:ring-black/5 focus:border-black focus:outline-none text-sm text-black transition-all hover:border-[#999] placeholder:text-[#999]"
+                        className="w-full min-h-[120px] p-3 rounded-[8px] border border-border focus:ring-4 focus:ring-foreground/5 focus:border-foreground focus:outline-none text-sm text-foreground transition-all hover:border-foreground/30 placeholder:text-muted-foreground"
                         placeholder="Chia sẻ suy nghĩ của bạn..."
                     />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                        <label className="block text-[12px] font-medium text-[#999]">Điểm mạnh</label>
+                        <label className="block text-[12px] font-medium text-muted-foreground">Điểm mạnh</label>
                         <textarea
                             {...register("strengths")}
-                            className="w-full p-2 text-xs border border-[#eaeaea] rounded-[6px] focus:outline-none focus:ring-4 focus:ring-black/5 focus:border-black text-black placeholder:text-[#999]"
+                            className="w-full p-2 text-xs border border-border rounded-[6px] focus:outline-none focus:ring-4 focus:ring-foreground/5 focus:border-foreground text-foreground placeholder:text-muted-foreground"
                             placeholder="Ghi nhận..."
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="block text-[12px] font-medium text-[#999]">Cần cải thiện</label>
+                        <label className="block text-[12px] font-medium text-muted-foreground">Cần cải thiện</label>
                         <textarea
                             {...register("improvements")}
-                            className="w-full p-2 text-xs border border-[#eaeaea] rounded-[6px] focus:outline-none focus:ring-4 focus:ring-black/5 focus:border-black text-black placeholder:text-[#999]"
+                            className="w-full p-2 text-xs border border-border rounded-[6px] focus:outline-none focus:ring-4 focus:ring-foreground/5 focus:border-foreground text-foreground placeholder:text-muted-foreground"
                             placeholder="Góp ý..."
                         />
                     </div>

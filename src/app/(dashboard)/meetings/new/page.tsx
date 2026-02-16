@@ -21,8 +21,8 @@ export default async function NewMeetingPage() {
     return (
         <div className="max-w-3xl mx-auto space-y-8">
             <div>
-                <h1 className="text-2xl font-semibold text-black">Lên lịch cuộc họp mới</h1>
-                <p className="text-[#666] mt-1 text-sm">Thiết lập thời gian và địa điểm cho buổi Mentoring</p>
+                <h1 className="text-2xl font-semibold text-foreground">Lên lịch cuộc họp mới</h1>
+                <p className="text-muted-foreground mt-1 text-sm">Thiết lập thời gian và địa điểm cho buổi Mentoring</p>
             </div>
 
             <MeetingForm mentorships={filteredMentorships} />
