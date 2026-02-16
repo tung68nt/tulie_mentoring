@@ -38,12 +38,16 @@ export default async function MenteeDashboard() {
         })
     ]);
 
-    const completedGoals = goals.filter(g => g.currentValue >= 100).length;
-    const completionRate = goals.length > 0 ? Math.round((completedGoals / goals.length) * 100) : 0;
+    const serializedMentorship = JSON.parse(JSON.stringify(mentorship));
+    const serializedGoals = JSON.parse(JSON.stringify(goals));
+    const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings));
+
+    const completedGoals = serializedGoals.filter((g: any) => g.currentValue >= 100).length;
+    const completionRate = serializedGoals.length > 0 ? Math.round((completedGoals / serializedGoals.length) * 100) : 0;
 
     const stats = [
-        { title: "Mục tiêu", value: goals.length, icon: <Target /> },
-        { title: "Sắp tới", value: upcomingMeetings.length, icon: <Calendar /> },
+        { title: "Mục tiêu", value: serializedGoals.length, icon: <Target /> },
+        { title: "Sắp tới", value: serializedUpcomingMeetings.length, icon: <Calendar /> },
         { title: "Tỉ lệ đạt", value: `${completionRate}%`, icon: <CheckCircle /> },
     ];
 
@@ -69,24 +73,24 @@ export default async function MenteeDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-12">
                     {/* Mentor Profile */}
-                    {mentorship && (
+                    {serializedMentorship && (
                         <Card className="bg-primary text-primary-foreground border-none p-10 overflow-hidden relative group" padding="none">
                             <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
                                 <Avatar
-                                    firstName={mentorship.mentor?.firstName}
-                                    lastName={mentorship.mentor?.lastName}
-                                    src={mentorship.mentor?.avatar}
+                                    firstName={serializedMentorship.mentor?.firstName}
+                                    lastName={serializedMentorship.mentor?.lastName}
+                                    src={serializedMentorship.mentor?.avatar}
                                     size="xl"
                                     className="w-24 h-24 border-foreground/30 shadow-lg"
                                 />
                                 <div className="text-center md:text-left space-y-5 flex-1">
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-medium !text-gray-400 leading-none mb-2 block">Mentor của tôi</span>
-                                        <h3 className="text-3xl font-bold !text-primary-foreground">{mentorship.mentor?.firstName} {mentorship.mentor?.lastName}</h3>
+                                        <h3 className="text-3xl font-bold !text-primary-foreground">{serializedMentorship.mentor?.firstName} {serializedMentorship.mentor?.lastName}</h3>
                                     </div>
-                                    <p className="text-sm !text-gray-300 line-clamp-2 max-w-lg leading-relaxed font-medium">{mentorship.mentor?.bio || "No bio available."}</p>
+                                    <p className="text-sm !text-gray-300 line-clamp-2 max-w-lg leading-relaxed font-medium">{serializedMentorship.mentor?.bio || "No bio available."}</p>
                                     <Button variant="outline" className="text-primary-foreground border-foreground/30 hover:border-background hover:bg-card hover:text-foreground transition-all duration-300" asChild>
-                                        <Link href={`/admin/mentorships/${mentorship.id}`}>Hồ sơ & Trao đổi</Link>
+                                        <Link href={`/admin/mentorships/${serializedMentorship.id}`}>Hồ sơ & Trao đổi</Link>
                                     </Button>
                                 </div>
                             </div>
@@ -103,7 +107,7 @@ export default async function MenteeDashboard() {
                             </Button>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {goals.slice(0, 4).map(goal => (
+                            {serializedGoals.slice(0, 4).map((goal: any) => (
                                 <Card key={goal.id} className="p-6 space-y-5" hover>
                                     <div className="flex items-center justify-between">
                                         <p className="text-sm font-semibold text-foreground truncate leading-tight flex-1 pr-4">{goal.title}</p>
@@ -120,10 +124,10 @@ export default async function MenteeDashboard() {
                 <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
-                        {upcomingMeetings.length === 0 ? (
+                        {serializedUpcomingMeetings.length === 0 ? (
                             <p className="text-sm text-muted-foreground">Hiện tại bạn không có lịch họp.</p>
                         ) : (
-                            upcomingMeetings.map(meeting => (
+                            serializedUpcomingMeetings.map((meeting: any) => (
                                 <div key={meeting.id} className="p-5 rounded-[8px] border border-border flex items-center gap-5 hover:border-foreground/20 transition-all bg-card group">
                                     <div className="w-12 h-12 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
                                         <Calendar className="w-5 h-5" />

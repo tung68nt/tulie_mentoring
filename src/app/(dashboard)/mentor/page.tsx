@@ -41,12 +41,15 @@ export default async function MentorDashboard() {
         })
     ]);
 
-    const totalMentees = mentorships.reduce((acc, m) => acc + m.mentees.length, 0);
+    const serializedMentorships = JSON.parse(JSON.stringify(mentorships));
+    const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings));
+
+    const totalMentees = serializedMentorships.reduce((acc: number, m: any) => acc + m.mentees.length, 0);
 
     const stats = [
         { title: "Mentees", value: totalMentees, icon: <Users /> },
-        { title: "Buổi họp sắp tới", value: upcomingMeetings.length, icon: <Calendar /> },
-        { title: "Mentorship", value: mentorships.length, icon: <CheckCircle /> },
+        { title: "Buổi họp sắp tới", value: serializedUpcomingMeetings.length, icon: <Calendar /> },
+        { title: "Mentorship", value: serializedMentorships.length, icon: <CheckCircle /> },
     ];
 
     return (
@@ -74,7 +77,7 @@ export default async function MentorDashboard() {
                         <h3 className="text-lg font-semibold tracking-tight text-foreground">Danh sách Mentees</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {mentorships.flatMap(m => m.mentees).map((mt) => (
+                        {serializedMentorships.flatMap((m: any) => m.mentees).map((mt: any) => (
                             <Card key={mt.id} className="p-6 flex items-center justify-between group" hover>
                                 <div className="flex items-center gap-4">
                                     <Avatar
@@ -101,10 +104,10 @@ export default async function MentorDashboard() {
                 <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
                     <div className="space-y-4">
-                        {upcomingMeetings.length === 0 ? (
+                        {serializedUpcomingMeetings.length === 0 ? (
                             <p className="text-sm text-muted-foreground">Chưa có lịch họp nào.</p>
                         ) : (
-                            upcomingMeetings.map((meeting) => (
+                            serializedUpcomingMeetings.map((meeting: any) => (
                                 <div key={meeting.id} className="flex gap-5 p-5 rounded-[8px] border border-border bg-card group hover:border-foreground/20 transition-all">
                                     <div className="w-12 h-12 rounded-[6px] bg-primary text-primary-foreground flex flex-col items-center justify-center shrink-0">
                                         <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>

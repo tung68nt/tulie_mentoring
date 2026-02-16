@@ -24,12 +24,13 @@ export default async function AdminUsersPage() {
     }
 
     const users = await getAllUsers();
+    const serializedUsers = JSON.parse(JSON.stringify(users));
 
     return (
         <div className="space-y-8">
             <div className="space-y-1">
                 <h1 className="text-2xl font-semibold text-foreground">Quản lý Người dùng</h1>
-                <p className="text-sm text-muted-foreground mt-1">Danh sách tất cả tài khoản trong hệ thống ({users.length})</p>
+                <p className="text-sm text-muted-foreground mt-1">Danh sách tất cả tài khoản trong hệ thống ({serializedUsers.length})</p>
             </div>
 
             <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -44,7 +45,7 @@ export default async function AdminUsersPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {users.map((user) => (
+                        {serializedUsers.map((user: any) => (
                             <TableRow key={user.id}>
                                 <TableCell>
                                     <div className="flex items-center gap-3">

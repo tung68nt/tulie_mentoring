@@ -68,6 +68,11 @@ export default async function AdminDashboard() {
         }),
     ]);
 
+    // Serialize data to prevent "Server Component render" errors with Date objects
+    const serializedRecentMeetings = JSON.parse(JSON.stringify(recentMeetings));
+    const serializedRecentMentorships = JSON.parse(JSON.stringify(recentMentorships));
+    const serializedRecentNotifications = JSON.parse(JSON.stringify(recentNotifications));
+
     const stats = [
         { title: "Tổng người dùng", value: totalUsers, icon: <Users />, color: "black" as const },
         { title: "Mentor hoạt động", value: activeMentors, icon: <UserCheck />, color: "black" as const },
@@ -131,7 +136,7 @@ export default async function AdminDashboard() {
                             </Link>
                         </div>
 
-                        {recentMeetings.length === 0 && recentMentorships.length === 0 ? (
+                        {serializedRecentMeetings.length === 0 && serializedRecentMentorships.length === 0 ? (
                             <EmptyState
                                 icon={<TrendingUp className="w-8 h-8 text-muted-foreground" />}
                                 title="Chưa có hoạt động nào"
@@ -141,7 +146,7 @@ export default async function AdminDashboard() {
                         ) : (
                             <div className="space-y-0">
                                 {/* Recent Meetings */}
-                                {recentMeetings.slice(0, 3).map((meeting, idx) => (
+                                {serializedRecentMeetings.slice(0, 3).map((meeting: any, idx: number) => (
                                     <div key={meeting.id}>
                                         {idx > 0 && <div className="h-px bg-border ml-[68px]" />}
                                         <Link
@@ -176,7 +181,7 @@ export default async function AdminDashboard() {
                                 <div className="h-px bg-border ml-[68px]" />
 
                                 {/* Recent Mentorships */}
-                                {recentMentorships.slice(0, 2).map((ms, idx) => (
+                                {serializedRecentMentorships.slice(0, 2).map((ms: any, idx: number) => (
                                     <div key={ms.id}>
                                         {idx > 0 && <div className="h-px bg-border ml-[68px]" />}
                                         <Link
@@ -240,7 +245,7 @@ export default async function AdminDashboard() {
                             Mentorship mới nhất
                         </h3>
                         <div className="space-y-0">
-                            {recentMentorships.slice(0, 3).map((ms, idx) => (
+                            {serializedRecentMentorships.slice(0, 3).map((ms: any, idx: number) => (
                                 <div key={ms.id}>
                                     {idx > 0 && <div className="h-px bg-border ml-12" />}
                                     <Link

@@ -16,6 +16,7 @@ export default async function ResourcesPage() {
     const categories = ["Tài liệu", "Biểu mẫu", "Video", "Sách điện tử", "Khác"];
 
     const resources = await getResources();
+    const serializedResources = JSON.parse(JSON.stringify(resources));
 
     return (
         <div className="space-y-8 pb-10">
@@ -34,7 +35,7 @@ export default async function ResourcesPage() {
                 )}
             </div>
 
-            <ResourceList resources={resources as any} categories={categories} />
+            <ResourceList resources={serializedResources} categories={categories} />
         </div>
     );
 }

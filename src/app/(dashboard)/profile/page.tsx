@@ -26,5 +26,8 @@ export default async function ProfilePage() {
     const meetings = await getMeetings({ role, userId });
     const meetingCount = meetings.length;
 
-    return <ProfileEditor user={user} meetingCount={meetingCount} />;
+    // Serialize data to avoid "Server Component Render" error when passing Date objects to Client Components
+    const serializedUser = JSON.parse(JSON.stringify(user));
+
+    return <ProfileEditor user={serializedUser} meetingCount={meetingCount} />;
 }

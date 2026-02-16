@@ -15,6 +15,7 @@ export default async function MentorshipsPage() {
         redirect("/login");
     }
     const mentorships = await getMentorships();
+    const serializedMentorships = JSON.parse(JSON.stringify(mentorships));
 
     return (
         <div className="space-y-8">
@@ -32,7 +33,7 @@ export default async function MentorshipsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {mentorships.length === 0 ? (
+                {serializedMentorships.length === 0 ? (
                     <Card className="lg:col-span-2 flex flex-col items-center justify-center py-12 text-center">
                         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-4 border border-border">
                             <Users className="w-8 h-8" />
@@ -46,7 +47,7 @@ export default async function MentorshipsPage() {
                         </Button>
                     </Card>
                 ) : (
-                    mentorships.map((m) => (
+                    serializedMentorships.map((m: any) => (
                         <Card key={m.id} hover padding="none" className="overflow-hidden flex flex-col">
                             <div className="p-6 flex-1">
                                 <div className="flex items-start justify-between mb-6">
@@ -78,7 +79,7 @@ export default async function MentorshipsPage() {
                                     {/* Mentees */}
                                     <div className="flex flex-col items-center text-center gap-2 flex-1">
                                         <AvatarGroup>
-                                            {m.mentees?.slice(0, 3).map((mt) => (
+                                            {m.mentees?.slice(0, 3).map((mt: any) => (
                                                 <Avatar
                                                     key={mt.mentee?.id}
                                                     firstName={mt.mentee?.firstName}

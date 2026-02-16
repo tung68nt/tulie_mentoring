@@ -76,19 +76,21 @@ export default async function AdminReportsPage() {
         }),
     ]);
 
+    const serializedTopMentees = JSON.parse(JSON.stringify(topMentees));
+
     const attendanceRate = totalAttendances > 0 ? Math.round((presentAttendances / totalAttendances) * 100) : 0;
     const goalCompletionRate = totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0;
 
     // Calculate top performers
-    const menteesWithProgress = topMentees.map(mentee => {
+    const menteesWithProgress = serializedTopMentees.map((mentee: any) => {
         const allGoals = mentee.menteeships?.flatMap(
-            ms => ms.mentorship.goals
+            (ms: any) => ms.mentorship.goals
         ) || [];
         const total = allGoals.length;
-        const completed = allGoals.filter(g => g.status === "completed").length;
+        const completed = allGoals.filter((g: any) => g.status === "completed").length;
         const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
         return { ...mentee, goalTotal: total, goalCompleted: completed, rate };
-    }).filter(m => m.goalTotal > 0).sort((a, b) => b.rate - a.rate).slice(0, 5);
+    }).filter((m: any) => m.goalTotal > 0).sort((a: any, b: any) => b.rate - a.rate).slice(0, 5);
 
     // Calculate program performance
     const programPerformance = programCycles.map(cycle => {
@@ -212,7 +214,7 @@ export default async function AdminReportsPage() {
                         />
                     ) : (
                         <div className="space-y-4">
-                            {menteesWithProgress.map((mentee, idx) => (
+                            {menteesWithProgress.map((mentee: any, idx: number) => (
                                 <div key={mentee.id} className="flex items-center justify-between p-5 rounded-[16px] bg-card border border-border hover:border-foreground/20/10 hover:shadow-sm hover:-translate-y-0.5 transition-all group">
                                     <div className="flex items-center gap-4">
                                         <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-sm">
