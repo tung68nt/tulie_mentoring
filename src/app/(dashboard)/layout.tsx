@@ -48,7 +48,7 @@ export default async function DashboardLayout({
                 </main>
 
                 <footer className="py-6 text-center text-xs text-muted-foreground border-t border-border">
-                    © {new Date().getFullYear()} ISME Mentoring Program (IMP) - Đại học Kinh tế Quốc dân. All rights reserved.
+                    © {new Date().getFullYear()} Tulie TSS. All rights reserved.
                 </footer>
             </div>
         </div>

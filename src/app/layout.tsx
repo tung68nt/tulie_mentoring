@@ -13,8 +13,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IMP Mentoring Platform",
-  description: "ISME Mentoring Program Management System",
+  title: "Tulie TSS Mentoring",
+  description: "Tulie TSS Mentoring Management System",
 };
 
 export default function RootLayout({
