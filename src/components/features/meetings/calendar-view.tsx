@@ -162,7 +162,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                                 <div className="flex justify-between items-start mb-2">
                                     <span className={cn(
                                         "text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full",
-                                        isToday(day) ? "bg-black text-white" : "text-muted-foreground"
+                                        isToday(day) ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                                     )}>
                                         {format(day, "d")}
                                     </span>
@@ -172,7 +172,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                                         <Link
                                             key={meeting.id}
                                             href={`/meetings/${meeting.id}`}
-                                            className="block px-1.5 py-0.5 bg-black/5 hover:bg-black/10 rounded-[3px] text-[10px] font-medium text-foreground truncate border border-transparent hover:border-foreground/20/10 transition-all"
+                                            className="block px-1.5 py-0.5 bg-primary/5 hover:bg-primary/10 rounded-[3px] text-[10px] font-medium text-foreground truncate border border-transparent hover:border-foreground/20/10 transition-all"
                                             title={meeting.title}
                                         >
                                             <span className="font-bold mr-1">{format(new Date(meeting.scheduledAt), "HH:mm")}</span>
@@ -203,7 +203,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                             </p>
                             <p className={cn(
                                 "text-lg font-bold w-8 h-8 flex items-center justify-center rounded-full mx-auto",
-                                isToday(day) ? "bg-black text-white" : "text-foreground"
+                                isToday(day) ? "bg-primary text-primary-foreground" : "text-foreground"
                             )}>
                                 {format(day, "d")}
                             </p>
@@ -264,7 +264,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                     <Card key={meeting.id} hover padding="none" className="flex flex-col group">
                         <div className="p-6 flex-1 space-y-4">
                             <div className="flex items-start justify-between">
-                                <div className="w-12 h-12 rounded-[8px] bg-black flex flex-col items-center justify-center text-white shrink-0">
+                                <div className="w-12 h-12 rounded-[8px] bg-primary flex flex-col items-center justify-center text-primary-foreground shrink-0">
                                     <span className="text-[10px] font-bold leading-none">{format(new Date(meeting.scheduledAt), "MMM", { locale: vi })}</span>
                                     <span className="text-lg font-bold leading-none mt-1">{format(new Date(meeting.scheduledAt), "dd")}</span>
                                 </div>

@@ -65,7 +65,7 @@ export default async function MenteeDashboard() {
                 <div className="lg:col-span-2 space-y-12">
                     {/* Mentor Profile */}
                     {mentorship && (
-                        <Card className="bg-black text-white border-none p-10 overflow-hidden relative group" padding="none">
+                        <Card className="bg-primary text-primary-foreground border-none p-10 overflow-hidden relative group" padding="none">
                             <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
                                 <Avatar
                                     firstName={mentorship.mentor.firstName}
@@ -77,15 +77,15 @@ export default async function MenteeDashboard() {
                                 <div className="text-center md:text-left space-y-5 flex-1">
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-medium !text-gray-400 leading-none mb-2 block">Mentor của tôi</span>
-                                        <h3 className="text-3xl font-bold !text-white">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
+                                        <h3 className="text-3xl font-bold !text-primary-foreground">{mentorship.mentor.firstName} {mentorship.mentor.lastName}</h3>
                                     </div>
                                     <p className="text-sm !text-gray-300 line-clamp-2 max-w-lg leading-relaxed font-medium">{mentorship.mentor.bio || "No bio available."}</p>
-                                    <Button variant="outline" className="text-white border-foreground/30 hover:border-white hover:bg-card hover:text-foreground transition-all duration-300" asChild>
+                                    <Button variant="outline" className="text-primary-foreground border-foreground/30 hover:border-background hover:bg-card hover:text-foreground transition-all duration-300" asChild>
                                         <Link href={`/admin/mentorships/${mentorship.id}`}>Hồ sơ & Trao đổi</Link>
                                     </Button>
                                 </div>
                             </div>
-                            <Zap className="absolute -top-10 -right-10 w-48 h-48 text-white/5 opacity-40 group-hover:scale-110 transition-transform duration-700 ease-out" />
+                            <Zap className="absolute -top-10 -right-10 w-48 h-48 text-primary-foreground/5 opacity-40 group-hover:scale-110 transition-transform duration-700 ease-out" />
                         </Card>
                     )}
 

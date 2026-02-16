@@ -89,7 +89,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
             >
                 <Bell className="w-[18px] h-[18px]" />
                 {localUnread > 0 && (
-                    <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-black text-white rounded-full text-[10px] font-medium flex items-center justify-center leading-none">
+                    <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-primary text-primary-foreground rounded-full text-[10px] font-medium flex items-center justify-center leading-none">
                         {localUnread > 99 ? "99+" : localUnread}
                     </span>
                 )}
@@ -184,7 +184,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
 
                                     {/* Unread dot */}
                                     {!notif.isRead && (
-                                        <span className="w-2 h-2 bg-black rounded-full shrink-0 mt-2" />
+                                        <span className="w-2 h-2 bg-primary rounded-full shrink-0 mt-2" />
                                     )}
                                 </div>
                             ))

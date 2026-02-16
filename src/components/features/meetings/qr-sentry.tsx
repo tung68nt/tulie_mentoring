@@ -34,7 +34,7 @@ export function QRSentry({ meetingId }: QRSentryProps) {
         <Card className="p-10 flex flex-col items-center text-center space-y-6">
             {status === "idle" && (
                 <>
-                    <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center text-white">
+                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-primary-foreground">
                         <Camera className="w-8 h-8" />
                     </div>
                     <div className="space-y-2">

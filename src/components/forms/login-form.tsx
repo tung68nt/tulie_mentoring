@@ -76,7 +76,7 @@ export function LoginForm() {
         <Card className="w-full max-w-md p-8">
             <div className="text-center mb-8">
                 <h1 className="text-2xl font-semibold text-foreground">Chào mừng trở lại</h1>
-                <p className="text-muted-foreground mt-2 text-sm">Đăng nhập vào hệ thống IMP Mentoring</p>
+                <p className="text-muted-foreground mt-2 text-sm">Đăng nhập vào hệ thống Tulie TSS Mentoring</p>
             </div>
 
             {/* Google Login */}

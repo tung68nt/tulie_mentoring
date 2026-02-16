@@ -99,7 +99,7 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                                 onClick={() => setActiveCategory(null)}
                                 className={cn(
                                     "w-full text-left px-3 py-2 rounded-[6px] text-sm font-medium flex items-center justify-between transition-colors",
-                                    !activeCategory ? "bg-black text-white" : "text-muted-foreground hover:bg-muted"
+                                    !activeCategory ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
                                 )}
                             >
                                 Tất cả tài liệu
@@ -116,7 +116,7 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                                     onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
                                     className={cn(
                                         "w-full text-left px-3 py-2 rounded-[6px] text-sm font-medium flex items-center justify-between transition-colors",
-                                        activeCategory === cat ? "bg-black text-white" : "text-muted-foreground hover:bg-muted"
+                                        activeCategory === cat ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
                                     )}
                                 >
                                     {cat}
@@ -133,15 +133,15 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                         </div>
                     </Card>
 
-                    <Card className="bg-black text-white p-6 border-none overflow-hidden relative">
+                    <Card className="bg-primary text-primary-foreground p-6 border-none overflow-hidden relative">
                         <div className="relative z-10">
                             <h4 className="text-sm font-semibold mb-2">Bạn có tài liệu hay?</h4>
-                            <p className="text-xs text-white/60 leading-relaxed mb-4">Chia sẻ kiến thức của bạn với cộng đồng Mentoring ngay hôm nay.</p>
-                            <Button size="sm" variant="outline" className="text-white border-white/30 hover:bg-card/10" asChild>
+                            <p className="text-xs text-primary-foreground/60 leading-relaxed mb-4">Chia sẻ kiến thức của bạn với cộng đồng Mentoring ngay hôm nay.</p>
+                            <Button size="sm" variant="outline" className="text-primary-foreground border-background/30 hover:bg-card/10" asChild>
                                 <Link href="/resources/new">Chia sẻ ngay</Link>
                             </Button>
                         </div>
-                        <FolderOpen className="absolute -bottom-4 -right-4 w-24 h-24 text-white/5 rotate-12" />
+                        <FolderOpen className="absolute -bottom-4 -right-4 w-24 h-24 text-primary-foreground/5 rotate-12" />
                     </Card>
                 </div>
 

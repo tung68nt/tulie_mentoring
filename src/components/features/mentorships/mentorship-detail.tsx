@@ -161,7 +161,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                     mentorship.meetings.map((meeting: any) => (
                                         <div key={meeting.id} className="flex items-center justify-between p-4 rounded-[8px] border border-border hover:bg-muted transition-colors">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-[6px] bg-black flex flex-col items-center justify-center text-white">
+                                                <div className="w-10 h-10 rounded-[6px] bg-primary flex flex-col items-center justify-center text-primary-foreground">
                                                     <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                                     <span className="text-sm font-bold leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
                                                 </div>
@@ -236,7 +236,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                         </div>
                     </Card>
 
-                    <Card className="bg-black text-white border-none">
+                    <Card className="bg-primary text-primary-foreground border-none">
                         <h4 className="text-sm font-semibold mb-4 opacity-70">Thống kê nhanh</h4>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">

@@ -67,7 +67,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                             lastName={user.lastName}
                             src={user.avatar}
                             size="xl"
-                            className="w-32 h-32 text-4xl mb-6 shadow-xl border-4 border-white"
+                            className="w-32 h-32 text-4xl mb-6 shadow-xl border-4 border-background"
                         />
                         <h2 className="text-xl font-semibold text-foreground">{user.firstName} {user.lastName}</h2>
                         <p className="text-xs font-medium text-muted-foreground mt-1 mb-4">{user.role}</p>
@@ -190,7 +190,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                 Hồ sơ Mentor
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Input label="Công ty / Tổ chức" value={user.mentorProfile.company || "ISME"} readOnly />
+                                <Input label="Công ty / Tổ chức" value={user.mentorProfile.company || "Tulie TSS"} readOnly />
                                 <Input label="Vị trí công việc" value={user.mentorProfile.jobTitle || "Professional"} readOnly />
                                 <div className="md:col-span-2 space-y-1.5">
                                     <label className="text-[12px] font-medium text-muted-foreground">Chuyên môn</label>

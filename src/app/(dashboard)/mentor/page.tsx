@@ -101,7 +101,7 @@ export default async function MentorDashboard() {
                         ) : (
                             upcomingMeetings.map((meeting) => (
                                 <div key={meeting.id} className="flex gap-5 p-5 rounded-[8px] border border-border bg-card group hover:border-foreground/20 transition-all">
-                                    <div className="w-12 h-12 rounded-[6px] bg-black text-white flex flex-col items-center justify-center shrink-0">
+                                    <div className="w-12 h-12 rounded-[6px] bg-primary text-primary-foreground flex flex-col items-center justify-center shrink-0">
                                         <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                         <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                     </div>

@@ -118,7 +118,7 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
                             <label
                                 key={m.id}
                                 className={`flex items-center gap-2 p-2 rounded-[6px] cursor-pointer transition-colors ${selectedMentees.includes(m.id)
-                                    ? "bg-black text-white"
+                                    ? "bg-primary text-primary-foreground"
                                     : "bg-card hover:bg-muted text-foreground border border-border"
                                     }`}
                             >

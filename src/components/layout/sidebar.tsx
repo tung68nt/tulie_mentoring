@@ -110,10 +110,10 @@ export function Sidebar({ role }: SidebarProps) {
             {/* Brand */}
             <div className="h-14 flex items-center px-4 border-b border-border shrink-0">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
-                    <span className="text-primary-foreground font-bold text-[11px]">IMP</span>
+                    <span className="text-primary-foreground font-bold text-[11px]">TSS</span>
                 </div>
                 {!isCollapsed && (
-                    <span className="ml-3 font-semibold text-foreground text-sm whitespace-nowrap">ISME Mentoring</span>
+                    <span className="ml-3 font-semibold text-foreground text-sm whitespace-nowrap">Tulie TSS</span>
                 )}
             </div>
 

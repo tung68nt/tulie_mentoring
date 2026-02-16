@@ -5,13 +5,31 @@ import { cn } from "@/lib/utils"
 function Card({
   className,
   size = "default",
+  padding = "default",
+  hover = false,
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> & {
+  size?: "default" | "sm",
+  padding?: "none" | "sm" | "default" | "lg",
+  hover?: boolean
+}) {
+  const paddingClasses = {
+    none: "p-0",
+    sm: "p-3",
+    default: "p-5",
+    lg: "p-8",
+  };
+
   return (
     <div
       data-slot="card"
       data-size={size}
-      className={cn("ring-foreground/10 bg-card text-card-foreground gap-4 overflow-hidden rounded-xl py-4 text-sm ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl group/card flex flex-col", className)}
+      className={cn(
+        "ring-foreground/10 bg-card text-card-foreground gap-4 overflow-hidden rounded-xl text-sm ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 group/card flex flex-col",
+        paddingClasses[padding],
+        hover && "hover:border-foreground/20 transition-all cursor-pointer",
+        className
+      )}
       {...props}
     />
   )

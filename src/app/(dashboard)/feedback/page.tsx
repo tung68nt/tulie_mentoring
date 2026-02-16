@@ -49,7 +49,7 @@ export default async function FeedbackPage() {
                             <div className="space-y-6">
                                 {received.map(fb => (
                                     <Card key={fb.id} className="relative overflow-visible">
-                                        <div className="absolute -top-3 -left-3 w-8 h-8 bg-black rounded-full flex items-center justify-center text-white shadow-lg">
+                                        <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg">
                                             <Quote className="w-4 h-4 fill-current" />
                                         </div>
                                         <div className="space-y-4">

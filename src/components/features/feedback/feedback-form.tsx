@@ -73,7 +73,7 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
                                     setValue("rating", s);
                                 }}
                                 className={`p-2 rounded-[8px] border transition-all ${rating >= s
-                                    ? "bg-black border-black text-white shadow-md"
+                                    ? "bg-primary border-primary text-primary-foreground shadow-md"
                                     : "bg-card border-border text-muted-foreground"
                                     }`}
                             >

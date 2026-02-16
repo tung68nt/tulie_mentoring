@@ -113,7 +113,7 @@ export default async function AdminReportsPage() {
                     <p className="text-sm text-muted-foreground mt-1">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-foreground bg-muted border border-border px-3 py-1.5 rounded-full shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                     Dữ liệu thời gian thực
                 </div>
             </div>
@@ -148,10 +148,10 @@ export default async function AdminReportsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Program Performance */}
-                <Card className="lg:col-span-7 bg-card shadow-xl shadow-black/[0.02]" padding="lg">
+                <Card className="lg:col-span-7 bg-card shadow-sm" padding="lg">
                     <CardHeader className="mb-6">
                         <CardTitle className="text-xl flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-black text-white shadow-lg shadow-black/20">
+                            <div className="p-2 rounded-lg bg-primary text-primary-foreground shadow-sm">
                                 <BarChart3 className="w-5 h-5" />
                             </div>
                             Hiệu suất theo chương trình
@@ -171,9 +171,7 @@ export default async function AdminReportsPage() {
                                         <div className="space-y-1.5">
                                             <div className="flex items-center gap-3">
                                                 <span className="text-lg font-bold text-foreground">{cycle.name}</span>
-                                                <Badge variant={cycle.status === 'active' ? 'solid' : 'default'} size="sm">
-                                                    {cycle.status === 'active' ? 'Đang chạy' : 'Hoàn thành'}
-                                                </Badge>
+                                                <Badge status={cycle.status} size="sm" />
                                             </div>
                                             <p className="text-xs font-medium text-muted-foreground">
                                                 {cycle.mentorshipCount} nhóm đang hoạt động tích cực
@@ -186,7 +184,7 @@ export default async function AdminReportsPage() {
                                             </p>
                                         </div>
                                     </div>
-                                    <Progress value={cycle.completionRate} size="md" color={cycle.completionRate === 100 ? "success" : "default"} />
+                                    <Progress value={cycle.completionRate} size="sm" color={cycle.completionRate === 100 ? "success" : "default"} />
                                 </div>
                             ))}
                         </div>
@@ -213,9 +211,9 @@ export default async function AdminReportsPage() {
                     ) : (
                         <div className="space-y-4">
                             {menteesWithProgress.map((mentee, idx) => (
-                                <div key={mentee.id} className="flex items-center justify-between p-5 rounded-[16px] bg-card shadow-sm border border-border hover:border-foreground/20/10 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-0.5 transition-all group">
+                                <div key={mentee.id} className="flex items-center justify-between p-5 rounded-[16px] bg-card border border-border hover:border-foreground/20/10 hover:shadow-sm hover:-translate-y-0.5 transition-all group">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shadow-lg shadow-black/10">
+                                        <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-sm">
                                             {idx + 1}
                                         </div>
                                         <Avatar
@@ -240,8 +238,8 @@ export default async function AdminReportsPage() {
                                             <p className="text-lg font-bold text-foreground leading-none">{mentee.rate}%</p>
                                         </div>
                                         {mentee.rate >= 80 ? (
-                                            <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center">
-                                                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                                            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-primary-foreground" />
                                             </div>
                                         ) : (
                                             <div className="w-6 h-6 rounded-full bg-border flex items-center justify-center">

@@ -33,34 +33,53 @@ const badgeVariants = cva(
   }
 )
 
+const statusConfig: Record<string, { variant: "primary" | "secondary" | "destructive" | "outline", label: string }> = {
+  active: { variant: "primary", label: "Đang hoạt động" },
+  completed: { variant: "primary", label: "Hoàn thành" },
+  in_progress: { variant: "primary", label: "Đang diễn ra" },
+  scheduled: { variant: "secondary", label: "Đã lên lịch" },
+  pending: { variant: "secondary", label: "Chờ duyệt" },
+  cancelled: { variant: "destructive", label: "Đã hủy" },
+  inactive: { variant: "secondary", label: "Ngừng hoạt động" },
+  offline: { variant: "secondary", label: "Ngoại tuyến" },
+  draft: { variant: "secondary", label: "Nháp" },
+};
+
 function Badge({
   className,
-  variant = "default",
+  variant,
   size = "default",
   status,
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<"span"> &
   VariantProps<typeof badgeVariants> & {
     asChild?: boolean
-    status?: "active" | "inactive" | string
+    status?: string
   }) {
   const Comp = asChild ? Slot.Root : "span"
 
-  // Legacy status mapping
-  let finalVariant = variant
-  let finalSize = size
-  if (status === "active") finalVariant = "success"
-  if (status === "inactive") finalVariant = "secondary"
+  let finalVariant = variant || "default";
+  let displayChildren = children;
+
+  if (status && statusConfig[status]) {
+    finalVariant = statusConfig[status].variant;
+    if (!displayChildren) {
+      displayChildren = statusConfig[status].label;
+    }
+  }
 
   return (
     <Comp
       data-slot="badge"
       data-variant={finalVariant}
-      data-size={finalSize}
-      className={cn(badgeVariants({ variant: finalVariant, size: finalSize }), className)}
+      data-size={size}
+      className={cn(badgeVariants({ variant: finalVariant, size }), className)}
       {...props}
-    />
+    >
+      {displayChildren}
+    </Comp>
   )
 }
 

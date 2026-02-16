@@ -79,10 +79,10 @@ export default async function AdminDashboard() {
                     <p className="text-sm text-muted-foreground mt-1">Tổng quan hoạt động của {session?.user?.name || "Admin"}</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" size="md" className="shadow-sm font-semibold bg-muted" asChild>
+                    <Button variant="outline" size="default" className="shadow-sm font-semibold bg-muted" asChild>
                         <Link href="/admin/users">Quản lý người dùng</Link>
                     </Button>
-                    <Button size="md" className="shadow-lg shadow-black/10 font-semibold" asChild>
+                    <Button size="default" className="shadow-lg shadow-sm font-semibold" asChild>
                         <Link href="/admin/mentorships/new">Tạo Mentorship</Link>
                     </Button>
                 </div>
@@ -118,7 +118,7 @@ export default async function AdminDashboard() {
                     <div className="lg:col-span-8 p-8">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-                                <span className="w-1 h-5 bg-black rounded-full" />
+                                <span className="w-1 h-5 bg-primary rounded-full" />
                                 Hoạt động gần đây
                             </h3>
                             <Link href="/admin/reports" className="text-xs font-medium text-muted-foreground hover:text-foreground transition-all flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full border border-border">
@@ -143,7 +143,7 @@ export default async function AdminDashboard() {
                                             href={`/meetings/${meeting.id}`}
                                             className="flex items-center gap-5 py-4 hover:bg-muted transition-all group -mx-2 px-2 rounded-xl"
                                         >
-                                            <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0 shadow-lg shadow-black/10 group-hover:scale-105 transition-transform">
+                                            <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-lg shadow-sm group-hover:scale-105 transition-transform">
                                                 <Calendar className="w-5 h-5" />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -178,7 +178,7 @@ export default async function AdminDashboard() {
                                             href={`/admin/mentorships/${ms.id}`}
                                             className="flex items-center gap-5 py-4 hover:bg-muted transition-all group -mx-2 px-2 rounded-xl"
                                         >
-                                            <div className="w-12 h-12 rounded-xl bg-muted border border-border text-muted-foreground flex items-center justify-center shrink-0 group-hover:bg-black group-hover:text-white group-hover:border-foreground/20 shadow-sm group-hover:shadow-lg transition-all">
+                                            <div className="w-12 h-12 rounded-xl bg-muted border border-border text-muted-foreground flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-foreground/20 shadow-sm group-hover:shadow-lg transition-all">
                                                 <Users className="w-5 h-5" />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -247,7 +247,7 @@ export default async function AdminDashboard() {
                                             lastName={ms.mentor.lastName}
                                             src={ms.mentor.avatar}
                                             size="sm"
-                                            className="border-2 border-white shadow-sm ring-1 ring-black/5 group-hover:ring-black group-hover:scale-110 transition-all"
+                                            className="border-2 border-background shadow-sm ring-1 ring-ring group-hover:ring-primary group-hover:scale-110 transition-all"
                                         />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-semibold text-foreground truncate">

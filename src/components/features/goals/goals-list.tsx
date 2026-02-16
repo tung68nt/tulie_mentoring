@@ -41,7 +41,7 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
                     <div key={mentorship.id} className="space-y-6">
                         <div className="flex items-center justify-between border-b border-border pb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-black rounded-[8px] flex items-center justify-center text-white">
+                                <div className="w-10 h-10 bg-primary rounded-[8px] flex items-center justify-center text-primary-foreground">
                                     <Target className="w-5 h-5" />
                                 </div>
                                 <div>

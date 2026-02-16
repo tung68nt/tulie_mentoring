@@ -60,7 +60,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                 <h1 className="text-2xl font-semibold text-foreground">{user.firstName} {user.lastName}</h1>
                                 <p className="text-sm text-muted-foreground mt-0.5">{getRoleLabel(user.role)}</p>
                             </div>
-                            <Badge className={user.isActive ? "bg-black text-white" : "bg-muted text-muted-foreground border border-border"}>
+                            <Badge className={user.isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"}>
                                 {user.isActive ? "Đang hoạt động" : "Ngừng hoạt động"}
                             </Badge>
                         </div>
