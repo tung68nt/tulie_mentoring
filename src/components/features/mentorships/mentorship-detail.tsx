@@ -65,7 +65,15 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                 </div>
             </div>
 
-            <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList variant="line" className="mb-6">
+                    {tabs.map((tab) => (
+                        <TabsTrigger key={tab.id} value={tab.id}>
+                            {tab.label}
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+            </Tabs>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Content */}
@@ -164,7 +172,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                                             <Clock className="w-3 h-3" />
                                                             {formatDate(meeting.scheduledAt, "HH:mm")}
                                                         </span>
-                                                        <Badge status={meeting.status} size="sm" />
+                                                        <Badge variant="outline" size="sm" />
                                                     </div>
                                                 </div>
                                             </div>

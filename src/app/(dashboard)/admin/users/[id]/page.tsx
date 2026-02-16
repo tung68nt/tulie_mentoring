@@ -123,7 +123,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                         <div className="flex items-center gap-3">
                                             <div className="flex -space-x-2">
                                                 {ms.mentees.slice(0, 3).map(mt => (
-                                                    <Avatar key={mt.id} firstName={mt.mentee.firstName} lastName={mt.mentee.lastName} src={mt.mentee.avatar} size="xs" className="ring-2 ring-white" />
+                                                    <Avatar key={mt.id} firstName={mt.mentee.firstName} lastName={mt.mentee.lastName} src={mt.mentee.avatar} size="xs" className="ring-2 ring-background" />
                                                 ))}
                                             </div>
                                             <div>

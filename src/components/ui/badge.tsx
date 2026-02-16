@@ -20,9 +20,15 @@ const badgeVariants = cva(
         ghost: "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
       },
+      size: {
+        default: "h-5 px-2 py-0.5 text-xs",
+        sm: "h-4 px-1.5 py-0 text-[10px]",
+        lg: "h-6 px-3 py-1 text-sm",
+      },
     },
     defaultVariants: {
       variant: "default",
+      size: "default",
     },
   }
 )
@@ -30,6 +36,7 @@ const badgeVariants = cva(
 function Badge({
   className,
   variant = "default",
+  size = "default",
   status,
   asChild = false,
   ...props
@@ -42,6 +49,7 @@ function Badge({
 
   // Legacy status mapping
   let finalVariant = variant
+  let finalSize = size
   if (status === "active") finalVariant = "success"
   if (status === "inactive") finalVariant = "secondary"
 
@@ -49,7 +57,8 @@ function Badge({
     <Comp
       data-slot="badge"
       data-variant={finalVariant}
-      className={cn(badgeVariants({ variant: finalVariant }), className)}
+      data-size={finalSize}
+      className={cn(badgeVariants({ variant: finalVariant, size: finalSize }), className)}
       {...props}
     />
   )
