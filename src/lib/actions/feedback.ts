@@ -24,6 +24,14 @@ export async function submitFeedback(data: FeedbackInput) {
 }
 
 export async function getReceivedFeedback(userId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    // Only allow user to see their own feedback, or admin
+    if (session.user.id !== userId && (session.user as any).role !== "admin") {
+        throw new Error("Unauthorized: You can only see your own feedback");
+    }
+
     return await prisma.feedback.findMany({
         where: { toUserId: userId },
         include: {
@@ -35,6 +43,14 @@ export async function getReceivedFeedback(userId: string) {
 }
 
 export async function getGivenFeedback(userId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    // Only allow user to see their own feedback, or admin
+    if (session.user.id !== userId && (session.user as any).role !== "admin") {
+        throw new Error("Unauthorized: You can only see your own feedback");
+    }
+
     return await prisma.feedback.findMany({
         where: { fromUserId: userId },
         include: {

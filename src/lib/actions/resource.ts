@@ -28,6 +28,9 @@ export async function createResource(data: {
 }
 
 export async function getResources(category?: string) {
+    const session = await auth();
+    if (!session?.user) return [];
+
     return await prisma.resource.findMany({
         where: category ? { category } : {},
         include: {

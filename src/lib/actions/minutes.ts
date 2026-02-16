@@ -30,6 +30,9 @@ export async function createMinutes(data: {
 }
 
 export async function getMinutes(meetingId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
     return await prisma.meetingMinutes.findFirst({
         where: { meetingId },
         include: {

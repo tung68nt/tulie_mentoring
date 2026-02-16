@@ -15,11 +15,12 @@ export default async function DashboardLayout({
         redirect("/login");
     }
 
+    const role = (session.user as any).role;
     const user = {
         id: session.user.id!,
         firstName: (session.user as any).firstName,
         lastName: (session.user as any).lastName,
-        role: (session.user as any).role,
+        role: role,
         avatar: session.user.image,
     };
 

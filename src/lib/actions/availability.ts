@@ -35,7 +35,7 @@ export async function setAvailability(slots: {
 
     const created = await prisma.availability.createMany({
         data: slots.map(slot => ({
-            userId: session.user!.id!,
+            userId: session!.user!.id!,
             dayOfWeek: slot.dayOfWeek,
             startTime: slot.startTime,
             endTime: slot.endTime,

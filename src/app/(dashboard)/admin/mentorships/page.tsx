@@ -1,3 +1,5 @@
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { getMentorships } from "@/lib/actions/mentorship";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,6 +10,10 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 
 export default async function MentorshipsPage() {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "admin") {
+        redirect("/login");
+    }
     const mentorships = await getMentorships();
 
     return (

@@ -34,6 +34,10 @@ export async function createMentorship(data: MentorshipInput) {
 }
 
 export async function getMentorships() {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "admin") {
+        throw new Error("Unauthorized");
+    }
     return await prisma.mentorship.findMany({
         include: {
             mentor: {
@@ -65,6 +69,10 @@ export async function getMentorships() {
 }
 
 export async function getMentorshipDetail(id: string) {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "admin") {
+        throw new Error("Unauthorized");
+    }
     return await prisma.mentorship.findUnique({
         where: { id },
         include: {
@@ -107,6 +115,8 @@ export async function getMentorshipDetail(id: string) {
 }
 
 export async function getProgramCycles() {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
     return await prisma.programCycle.findMany({
         where: { status: "active" },
         orderBy: { startDate: "desc" },
@@ -114,6 +124,10 @@ export async function getProgramCycles() {
 }
 
 export async function getEligibleMentors() {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "admin") {
+        throw new Error("Unauthorized");
+    }
     return await prisma.user.findMany({
         where: { role: "mentor", isActive: true },
         select: { id: true, firstName: true, lastName: true },
@@ -121,6 +135,10 @@ export async function getEligibleMentors() {
 }
 
 export async function getEligibleMentees() {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "admin") {
+        throw new Error("Unauthorized");
+    }
     return await prisma.user.findMany({
         where: { role: "mentee", isActive: true },
         select: { id: true, firstName: true, lastName: true },
