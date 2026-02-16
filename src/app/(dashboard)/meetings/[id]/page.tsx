@@ -153,13 +153,13 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                         <QRManager
                             meetingId={meeting.id}
                             qrToken={meeting.qrToken}
-                            expiresAt={meeting.qrExpiresAt || new Date()}
+                            expiresAt={meeting.qrExpiresAt ? meeting.qrExpiresAt.toISOString() : new Date().toISOString()}
                         />
                     ) : (
                         <QRSentry meetingId={meeting.id} />
                     )}
 
-                    <MinutesSection meetingId={meeting.id} minutes={minutes} isMentor={isMentor} />
+                    <MinutesSection meetingId={meeting.id} minutes={JSON.parse(JSON.stringify(minutes))} isMentor={isMentor} />
                 </div>
             </div>
         </div>

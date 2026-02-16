@@ -37,7 +37,7 @@ export default async function CalendarPage() {
                 )}
             </div>
 
-            <CalendarView meetings={meetings as any} />
+            <CalendarView meetings={JSON.parse(JSON.stringify(meetings))} />
         </div>
     );
 }

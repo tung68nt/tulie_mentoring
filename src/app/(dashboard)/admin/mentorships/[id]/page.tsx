@@ -32,7 +32,7 @@ export default async function AdminMentorshipDetailPage({ params }: PageProps) {
                 </Link>
             </Button>
 
-            <MentorshipDetailView mentorship={mentorship} userRole="admin" />
+            <MentorshipDetailView mentorship={JSON.parse(JSON.stringify(mentorship))} userRole="admin" />
         </div>
     );
 }

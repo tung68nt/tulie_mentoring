@@ -32,8 +32,8 @@ export default async function GoalsPage() {
             </div>
 
             <GoalsList
-                mentorships={relevantMentorships}
-                allGoals={allGoals}
+                mentorships={JSON.parse(JSON.stringify(relevantMentorships))}
+                allGoals={JSON.parse(JSON.stringify(allGoals))}
                 userRole={role}
             />
         </div>

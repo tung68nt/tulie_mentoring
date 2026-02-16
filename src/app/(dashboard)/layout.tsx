@@ -48,7 +48,7 @@ export default async function DashboardLayout({
                     userName={`${user.firstName} ${user.lastName || ""}`}
                     userRole={user.role}
                     avatar={user.avatar}
-                    notifications={notifications}
+                    notifications={JSON.parse(JSON.stringify(notifications))}
                     unreadCount={unreadCount}
                 />
 
