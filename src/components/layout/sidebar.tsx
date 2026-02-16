@@ -20,7 +20,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
@@ -199,14 +199,16 @@ export function Sidebar({ role }: SidebarProps) {
             </div>
 
             <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-                <DialogHeader>
-                    <DialogTitle>Đăng xuất</DialogTitle>
-                    <DialogDescription>Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?</DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button variant="ghost" onClick={() => setShowLogoutDialog(false)}>Hủy</Button>
-                    <Button variant="destructive" onClick={() => signOut({ callbackUrl: "/login" })}>Đăng xuất</Button>
-                </DialogFooter>
+                <DialogContent showCloseButton={false} className="sm:max-w-[400px]">
+                    <DialogHeader>
+                        <DialogTitle>Đăng xuất</DialogTitle>
+                        <DialogDescription>Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => setShowLogoutDialog(false)}>Hủy</Button>
+                        <Button variant="destructive" onClick={() => signOut({ callbackUrl: "/login" })}>Đăng xuất</Button>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </aside>
     );

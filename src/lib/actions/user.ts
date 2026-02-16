@@ -35,7 +35,7 @@ export async function getUserProfile(userId: string) {
 
 export async function getAllUsers() {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") return [];
+    if (!session?.user || (session.user as any).role !== "admin") return [];
 
     return await prisma.user.findMany({
         orderBy: { createdAt: "desc" },
@@ -44,7 +44,7 @@ export async function getAllUsers() {
 
 export async function getUserDetail(userId: string) {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") throw new Error("Unauthorized");
+    if (!session?.user || (session.user as any).role !== "admin") throw new Error("Unauthorized");
 
     return await prisma.user.findUnique({
         where: { id: userId },
@@ -84,7 +84,7 @@ export async function getUserDetail(userId: string) {
 
 export async function deleteUser(userId: string) {
     const session = await auth();
-    if ((session?.user as any).role !== "admin") {
+    if (!session?.user || (session.user as any).role !== "admin") {
         throw new Error("Unauthorized");
     }
 

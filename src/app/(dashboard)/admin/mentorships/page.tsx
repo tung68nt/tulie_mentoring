@@ -2,7 +2,7 @@ import { getMentorships } from "@/lib/actions/mentorship";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarGroup } from "@/components/ui/avatar";
+import { Avatar, AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar";
 import { Plus, Users, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
@@ -71,11 +71,22 @@ export default async function MentorshipsPage() {
 
                                     {/* Mentees */}
                                     <div className="flex flex-col items-center text-center gap-2 flex-1">
-                                        <AvatarGroup
-                                            users={m.mentees.map((mt) => mt.mentee)}
-                                            max={3}
-                                            size="md"
-                                        />
+                                        <AvatarGroup>
+                                            {m.mentees.slice(0, 3).map((mt) => (
+                                                <Avatar
+                                                    key={mt.mentee.id}
+                                                    firstName={mt.mentee.firstName}
+                                                    lastName={mt.mentee.lastName}
+                                                    src={mt.mentee.avatar}
+                                                    size="md"
+                                                />
+                                            ))}
+                                            {m.mentees.length > 3 && (
+                                                <AvatarGroupCount>
+                                                    +{m.mentees.length - 3}
+                                                </AvatarGroupCount>
+                                            )}
+                                        </AvatarGroup>
                                         <div>
                                             <p className="text-xs text-muted-foreground font-medium mb-0.5">
                                                 {m.mentees.length} Mentees

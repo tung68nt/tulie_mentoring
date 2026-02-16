@@ -10,14 +10,16 @@ function Select({
   label,
   options,
   error,
+  placeholder,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root> & {
   label?: string
   options?: { label: string; value: string }[]
   error?: string
+  placeholder?: string
 }) {
   if (options) {
-    return <NativeSelect label={label} options={options} error={error} {...(props as any)} />
+    return <NativeSelect label={label} options={options} error={error} placeholder={placeholder} {...(props as any)} />
   }
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
@@ -28,8 +30,9 @@ const NativeSelect = React.forwardRef<
     label?: string;
     options: { label: string; value: string }[];
     error?: string;
+    placeholder?: string;
   }
->(({ className, label, options, error, ...props }, ref) => {
+>(({ className, label, options, error, placeholder, ...props }, ref) => {
   return (
     <div className="space-y-1.5 w-full">
       {label && (
@@ -47,6 +50,11 @@ const NativeSelect = React.forwardRef<
           )}
           {...props}
         >
+          {placeholder && (
+            <option value="" disabled>
+              {placeholder}
+            </option>
+          )}
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
