@@ -5,29 +5,38 @@ import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "h-5 gap-1 rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium transition-all has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&>svg]:size-3! inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive overflow-hidden group/badge",
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        primary: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        secondary: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        success: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        warning: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        error: "bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20",
+        destructive: "bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20",
+        outline: "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        ghost: "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-5 px-2 py-0.5 text-xs",
+        sm: "h-4 px-1.5 py-0 text-[10px]",
+        lg: "h-6 px-3 py-1 text-sm",
       },
     },
     defaultVariants: {
       variant: "default",
+      size: "default",
     },
   }
 )
 
-const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
-  active: { variant: "default", label: "Đang hoạt động" },
-  completed: { variant: "default", label: "Hoàn thành" },
-  in_progress: { variant: "default", label: "Đang diễn ra" },
+const statusConfig: Record<string, { variant: "primary" | "secondary" | "destructive" | "outline", label: string }> = {
+  active: { variant: "primary", label: "Đang hoạt động" },
+  completed: { variant: "primary", label: "Hoàn thành" },
+  in_progress: { variant: "primary", label: "Đang diễn ra" },
   scheduled: { variant: "secondary", label: "Đã lên lịch" },
   pending: { variant: "secondary", label: "Chờ duyệt" },
   cancelled: { variant: "destructive", label: "Đã hủy" },
@@ -36,13 +45,21 @@ const statusConfig: Record<string, { variant: "default" | "secondary" | "destruc
   draft: { variant: "secondary", label: "Nháp" },
 };
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-  VariantProps<typeof badgeVariants> {
-  status?: string
-}
+function Badge({
+  className,
+  variant,
+  size = "default",
+  status,
+  asChild = false,
+  children,
+  ...props
+}: React.ComponentProps<"span"> &
+  VariantProps<typeof badgeVariants> & {
+    asChild?: boolean
+    status?: string
+  }) {
+  const Comp = asChild ? Slot : "span"
 
-function Badge({ className, variant, status, children, ...props }: BadgeProps) {
   let finalVariant = variant || "default";
   let displayChildren = children;
 
@@ -51,12 +68,22 @@ function Badge({ className, variant, status, children, ...props }: BadgeProps) {
     if (!displayChildren) {
       displayChildren = statusConfig[status].label;
     }
+  } else if (!displayChildren && !variant) {
+    // If no status, no children, and no variant, provide a fallback to prevent empty render crash
+    displayChildren = "Unknown";
+    finalVariant = "outline";
   }
 
   return (
-    <div className={cn(badgeVariants({ variant: finalVariant }), className)} {...props}>
+    <Comp
+      data-slot="badge"
+      data-variant={finalVariant}
+      data-size={size}
+      className={cn(badgeVariants({ variant: finalVariant, size }), className)}
+      {...props}
+    >
       {displayChildren}
-    </div>
+    </Comp>
   )
 }
 
