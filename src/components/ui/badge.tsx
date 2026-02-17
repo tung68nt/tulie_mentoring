@@ -68,6 +68,10 @@ function Badge({
     if (!displayChildren) {
       displayChildren = statusConfig[status].label;
     }
+  } else if (!displayChildren && !variant) {
+    // If no status, no children, and no variant, provide a fallback to prevent empty render crash
+    displayChildren = "Unknown";
+    finalVariant = "outline";
   }
 
   return (

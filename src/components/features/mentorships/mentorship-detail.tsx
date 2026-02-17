@@ -172,7 +172,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                                             <Clock className="w-3 h-3" />
                                                             {formatDate(meeting.scheduledAt, "HH:mm")}
                                                         </span>
-                                                        <Badge variant="outline" size="sm" />
+                                                        {/* Removed empty Badge causing render crash */}
                                                     </div>
                                                 </div>
                                             </div>
