@@ -153,7 +153,7 @@ export default async function AdminReportsPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Program Performance */}
-                    <Card className="lg:col-span-7 bg-card shadow-sm" padding="lg">
+                    <Card className="lg:col-span-7 bg-card shadow-sm">
                         <CardHeader className="mb-6">
                             <CardTitle className="text-xl flex items-center gap-3">
                                 <div className="p-2 rounded-lg bg-primary text-primary-foreground shadow-sm">
@@ -176,7 +176,7 @@ export default async function AdminReportsPage() {
                                             <div className="space-y-1.5">
                                                 <div className="flex items-center gap-3">
                                                     <span className="text-lg font-bold text-foreground">{cycle.name}</span>
-                                                    <Badge status={cycle.status} size="sm" />
+                                                    <Badge status={cycle.status} />
                                                 </div>
                                                 <p className="text-xs font-medium text-muted-foreground">
                                                     {cycle.mentorshipCount} nhóm đang hoạt động tích cực
@@ -197,7 +197,7 @@ export default async function AdminReportsPage() {
                     </Card>
 
                     {/* Top Mentees */}
-                    <Card className="lg:col-span-5 bg-muted border-none shadow-inner" padding="lg">
+                    <Card className="lg:col-span-5 bg-muted border-none shadow-inner">
                         <CardHeader className="mb-6">
                             <CardTitle className="text-xl flex items-center gap-3">
                                 <div className="p-2 rounded-lg bg-card text-foreground shadow-md border border-border">
