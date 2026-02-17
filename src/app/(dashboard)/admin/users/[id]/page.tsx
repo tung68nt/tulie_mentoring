@@ -25,15 +25,22 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
     }
 
     const { id } = await params;
-    const user = await getUserDetail(id);
+    let user = null;
+
+    try {
+        user = await getUserDetail(id);
+    } catch (error) {
+        console.error("Failed to fetch user details:", error);
+    }
+
     if (!user) notFound();
 
-    const attendanceTotal = user.attendances.length;
-    const attendancePresent = user.attendances.filter(a => a.status === "present").length;
+    const attendanceTotal = user.attendances?.length || 0;
+    const attendancePresent = user.attendances?.filter((a: any) => a.status === "present").length || 0;
     const attendanceRate = attendanceTotal > 0 ? Math.round((attendancePresent / attendanceTotal) * 100) : 0;
 
-    const avgRating = user.feedbackReceived.length > 0
-        ? (user.feedbackReceived.reduce((sum, f) => sum + (f.rating || 0), 0) / user.feedbackReceived.filter(f => f.rating).length).toFixed(1)
+    const avgRating = user.feedbackReceived?.length > 0
+        ? (user.feedbackReceived.reduce((sum: number, f: any) => sum + (f.rating || 0), 0) / user.feedbackReceived.filter((f: any) => f.rating).length).toFixed(1)
         : null;
 
     return (

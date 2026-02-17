@@ -30,7 +30,7 @@ export async function createMentorship(data: MentorshipInput) {
     });
 
     revalidatePath("/admin/mentorships");
-    return mentorship;
+    return JSON.parse(JSON.stringify(mentorship));
 }
 
 export async function getMentorships() {
@@ -51,35 +51,41 @@ export async function getMentorships() {
         }
     }
 
-    return await prisma.mentorship.findMany({
-        where,
-        include: {
-            mentor: {
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    avatar: true,
+    try {
+        const mentorships = await prisma.mentorship.findMany({
+            where,
+            include: {
+                mentor: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        avatar: true,
+                    },
                 },
-            },
-            mentees: {
-                include: {
-                    mentee: {
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            avatar: true,
+                mentees: {
+                    include: {
+                        mentee: {
+                            select: {
+                                id: true,
+                                firstName: true,
+                                lastName: true,
+                                avatar: true,
+                            },
                         },
                     },
                 },
+                programCycle: true,
             },
-            programCycle: true,
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+        return JSON.parse(JSON.stringify(mentorships));
+    } catch (error) {
+        console.error("Error in getMentorships:", error);
+        return [];
+    }
 }
 
 export async function getMentorshipDetail(id: string) {
@@ -91,67 +97,73 @@ export async function getMentorshipDetail(id: string) {
     const userId = session.user.id;
     const role = (session.user as any).role;
 
-    const mentorship = await prisma.mentorship.findUnique({
-        where: { id },
-        include: {
-            mentor: {
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    avatar: true,
-                    bio: true,
-                    mentorProfile: true,
+    try {
+        const mentorship = await prisma.mentorship.findUnique({
+            where: { id },
+            include: {
+                mentor: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        avatar: true,
+                        bio: true,
+                        mentorProfile: true,
+                    },
                 },
-            },
-            mentees: {
-                include: {
-                    mentee: {
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            avatar: true,
-                            menteeProfile: true,
+                mentees: {
+                    include: {
+                        mentee: {
+                            select: {
+                                id: true,
+                                firstName: true,
+                                lastName: true,
+                                avatar: true,
+                                menteeProfile: true,
+                            },
                         },
                     },
                 },
-            },
-            programCycle: true,
-            meetings: {
-                orderBy: { scheduledAt: "desc" },
-                take: 10,
-                include: {
-                    attendances: true,
+                programCycle: true,
+                meetings: {
+                    orderBy: { scheduledAt: "desc" },
+                    take: 10,
+                    include: {
+                        attendances: true,
+                    },
+                },
+                goals: {
+                    orderBy: { createdAt: "desc" },
                 },
             },
-            goals: {
-                orderBy: { createdAt: "desc" },
-            },
-        },
-    });
+        });
 
-    if (!mentorship) return null;
+        if (!mentorship) return null;
 
-    // Security check: Only admin or members of the mentorship can view details
-    if (role !== "admin") {
-        const isMentor = mentorship.mentorId === userId;
-        const isMentee = mentorship.mentees.some(m => m.menteeId === userId);
-        if (!isMentor && !isMentee) {
-            throw new Error("Unauthorized access to mentorship details");
+        // Security check: Only admin or members of the mentorship can view details
+        if (role !== "admin") {
+            const isMentor = mentorship.mentorId === userId;
+            const isMentee = mentorship.mentees.some(m => m.menteeId === userId);
+            if (!isMentor && !isMentee) {
+                throw new Error("Unauthorized access to mentorship details");
+            }
         }
-    }
 
-    return mentorship;
+        return JSON.parse(JSON.stringify(mentorship));
+    } catch (error) {
+        console.error("Error in getMentorshipDetail:", error);
+        return null;
+    }
 }
 
 export async function getProgramCycles() {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
-    return await prisma.programCycle.findMany({
+    const cycles = await prisma.programCycle.findMany({
         where: { status: "active" },
         orderBy: { startDate: "desc" },
     });
+    return JSON.parse(JSON.stringify(cycles));
 }
 
 export async function getEligibleMentors() {
@@ -159,10 +171,11 @@ export async function getEligibleMentors() {
     if (!session?.user || (session.user as any).role !== "admin") {
         throw new Error("Unauthorized");
     }
-    return await prisma.user.findMany({
+    const mentors = await prisma.user.findMany({
         where: { role: "mentor", isActive: true },
         select: { id: true, firstName: true, lastName: true },
     });
+    return JSON.parse(JSON.stringify(mentors));
 }
 
 export async function getEligibleMentees() {
@@ -170,8 +183,9 @@ export async function getEligibleMentees() {
     if (!session?.user || (session.user as any).role !== "admin") {
         throw new Error("Unauthorized");
     }
-    return await prisma.user.findMany({
+    const mentees = await prisma.user.findMany({
         where: { role: "mentee", isActive: true },
         select: { id: true, firstName: true, lastName: true },
     });
+    return JSON.parse(JSON.stringify(mentees));
 }

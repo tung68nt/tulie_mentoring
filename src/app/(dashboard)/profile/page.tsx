@@ -24,18 +24,18 @@ export default async function ProfilePage() {
         }
 
         // Get real meeting count
-        const meetings = await getMeetings({ role, userId });
+        const meetings = await getMeetings({ role, userId: userId! });
         const meetingCount = meetings.length;
 
-        // Serialize data to avoid "Server Component Render" error when passing Date objects to Client Components
-        const serializedUser = JSON.parse(JSON.stringify(user));
-
-        return <ProfileEditor user={serializedUser} meetingCount={meetingCount} />;
-    } catch (error) {
+        return <ProfileEditor user={user} meetingCount={meetingCount} />;
+    } catch (error: any) {
         console.error("Failed to fetch profile:", error);
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <p className="text-muted-foreground">Không thể tải thông tin hồ sơ. Vui lòng thử lại sau.</p>
+            <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+                <p className="text-destructive font-semibold">Không thể tải thông tin hồ sơ.</p>
+                <code className="text-xs bg-muted p-4 rounded max-w-2xl overflow-auto whitespace-pre-wrap">
+                    {error?.message || String(error)}
+                </code>
             </div>
         );
     }

@@ -39,9 +39,9 @@ export default async function MenteeDashboard() {
             })
         ]);
 
-        const serializedMentorship = JSON.parse(JSON.stringify(mentorship));
-        const serializedGoals = JSON.parse(JSON.stringify(goals));
-        const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings));
+        const serializedMentorship = JSON.parse(JSON.stringify(mentorship || null));
+        const serializedGoals = JSON.parse(JSON.stringify(goals || []));
+        const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings || []));
 
         const completedGoals = serializedGoals.filter((g: any) => g.currentValue >= 100).length;
         const completionRate = serializedGoals.length > 0 ? Math.round((completedGoals / serializedGoals.length) * 100) : 0;

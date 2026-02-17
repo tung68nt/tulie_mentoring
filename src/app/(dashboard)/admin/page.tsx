@@ -94,9 +94,9 @@ export default async function AdminDashboard() {
         totalGoals = goalsCount;
 
         // Serialize data to prevent "Server Component render" errors with Date objects
-        serializedRecentMeetings = JSON.parse(JSON.stringify(recentMeetings));
-        serializedRecentMentorships = JSON.parse(JSON.stringify(recentMentorships));
-        serializedRecentNotifications = JSON.parse(JSON.stringify(recentNotifications));
+        serializedRecentMeetings = JSON.parse(JSON.stringify(recentMeetings || []));
+        serializedRecentMentorships = JSON.parse(JSON.stringify(recentMentorships || []));
+        serializedRecentNotifications = JSON.parse(JSON.stringify(recentNotifications || []));
 
         stats = [
             { title: "Tổng người dùng", value: totalUsers, icon: <Users />, color: "black" as const },
@@ -104,9 +104,17 @@ export default async function AdminDashboard() {
             { title: "Mentee hoạt động", value: activeMentees, icon: <Users />, color: "black" as const },
             { title: "Cặp Mentoring", value: totalMentorships, icon: <Bookmark />, color: "black" as const },
         ];
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to fetch admin dashboard data:", error);
-        // Continue with default empty values to prevent page crash
+        return (
+            <div className="p-8 border border-destructive/20 rounded-xl bg-destructive/5">
+                <p className="text-destructive font-semibold mb-2">Đã có lỗi xảy ra khi tải dữ liệu:</p>
+                <code className="text-xs bg-background p-2 rounded block overflow-auto whitespace-pre-wrap">
+                    {error?.message || String(error)}
+                    {"\n\nStack:\n" + (error?.stack || "No stack trace available")}
+                </code>
+            </div>
+        );
     }
 
     return (

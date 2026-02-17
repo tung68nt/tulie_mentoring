@@ -1,13 +1,13 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getMentorships } from "@/lib/actions/mentorship";
-import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar";
 import { Plus, Users, Calendar, ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { formatDate } from "@/lib/utils";
+import Link from "next/link";
 
 export default async function MentorshipsPage() {
     const session = await auth();
@@ -15,8 +15,35 @@ export default async function MentorshipsPage() {
         redirect("/login");
     }
     try {
-        const mentorships = await getMentorships();
-        const serializedMentorships = JSON.parse(JSON.stringify(mentorships));
+        const mentorshipsData = await prisma.mentorship.findMany({
+            include: {
+                mentor: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        avatar: true,
+                    },
+                },
+                mentees: {
+                    include: {
+                        mentee: {
+                            select: {
+                                id: true,
+                                firstName: true,
+                                lastName: true,
+                                avatar: true,
+                            },
+                        },
+                    },
+                },
+                programCycle: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+        const mentorships = JSON.parse(JSON.stringify(mentorshipsData));
 
         return (
             <div className="space-y-8">
@@ -34,7 +61,7 @@ export default async function MentorshipsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {serializedMentorships.length === 0 ? (
+                    {mentorships.length === 0 ? (
                         <Card className="lg:col-span-2 flex flex-col items-center justify-center py-12 text-center">
                             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-4 border border-border">
                                 <Users className="w-8 h-8" />
@@ -48,10 +75,10 @@ export default async function MentorshipsPage() {
                             </Button>
                         </Card>
                     ) : (
-                        serializedMentorships.map((m: any) => (
+                        mentorships.map((m: any) => (
                             <Card key={m.id} hover padding="none" className="overflow-hidden flex flex-col">
                                 <div className="p-6 flex-1">
-                                    <div className="flex items-start justify-between mb-6">
+                                    <div className="flex items-start justify-between mb-6" data-status={m.status}>
                                         <Badge status={m.status} />
                                         <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-[4px] border border-border">
                                             {m.programCycle?.name || "Program"}
@@ -122,11 +149,14 @@ export default async function MentorshipsPage() {
                 </div>
             </div>
         );
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to fetch mentorships:", error);
         return (
-            <div className="p-8 text-center">
-                <p className="text-muted-foreground">Không thể tải dữ liệu mentorship. Vui lòng thử lại sau.</p>
+            <div className="p-8 border border-destructive/20 rounded-xl bg-destructive/5">
+                <p className="text-destructive font-semibold mb-2">Đã có lỗi xảy ra khi tải dữ liệu Mentorship:</p>
+                <code className="text-xs bg-background p-2 rounded block overflow-auto whitespace-pre-wrap">
+                    {error?.message || String(error)}
+                </code>
             </div>
         );
     }

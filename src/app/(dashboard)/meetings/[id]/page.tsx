@@ -28,14 +28,22 @@ export default async function MeetingDetailPage({ params }: PageProps) {
     const role = (session.user as any).role;
 
     const { id } = await params;
-    const meeting = await getMeetingDetail(id);
+    let meeting = null;
+    let minutes = null;
+
+    try {
+        [meeting, minutes] = await Promise.all([
+            getMeetingDetail(id),
+            getMinutes(id)
+        ]);
+    } catch (error) {
+        console.error("Failed to fetch meeting details:", error);
+    }
 
     if (!meeting) notFound();
 
-    const minutes = await getMinutes(id);
-
     const isMentor = meeting.mentorship.mentorId === userId || role === "admin";
-    const isParticipant = meeting.mentorship.mentees.some(m => m.menteeId === userId) || isMentor;
+    const isParticipant = meeting.mentorship.mentees?.some((m: any) => m.menteeId === userId) || isMentor;
 
     if (!isParticipant) notFound();
 
@@ -117,7 +125,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                     <Card>
                         <h3 className="text-lg font-semibold text-foreground mb-6">Danh sách điểm danh</h3>
                         <div className="space-y-4">
-                            {meeting.attendances.map((attendance) => (
+                            {meeting.attendances.map((attendance: any) => (
                                 <div key={attendance.id} className="flex items-center justify-between p-4 rounded-[8px] border border-border bg-card">
                                     <div className="flex items-center gap-3">
                                         <Avatar
@@ -153,7 +161,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                         <QRManager
                             meetingId={meeting.id}
                             qrToken={meeting.qrToken}
-                            expiresAt={meeting.qrExpiresAt ? meeting.qrExpiresAt.toISOString() : new Date().toISOString()}
+                            expiresAt={meeting.qrExpiresAt || new Date().toISOString()}
                         />
                     ) : (
                         <QRSentry meetingId={meeting.id} />

@@ -42,8 +42,8 @@ export default async function MentorDashboard() {
             })
         ]);
 
-        const serializedMentorships = JSON.parse(JSON.stringify(mentorships));
-        const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings));
+        const serializedMentorships = JSON.parse(JSON.stringify(mentorships || []));
+        const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings || []));
 
         const totalMentees = serializedMentorships.reduce((acc: number, m: any) => acc + m.mentees.length, 0);
 

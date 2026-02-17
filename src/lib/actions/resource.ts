@@ -24,20 +24,21 @@ export async function createResource(data: {
     });
 
     revalidatePath("/resources");
-    return resource;
+    return JSON.parse(JSON.stringify(resource));
 }
 
 export async function getResources(category?: string) {
     const session = await auth();
     if (!session?.user) return [];
 
-    return await prisma.resource.findMany({
+    const resources = await prisma.resource.findMany({
         where: category ? { category } : {},
         include: {
             uploadedBy: { select: { firstName: true, lastName: true } },
         },
         orderBy: { createdAt: "desc" },
     });
+    return JSON.parse(JSON.stringify(resources));
 }
 
 export async function deleteResource(id: string) {

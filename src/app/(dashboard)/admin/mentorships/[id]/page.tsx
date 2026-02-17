@@ -17,7 +17,13 @@ export default async function AdminMentorshipDetailPage({ params }: PageProps) {
     }
 
     const { id } = await params;
-    const mentorship = await getMentorshipDetail(id);
+    let mentorship = null;
+
+    try {
+        mentorship = await getMentorshipDetail(id);
+    } catch (error) {
+        console.error("Failed to fetch mentorship details:", error);
+    }
 
     if (!mentorship) {
         notFound();

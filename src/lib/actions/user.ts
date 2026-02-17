@@ -20,17 +20,23 @@ export async function updateProfile(data: {
     });
 
     revalidatePath("/profile");
-    return user;
+    return JSON.parse(JSON.stringify(user));
 }
 
 export async function getUserProfile(userId: string) {
-    return await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-            mentorProfile: true,
-            menteeProfile: true,
-        },
-    });
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                mentorProfile: true,
+                menteeProfile: true,
+            },
+        });
+        return user ? JSON.parse(JSON.stringify(user)) : null;
+    } catch (error) {
+        console.error("Error in getUserProfile:", error);
+        return null;
+    }
 }
 
 export async function getAllUsers() {
@@ -46,40 +52,46 @@ export async function getUserDetail(userId: string) {
     const session = await auth();
     if (!session?.user || (session.user as any).role !== "admin") throw new Error("Unauthorized");
 
-    return await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-            mentorProfile: true,
-            menteeProfile: true,
-            mentorships: {
-                include: {
-                    mentees: { include: { mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } } } },
-                    programCycle: { select: { name: true } },
-                    _count: { select: { meetings: true, goals: true } },
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                mentorProfile: true,
+                menteeProfile: true,
+                mentorships: {
+                    include: {
+                        mentees: { include: { mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } } } },
+                        programCycle: { select: { name: true } },
+                        _count: { select: { meetings: true, goals: true } },
+                    },
+                    orderBy: { createdAt: "desc" },
                 },
-                orderBy: { createdAt: "desc" },
-            },
-            menteeships: {
-                include: {
-                    mentorship: {
-                        include: {
-                            mentor: { select: { id: true, firstName: true, lastName: true, avatar: true } },
-                            programCycle: { select: { name: true } },
-                            _count: { select: { meetings: true, goals: true } },
+                menteeships: {
+                    include: {
+                        mentorship: {
+                            include: {
+                                mentor: { select: { id: true, firstName: true, lastName: true, avatar: true } },
+                                programCycle: { select: { name: true } },
+                                _count: { select: { meetings: true, goals: true } },
+                            },
                         },
                     },
                 },
+                attendances: {
+                    select: { status: true },
+                },
+                feedbackReceived: {
+                    select: { rating: true, content: true, createdAt: true, fromUser: { select: { firstName: true, lastName: true } } },
+                    orderBy: { createdAt: "desc" },
+                    take: 5,
+                },
             },
-            attendances: {
-                select: { status: true },
-            },
-            feedbackReceived: {
-                select: { rating: true, content: true, createdAt: true, fromUser: { select: { firstName: true, lastName: true } } },
-                orderBy: { createdAt: "desc" },
-                take: 5,
-            },
-        },
-    });
+        });
+        return user ? JSON.parse(JSON.stringify(user)) : null;
+    } catch (error) {
+        console.error("Error in getUserDetail:", error);
+        return null;
+    }
 }
 
 export async function deleteUser(userId: string) {

@@ -37,7 +37,7 @@ export async function createMeeting(data: MeetingInput) {
 
     if (mentees.length > 0) {
         await prisma.attendance.createMany({
-            data: mentees.map((m) => ({
+            data: mentees.map((m: any) => ({
                 meetingId: meeting.id,
                 userId: m.menteeId,
                 status: "absent",
@@ -47,7 +47,7 @@ export async function createMeeting(data: MeetingInput) {
 
     revalidatePath("/calendar");
     revalidatePath(`/admin/mentorships/${validatedData.mentorshipId}`);
-    return meeting;
+    return JSON.parse(JSON.stringify(meeting));
 }
 
 export async function getMeetings(filters?: {
@@ -75,40 +75,52 @@ export async function getMeetings(filters?: {
         if (filters.endDate) where.scheduledAt.lte = filters.endDate;
     }
 
-    return await prisma.meeting.findMany({
-        where,
-        include: {
-            mentorship: {
-                include: {
-                    mentor: { select: { firstName: true, lastName: true, avatar: true } },
-                    mentees: { include: { mentee: { select: { firstName: true, lastName: true, avatar: true } } } },
+    try {
+        const meetings = await prisma.meeting.findMany({
+            where,
+            include: {
+                mentorship: {
+                    include: {
+                        mentor: { select: { firstName: true, lastName: true, avatar: true } },
+                        mentees: { include: { mentee: { select: { firstName: true, lastName: true, avatar: true } } } },
+                    },
                 },
+                creator: { select: { id: true, firstName: true, lastName: true, avatar: true } },
+                attendances: true,
             },
-            creator: { select: { id: true, firstName: true, lastName: true, avatar: true } },
-            attendances: true,
-        },
-        orderBy: { scheduledAt: "asc" },
-    });
+            orderBy: { scheduledAt: "asc" },
+        });
+        return JSON.parse(JSON.stringify(meetings));
+    } catch (error) {
+        console.error("Error in getMeetings:", error);
+        return [];
+    }
 }
 
 export async function getMeetingDetail(id: string) {
-    return await prisma.meeting.findUnique({
-        where: { id },
-        include: {
-            mentorship: {
-                include: {
-                    mentor: { select: { id: true, firstName: true, lastName: true, avatar: true } },
-                    mentees: { include: { mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } } } },
+    try {
+        const meeting = await prisma.meeting.findUnique({
+            where: { id },
+            include: {
+                mentorship: {
+                    include: {
+                        mentor: { select: { id: true, firstName: true, lastName: true, avatar: true } },
+                        mentees: { include: { mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } } } },
+                    },
                 },
-            },
-            attendances: {
-                include: {
-                    user: { select: { firstName: true, lastName: true, avatar: true } },
+                attendances: {
+                    include: {
+                        user: { select: { firstName: true, lastName: true, avatar: true } },
+                    },
                 },
+                minutes: true,
             },
-            minutes: true,
-        },
-    });
+        });
+        return meeting ? JSON.parse(JSON.stringify(meeting)) : null;
+    } catch (error) {
+        console.error("Error in getMeetingDetail:", error);
+        return null;
+    }
 }
 
 export async function checkIn(meetingId: string, token: string) {
@@ -147,7 +159,7 @@ export async function checkIn(meetingId: string, token: string) {
     });
 
     revalidatePath(`/meetings/${meetingId}`);
-    return attendance;
+    return JSON.parse(JSON.stringify(attendance));
 }
 
 export async function updateMeetingStatus(id: string, status: string) {
@@ -157,5 +169,5 @@ export async function updateMeetingStatus(id: string, status: string) {
     });
     revalidatePath("/calendar");
     revalidatePath(`/meetings/${id}`);
-    return meeting;
+    return JSON.parse(JSON.stringify(meeting));
 }
