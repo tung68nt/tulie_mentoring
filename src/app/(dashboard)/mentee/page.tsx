@@ -1,50 +1,82 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Target, Calendar, CheckCircle, Zap } from "lucide-react";
+import { redirect } from "next/navigation";
+import { Card, StatCard } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { formatDate } from "@/lib/utils";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-import { redirect } from "next/navigation";
+import {
+    Calendar,
+    Target,
+    CheckCircle,
+    Clock,
+    Zap,
+} from "lucide-react";
+import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
 export default async function MenteeDashboard() {
     const session = await auth();
+
     if (!session?.user) {
         redirect("/login");
     }
+
     const userId = session.user.id;
     const role = (session.user as any).role;
     const isAdmin = role === "admin";
 
-    // Admin sees first active mentorship + all goals; mentee sees only theirs
-    const menteeFilter = isAdmin ? {} : { menteeId: userId };
-
     try {
         const [mentorship, goals, upcomingMeetings] = await Promise.all([
             prisma.mentorship.findFirst({
-                where: isAdmin ? { status: "active" } : { mentees: { some: { menteeId: userId } }, status: "active" },
-                include: { mentor: true, programCycle: true }
+                where: isAdmin ? { status: "active" } : {
+                    mentees: { some: { menteeId: userId } },
+                    status: "active"
+                },
+                include: {
+                    mentor: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            avatar: true,
+                            bio: true,
+                        },
+                    },
+                    programCycle: true,
+                },
             }),
             prisma.goal.findMany({
-                where: isAdmin ? {} : { mentorship: { mentees: { some: { menteeId: userId } } } },
+                where: isAdmin ? {} : {
+                    mentorship: {
+                        mentees: { some: { menteeId: userId } }
+                    }
+                },
+                orderBy: { createdAt: "desc" },
                 take: 20,
             }),
             prisma.meeting.findMany({
-                where: isAdmin ? { status: "scheduled" } : { mentorship: { mentees: { some: { menteeId: userId } } }, status: "scheduled" },
+                where: isAdmin ? {
+                    status: "scheduled"
+                } : {
+                    mentorship: {
+                        mentees: { some: { menteeId: userId } }
+                    },
+                    status: "scheduled"
+                },
                 orderBy: { scheduledAt: "asc" },
-                take: 5
-            })
+                take: 5,
+            }),
         ]);
 
-        const serializedMentorship = JSON.parse(JSON.stringify(mentorship || null));
+        const serializedMentorship = JSON.parse(JSON.stringify(mentorship));
         const serializedGoals = JSON.parse(JSON.stringify(goals || []));
         const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings || []));
 
-        const completedGoals = serializedGoals.filter((g: any) => g.currentValue >= 100).length;
-        const completionRate = serializedGoals.length > 0 ? Math.round((completedGoals / serializedGoals.length) * 100) : 0;
+        const completionRate = serializedGoals.length > 0
+            ? Math.round((serializedGoals.filter((g: any) => g.status === "completed").length / serializedGoals.length) * 100)
+            : 0;
 
         const stats = [
             { title: "Mục tiêu", value: serializedGoals.length, icon: <Target /> },
@@ -117,25 +149,41 @@ export default async function MenteeDashboard() {
                                         <Progress value={goal.currentValue} size="sm" color="default" />
                                     </Card>
                                 ))}
+                                {serializedGoals.length === 0 && (
+                                    <p className="text-sm text-muted-foreground py-4">Chưa có mục tiêu nào được thiết lập.</p>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     {/* Sidebar: Upcoming Meetings */}
                     <div className="space-y-6">
-                        <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
+                            <Button variant="ghost" size="sm" asChild>
+                                <Link href="/calendar">Xem tất cả</Link>
+                            </Button>
+                        </div>
                         <div className="space-y-4">
                             {serializedUpcomingMeetings.length === 0 ? (
-                                <p className="text-sm text-muted-foreground">Hiện tại bạn không có lịch họp.</p>
+                                <p className="text-sm text-muted-foreground bg-muted/30 p-8 rounded-xl border border-dashed border-border text-center">
+                                    Hiện tại bạn không có lịch họp.
+                                </p>
                             ) : (
                                 serializedUpcomingMeetings.map((meeting: any) => (
                                     <div key={meeting.id} className="p-5 rounded-[8px] border border-border flex items-center gap-5 hover:border-foreground/20 transition-all bg-card group">
-                                        <div className="w-12 h-12 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
+                                        <div className="w-12 h-12 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200 shrink-0">
                                             <Calendar className="w-5 h-5" />
                                         </div>
                                         <div className="flex-1 min-w-0 space-y-1">
                                             <p className="text-sm font-semibold text-foreground truncate">{meeting.title}</p>
-                                            <p className="text-[11px] text-muted-foreground font-medium">{formatDate(meeting.scheduledAt, "dd/MM · HH:mm")}</p>
+                                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium">
+                                                <div className="flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    {formatDate(meeting.scheduledAt, "dd/MM · HH:mm")}
+                                                </div>
+                                                <Badge status={meeting.status} size="sm" />
+                                            </div>
                                         </div>
                                     </div>
                                 ))
@@ -151,7 +199,7 @@ export default async function MenteeDashboard() {
     } catch (error) {
         console.error("Failed to fetch mentee dashboard data:", error);
         return (
-            <div className="p-8 text-center">
+            <div className="p-8 text-center bg-muted/30 rounded-xl border border-border">
                 <p className="text-muted-foreground">Không thể tải dữ liệu dashboard. Vui lòng thử lại sau.</p>
             </div>
         );
