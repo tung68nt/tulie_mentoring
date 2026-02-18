@@ -71,7 +71,8 @@ Light Mode:
 
 ### Quy tắc bắt buộc
 
-> ⛔ **TUYỆT ĐỐI KHÔNG** dùng `uppercase`, `text-transform: uppercase`, hoặc `tracking-wider/widest`
+> ⛔ **TUYỆT ĐỐI KHÔNG** dùng `uppercase`, `text-transform: uppercase` (vì ghét HOA)
+> ⛔ **TUYỆT ĐỐI KHÔNG** dùng `letter-spacing`, `tracking-wider`, `tracking-widest` (không giãn chữ)
 > ⛔ **TUYỆT ĐỐI KHÔNG** dùng `italic`, `font-italic`, `font-style: italic`
 > ⛔ **TUYỆT ĐỐI KHÔNG** dùng `font-extrabold` (800), `font-black` (900)
 
@@ -79,6 +80,7 @@ Light Mode:
 - `font-weight` thông thường: Chỉ dùng `font-medium` (500) hoặc `font-semibold` (600).
 - `font-bold` (700): Chỉ dùng cho stat values lớn (`text-3xl font-bold`).
 - **Không uppercase**: Mọi text đều giữ nguyên dạng viết (sentence case hoặc title case). Kể cả sidebar labels.
+- **Không letter-spacing**: Tuyệt đối không dùng các class tracking của tailwind.
 - **Không italic**: Không dùng `italic` hay `font-style: italic` ở bất kỳ đâu.
 - `leading`: Dùng `leading-tight` cho heading, `leading-relaxed` cho paragraph dài.
 

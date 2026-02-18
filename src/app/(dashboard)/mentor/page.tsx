@@ -75,7 +75,7 @@ export default async function MentorDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold tracking-tight text-foreground">Danh sách Mentees</h3>
+                            <h3 className="text-lg font-semibold text-foreground">Danh sách Mentees</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {serializedMentorships.flatMap((m: any) => m.mentees).map((mt: any) => (
