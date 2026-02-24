@@ -1,0 +1,210 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { updateWikiPage, deleteWikiPage } from "@/lib/actions/wiki";
+import { BlockEditor } from "@/components/ui/block-editor";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ChevronLeft, Save, Loader2, Globe, Shield, Lock, Trash2, Layout } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
+
+interface WikiEditFormProps {
+    page: any;
+}
+
+export function WikiEditForm({ page }: WikiEditFormProps) {
+    const router = useRouter();
+    const [title, setTitle] = useState(page.title);
+    const [category, setCategory] = useState(page.category || "");
+    const [visibility, setVisibility] = useState<any>(page.visibility);
+    const [content, setContent] = useState(page.content);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    async function handleSave() {
+        if (!title) {
+            toast.error("Vui lòng nhập tiêu đề trang");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await updateWikiPage(page.id, {
+                title,
+                content,
+                category,
+                visibility
+            });
+            toast.success("Đã cập nhật trang Wiki");
+            router.push(`/wiki/${page.slug}`);
+            router.refresh();
+        } catch (error) {
+            toast.error("Không thể cập nhật trang. Vui lòng thử lại.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    async function handleDelete() {
+        setIsDeleting(true);
+        try {
+            await deleteWikiPage(page.id);
+            toast.success("Đã xóa trang Wiki");
+            router.push("/wiki");
+        } catch (error) {
+            toast.error("Không thể xóa trang. Vui lòng thử lại.");
+            setIsDeleting(false);
+        }
+    }
+
+    return (
+        <div className="max-w-5xl mx-auto space-y-8 pb-10 animate-fade-in">
+            <header className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Link href={`/wiki/${page.slug}`}>
+                        <Button variant="ghost" size="icon" className="rounded-xl">
+                            <ChevronLeft className="w-5 h-5" />
+                        </Button>
+                    </Link>
+                    <div className="space-y-0.5">
+                        <h1 className="text-2xl font-bold no-uppercase">Chỉnh sửa tài liệu</h1>
+                        <p className="text-[11px] text-muted-foreground/60 no-uppercase font-bold tracking-tight">Slug: {page.slug}</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="ghost" className="rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive no-uppercase gap-2">
+                                <Trash2 className="w-4 h-4" />
+                                Xóa trang
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="rounded-3xl border-none shadow-2xl">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="no-uppercase font-bold">Xác nhận xóa tài liệu?</AlertDialogTitle>
+                                <AlertDialogDescription className="no-uppercase">
+                                    Hành động này không thể hoàn tác. Trang wiki "{page.title}" sẽ bị xóa vĩnh viễn khỏi hệ thống.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel className="rounded-xl no-uppercase border-border">Hủy</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleDelete}
+                                    className="rounded-xl no-uppercase bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                    {isDeleting ? "Đang xóa..." : "Xóa tài liệu"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
+                    <Button
+                        onClick={handleSave}
+                        disabled={isSubmitting}
+                        className="rounded-xl no-uppercase min-w-[120px] shadow-lg shadow-primary/20"
+                    >
+                        {isSubmitting ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                            <Save className="w-4 h-4 mr-2" />
+                        )}
+                        Cập nhật
+                    </Button>
+                </div>
+            </header>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+                <div className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-muted-foreground/60 no-uppercase px-1">Tiêu đề tài liệu</label>
+                        <Input
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Nhập tiêu đề ấn tượng..."
+                            className="text-2xl font-bold h-16 rounded-2xl border-border/40 focus:border-primary/30 px-6 shadow-sm"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-muted-foreground/60 no-uppercase px-1">Nội dung chi tiết</label>
+                        <BlockEditor
+                            initialContent={content}
+                            onChange={setContent}
+                            className="min-h-[600px] rounded-3xl border-border/40 shadow-sm"
+                        />
+                    </div>
+                </div>
+
+                <aside className="space-y-6">
+                    <Card className="p-6 rounded-3xl border-border/40 shadow-sm bg-muted/20 space-y-6">
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Danh mục</label>
+                            <div className="relative">
+                                <Layout className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                                <Input
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    placeholder="Danh mục..."
+                                    className="rounded-xl border-border/40 bg-background pl-10"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Phạm vi hiển thị</label>
+                            <Select
+                                value={visibility}
+                                onValueChange={(v: any) => setVisibility(v)}
+                            >
+                                <SelectTrigger className="rounded-xl border-border/40 bg-background h-11">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl">
+                                    <SelectItem value="public">
+                                        <div className="flex items-center gap-2">
+                                            <Globe className="w-3.5 h-3.5 text-blue-500" />
+                                            <span>Công khai</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="mentor_only">
+                                        <div className="flex items-center gap-2">
+                                            <Shield className="w-3.5 h-3.5 text-purple-500" />
+                                            <span>Chỉ Mentors</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="mentee_only">
+                                        <div className="flex items-center gap-2">
+                                            <Lock className="w-3.5 h-3.5 text-orange-500" />
+                                            <span>Chỉ Mentees</span>
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </Card>
+                </aside>
+            </div>
+        </div>
+    );
+}

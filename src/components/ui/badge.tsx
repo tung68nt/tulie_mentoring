@@ -5,25 +5,25 @@ import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "h-5 gap-1 rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium transition-all has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&>svg]:size-3! inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive overflow-hidden group/badge",
+  "h-5 gap-1 rounded-full border border-transparent px-2.5 py-0.5 text-[11px] font-semibold transition-all inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden no-uppercase",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        primary: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        secondary: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-        success: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        warning: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-        error: "bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20",
-        destructive: "bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20",
-        outline: "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
-        ghost: "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: "bg-primary text-primary-foreground",
+        primary: "bg-primary text-primary-foreground",
+        secondary: "bg-secondary text-foreground border-border shadow-sm",
+        success: "bg-primary text-primary-foreground",
+        warning: "bg-secondary text-foreground border-border shadow-sm",
+        error: "bg-destructive/10 text-destructive border-destructive/20",
+        destructive: "bg-destructive/10 text-destructive border-destructive/20",
+        outline: "border-border text-foreground/60 hover:text-foreground hover:bg-muted font-medium",
+        ghost: "hover:bg-muted text-foreground/60 hover:text-foreground",
+        link: "text-foreground font-semibold underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-5 px-2 py-0.5 text-xs",
-        sm: "h-4 px-1.5 py-0 text-[10px]",
-        lg: "h-6 px-3 py-1 text-sm",
+        default: "h-5 px-2.5 text-[11px]",
+        sm: "h-4 px-2 text-[10px]",
+        lg: "h-6 px-3 text-xs",
       },
     },
     defaultVariants: {
@@ -43,6 +43,9 @@ const statusConfig: Record<string, { variant: "primary" | "secondary" | "destruc
   inactive: { variant: "secondary", label: "Ngừng hoạt động" },
   offline: { variant: "secondary", label: "Ngoại tuyến" },
   draft: { variant: "secondary", label: "Nháp" },
+  open: { variant: "secondary", label: "Đang mở" },
+  resolved: { variant: "primary", label: "Đã giải quyết" },
+  closed: { variant: "outline", label: "Đã đóng" },
 };
 
 function Badge({

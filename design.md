@@ -33,14 +33,16 @@
 
 ```
 Light Mode:
---background    oklch(1 0 0)        — trắng
---foreground    oklch(0.145 0 0)    — gần đen
---muted         oklch(0.97 0 0)     — xám nhạt
---muted-fg      oklch(0.556 0 0)    — xám trung
---primary       oklch(0.205 0 0)    — gần đen
---primary-fg    oklch(0.985 0 0)    — trắng
---border        oklch(0.922 0 0)    — xám viền
---destructive   oklch(0.58 0.22 27) — đỏ
+--background    oklch(1 0 0)        — trắng tinh (bg chính)
+--foreground    oklch(0.12 0 0)     — đen tinh (chữ chính)
+--muted         oklch(0.98 0 0)     — xám cực nhạt (nền sidebar, nền input)
+--muted-fg      oklch(0.50 0 0)     — xám trung (chữ phụ)
+--primary       oklch(0.18 0 0)     — đen đậm (nhấn mạnh)
+--primary-fg    oklch(1 0 0)        — trắng (chữ trên nút)
+--border        oklch(0.94 0 0)     — xám viền (mảnh, tinh tế)
+--accent        oklch(0.96 0 0)     — xám nhấn (hover state)
+--destructive   oklch(0.60 0.18 25) — đỏ (cảnh báo)
+--radius        0.75rem            — bo góc hiện đại (12px)
 ```
 
 ---
@@ -125,22 +127,19 @@ Light Mode:
 ### 3.2 Card Internal Spacing
 
 ```
-┌─── Card ─────────────────────────────┐
-│  (py-4 px-4 tự động từ shadcn Card)  │
+┌─── Card (rounded-2xl) ───────────────┐
+│  (p-6 - hào phóng hơn mẫu cũ)         │
 │                                       │
 │  ┌── CardHeader ───────────────────┐  │
-│  │  CardTitle                      │  │
-│  │  CardDescription (gap-1)        │  │
+│  │  CardTitle (font-semibold)      │  │
+│  │  CardDescription (mt-1)         │  │
 │  └─────────────────────────────────┘  │
-│        ↕ gap-4 (Card internal)        │
+│        ↕ gap-6 (Spacing hiện đại)      │
 │  ┌── CardContent ──────────────────┐  │
 │  │  ...nội dung...                 │  │
 │  └─────────────────────────────────┘  │
-│        ↕ gap-4 (Card internal)        │
-│  ┌── CardFooter ──────────────────┐   │
-│  │  ...actions...                  │  │
-│  └─────────────────────────────────┘  │
 └───────────────────────────────────────┘
+```
 ```
 
 ### 3.3 Section Pattern
@@ -295,6 +294,23 @@ export default function ExamplePage() {
         </div>
     );
 }
+```
+
+### 4.5 Modern Sidebar Layout (Premium)
+
+- **Sidebar Width**: `280px` (Desktop)
+- **Container**: `bg-muted` hoặc `bg-background` với `border-r`
+- **Navigation Items**: Bo góc lớn (`rounded-xl`), padding `px-3 py-2`, chuyển động `transition-all`.
+- **Active State**: `bg-white` (nếu sidebar màu muted) hoặc `bg-muted` (nếu sidebar màu trắng), chữ đậm hơn.
+
+```tsx
+<aside className="w-[280px] border-r bg-muted/30 p-4 space-y-4">
+    <div className="px-2 py-4">Logo / Brand</div>
+    <nav className="space-y-1">
+        <NavItem icon={<Home />} label="Trang chủ" active />
+        <NavItem icon={<Users />} label="Mentor" />
+    </nav>
+</aside>
 ```
 
 ---

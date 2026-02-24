@@ -123,6 +123,16 @@ export const availabilitySchema = z.object({
     duration: z.coerce.number().min(15).max(180).default(60),
 });
 
+// ─── Todo / Tasks ───────────────────────────────────────────────
+export const todoSchema = z.object({
+    title: z.string().min(1, "Tiêu đề không được để trống"),
+    priority: z.enum(["low", "medium", "high"]).default("medium"),
+    status: z.enum(["todo", "doing", "review", "done"]).default("todo"),
+    column: z.string().default("todo"),
+    dueDate: z.string().optional().nullable(),
+    reflectionId: z.string().optional().nullable(),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type MeetingInput = z.infer<typeof meetingSchema>;
@@ -134,3 +144,4 @@ export type PortfolioInput = z.infer<typeof portfolioSchema>;
 export type MentorshipInput = z.infer<typeof mentorshipSchema>;
 export type AvailabilityInput = z.infer<typeof availabilitySchema>;
 export type MenteeOnboardingInput = z.infer<typeof menteeOnboardingSchema>;
+export type TaskInput = z.infer<typeof todoSchema>;

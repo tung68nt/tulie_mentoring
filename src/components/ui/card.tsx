@@ -117,22 +117,22 @@ function StatCard({
   className?: string
 }) {
   return (
-    <Card className={cn("p-5", className)}>
+    <Card className={cn("p-6 shadow-sm", className)}>
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold text-foreground">{value}</p>
-          {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+        <div className="space-y-1.5">
+          <p className="text-[11px] font-semibold text-muted-foreground/60 no-uppercase tracking-normal">{title}</p>
+          <p className="text-3xl font-bold text-foreground tabular-nums">{value}</p>
+          {subtitle && <p className="text-[11px] text-muted-foreground/60 no-uppercase font-medium">{subtitle}</p>}
         </div>
         {icon && (
-          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0">
-            {icon}
+          <div className="w-12 h-12 rounded-2xl bg-muted/50 border border-border flex items-center justify-center text-foreground/60 shrink-0 shadow-sm transition-all hover:bg-muted">
+            {React.cloneElement(icon as React.ReactElement<any>, { className: "w-6 h-6" })}
           </div>
         )}
       </div>
       {trend && (
-        <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
-          <span className="text-primary font-medium">+{trend.value}%</span>
+        <div className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground/60 font-medium no-uppercase">
+          <span className="text-foreground font-bold tabular-nums">+{trend.value}%</span>
           <span>{trend.label}</span>
         </div>
       )}

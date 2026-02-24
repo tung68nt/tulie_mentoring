@@ -39,6 +39,13 @@ model User {
   notifications      Notification[]
   portfolios         Portfolio[]
   availabilities     Availability[]
+  sessionReflections SessionReflection[]
+  todoItems          TodoItem[]
+  activityLogs       ActivityLog[]
+  ticketsCreated     SupportTicket[]  @relation("TicketCreator")
+  assignedTickets    SupportTicket[]  @relation("TicketAssignee")
+  ticketComments     TicketComment[]
+  wikiPages          WikiPage[]
 
   @@index([role])
   @@index([email])
@@ -178,6 +185,7 @@ model Meeting {
   creator     User             @relation("MeetingCreator", fields: [creatorId], references: [id])
   attendances Attendance[]
   minutes     MeetingMinutes[]
+  sessionReflections SessionReflection[]
 
   @@index([mentorshipId])
   @@index([scheduledAt])
@@ -189,6 +197,7 @@ model Attendance {
   meetingId       String
   userId          String
   checkInTime     DateTime?
+  checkOutTime    DateTime?
   checkInLat      Float?
   checkInLng      Float?
   deviceHash      String?
@@ -370,4 +379,108 @@ model Notification {
 
   @@index([userId, isRead])
   @@index([createdAt])
+}
+
+// ─── Phase 2: Reflections & Tasks ───────────────────────────────
+model SessionReflection {
+  id           String    @id @default(cuid())
+  meetingId    String
+  menteeId     String
+  content      String?   // JSON string from BlockNote
+  actionItems  String?   // JSON array of action items (deprecated for TodoItem but kept for backward compatibility)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  meeting      Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  mentee       User      @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  todoItems    TodoItem[]
+
+  @@unique([meetingId, menteeId])
+  @@index([menteeId])
+}
+
+model TodoItem {
+  id           String    @id @default(cuid())
+  reflectionId String?   // optional, linked to reflection
+  menteeId     String
+  title        String
+  status       String    @default("todo") // todo, doing, review, done
+  priority     String    @default("medium") // low, medium, high
+  dueDate      DateTime?
+  startDate    DateTime? 
+  column       String    @default("todo") 
+  labels       String?   // JSON array string
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  reflection   SessionReflection? @relation(fields: [reflectionId], references: [id], onDelete: SetNull)
+  mentee       User               @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+
+  @@index([menteeId])
+  @@index([reflectionId])
+}
+// ─── Phase 4: Activity Log ──────────────────────────────────────
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String   // e.g., "check_in", "create_task", "submit_reflection"
+  entityId  String?  // ID of the related object (meetingId, taskId, etc.)
+  entityType String? // e.g., "meeting", "task", "reflection"
+  metadata  String?  // JSON string for extra data
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── Phase 5: Ticket & Wiki ──────────────────────────────────────
+model SupportTicket {
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  status       String    @default("open") // open, in_progress, resolved, closed
+  priority     String    @default("medium") // low, medium, high
+  userId       String
+  assignedToId String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user       User            @relation("TicketCreator", fields: [userId], references: [id])
+  assignedTo User?           @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  comments   TicketComment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model TicketComment {
+  id        String   @id @default(cuid())
+  ticketId  String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user   User          @relation(fields: [userId], references: [id])
+
+  @@index([ticketId])
+}
+
+model WikiPage {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  content    String?  // JSON string from BlockNote
+  category   String?
+  visibility String   @default("public") // public, mentor_only, mentee_only
+  authorId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([authorId])
+  @@index([category])
 }

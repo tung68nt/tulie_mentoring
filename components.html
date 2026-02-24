@@ -1,333 +1,470 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tulie Mentoring — Component Library</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-/* ─── Design Tokens (Shadcn Neutral) ─── */
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
-  --font: 'Inter', system-ui, -apple-system, sans-serif;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tulie Mentoring — Component Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Design Tokens (Modern Minimalist B&W) ─── */
+    :root {
+      --background: oklch(1 0 0);
+      --foreground: oklch(0.12 0 0);
+      --card: oklch(1 0 0);
+      --card-foreground: oklch(0.12 0 0);
+      --primary: oklch(0.18 0 0);
+      --primary-foreground: oklch(1 0 0);
+      --secondary: oklch(0.98 0 0);
+      --secondary-foreground: oklch(0.18 0 0);
+      --muted: oklch(0.98 0 0);
+      --muted-foreground: oklch(0.50 0 0);
+      --accent: oklch(0.96 0 0);
+      --accent-foreground: oklch(0.18 0 0);
+      --destructive: oklch(0.60 0.18 25);
+      --border: oklch(0.94 0 0);
+      --input: oklch(0.94 0 0);
+      --ring: oklch(0.708 0 0);
+      --radius: 0.75rem;
+      /* 12px */
+      --font: 'Inter', system-ui, sans-serif;
+    }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: var(--font); background: var(--background); color: var(--foreground); -webkit-font-smoothing: antialiased; line-height: 1.5; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* ─── Layout ─── */
-.page { max-width: 1200px; margin: 0 auto; padding: 60px 40px 100px; }
-.page > section { margin-bottom: 80px; }
-.header { margin-bottom: 60px; border-bottom: 1px solid var(--border); padding-bottom: 40px; }
-.page-title { font-size: 36px; font-weight: 700; color: var(--foreground); margin-bottom: 8px; }
-.page-desc { font-size: 16px; color: var(--muted-foreground); max-width: 600px; }
+    body {
+      font-family: var(--font);
+      background: var(--background);
+      color: var(--foreground);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
 
-/* Sections */
-.section-header { margin-bottom: 32px; }
-.section-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-.section-desc { font-size: 14px; color: var(--muted-foreground); }
+    /* ─── High-Level Layout ─── */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      background: var(--background);
+    }
 
-/* Grid Helpers */
-.grid { display: grid; gap: 24px; }
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-4 { grid-template-columns: repeat(4, 1fr); }
-.flex-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      background: var(--background);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* Demo Blocks */
-.demo-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; }
-.demo-label { font-size: 10px; font-family: monospace; color: var(--muted-foreground); background: var(--muted); padding: 2px 6px; border-radius: 4px; margin-bottom: 12px; display: inline-block; }
+    .sidebar-logo {
+      height: 32px;
+      width: 32px;
+      background: var(--primary);
+      border-radius: 8px;
+      margin: 8px 12px 32px;
+    }
 
-/* ─── Components CSS ─── */
+    .nav-group {
+      margin-bottom: 24px;
+    }
 
-/* Button */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 500; border-radius: var(--radius); border: 1px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; height: 36px; padding: 0 16px; outline: none; }
-.btn-primary { background: var(--primary); color: var(--primary-foreground); }
-.btn-primary:hover { opacity: 0.9; }
-.btn-secondary { background: var(--secondary); color: var(--secondary-foreground); }
-.btn-secondary:hover { background: oklch(0.92 0 0); }
-.btn-outline { background: transparent; border-color: var(--border); color: var(--foreground); }
-.btn-outline:hover { background: var(--secondary); }
-.btn-ghost { background: transparent; color: var(--foreground); }
-.btn-ghost:hover { background: var(--secondary); }
-.btn-destructive { background: var(--destructive); color: white; }
-.btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
-.btn-lg { height: 44px; padding: 0 20px; font-size: 15px; }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
 
-/* Input */
-.input { width: 100%; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius); padding: 0 12px; font-size: 14px; font-family: inherit; transition: all 0.2s; outline: none; }
-.input:focus { border-color: var(--ring); box-shadow: 0 0 0 2px oklch(0.708 0 0 / 0.1); }
-.label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--foreground); }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--muted-foreground);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
 
-/* Card */
-.ui-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-.ui-card-header { padding: 20px 20px 16px; }
-.ui-card-title { font-size: 16px; font-weight: 600; }
-.ui-card-desc { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
-.ui-card-content { padding: 0 20px 20px; }
-.ui-card-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .nav-item:hover {
+      background: var(--accent);
+      color: var(--foreground);
+    }
 
-/* Badge */
-.badge { display: inline-flex; align-items: center; px: 10px; height: 22px; font-size: 12px; font-weight: 500; border-radius: 999px; background: var(--secondary); color: var(--secondary-foreground); border: 1px solid var(--border); padding: 0 10px; }
-.badge-primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
+    .nav-item.active {
+      background: oklch(0.98 0 0);
+      color: var(--foreground);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
 
-/* Avatar */
-.avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--muted-foreground); overflow: hidden; }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
 
-/* Table */
-.table-container { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { text-align: left; padding: 12px 16px; font-weight: 500; color: var(--muted-foreground); border-bottom: 1px solid var(--border); background: var(--secondary); }
-td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
-tr:last-child td { border-bottom: none; }
+    .nav-item.active .nav-icon {
+      opacity: 1;
+    }
 
-/* Progress */
-.progress-container { height: 6px; width: 100%; background: var(--secondary); border-radius: 999px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--primary); border-radius: 999px; transition: width 0.3s; }
+    .main-content {
+      flex: 1;
+      padding: 60px 80px;
+      max-width: 1400px;
+    }
 
-/* Utility */
-.no-uppercase { text-transform: none !important; }
-.no-spacing { letter-spacing: normal !important; }
+    /* ─── Typography ─── */
+    .page-header {
+      margin-bottom: 60px;
+    }
 
-</style>
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .page-desc {
+      color: var(--muted-foreground);
+      font-size: 15px;
+      max-width: 600px;
+    }
+
+    /* ─── Components ─── */
+    .section-anchor {
+      margin-bottom: 80px;
+    }
+
+    .section-head {
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-cols-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Card */
+    .ui-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .ui-card:hover {
+      border-color: oklch(0.85 0 0);
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .ui-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .ui-card-desc {
+      font-size: 13px;
+      color: var(--muted-foreground);
+    }
+
+    /* Button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      padding: 0 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--foreground);
+    }
+
+    .btn-outline:hover {
+      background: var(--secondary);
+      border-color: oklch(0.85 0 0);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted-foreground);
+    }
+
+    .btn-ghost:hover {
+      background: var(--secondary);
+      color: var(--foreground);
+    }
+
+    /* Input */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--muted-foreground);
+    }
+
+    .input {
+      width: 100%;
+      height: 44px;
+      background: var(--muted);
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 0 16px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input:focus {
+      background: var(--background);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px oklch(0.18 0 0 / 0.05);
+    }
+
+    .input::placeholder {
+      color: oklch(0.7 0 0);
+    }
+
+    /* Utility Styles */
+    .no-uppercase {
+      text-transform: none !important;
+    }
+
+    .no-spacing {
+      letter-spacing: 0 !important;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .gap-2 {
+      gap: 8px;
+    }
+
+    .mt-6 {
+      margin-top: 24px;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="page">
-  <header class="header">
-    <h1 class="page-title no-uppercase">Tulie Mentoring — Design System</h1>
-    <p class="page-desc no-spacing">Hệ thống thành phần giao diện chuẩn phong cách Shadcn Black & White. Toàn bộ giao diện không sử dụng chữ in hoa (uppercase) và không giãn chữ (letter-spacing).</p>
-  </header>
+  <div class="app-container">
+    <!-- Modern Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo"></div>
 
-  <!-- Atoms: Colors & Typography -->
-  <section id="atoms">
-    <div class="section-header">
-      <h2 class="section-title">Nền tảng (Atoms)</h2>
-      <p class="section-desc">Màu sắc và kiểu chữ cơ bản.</p>
-    </div>
-    
-    <div class="grid grid-2">
-      <div class="demo-card">
-        <span class="demo-label">Màu sắc (Colors)</span>
-        <div class="flex-row" style="gap: 16px;">
-          <div style="flex: 1;">
-            <div style="height: 60px; background: var(--primary); border-radius: 8px;"></div>
-            <p style="font-size: 12px; margin-top: 8px; font-weight: 600;">Primary</p>
-          </div>
-          <div style="flex: 1;">
-            <div style="height: 60px; background: var(--background); border: 1px solid var(--border); border-radius: 8px;"></div>
-            <p style="font-size: 12px; margin-top: 8px; font-weight: 600;">Background</p>
-          </div>
-          <div style="flex: 1;">
-            <div style="height: 60px; background: var(--muted); border-radius: 8px;"></div>
-            <p style="font-size: 12px; margin-top: 8px; font-weight: 600;">Muted</p>
-          </div>
-          <div style="flex: 1;">
-            <div style="height: 60px; background: var(--destructive); border-radius: 8px;"></div>
-            <p style="font-size: 12px; margin-top: 8px; font-weight: 600;">Destructive</p>
-          </div>
+      <div class="nav-group">
+        <div class="nav-label no-uppercase">Menu chính</div>
+        <div class="nav-item active no-uppercase">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          Trang chủ
+        </div>
+        <div class="nav-item no-uppercase">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+            <path d="M3 6h18" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+          Sản phẩm
+        </div>
+        <div class="nav-item no-uppercase">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+            <polyline points="11 9 11 15 15 12 11 9" />
+          </svg>
+          Videos
         </div>
       </div>
-      
-      <div class="demo-card">
-        <span class="demo-label">Kiểu chữ (Typography)</span>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <h1 style="font-size: 24px; font-weight: 700;" class="no-uppercase">Tiêu đề lớn (Heading 1)</h1>
-          <h2 style="font-size: 20px; font-weight: 600;" class="no-uppercase">Tiêu đề vừa (Heading 2)</h2>
-          <p style="font-size: 14px; color: var(--foreground);" class="no-spacing">Văn bản nội dung thông thường (Body text). Không giãn chữ và không in hoa các nhãn header.</p>
-          <p style="font-size: 12px; color: var(--muted-foreground);" class="no-spacing">Văn bản mô tả phụ (Muted text).</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Buttons -->
-  <section id="buttons">
-    <div class="section-header">
-      <h2 class="section-title">Nút bấm (Buttons)</h2>
-      <p class="section-desc">Các loại nút bấm tương tác.</p>
-    </div>
-    
-    <div class="demo-card">
-      <span class="demo-label">Variants & Sizes</span>
-      <div class="flex-row" style="gap: 24px;">
-        <div class="flex-row">
-          <button class="btn btn-primary no-uppercase">Primary button</button>
-          <button class="btn btn-secondary no-uppercase">Secondary</button>
-          <button class="btn btn-outline no-uppercase">Outline</button>
-          <button class="btn btn-ghost no-uppercase">Ghost</button>
-          <button class="btn btn-destructive no-uppercase">Destructive</button>
+      <div class="nav-group">
+        <div class="nav-label no-uppercase">Tài khoản</div>
+        <div class="nav-item no-uppercase">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Hồ sơ
         </div>
-        <div class="flex-row" style="border-left: 1px solid var(--border); padding-left: 24px;">
-          <button class="btn btn-primary btn-sm no-uppercase">Small</button>
-          <button class="btn btn-primary no-uppercase">Medium</button>
-          <button class="btn btn-primary btn-lg no-uppercase">Large</button>
+        <div class="nav-item no-uppercase" style="margin-top: auto; color: var(--destructive);">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" x2="9" y1="12" y2="12" />
+          </svg>
+          Đăng xuất
         </div>
       </div>
-    </div>
-  </section>
+    </aside>
 
-  <!-- Form Controls -->
-  <section id="forms">
-    <div class="section-header">
-      <h2 class="section-title">Nhập liệu (Forms)</h2>
-      <p class="section-desc">Các thành phần điều khiển form.</p>
-    </div>
-    
-    <div class="grid grid-3">
-      <div class="demo-card">
-        <span class="demo-label">Văn bản (Input)</span>
-        <label class="label no-uppercase">Địa chỉ email</label>
-        <input type="email" class="input no-spacing" placeholder="nhap@email.com">
-      </div>
-      <div class="demo-card">
-        <span class="demo-label">Lựa chọn (Select)</span>
-        <label class="label no-uppercase">Vai trò của bạn</label>
-        <select class="input no-spacing">
-          <option>Người hướng dẫn (Mentor)</option>
-          <option>Người được học (Mentee)</option>
-        </select>
-      </div>
-      <div class="demo-card">
-        <span class="demo-label">Trạng thái lỗi</span>
-        <label class="label no-uppercase">Mật khẩu</label>
-        <input type="password" class="input no-spacing" value="123" style="border-color: var(--destructive);">
-        <p style="font-size: 12px; color: var(--destructive); margin-top: 6px;" class="no-spacing">Mật khẩu quá ngắn.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Data Display -->
-  <section id="data">
-    <div class="section-header">
-      <h2 class="section-title">Hiển thị dữ liệu (Data)</h2>
-      <p class="section-desc">Cards, Tables và Status.</p>
-    </div>
-    
-    <div class="grid grid-2">
-      <!-- Card Example -->
-      <div class="ui-card">
-        <div class="ui-card-header">
-          <h3 class="ui-card-title no-uppercase">Thông tin người học</h3>
-          <p class="ui-card-desc no-spacing">Cập nhật lúc 10:30 sáng nay.</p>
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="page-header">
+        <div class="flex items-center gap-2"
+          style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 24px;">
+          <span>Trang chủ</span> <span>/</span> <span>Thiết kế</span>
         </div>
-        <div class="ui-card-content">
-          <div class="flex-row" style="margin-bottom: 16px;">
-            <div class="avatar"><img src="https://ui.shadcn.com/avatars/01.png" alt="Avatar"></div>
-            <div>
-              <p style="font-weight: 600; font-size: 14px;" class="no-uppercase">Nguyễn Văn A</p>
-              <p style="font-size: 12px; color: var(--muted-foreground);" class="no-spacing">a.nguyen@example.com</p>
+        <h1 class="page-title no-uppercase">Hệ thống thành phần modern minimalist</h1>
+        <p class="page-desc no-spacing">Thiết kế tinh tế, tập trung vào sự tối giản và trải nghiệm cao cấp. Không in
+          hoa,
+          không giãn chữ.</p>
+      </header>
+
+      <!-- Buttons Section -->
+      <section class="section-anchor">
+        <div class="section-head">
+          <h2 class="section-title no-uppercase">Nút bấm (Buttons)</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn btn-primary no-uppercase">Hành động chính</button>
+          <button class="btn btn-outline no-uppercase">Hành động phụ</button>
+          <button class="btn btn-ghost no-uppercase">Bỏ qua</button>
+        </div>
+      </section>
+
+      <!-- Cards Section -->
+      <section class="section-anchor">
+        <div class="section-head">
+          <h2 class="section-title no-uppercase">Thẻ (Cards)</h2>
+        </div>
+        <div class="grid grid-cols-2">
+          <div class="ui-card">
+            <h3 class="ui-card-title no-uppercase">Tiêu đề thẻ</h3>
+            <p class="ui-card-desc no-spacing">Mô tả chi tiết về nội dung bên trong thẻ này.</p>
+            <div class="mt-6">
+              <div
+                style="height: 120px; background: var(--muted); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--muted-foreground); font-size: 14px;">
+                Khu vực nội dung (Placeholder)
+              </div>
             </div>
-            <div style="margin-left: auto;">
-              <span class="badge badge-primary no-uppercase">Hoạt động</span>
+            <div class="flex gap-2 mt-6">
+              <button class="btn btn-primary no-uppercase" style="flex: 1;">Lưu thay đổi</button>
+              <button class="btn btn-outline no-uppercase">Hủy</button>
             </div>
           </div>
-          <div style="margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 12px;">
-            <span class="no-spacing">Tiến độ khóa học</span>
-            <span class="no-spacing">75%</span>
+
+          <div class="ui-card">
+            <div class="flex items-center gap-2 mb-4">
+              <div style="width: 40px; height: 40px; background: var(--secondary); border-radius: 50%;"></div>
+              <div>
+                <p style="font-weight: 600; font-size: 14px;" class="no-uppercase">Nguyễn Văn A</p>
+                <p style="font-size: 12px; color: var(--muted-foreground);" class="no-spacing">Mentor cao cấp tại Hà Nội
+                </p>
+              </div>
+            </div>
+            <p class="ui-card-desc no-spacing">Chuyên gia về thiết kế hệ thống và trải nghiệm người dùng với hơn 10 năm
+              kinh nghiệm.</p>
+            <div class="mt-6 flex gap-2">
+              <button class="btn btn-outline btn-sm no-uppercase" style="height: 32px;">Xem hồ sơ</button>
+              <button class="btn btn-ghost btn-sm no-uppercase" style="height: 32px;">Nhắn tin</button>
+            </div>
           </div>
-          <div class="progress-container"><div class="progress-fill" style="width: 75%;"></div></div>
         </div>
-        <div class="ui-card-footer">
-          <button class="btn btn-outline btn-sm no-uppercase">Xem chi tiết</button>
-          <button class="btn btn-primary btn-sm no-uppercase">Nhắn tin</button>
-        </div>
-      </div>
+      </section>
 
-      <!-- Table Example -->
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th class="no-uppercase">Dự án</th>
-              <th class="no-uppercase">Trạng thái</th>
-              <th class="no-uppercase">Thời gian</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="no-spacing">Xây dựng UI mới</td>
-              <td><span class="badge no-uppercase">Đang thực hiện</span></td>
-              <td class="no-spacing">12/03/2026</td>
-            </tr>
-            <tr>
-              <td class="no-spacing">Tối ưu database</td>
-              <td><span class="badge badge-primary no-uppercase">Hoàn thành</span></td>
-              <td class="no-spacing">10/03/2026</td>
-            </tr>
-            <tr>
-              <td class="no-spacing">Sửa lỗi đăng nhập</td>
-              <td><span class="badge no-uppercase" style="color: var(--destructive); border-color: var(--destructive);">Chậm trễ</span></td>
-              <td class="no-spacing">08/03/2026</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+      <!-- Forms Section -->
+      <section class="section-anchor">
+        <div class="section-head">
+          <h2 class="section-title no-uppercase">Nhập liệu (Forms)</h2>
+        </div>
+        <div class="ui-card" style="max-width: 500px;">
+          <div class="input-group">
+            <label class="label no-uppercase">Họ và tên</label>
+            <input type="text" class="input no-spacing" placeholder="Nguyễn Văn A">
+          </div>
+          <div class="input-group">
+            <label class="label no-uppercase">Địa chỉ email</label>
+            <input type="email" class="input no-spacing" placeholder="example@email.com">
+          </div>
+          <div class="input-group">
+            <label class="label no-uppercase">Vị trí mong muốn</label>
+            <select class="input no-spacing" style="appearance: none;">
+              <option>Thiết kế sản phẩm</option>
+              <option>Lập trình Frontend</option>
+            </select>
+          </div>
+          <button class="btn btn-primary no-uppercase" style="width: 100%; margin-top: 12px;">Gửi thông tin đăng
+            ký</button>
+        </div>
+      </section>
 
-  <!-- Stats Grid -->
-  <section id="stats">
-    <div class="section-header">
-      <h2 class="section-title">Chỉ số (Statistics)</h2>
-      <p class="section-desc">Các khối hiển thị con số quan trọng.</p>
-    </div>
-    
-    <div class="grid grid-4">
-      <div class="demo-card" style="padding: 20px;">
-        <p style="font-size: 12px; color: var(--muted-foreground); margin-bottom: 8px;" class="no-uppercase">Tổng số Mentor</p>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <h2 style="font-size: 32px; font-weight: 700;">245</h2>
-          <span style="font-size: 12px; color: #10b981; font-weight: 500;">+12%</span>
-        </div>
-      </div>
-      <div class="demo-card" style="padding: 20px;">
-        <p style="font-size: 12px; color: var(--muted-foreground); margin-bottom: 8px;" class="no-uppercase">Học viên mới</p>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <h2 style="font-size: 32px; font-weight: 700;">1,280</h2>
-          <span style="font-size: 12px; color: #10b981; font-weight: 500;">+5%</span>
-        </div>
-      </div>
-      <div class="demo-card" style="padding: 20px;">
-        <p style="font-size: 12px; color: var(--muted-foreground); margin-bottom: 8px;" class="no-uppercase">Tỷ lệ hoàn thành</p>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <h2 style="font-size: 32px; font-weight: 700;">89%</h2>
-          <span style="font-size: 12px; color: #f59e0b; font-weight: 500;">+2%</span>
-        </div>
-      </div>
-      <div class="demo-card" style="padding: 20px;">
-        <p style="font-size: 12px; color: var(--muted-foreground); margin-bottom: 8px;" class="no-uppercase">Số buổi học</p>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <h2 style="font-size: 32px; font-weight: 700;">4,560</h2>
-          <span style="font-size: 12px; color: #10b981; font-weight: 500;">+18%</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer style="margin-top: 100px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--muted-foreground); font-size: 12px;" class="no-spacing">
-    © 2026 Tulie TSS Mentoring. Thiết kế bởi Antigravity.
-  </footer>
-</div>
-
+      <footer
+        style="padding-top: 40px; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 12px;"
+        class="no-spacing">
+        © 2026 Tulie TSS Mentoring. Thiết kế bởi Antigravity.
+      </footer>
+    </main>
+  </div>
 </body>
+
 </html>

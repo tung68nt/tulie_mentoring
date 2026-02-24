@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { v4 as uuidv4 } from "uuid";
 import { addMinutes } from "date-fns";
+import { logActivity } from "./activity";
 
 export async function createMeeting(data: MeetingInput) {
     const session = await auth();
@@ -159,6 +160,10 @@ export async function checkIn(meetingId: string, token: string) {
     });
 
     revalidatePath(`/meetings/${meetingId}`);
+
+    // Log activity
+    await logActivity("check_in", meetingId, "meeting", { title: meeting.title });
+
     return JSON.parse(JSON.stringify(attendance));
 }
 

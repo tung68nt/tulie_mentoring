@@ -56,9 +56,9 @@ export default async function MentorDashboard() {
         return (
             <div className="space-y-8 pb-10 animate-fade-in">
                 {isAdmin && (
-                    <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg text-xs text-muted-foreground">
-                        <span className="w-2 h-2 rounded-full bg-primary" />
-                        Bạn đang xem ở chế độ Admin Preview — dữ liệu hiển thị toàn bộ hệ thống
+                    <div className="flex items-center gap-2 px-4 py-2 bg-muted border border-border rounded-xl text-xs text-muted-foreground/60 no-uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        Chế độ Admin Preview — dữ liệu toàn hệ thống
                     </div>
                 )}
                 <div className="space-y-1">
@@ -109,9 +109,9 @@ export default async function MentorDashboard() {
                                 <p className="text-sm text-muted-foreground">Chưa có lịch họp nào.</p>
                             ) : (
                                 serializedUpcomingMeetings.map((meeting: any) => (
-                                    <div key={meeting.id} className="flex gap-5 p-5 rounded-[8px] border border-border bg-card group hover:border-foreground/20 transition-all">
-                                        <div className="w-12 h-12 rounded-[6px] bg-primary text-primary-foreground flex flex-col items-center justify-center shrink-0">
-                                            <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
+                                    <div key={meeting.id} className="flex gap-5 p-5 rounded-2xl border border-border bg-background group hover:border-foreground/20 transition-all shadow-sm">
+                                        <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex flex-col items-center justify-center shrink-0">
+                                            <span className="text-[10px] font-bold leading-none no-uppercase">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                             <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                         </div>
                                         <div className="flex-1 min-w-0 space-y-2">

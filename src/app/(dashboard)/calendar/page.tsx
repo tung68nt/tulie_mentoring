@@ -23,17 +23,17 @@ export default async function CalendarPage() {
         const serializedMeetings = JSON.parse(JSON.stringify(meetings));
 
         return (
-            <div className="space-y-8">
-                <div className="flex items-center justify-between">
+            <div className="space-y-10 pb-20 animate-fade-in">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-semibold text-foreground">Lịch hoạt động</h1>
-                        <p className="text-sm text-muted-foreground mt-1">Quản lý và theo dõi các buổi họp sắp tới</p>
+                        <h1 className="text-2xl font-semibold text-foreground no-uppercase">Lịch hoạt động</h1>
+                        <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Quản lý và theo dõi các buổi họp sắp tới</p>
                     </div>
                     {(role === "admin" || role === "mentor") && (
-                        <Button asChild>
+                        <Button asChild className="rounded-xl shadow-sm">
                             <Link href="/meetings/new">
                                 <Plus className="w-4 h-4 mr-2" />
-                                Lên lịch mới
+                                <span className="no-uppercase">Lên lịch mới</span>
                             </Link>
                         </Button>
                     )}

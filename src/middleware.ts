@@ -48,10 +48,12 @@ export default auth((req) => {
         if (nextUrl.pathname.startsWith("/admin") && role !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
-        if (nextUrl.pathname.startsWith("/mentor") && role !== "mentor") {
+        // Use exact prefix check with trailing slash or end-of-string
+        // to avoid /mentees being blocked for mentors
+        if (nextUrl.pathname.startsWith("/mentor") && !nextUrl.pathname.startsWith("/mentees") && role !== "mentor" && role !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
-        if (nextUrl.pathname.startsWith("/mentee") && role !== "mentee") {
+        if ((nextUrl.pathname === "/mentee" || nextUrl.pathname.startsWith("/mentee/")) && role !== "mentee") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
     }

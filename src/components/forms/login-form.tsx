@@ -141,16 +141,6 @@ export function LoginForm() {
                 </p>
             </div>
 
-            <div className="mt-6 p-4 bg-muted rounded-[8px] border border-border">
-                <p className="text-xs font-medium text-muted-foreground mb-2">
-                    Tài khoản Demo
-                </p>
-                <div className="space-y-1 text-xs text-muted-foreground">
-                    <p>Admin: admin@imp.edu.vn / password123</p>
-                    <p>Mentor: mentor1@imp.edu.vn / password123</p>
-                    <p>Mentee: mentee1@imp.edu.vn / password123</p>
-                </div>
-            </div>
         </Card>
     );
 }

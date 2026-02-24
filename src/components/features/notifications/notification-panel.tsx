@@ -89,7 +89,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
             >
                 <Bell className="w-[18px] h-[18px]" />
                 {localUnread > 0 && (
-                    <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-primary text-primary-foreground rounded-full text-[10px] font-medium flex items-center justify-center leading-none">
+                    <span className="absolute top-0.5 right-0.5 min-w-[14px] h-3.5 px-1 bg-foreground text-background rounded-full text-[9px] font-bold flex items-center justify-center leading-none ring-2 ring-background">
                         {localUnread > 99 ? "99+" : localUnread}
                     </span>
                 )}

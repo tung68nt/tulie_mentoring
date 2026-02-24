@@ -1,20 +1,21 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
-import { Card, StatCard } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import {
     Calendar,
-    Target,
-    CheckCircle,
     Clock,
     Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
+import { getMenteeStats } from "@/lib/actions/report";
+import { getActivityLogs } from "@/lib/actions/activity";
+import { StatsCards } from "@/components/features/reports/stats-cards";
+import { ActivityFeed } from "@/components/features/reports/activity-feed";
 
 export default async function MenteeDashboard() {
     const session = await auth();
@@ -28,7 +29,7 @@ export default async function MenteeDashboard() {
     const isAdmin = role === "admin";
 
     try {
-        const [mentorship, goals, upcomingMeetings] = await Promise.all([
+        const [mentorship, goals, upcomingMeetings, stats, logs] = await Promise.all([
             prisma.mentorship.findFirst({
                 where: isAdmin ? { status: "active" } : {
                     mentees: { some: { menteeId: userId } },
@@ -54,7 +55,7 @@ export default async function MenteeDashboard() {
                     }
                 },
                 orderBy: { createdAt: "desc" },
-                take: 20,
+                take: 4,
             }),
             prisma.meeting.findMany({
                 where: isAdmin ? {
@@ -68,130 +69,103 @@ export default async function MenteeDashboard() {
                 orderBy: { scheduledAt: "asc" },
                 take: 5,
             }),
+            getMenteeStats(),
+            getActivityLogs(8),
         ]);
 
         const serializedMentorship = JSON.parse(JSON.stringify(mentorship));
         const serializedGoals = JSON.parse(JSON.stringify(goals || []));
         const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings || []));
 
-        const completionRate = serializedGoals.length > 0
-            ? Math.round((serializedGoals.filter((g: any) => g.status === "completed").length / serializedGoals.length) * 100)
-            : 0;
-
-        const stats = [
-            { title: "Mục tiêu", value: serializedGoals.length, icon: <Target /> },
-            { title: "Sắp tới", value: serializedUpcomingMeetings.length, icon: <Calendar /> },
-            { title: "Tỉ lệ đạt", value: `${completionRate}%`, icon: <CheckCircle /> },
-        ];
-
         return (
-            <div className="space-y-8 pb-10 animate-fade-in">
+            <div className="space-y-10 pb-20 animate-fade-in">
                 {isAdmin && (
-                    <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg text-xs text-muted-foreground">
-                        <span className="w-2 h-2 rounded-full bg-primary" />
-                        Bạn đang xem ở chế độ Admin Preview — dữ liệu hiển thị toàn bộ hệ thống
+                    <div className="flex items-center gap-2 px-4 py-2 bg-muted border border-border rounded-xl text-xs text-muted-foreground/60 no-uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        Chế độ Admin Preview — dữ liệu toàn hệ thống
                     </div>
                 )}
-                <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Bảng điều khiển Mentee</h1>
-                    <p className="text-sm text-muted-foreground mt-1">{isAdmin ? "Xem trước giao diện Mentee (tổng hợp dữ liệu toàn hệ thống)" : `Chào mừng bạn trở lại, ${session?.user?.name || "Mentee"}.`}</p>
+
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-semibold text-foreground no-uppercase">Bảng điều khiển Mentee</h1>
+                        <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Chào mừng bạn trở lại, {session?.user?.name || "Mentee"}.</p>
+                    </div>
+                    <Button variant="outline" className="rounded-xl no-uppercase h-11 px-6 font-medium" asChild>
+                        <Link href="/reports">Xem báo cáo chi tiết</Link>
+                    </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {stats.map((stat) => (
-                        <StatCard key={stat.title} {...stat} />
-                    ))}
-                </div>
+                {/* New Stats Cards Component */}
+                <StatsCards stats={stats} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-12">
-                        {/* Mentor Profile */}
-                        {serializedMentorship && (
-                            <Card className="bg-primary text-primary-foreground border-none p-10 overflow-hidden relative group" padding="none">
-                                <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-                                    <Avatar
-                                        firstName={serializedMentorship.mentor?.firstName}
-                                        lastName={serializedMentorship.mentor?.lastName}
-                                        src={serializedMentorship.mentor?.avatar}
-                                        size="xl"
-                                        className="w-24 h-24 border-foreground/30 shadow-lg"
-                                    />
-                                    <div className="text-center md:text-left space-y-5 flex-1">
-                                        <div className="space-y-1">
-                                            <span className="text-[10px] font-medium !text-gray-400 leading-none mb-2 block">Mentor của tôi</span>
-                                            <h3 className="text-3xl font-bold !text-primary-foreground">{serializedMentorship.mentor?.firstName} {serializedMentorship.mentor?.lastName}</h3>
-                                        </div>
-                                        <p className="text-sm !text-gray-300 line-clamp-2 max-w-lg leading-relaxed font-medium">{serializedMentorship.mentor?.bio || "No bio available."}</p>
-                                        <Button variant="outline" className="text-primary-foreground border-foreground/30 hover:border-background hover:bg-card hover:text-foreground transition-all duration-300" asChild>
-                                            <Link href={`/admin/mentorships/${serializedMentorship.id}`}>Hồ sơ & Trao đổi</Link>
-                                        </Button>
-                                    </div>
-                                </div>
-                                <Zap className="absolute -top-10 -right-10 w-48 h-48 text-primary-foreground/5 opacity-40 group-hover:scale-110 transition-transform duration-700 ease-out" />
-                            </Card>
-                        )}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div className="lg:col-span-8 space-y-12">
 
-                        {/* Goal Progress */}
+                        {/* Goal Progress Section */}
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-semibold text-foreground">Tiến độ mục tiêu</h3>
-                                <Button variant="outline" size="sm" asChild>
+                            <div className="flex items-center justify-between px-2">
+                                <h3 className="text-lg font-semibold text-foreground no-uppercase">Tiến độ mục tiêu</h3>
+                                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground no-uppercase h-8">
                                     <Link href="/goals">Xem tất cả</Link>
                                 </Button>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {serializedGoals.slice(0, 4).map((goal: any) => (
-                                    <Card key={goal.id} className="p-6 space-y-5" hover>
-                                        <div className="flex items-center justify-between">
-                                            <p className="text-sm font-semibold text-foreground truncate leading-tight flex-1 pr-4">{goal.title}</p>
-                                            <span className="text-xs font-bold text-muted-foreground">{goal.currentValue}%</span>
-                                        </div>
-                                        <Progress value={goal.currentValue} size="sm" color="default" />
-                                    </Card>
-                                ))}
-                                {serializedGoals.length === 0 && (
-                                    <p className="text-sm text-muted-foreground py-4">Chưa có mục tiêu nào được thiết lập.</p>
+                                {serializedGoals.length > 0 ? (
+                                    serializedGoals.map((goal: any) => (
+                                        <Card key={goal.id} className="p-5 space-y-4 shadow-sm border-border/50 hover:border-primary/30 transition-colors rounded-2xl">
+                                            <div className="flex items-center justify-between">
+                                                <p className="text-sm font-semibold text-foreground truncate flex-1 pr-4 no-uppercase">{goal.title}</p>
+                                                <span className="text-[10px] font-bold text-muted-foreground/60 tabular-nums">{goal.currentValue}%</span>
+                                            </div>
+                                            <Progress value={goal.currentValue} size="sm" />
+                                        </Card>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full py-10 text-center bg-muted/20 border border-dashed border-border rounded-2xl">
+                                        <p className="text-xs text-muted-foreground no-uppercase">Chưa có mục tiêu nào được thiết lập.</p>
+                                    </div>
                                 )}
                             </div>
                         </div>
                     </div>
 
-                    {/* Sidebar: Upcoming Meetings */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
-                            <Button variant="ghost" size="sm" asChild>
-                                <Link href="/calendar">Xem tất cả</Link>
-                            </Button>
-                        </div>
-                        <div className="space-y-4">
-                            {serializedUpcomingMeetings.length === 0 ? (
-                                <p className="text-sm text-muted-foreground bg-muted/30 p-8 rounded-xl border border-dashed border-border text-center">
-                                    Hiện tại bạn không có lịch họp.
-                                </p>
-                            ) : (
-                                serializedUpcomingMeetings.map((meeting: any) => (
-                                    <div key={meeting.id} className="p-5 rounded-[8px] border border-border flex items-center gap-5 hover:border-foreground/20 transition-all bg-card group">
-                                        <div className="w-12 h-12 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200 shrink-0">
-                                            <Calendar className="w-5 h-5" />
-                                        </div>
-                                        <div className="flex-1 min-w-0 space-y-1">
-                                            <p className="text-sm font-semibold text-foreground truncate">{meeting.title}</p>
-                                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium">
-                                                <div className="flex items-center gap-1">
+                    <div className="lg:col-span-4 space-y-10">
+                        {/* Upcoming Meetings (Moved up for better visibility) */}
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between px-2">
+                                <h3 className="text-sm font-semibold text-foreground no-uppercase">Lịch họp sắp tới</h3>
+                                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground no-uppercase h-9 text-xs px-4">
+                                    <Link href="/calendar">Xem lịch</Link>
+                                </Button>
+                            </div>
+                            <div className="space-y-3">
+                                {serializedUpcomingMeetings.length === 0 ? (
+                                    <div className="p-8 rounded-2xl border border-dashed border-border bg-muted/20 text-center space-y-2">
+                                        <Calendar className="w-6 h-6 text-muted-foreground/30 mx-auto" />
+                                        <p className="text-xs text-muted-foreground no-uppercase">Hiện không có lịch họp.</p>
+                                    </div>
+                                ) : (
+                                    serializedUpcomingMeetings.map((meeting: any) => (
+                                        <div key={meeting.id} className="p-4 rounded-xl border border-border/60 flex items-center gap-4 hover:border-primary/20 transition-all bg-background shadow-sm group">
+                                            <div className="w-10 h-10 rounded-lg bg-muted/40 border border-border/50 flex items-center justify-center text-muted-foreground/40 group-hover:bg-primary/10 group-hover:text-primary transition-colors shrink-0">
+                                                <Calendar className="w-4 h-4" />
+                                            </div>
+                                            <div className="flex-1 min-w-0 space-y-1">
+                                                <p className="text-xs font-bold text-foreground truncate no-uppercase">{meeting.title}</p>
+                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60">
                                                     <Clock className="w-3 h-3" />
                                                     {formatDate(meeting.scheduledAt, "dd/MM · HH:mm")}
                                                 </div>
-                                                <Badge status={meeting.status} size="sm" />
                                             </div>
                                         </div>
-                                    </div>
-                                ))
-                            )}
-                            <Button className="w-full mt-4" variant="outline" asChild>
-                                <Link href="/calendar">Lịch trình chi tiết</Link>
-                            </Button>
+                                    ))
+                                )}
+                            </div>
                         </div>
+
+                        {/* New Activity Feed Component */}
+                        <ActivityFeed logs={logs} />
                     </div>
                 </div>
             </div>
@@ -199,8 +173,8 @@ export default async function MenteeDashboard() {
     } catch (error) {
         console.error("Failed to fetch mentee dashboard data:", error);
         return (
-            <div className="p-8 text-center bg-muted/30 rounded-xl border border-border">
-                <p className="text-muted-foreground">Không thể tải dữ liệu dashboard. Vui lòng thử lại sau.</p>
+            <div className="p-10 text-center bg-destructive/5 rounded-3xl border border-destructive/20">
+                <p className="text-sm text-destructive font-medium">Không thể tải dữ liệu dashboard. Vui lòng kiểm tra kết nối và thử lại.</p>
             </div>
         );
     }

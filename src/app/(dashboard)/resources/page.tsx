@@ -20,17 +20,17 @@ export default async function ResourcesPage() {
         const serializedResources = JSON.parse(JSON.stringify(resources));
 
         return (
-            <div className="space-y-8 pb-10">
-                <div className="flex items-center justify-between">
+            <div className="space-y-10 pb-20 animate-fade-in">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-semibold text-foreground">Thư viện Tài nguyên</h1>
-                        <p className="text-sm text-muted-foreground mt-1">Tổng hợp tài liệu, biểu mẫu và hướng dẫn trong chương trình</p>
+                        <h1 className="text-2xl font-semibold text-foreground no-uppercase">Thư viện Tài nguyên</h1>
+                        <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Tổng hợp tài liệu, biểu mẫu và hướng dẫn chương trình</p>
                     </div>
                     {(role === "admin" || role === "mentor") && (
-                        <Button asChild>
+                        <Button asChild className="rounded-xl shadow-sm">
                             <Link href="/resources/new">
                                 <Plus className="w-4 h-4 mr-2" />
-                                Tải lên tài liệu
+                                <span className="no-uppercase">Tải lên tài liệu</span>
                             </Link>
                         </Button>
                     )}

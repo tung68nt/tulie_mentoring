@@ -45,15 +45,16 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
                                     <Target className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-semibold text-foreground">
-                                        {mentorship.programCycle.name} - {mentorship.mentor.lastName} ➔ {mentorship.mentees[0]?.mentee.lastName}...
+                                    <h2 className="text-lg font-semibold text-foreground no-uppercase">
+                                        {mentorship.programCycle.name} - {mentorship.mentor.firstName} {mentorship.mentor.lastName} ➔ {mentorship.mentees.map((m: any) => `${m.mentee.firstName} ${m.mentee.lastName}`).join(", ")}
                                     </h2>
-                                    <p className="text-xs text-muted-foreground font-medium">{mentorshipGoals.length} mục tiêu</p>
+                                    <p className="text-[10px] text-muted-foreground/60 font-semibold tracking-wider uppercase">{mentorshipGoals.length} mục tiêu</p>
                                 </div>
                             </div>
                             {userRole !== "mentee" && (
                                 <Button
                                     size="sm"
+                                    className="h-10 px-5 rounded-xl font-medium no-uppercase"
                                     variant={isFormOpen ? "outline" : undefined}
                                     onClick={() => setShowFormFor(isFormOpen ? null : mentorship.id)}
                                 >

@@ -40,10 +40,10 @@ export default async function DashboardLayout({
     }
 
     return (
-        <div className="min-h-screen bg-card">
+        <div className="min-h-screen bg-background">
             <Sidebar role={user.role} />
 
-            <div className="lg:ml-[var(--sidebar-width)] min-h-screen flex flex-col">
+            <div className="lg:ml-[var(--sidebar-width)] min-h-screen flex flex-col transition-all duration-300">
                 <Header
                     userName={`${user.firstName} ${user.lastName || ""}`}
                     userRole={user.role}
@@ -52,14 +52,14 @@ export default async function DashboardLayout({
                     unreadCount={unreadCount}
                 />
 
-                <main className="flex-1 px-4 sm:px-6 lg:px-8 pt-[72px] pb-10 max-w-[1200px] mx-auto w-full">
+                <main className="flex-1 px-4 sm:px-6 lg:px-8 pt-[88px] pb-10 max-w-[1400px] mx-auto w-full">
                     <div className="animate-fade-in">
                         {children}
                     </div>
                 </main>
 
-                <footer className="py-6 text-center text-xs text-muted-foreground border-t border-border">
-                    © {new Date().getFullYear()} Tulie TSS. All rights reserved.
+                <footer className="py-8 text-center text-[13px] text-muted-foreground/60 border-t border-border no-uppercase">
+                    © {new Date().getFullYear()} Tulie Mentoring. All rights reserved.
                 </footer>
             </div>
         </div>

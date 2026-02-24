@@ -105,8 +105,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                 {!isUpdating ? (
                     <Button
                         variant="outline"
-                        size="sm"
-                        className="w-full"
+                        className="w-full h-11 rounded-xl no-uppercase font-medium"
                         onClick={() => setIsUpdating(true)}
                         disabled={goal.status === "completed"}
                     >
@@ -121,10 +120,10 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                                 value={newValue}
                                 onChange={(e) => setNewValue(Number(e.target.value))}
                             />
-                            <div className="flex items-end pb-1.5">
+                            <div className="flex items-end pb-1">
                                 <div className="flex items-center gap-2 w-full">
-                                    <Button variant="ghost" size="sm" className="flex-1" onClick={() => setIsUpdating(false)}>Hủy</Button>
-                                    <Button size="sm" className="flex-1" onClick={handleUpdate} isLoading={isLoading}>Lưu</Button>
+                                    <Button variant="ghost" size="sm" className="flex-1 h-10 rounded-lg no-uppercase" onClick={() => setIsUpdating(false)}>Hủy</Button>
+                                    <Button size="sm" className="flex-1 h-10 rounded-lg no-uppercase" onClick={handleUpdate} isLoading={isLoading}>Lưu</Button>
                                 </div>
                             </div>
                         </div>
