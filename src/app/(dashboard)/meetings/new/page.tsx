@@ -19,7 +19,7 @@ export default async function NewMeetingPage() {
     const allMentorships = await getMentorships();
     const filteredMentorships = role === "admin"
         ? allMentorships
-        : allMentorships.filter(m => m.mentorId === session?.user?.id);
+        : allMentorships.filter((m: any) => m.mentorId === session?.user?.id);
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">

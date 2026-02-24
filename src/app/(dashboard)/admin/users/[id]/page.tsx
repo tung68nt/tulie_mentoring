@@ -123,7 +123,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                             <EmptyState icon={<Users className="w-5 h-5" />} title="Chưa có nhóm Mentoring nào" className="py-8" />
                         ) : (
                             <div className="space-y-3">
-                                {user.mentorships.map(ms => (
+                                {user.mentorships.map((ms: any) => (
                                     <Link
                                         key={ms.id}
                                         href={`/admin/mentorships/${ms.id}`}
@@ -131,7 +131,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                     >
                                         <div className="flex items-center gap-3">
                                             <div className="flex -space-x-2">
-                                                {ms.mentees.slice(0, 3).map(mt => (
+                                                {ms.mentees.slice(0, 3).map((mt: any) => (
                                                     <Avatar key={mt.id} firstName={mt.mentee.firstName} lastName={mt.mentee.lastName} src={mt.mentee.avatar} size="xs" className="ring-2 ring-background" />
                                                 ))}
                                             </div>
@@ -154,7 +154,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                             <EmptyState icon={<Users className="w-5 h-5" />} title="Chưa được ghép Mentor" className="py-8" />
                         ) : (
                             <div className="space-y-3">
-                                {user.menteeships.map(ms => (
+                                {user.menteeships.map((ms: any) => (
                                     <Link
                                         key={ms.id}
                                         href={`/admin/mentorships/${ms.mentorship.id}`}
@@ -189,7 +189,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                         <EmptyState icon={<Star className="w-5 h-5" />} title="Chưa có phản hồi" className="py-8" />
                     ) : (
                         <div className="space-y-4">
-                            {user.feedbackReceived.map((fb, i) => (
+                            {user.feedbackReceived.map((fb: any, i: number) => (
                                 <div key={i} className="p-3 bg-muted rounded-md space-y-2">
                                     <div className="flex items-center justify-between">
                                         <p className="text-xs font-medium text-foreground">{fb.fromUser.firstName} {fb.fromUser.lastName}</p>

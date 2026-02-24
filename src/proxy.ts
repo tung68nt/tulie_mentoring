@@ -38,7 +38,7 @@ export default auth((req) => {
 
     // Role-based access control (admin can access everything)
     if (isLoggedIn) {
-        const role = (req.auth?.user as any).role;
+        const role = req.auth?.user?.role;
 
         // Admin can access all routes
         if (role === "admin") {

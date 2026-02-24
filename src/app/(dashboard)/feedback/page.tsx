@@ -27,8 +27,8 @@ export default async function FeedbackPage() {
     const relevantMentorships = role === "admin"
         ? mentorships
         : role === "mentor"
-            ? mentorships.filter(m => m.mentorId === userId)
-            : mentorships.filter(m => m.mentees.some(mt => mt.menteeId === userId));
+            ? mentorships.filter((m: any) => m.mentorId === userId)
+            : mentorships.filter((m: any) => m.mentees.some((mt: any) => mt.menteeId === userId));
 
     return (
         <div className="space-y-8 pb-10">
@@ -52,7 +52,7 @@ export default async function FeedbackPage() {
                             </Card>
                         ) : (
                             <div className="space-y-6">
-                                {received.map(fb => (
+                                {received.map((fb: any) => (
                                     <Card key={fb.id} className="relative overflow-visible">
                                         <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg">
                                             <Quote className="w-4 h-4 fill-current" />
@@ -118,7 +118,7 @@ export default async function FeedbackPage() {
                             Lịch sử gửi phản hồi
                         </h3>
                         <div className="space-y-4">
-                            {given.map(fb => (
+                            {given.map((fb: any) => (
                                 <div key={fb.id} className="p-4 rounded-[8px] border border-border flex items-center justify-between bg-card">
                                     <div className="flex items-center gap-3">
                                         <Avatar
@@ -147,9 +147,9 @@ export default async function FeedbackPage() {
                 <div className="space-y-6">
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-foreground">Gửi phản hồi mới</h3>
-                        {relevantMentorships.map(m => {
+                        {relevantMentorships.map((m: any) => {
                             // Determine who to send feedback to
-                            const targetMentees = m.mentees.filter(mt => mt.menteeId !== userId).map(mt => mt.mentee);
+                            const targetMentees = m.mentees.filter((mt: any) => mt.menteeId !== userId).map((mt: any) => mt.mentee);
                             const targetMentor = m.mentorId !== userId ? m.mentor : null;
 
                             const targets = [...(targetMentor ? [targetMentor] : []), ...targetMentees];

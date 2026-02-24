@@ -17,10 +17,10 @@ export default async function GoalsPage() {
     const relevantMentorships = role === "admin"
         ? mentorships
         : role === "mentor"
-            ? mentorships.filter(m => m.mentorId === userId)
-            : mentorships.filter(m => m.mentees.some(mt => mt.menteeId === userId));
+            ? mentorships.filter((m: any) => m.mentorId === userId)
+            : mentorships.filter((m: any) => m.mentees.some((mt: any) => mt.menteeId === userId));
 
-    const allGoalsPromises = relevantMentorships.map(m => getGoals(m.id));
+    const allGoalsPromises = relevantMentorships.map((m: any) => getGoals(m.id));
     const results = await Promise.all(allGoalsPromises);
     const allGoals = results.flat();
 
