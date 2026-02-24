@@ -5,7 +5,6 @@ import {
     Users,
     Calendar,
     Target,
-    BookOpen,
     MessageSquare,
     BarChart,
     LogOut,
@@ -21,7 +20,6 @@ import {
     FileText,
     LifeBuoy,
     BookMarked,
-    UserCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -37,6 +35,7 @@ interface SidebarProps {
 interface MenuItem {
     id: string;
     label: string;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     icon: any;
     href: string;
 }
@@ -168,18 +167,18 @@ export function Sidebar({ role }: SidebarProps) {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 py-4 px-4 overflow-y-auto space-y-1">
+            <nav className="flex-1 py-8 px-4 overflow-y-auto space-y-8">
                 {sections.map((section, sIdx) => (
-                    <div key={sIdx} className={cn(sIdx > 0 && "mt-5")}>
+                    <div key={sIdx} className="space-y-4">
                         {section.title && !isCollapsed && (
-                            <div className="px-3 mb-2 pt-1">
-                                <span className="text-[11px] font-semibold text-muted-foreground/50 no-uppercase">{section.title}</span>
+                            <div className="px-5 mb-1 pt-1">
+                                <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-muted-foreground/30">{section.title}</span>
                             </div>
                         )}
                         {section.title && isCollapsed && (
-                            <div className="mx-3 mb-2 pt-1 border-t border-border/50" />
+                            <div className="mx-5 mb-2 pt-1 border-t border-border/30" />
                         )}
-                        <div className="space-y-0.5">
+                        <div className="space-y-2">
                             {section.items.map((item) => {
                                 const active = isActive(item.href);
                                 const Icon = item.icon;
@@ -188,18 +187,21 @@ export function Sidebar({ role }: SidebarProps) {
                                         key={item.id}
                                         href={item.href}
                                         className={cn(
-                                            "flex items-center gap-3 px-3.5 py-3 rounded-xl text-[13px] transition-all duration-200 relative group",
+                                            "flex items-center gap-4 px-5 py-3 rounded-[1.25rem] text-[13.5px] transition-all duration-300 relative group",
                                             active
-                                                ? "bg-secondary text-foreground font-medium shadow-sm"
-                                                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                                ? "bg-secondary text-foreground font-semibold shadow-sm"
+                                                : "text-muted-foreground/60 hover:bg-accent/70 hover:text-foreground hover:translate-x-1"
                                         )}
                                         title={isCollapsed ? item.label : undefined}
                                     >
                                         <Icon className={cn(
-                                            "w-[18px] h-[18px] shrink-0 transition-opacity",
-                                            active ? "opacity-100" : "opacity-60 group-hover:opacity-100"
+                                            "w-[20px] h-[20px] shrink-0 transition-all duration-300",
+                                            active ? "opacity-100 scale-110" : "opacity-40 group-hover:opacity-100 group-hover:scale-105"
                                         )} />
                                         {!isCollapsed && <span className="truncate">{item.label}</span>}
+                                        {active && !isCollapsed && (
+                                            <div className="absolute left-0 w-1.5 h-6 bg-primary rounded-full -translate-x-2 shadow-[4px_0_12px_rgba(0,0,0,0.1)]" />
+                                        )}
                                     </Link>
                                 );
                             })}

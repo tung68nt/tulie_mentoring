@@ -10,23 +10,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Plus, Loader2 } from "lucide-react";
 
 export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void }) {
     const [open, setOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<TaskInput>({
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<TaskInput>({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         resolver: zodResolver(todoSchema) as any,
         defaultValues: {
             priority: "medium",
             status: "todo",
             column: "todo",
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         } as any
     });
-
-    const priority = watch("priority");
 
     const onSubmit = async (data: TaskInput) => {
         setIsSubmitting(true);
@@ -50,70 +49,71 @@ export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="rounded-xl shadow-lg shadow-primary/10 h-11 px-6 font-medium">
-                    <Plus className="w-4 h-4 mr-2" />
-                    <span className="no-uppercase">Giao việc mới</span>
+                <Button className="rounded-2xl shadow-xl shadow-primary/10 h-12 px-8 font-bold text-[13px] uppercase tracking-wider transition-all hover:scale-105 active:scale-95">
+                    <Plus className="w-5 h-5 mr-2" />
+                    Giao việc mới
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] rounded-2xl">
-                <DialogHeader>
-                    <DialogTitle className="no-uppercase">Thêm công việc mới</DialogTitle>
+            <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] border-none shadow-2xl p-0 overflow-hidden ring-1 ring-border/5">
+                <DialogHeader className="p-8 pb-0">
+                    <DialogTitle className="text-2xl font-bold no-uppercase tracking-tight">Thêm công việc mới</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Tiêu đề công việc</Label>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-8">
+                    <div className="space-y-6">
+                        <div className="space-y-3">
+                            <Label htmlFor="title" className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.1em] px-1">Tiêu đề công việc</Label>
                             <Input
                                 id="title"
-                                placeholder="Nhập tên công việc..."
+                                placeholder="Cần hoàn thành việc gì..."
                                 {...register("title")}
-                                className="rounded-xl"
+                                className="h-14 rounded-2xl border-border/40 bg-muted/20 px-5 font-medium placeholder:text-muted-foreground/30 focus:border-primary/20 transition-all"
                             />
-                            {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+                            {errors.title && <p className="text-[10px] font-bold text-destructive/70 px-1">{errors.title.message}</p>}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Độ ưu tiên</Label>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-3">
+                                <Label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.1em] px-1">Độ ưu tiên</Label>
                                 <Select
                                     defaultValue="medium"
+                                    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
                                     onValueChange={(val) => setValue("priority", val as any)}
                                 >
-                                    <SelectTrigger className="rounded-xl">
-                                        <SelectValue placeholder="Chọn độ ưu tiên" />
+                                    <SelectTrigger className="h-12 rounded-2xl border-border/40 bg-muted/20 px-5">
+                                        <SelectValue placeholder="Chọn..." />
                                     </SelectTrigger>
-                                    <SelectContent className="rounded-xl">
-                                        <SelectItem value="low">Thấp</SelectItem>
-                                        <SelectItem value="medium">Trung bình</SelectItem>
-                                        <SelectItem value="high">Cao</SelectItem>
+                                    <SelectContent className="rounded-2xl border-border/40 shadow-2xl">
+                                        <SelectItem value="low" className="rounded-xl">Thấp</SelectItem>
+                                        <SelectItem value="medium" className="rounded-xl">Trung bình</SelectItem>
+                                        <SelectItem value="high" className="rounded-xl">Cao</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="dueDate">Hạn chót</Label>
+                            <div className="space-y-3">
+                                <Label htmlFor="dueDate" className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.1em] px-1">Hạn chót</Label>
                                 <Input
                                     id="dueDate"
                                     type="date"
                                     {...register("dueDate")}
-                                    className="rounded-xl"
+                                    className="h-12 rounded-2xl border-border/40 bg-muted/20 px-5 font-medium"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <DialogFooter>
+                    <DialogFooter className="pt-2">
                         <Button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full rounded-xl"
+                            className="w-full h-14 rounded-2xl font-bold text-[14px] shadow-xl shadow-primary/10 transition-all hover:opacity-90 active:scale-[0.98]"
                         >
                             {isSubmitting ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    <Loader2 className="w-5 h-5 mr-3 animate-spin" />
                                     Đang xử lý...
                                 </>
                             ) : (
-                                "Tạo công việc"
+                                "Xác nhận tạo việc"
                             )}
                         </Button>
                     </DialogFooter>

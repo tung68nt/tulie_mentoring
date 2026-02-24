@@ -2,11 +2,12 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getTasks } from "@/lib/actions/task";
 import { KanbanBoard } from "@/components/features/tasks/kanban-board";
+import { TaskListView } from "@/components/features/tasks/task-list-view";
+import { TaskCalendarView } from "@/components/features/tasks/task-calendar-view";
+import { TaskGanttView } from "@/components/features/tasks/task-gantt-view";
 import { CreateTaskModal } from "@/components/features/tasks/create-task-modal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutGrid, List, Calendar as CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { LayoutGrid, List, Calendar as CalendarIcon, Clock } from "lucide-react";
 
 export default async function TasksPage() {
     const session = await auth();
@@ -29,7 +30,7 @@ export default async function TasksPage() {
             </div>
 
             <Tabs defaultValue="kanban" className="w-full">
-                <TabsList className="bg-muted/50 p-1.5 rounded-2xl mb-8 h-auto">
+                <TabsList className="bg-muted/10 p-1.5 rounded-2xl border border-border/40 mb-8 self-start flex-wrap lg:flex-nowrap">
                     <TabsTrigger value="kanban" className="rounded-xl px-6 py-3 data-[state=active]:bg-background shadow-none transition-all">
                         <LayoutGrid className="w-4 h-4 mr-2" />
                         <span className="no-uppercase font-medium">Kanban</span>
@@ -42,6 +43,10 @@ export default async function TasksPage() {
                         <CalendarIcon className="w-4 h-4 mr-2" />
                         <span className="no-uppercase font-medium">Lịch</span>
                     </TabsTrigger>
+                    <TabsTrigger value="gantt" className="rounded-xl px-6 py-3 data-[state=active]:bg-background shadow-none transition-all">
+                        <Clock className="w-4 h-4 mr-2" />
+                        <span className="no-uppercase font-medium">Lịch trình</span>
+                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="kanban" className="mt-0">
@@ -49,15 +54,15 @@ export default async function TasksPage() {
                 </TabsContent>
 
                 <TabsContent value="list" className="mt-0">
-                    <div className="p-20 text-center bg-muted/20 border border-dashed border-border rounded-3xl">
-                        <p className="text-sm text-muted-foreground font-medium">Chế độ xem danh sách đang được cập nhật...</p>
-                    </div>
+                    <TaskListView initialTasks={tasks} />
                 </TabsContent>
 
                 <TabsContent value="calendar" className="mt-0">
-                    <div className="p-20 text-center bg-muted/20 border border-dashed border-border rounded-3xl">
-                        <p className="text-sm text-muted-foreground font-medium">Chế độ xem lịch đang được cập nhật...</p>
-                    </div>
+                    <TaskCalendarView initialTasks={tasks} />
+                </TabsContent>
+
+                <TabsContent value="gantt" className="mt-0">
+                    <TaskGanttView initialTasks={tasks} />
                 </TabsContent>
             </Tabs>
         </div>
