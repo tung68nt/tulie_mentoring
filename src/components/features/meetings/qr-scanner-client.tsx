@@ -45,7 +45,7 @@ export function QRScannerClient() {
     return (
         <div className="max-w-md mx-auto space-y-6">
             {status === "idle" && (
-                <Card className="p-10 flex flex-col items-center text-center space-y-6 border-dashed">
+                <Card className="p-10 flex flex-col items-center text-center space-y-6 border-dashed rounded-xl">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary">
                         <Camera className="w-8 h-8" />
                     </div>
@@ -55,14 +55,14 @@ export function QRScannerClient() {
                             Nhấn nút bên dưới để mở camera và quét mã QR điểm danh từ Mentor.
                         </p>
                     </div>
-                    <Button className="w-full rounded-xl" onClick={() => setStatus("scanning")}>
+                    <Button className="w-full rounded-lg" onClick={() => setStatus("scanning")}>
                         Bắt đầu quét mã
                     </Button>
                 </Card>
             )}
 
             {status === "scanning" && (
-                <div className="relative overflow-hidden rounded-2xl border border-border bg-black aspect-square">
+                <div className="relative overflow-hidden rounded-xl border border-border bg-black aspect-square">
                     <Scanner
                         onScan={handleScan}
                         onError={(err) => {
@@ -78,7 +78,7 @@ export function QRScannerClient() {
                         <div className="w-full h-full border-2 border-white/50 rounded-lg animate-pulse" />
                     </div>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                        <Button variant="secondary" size="sm" onClick={() => setStatus("idle")} className="rounded-full shadow-lg">
+                        <Button variant="secondary" size="sm" onClick={() => setStatus("idle")} className="rounded-full shadow-none">
                             Hủy bỏ
                         </Button>
                     </div>
@@ -94,7 +94,7 @@ export function QRScannerClient() {
 
             {status === "success" && (
                 <Card className="p-12 flex flex-col items-center justify-center space-y-4 border-primary/20 bg-primary/5 animate-in fade-in zoom-in duration-300">
-                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
+                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-none">
                         <CheckCircle className="w-10 h-10" />
                     </div>
                     <div className="text-center space-y-1">
@@ -106,14 +106,14 @@ export function QRScannerClient() {
 
             {status === "error" && (
                 <Card className="p-12 flex flex-col items-center justify-center space-y-4 border-destructive/20 bg-destructive/5 animate-in fade-in zoom-in duration-300">
-                    <div className="w-16 h-16 bg-destructive rounded-full flex items-center justify-center text-destructive-foreground shadow-lg shadow-destructive/20">
+                    <div className="w-16 h-16 bg-destructive rounded-full flex items-center justify-center text-destructive-foreground shadow-none">
                         <AlertCircle className="w-10 h-10" />
                     </div>
                     <div className="text-center space-y-1">
                         <h3 className="text-xl font-semibold text-foreground">Lỗi điểm danh</h3>
                         <p className="text-sm text-destructive font-bold">{errorMsg}</p>
                     </div>
-                    <Button variant="outline" onClick={() => setStatus("scanning")} className="rounded-xl mt-2">
+                    <Button variant="outline" onClick={() => setStatus("scanning")} className="rounded-lg mt-2 border-border/60">
                         Thử lại
                     </Button>
                 </Card>

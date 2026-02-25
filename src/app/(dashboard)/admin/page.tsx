@@ -127,17 +127,17 @@ export default async function AdminDashboard() {
                     <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Tổng quan hoạt động của {session?.user?.name || "Admin"}</p>
                 </div>
                 <div className="flex gap-4">
-                    <Button variant="outline" size="default" className="shadow-sm font-semibold bg-muted rounded-xl no-uppercase" asChild>
+                    <Button variant="outline" size="default" className="shadow-none font-semibold bg-muted rounded-xl no-uppercase" asChild>
                         <Link href="/admin/users">Người dùng</Link>
                     </Button>
-                    <Button size="default" className="shadow-md font-semibold rounded-xl no-uppercase" asChild>
+                    <Button size="default" className="shadow-none font-semibold rounded-xl no-uppercase" asChild>
                         <Link href="/admin/mentorships/new">Tạo Mentorship</Link>
                     </Button>
                 </div>
             </div>
 
             {/* Stats Row - Single container with shared borders */}
-            <div className="rounded-3xl border border-border bg-background shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-border bg-background shadow-none overflow-hidden">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                     {stats.map((stat, idx) => (
                         <div
@@ -149,7 +149,7 @@ export default async function AdminDashboard() {
                                     <p className="text-[11px] font-semibold text-muted-foreground/60 no-uppercase tracking-normal">{stat.title}</p>
                                     <p className="text-3xl font-bold text-foreground tabular-nums leading-none tracking-tight">{stat.value}</p>
                                 </div>
-                                <div className="p-3 rounded-2xl bg-muted/50 text-foreground/40 border border-border shadow-sm">
+                                <div className="p-3 rounded-lg bg-muted/50 text-foreground/40 border border-border shadow-none">
                                     {React.cloneElement(stat.icon as React.ReactElement<any>, { className: "w-6 h-6" })}
                                 </div>
                             </div>
@@ -159,7 +159,7 @@ export default async function AdminDashboard() {
             </div>
 
             {/* Main Content Grid - Single container with shared borders */}
-            <div className="rounded-3xl border border-border bg-background shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-border bg-background shadow-none overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-12">
                     {/* Recent Activities - Left Panel */}
                     <div className="lg:col-span-8 p-10">
@@ -188,9 +188,9 @@ export default async function AdminDashboard() {
                                         {idx > 0 && <div className="h-px bg-border/60 ml-[68px]" />}
                                         <Link
                                             href={`/meetings/${meeting.id}`}
-                                            className="flex items-center gap-6 py-5 hover:bg-muted/30 transition-all group -mx-2 px-4 rounded-2xl"
+                                            className="flex items-center gap-6 py-5 hover:bg-muted/30 transition-all group -mx-2 px-4 rounded-xl"
                                         >
-                                            <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 transition-all duration-300">
+                                            <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-none group-hover:scale-105 transition-all duration-300">
                                                 <Calendar className="w-5 h-5" />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -224,9 +224,9 @@ export default async function AdminDashboard() {
                                         {idx > 0 && <div className="h-px bg-border/60 ml-[68px]" />}
                                         <Link
                                             href={`/admin/mentorships/${ms.id}`}
-                                            className="flex items-center gap-6 py-5 hover:bg-muted/30 transition-all group -mx-2 px-4 rounded-2xl"
+                                            className="flex items-center gap-6 py-5 hover:bg-muted/30 transition-all group -mx-2 px-4 rounded-xl"
                                         >
-                                            <div className="w-12 h-12 rounded-xl bg-muted border border-border text-muted-foreground/60 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary shadow-sm group-hover:shadow-md transition-all duration-300">
+                                            <div className="w-12 h-12 rounded-xl bg-muted border border-border text-muted-foreground/60 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary shadow-none transition-all duration-300">
                                                 <Users className="w-5 h-5" />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -257,7 +257,7 @@ export default async function AdminDashboard() {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between group">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-muted-foreground/40 border border-border group-hover:border-foreground/20 group-hover:text-foreground/60 transition-all shadow-sm">
+                                    <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-muted-foreground/40 border border-border group-hover:border-foreground/20 group-hover:text-foreground/60 transition-all shadow-none">
                                         <Calendar className="w-5 h-5" />
                                     </div>
                                     <span className="text-sm font-semibold text-muted-foreground/60 group-hover:text-foreground transition-colors no-uppercase">Buổi họp</span>
@@ -267,7 +267,7 @@ export default async function AdminDashboard() {
 
                             <div className="flex items-center justify-between group">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-muted-foreground/40 border border-border group-hover:border-foreground/20 group-hover:text-foreground/60 transition-all shadow-sm">
+                                    <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-muted-foreground/40 border border-border group-hover:border-foreground/20 group-hover:text-foreground/60 transition-all shadow-none">
                                         <TrendingUp className="w-5 h-5" />
                                     </div>
                                     <span className="text-sm font-semibold text-muted-foreground/60 group-hover:text-foreground transition-colors no-uppercase">Mục tiêu</span>
@@ -287,14 +287,14 @@ export default async function AdminDashboard() {
                                 <Link
                                     key={ms.id}
                                     href={`/admin/mentorships/${ms.id}`}
-                                    className="flex items-center gap-4 group p-3 rounded-2xl hover:bg-background transition-all"
+                                    className="flex items-center gap-4 group p-3 rounded-xl hover:bg-background transition-all"
                                 >
                                     <Avatar
                                         firstName={ms.mentor?.firstName}
                                         lastName={ms.mentor?.lastName}
                                         src={ms.mentor?.avatar}
                                         size="sm"
-                                        className="border-2 border-background shadow-sm ring-1 ring-border group-hover:ring-primary group-hover:scale-105 transition-all"
+                                        className="border-2 border-background shadow-none ring-1 ring-border group-hover:ring-primary group-hover:scale-105 transition-all"
                                     />
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-bold text-foreground truncate no-uppercase">

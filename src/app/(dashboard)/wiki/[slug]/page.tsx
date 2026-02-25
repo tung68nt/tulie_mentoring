@@ -56,7 +56,7 @@ export default async function WikiDetailPage({ params }: { params: { slug: strin
                         <>
                             <DeleteWikiButton id={page.id} title={page.title} />
                             <Link href={`/wiki/${page.slug}/edit`}>
-                                <Button className="rounded-xl no-uppercase gap-2 shadow-lg shadow-primary/10" size="sm">
+                                <Button className="rounded-xl no-uppercase gap-2 shadow-none" size="sm">
                                     <Edit className="w-4 h-4" />
                                     Chỉnh sửa
                                 </Button>
@@ -66,7 +66,7 @@ export default async function WikiDetailPage({ params }: { params: { slug: strin
                 </div>
             </div>
 
-            <div className="rounded-3xl border border-border/40 bg-background overflow-hidden shadow-sm">
+            <div className="rounded-xl border border-border/40 bg-background overflow-hidden shadow-none">
                 <div className="p-1 px-2 pb-2">
                     <BlockEditor
                         initialContent={page.content}

@@ -51,15 +51,15 @@ export function QRManager({ meetingId, qrToken, expiresAt }: QRManagerProps) {
             </div>
 
             <div className="relative group">
-                <div className="bg-card p-4 rounded-[12px] shadow-sm border border-border">
+                <div className="bg-card p-4 rounded-xl border border-border shadow-none">
                     {qrDataUrl ? (
                         <img src={qrDataUrl} alt="Meeting QR Code" className="w-64 h-64" />
                     ) : (
-                        <div className="w-64 h-64 bg-muted animate-pulse rounded-[8px]" />
+                        <div className="w-64 h-64 bg-muted animate-pulse rounded-lg" />
                     )}
                 </div>
                 {timeLeft === 0 && (
-                    <div className="absolute inset-0 bg-card/90 backdrop-blur-[2px] rounded-[12px] flex flex-col items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-card/90 backdrop-blur-[2px] rounded-xl flex flex-col items-center justify-center p-4">
                         <p className="text-sm font-semibold text-destructive mb-2">Mã QR đã hết hạn</p>
                         <Button size="sm" variant="outline">
                             <RefreshCw className="w-4 h-4 mr-2" />

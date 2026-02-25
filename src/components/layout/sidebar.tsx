@@ -152,72 +152,81 @@ export function Sidebar({ role }: SidebarProps) {
 
     return (
         <aside className={cn(
-            "fixed top-0 left-0 h-screen bg-background border-r border-border transition-all duration-300 z-50 overflow-hidden flex flex-col",
+            "fixed top-0 left-0 h-screen bg-background border-r border-border transition-all duration-300 z-50 flex flex-col",
             "hidden lg:flex",
             isCollapsed ? "w-[80px]" : "w-[280px]"
         )} style={!isCollapsed ? { "--sidebar-width": "280px" } as React.CSSProperties : { "--sidebar-width": "80px" } as React.CSSProperties}>
             {/* Brand */}
-            <div className="h-16 flex items-center px-6 shrink-0">
-                <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center shrink-0">
-                    <span className="text-primary-foreground font-bold text-[11px]">T</span>
+            <div className="h-16 flex items-center justify-between px-6 shrink-0 relative">
+                <div className="flex items-center">
+                    <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center shrink-0">
+                        <span className="text-primary-foreground font-bold text-[11px]">T</span>
+                    </div>
+                    {!isCollapsed && (
+                        <span className="ml-3 font-semibold text-foreground text-[14px] tracking-normal whitespace-nowrap">Tulie Mentoring</span>
+                    )}
                 </div>
-                {!isCollapsed && (
-                    <span className="ml-3 font-semibold text-foreground text-[15px] tracking-normal no-uppercase whitespace-nowrap">Tulie Mentoring</span>
-                )}
+
+                <div className="absolute top-4 -right-4 z-50">
+                    <button
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        className="flex items-center justify-center w-8 h-8 rounded-full border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-accent transition-all shadow-none"
+                    >
+                        {isCollapsed
+                            ? <ChevronRight className="w-4 h-4" />
+                            : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                </div>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 py-8 px-4 overflow-y-auto space-y-8">
-                {sections.map((section, sIdx) => (
-                    <div key={sIdx} className="space-y-4">
-                        {section.title && !isCollapsed && (
-                            <div className="px-5 mb-1 pt-1">
-                                <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-muted-foreground/30">{section.title}</span>
+            {/* Navigation container with overflow handling */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <nav className="flex-1 py-4 px-4 overflow-y-auto space-y-4">
+                    {sections.map((section, sIdx) => (
+                        <div key={sIdx} className="space-y-1">
+                            {section.title && !isCollapsed && (
+                                <div className="px-3 mb-1">
+                                    <span className="text-[11px] font-semibold text-muted-foreground/60 no-uppercase tracking-normal">{section.title}</span>
+                                </div>
+                            )}
+                            <div className="space-y-1">
+                                {section.items.map((item) => {
+                                    const active = isActive(item.href);
+                                    const Icon = item.icon;
+                                    return (
+                                        <Link
+                                            key={item.id}
+                                            href={item.href}
+                                            className={cn(
+                                                "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-colors relative group",
+                                                active
+                                                    ? "bg-secondary text-foreground font-medium"
+                                                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                            )}
+                                            title={isCollapsed ? item.label : undefined}
+                                        >
+                                            <Icon className={cn(
+                                                "w-[18px] h-[18px] shrink-0 transition-opacity",
+                                                active ? "opacity-100" : "opacity-60 group-hover:opacity-100"
+                                            )} />
+                                            {!isCollapsed && <span className="font-medium truncate">{item.label}</span>}
+                                        </Link>
+                                    );
+                                })}
                             </div>
-                        )}
-                        {section.title && isCollapsed && (
-                            <div className="mx-5 mb-2 pt-1 border-t border-border/30" />
-                        )}
-                        <div className="space-y-2">
-                            {section.items.map((item) => {
-                                const active = isActive(item.href);
-                                const Icon = item.icon;
-                                return (
-                                    <Link
-                                        key={item.id}
-                                        href={item.href}
-                                        className={cn(
-                                            "flex items-center gap-4 px-5 py-3 rounded-[1.25rem] text-[13.5px] transition-all duration-300 relative group",
-                                            active
-                                                ? "bg-secondary text-foreground font-semibold shadow-sm"
-                                                : "text-muted-foreground/60 hover:bg-accent/70 hover:text-foreground hover:translate-x-1"
-                                        )}
-                                        title={isCollapsed ? item.label : undefined}
-                                    >
-                                        <Icon className={cn(
-                                            "w-[20px] h-[20px] shrink-0 transition-all duration-300",
-                                            active ? "opacity-100 scale-110" : "opacity-40 group-hover:opacity-100 group-hover:scale-105"
-                                        )} />
-                                        {!isCollapsed && <span className="truncate">{item.label}</span>}
-                                        {active && !isCollapsed && (
-                                            <div className="absolute left-0 w-1.5 h-6 bg-primary rounded-full -translate-x-2 shadow-[4px_0_12px_rgba(0,0,0,0.1)]" />
-                                        )}
-                                    </Link>
-                                );
-                            })}
                         </div>
-                    </div>
-                ))}
-            </nav>
+                    ))}
+                </nav>
+            </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-border space-y-0.5 shrink-0 bg-muted/30">
+            <div className="p-4 border-t border-border shrink-0 bg-muted/20">
                 <Link
                     href="/profile"
                     className={cn(
-                        "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] transition-all",
+                        "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-colors",
                         pathname === "/profile"
-                            ? "bg-secondary text-foreground font-medium shadow-sm"
+                            ? "bg-secondary text-foreground font-medium"
                             : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     )}
                     title={isCollapsed ? "Hồ sơ cá nhân" : undefined}
@@ -227,35 +236,24 @@ export function Sidebar({ role }: SidebarProps) {
                 </Link>
 
                 <button
-                    className="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-[13px] text-muted-foreground hover:bg-accent hover:text-foreground transition-all group"
+                    className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-[13px] text-muted-foreground hover:bg-accent hover:text-foreground transition-all group"
                     onClick={() => setShowLogoutDialog(true)}
                     title={isCollapsed ? "Đăng xuất" : undefined}
                 >
-                    <LogOut className="w-[18px] h-[18px] shrink-0 opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <LogOut className="w-[18px] h-[18px] shrink-0 opacity-60 group-hover:opacity-100" />
                     {!isCollapsed && <span>Đăng xuất</span>}
-                </button>
-
-                {/* Collapse toggle */}
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="flex items-center gap-3 w-full px-3 py-2 rounded-xl text-[13px] text-muted-foreground hover:bg-accent hover:text-foreground transition-all"
-                >
-                    {isCollapsed
-                        ? <ChevronRight className="w-[18px] h-[18px] shrink-0" />
-                        : <ChevronLeft className="w-[18px] h-[18px] shrink-0" />}
-                    {!isCollapsed && <span className="text-muted-foreground/60">Thu gọn</span>}
                 </button>
             </div>
 
             <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-                <DialogContent showCloseButton={false} className="sm:max-w-[400px] rounded-2xl">
+                <DialogContent showCloseButton={false} className="sm:max-w-[400px] rounded-lg">
                     <DialogHeader>
-                        <DialogTitle className="no-uppercase">Đăng xuất</DialogTitle>
-                        <DialogDescription className="text-muted-foreground">Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?</DialogDescription>
+                        <DialogTitle>Đăng xuất</DialogTitle>
+                        <DialogDescription>Bạn có chắc chắn muốn đăng xuất?</DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="gap-2">
-                        <Button variant="ghost" className="rounded-xl no-uppercase" onClick={() => setShowLogoutDialog(false)}>Hủy</Button>
-                        <Button variant="destructive" className="rounded-xl no-uppercase" onClick={() => signOut({ callbackUrl: "/login" })}>Đăng xuất</Button>
+                        <Button variant="ghost" className="rounded-lg" onClick={() => setShowLogoutDialog(false)}>Hủy</Button>
+                        <Button variant="destructive" className="rounded-lg" onClick={() => signOut({ callbackUrl: "/login" })}>Đăng xuất</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

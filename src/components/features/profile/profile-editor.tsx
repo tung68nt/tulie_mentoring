@@ -67,7 +67,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                             lastName={user.lastName}
                             src={user.avatar}
                             size="xl"
-                            className="w-32 h-32 text-4xl mb-6 shadow-xl border-4 border-background"
+                            className="w-32 h-32 text-4xl mb-6 border-4 border-background"
                         />
                         <h2 className="text-xl font-semibold text-foreground">{user.firstName} {user.lastName}</h2>
                         <p className="text-xs font-medium text-muted-foreground mt-1 mb-4">{user.role}</p>
@@ -170,11 +170,11 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                     <textarea
                                         value={formData.bio}
                                         onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                                        className="w-full min-h-[100px] p-3 rounded-[8px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
+                                        className="w-full min-h-[100px] p-3 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
                                         placeholder="Chia sẻ đôi điều về bạn..."
                                     />
                                 ) : (
-                                    <p className="p-3 bg-muted rounded-[8px] text-sm text-muted-foreground min-h-[100px] border border-border">
+                                    <p className="p-3 bg-muted rounded-md text-sm text-muted-foreground min-h-[100px] border border-border">
                                         {user.bio || "Bạn chưa có thông tin giới thiệu."}
                                     </p>
                                 )}
@@ -216,7 +216,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                 <Input label="Năm học" value={`Năm thứ ${user.menteeProfile.year || 1}`} readOnly />
                                 <div className="md:col-span-2 space-y-1.5">
                                     <label className="text-[12px] font-medium text-muted-foreground">Mục tiêu nghề nghiệp</label>
-                                    <p className="p-3 bg-muted rounded-[8px] text-sm text-muted-foreground border border-border">
+                                    <p className="p-3 bg-muted rounded-md text-sm text-muted-foreground border border-border">
                                         {user.menteeProfile.careerGoals || "Đang cập nhật..."}
                                     </p>
                                 </div>

@@ -97,7 +97,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
 
             {/* Dropdown Panel */}
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 w-[380px] bg-card border border-border rounded-lg shadow-lg overflow-hidden z-[100] animate-scale-in">
+                <div className="absolute right-0 top-full mt-2 w-[380px] bg-card border border-border rounded-lg shadow-none overflow-hidden z-[100] animate-scale-in">
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                         <h3 className="text-sm font-semibold text-foreground">Thông báo</h3>

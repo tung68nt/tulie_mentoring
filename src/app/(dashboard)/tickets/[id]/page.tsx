@@ -81,7 +81,7 @@ export default async function TicketDetailPage({ params }: { params: { id: strin
                 )}
             </div>
 
-            <Card className="p-8 rounded-3xl border-none shadow-sm bg-muted/20">
+            <Card className="p-8 rounded-xl border-none shadow-none bg-muted/20">
                 <div className="flex items-start gap-4 mb-6">
                     <Avatar className="w-10 h-10 border border-background ring-2 ring-muted/50">
                         <AvatarImage src={ticket.user.avatar} />
@@ -115,9 +115,9 @@ export default async function TicketDetailPage({ params }: { params: { id: strin
                                 <AvatarFallback className="text-[10px]">{comment.user.firstName[0]}</AvatarFallback>
                             </Avatar>
                             <div className={`space-y-2 max-w-[80%] ${comment.userId === session.user.id ? 'items-end' : ''}`}>
-                                <div className={`p-4 rounded-2xl shadow-sm border border-border/40 ${comment.userId === session.user.id
-                                        ? 'bg-primary text-primary-foreground rounded-tr-none'
-                                        : 'bg-background rounded-tl-none'
+                                <div className={`p-4 rounded-xl shadow-none border border-border/40 ${comment.userId === session.user.id
+                                    ? 'bg-primary text-primary-foreground rounded-tr-none'
+                                    : 'bg-background rounded-tl-none'
                                     }`}>
                                     <p className="text-sm leading-relaxed no-uppercase">{comment.content}</p>
                                 </div>
@@ -139,12 +139,12 @@ export default async function TicketDetailPage({ params }: { params: { id: strin
                         <Textarea
                             name="content"
                             placeholder="Nhập phản hồi của bạn..."
-                            className="rounded-2xl border-border/50 focus:border-primary/30 min-h-[100px] pr-12 pt-4 bg-background"
+                            className="rounded-xl border-border/50 focus:border-primary/30 min-h-[100px] pr-12 pt-4 bg-background px-4"
                         />
                         <Button
                             type="submit"
                             size="icon"
-                            className="absolute bottom-4 right-4 rounded-xl shadow-lg hover:scale-105 transition-transform"
+                            className="absolute bottom-4 right-4 rounded-lg shadow-none"
                         >
                             <Send className="w-4 h-4" />
                         </Button>

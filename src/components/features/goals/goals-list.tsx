@@ -41,33 +41,31 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
                     <div key={mentorship.id} className="space-y-6">
                         <div className="flex items-center justify-between border-b border-border pb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-primary rounded-[8px] flex items-center justify-center text-primary-foreground">
+                                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
                                     <Target className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-semibold text-foreground no-uppercase">
+                                    <h2 className="text-lg font-semibold text-foreground">
                                         {mentorship.programCycle.name} - {mentorship.mentor.firstName} {mentorship.mentor.lastName} ➔ {mentorship.mentees.map((m: any) => `${m.mentee.firstName} ${m.mentee.lastName}`).join(", ")}
                                     </h2>
-                                    <p className="text-[10px] text-muted-foreground/60 font-semibold tracking-wider uppercase">{mentorshipGoals.length} mục tiêu</p>
+                                    <p className="text-[10px] text-muted-foreground/60 font-semibold tracking-wider">{mentorshipGoals.length} mục tiêu</p>
                                 </div>
                             </div>
-                            {userRole !== "mentee" && (
-                                <Button
-                                    size="sm"
-                                    className="h-10 px-5 rounded-xl font-medium no-uppercase"
-                                    variant={isFormOpen ? "outline" : undefined}
-                                    onClick={() => setShowFormFor(isFormOpen ? null : mentorship.id)}
-                                >
-                                    {isFormOpen ? (
-                                        "Đóng"
-                                    ) : (
-                                        <>
-                                            <Plus className="w-4 h-4 mr-2" />
-                                            Thêm mục tiêu
-                                        </>
-                                    )}
-                                </Button>
-                            )}
+                            <Button
+                                size="sm"
+                                className="h-10 px-5 rounded-xl font-medium"
+                                variant={isFormOpen ? "outline" : undefined}
+                                onClick={() => setShowFormFor(isFormOpen ? null : mentorship.id)}
+                            >
+                                {isFormOpen ? (
+                                    "Đóng"
+                                ) : (
+                                    <>
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        Thêm mục tiêu
+                                    </>
+                                )}
+                            </Button>
                         </div>
 
                         {/* Inline GoalForm */}
@@ -83,8 +81,8 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
 
                         {mentorshipGoals.length === 0 && !isFormOpen ? (
                             <div
-                                className="p-10 border-2 border-dashed border-border rounded-[8px] flex flex-col items-center justify-center text-center cursor-pointer hover:border-foreground/20 transition-colors"
-                                onClick={() => userRole !== "mentee" && setShowFormFor(mentorship.id)}
+                                className="p-10 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:border-foreground/20 transition-colors"
+                                onClick={() => setShowFormFor(mentorship.id)}
                             >
                                 <Plus className="w-8 h-8 text-muted-foreground mb-3" />
                                 <p className="text-sm text-muted-foreground font-medium">Chưa có mục tiêu nào. Nhấn để thêm.</p>
@@ -94,9 +92,9 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
                                 {mentorshipGoals.map(goal => (
                                     <GoalCard key={goal.id} goal={goal} userRole={userRole} />
                                 ))}
-                                {userRole !== "mentee" && !isFormOpen && (
+                                {!isFormOpen && (
                                     <div
-                                        className="border-2 border-dashed border-border rounded-[8px] p-6 flex items-center justify-center group hover:border-foreground/20 transition-colors cursor-pointer"
+                                        className="border-2 border-dashed border-border rounded-lg p-6 flex items-center justify-center group hover:border-foreground/20 transition-colors cursor-pointer"
                                         onClick={() => setShowFormFor(mentorship.id)}
                                     >
                                         <Plus className="w-8 h-8 text-muted-foreground group-hover:text-foreground transition-colors" />

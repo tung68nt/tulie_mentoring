@@ -12,6 +12,8 @@ services:
       - AUTH_SECRET=${AUTH_SECRET:?AUTH_SECRET is required}
       - AUTH_URL=${AUTH_URL:-https://mentoring.tulie.vn}
       - NEXTAUTH_URL=${AUTH_URL:-https://mentoring.tulie.vn}
+      - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
+      - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET}
       - AUTH_TRUST_HOST=true
     networks:
       - app-network

@@ -72,7 +72,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-y border-border">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
+                                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
                                     <Calendar className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -81,7 +81,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
+                                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
                                     <Clock className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -90,7 +90,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
+                                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
                                     {meeting.type === "online" ? <Video className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -101,7 +101,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-[8px] bg-muted flex items-center justify-center text-muted-foreground">
+                                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
                                     <Users className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -115,7 +115,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
                         <div className="mt-8 space-y-4">
                             <h3 className="text-lg font-semibold text-foreground">Nội dung buổi họp</h3>
-                            <div className="p-5 bg-muted rounded-[8px] text-sm text-muted-foreground leading-relaxed min-h-[100px] border border-border">
+                            <div className="p-5 bg-muted rounded-lg text-sm text-muted-foreground leading-relaxed min-h-[100px] border border-border">
                                 {meeting.description || "Không có mô tả chi tiết."}
                             </div>
                         </div>
@@ -126,7 +126,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                         <h3 className="text-lg font-semibold text-foreground mb-6">Danh sách điểm danh</h3>
                         <div className="space-y-4">
                             {meeting.attendances.map((attendance: any) => (
-                                <div key={attendance.id} className="flex items-center justify-between p-4 rounded-[8px] border border-border bg-card">
+                                <div key={attendance.id} className="flex items-center justify-between p-4 rounded-lg border border-border bg-card">
                                     <div className="flex items-center gap-3">
                                         <Avatar
                                             firstName={attendance.user.firstName}

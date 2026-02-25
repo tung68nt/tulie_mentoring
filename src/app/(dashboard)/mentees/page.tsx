@@ -54,7 +54,7 @@ export default async function MenteesPage() {
                 </div>
 
                 {serialized.length === 0 ? (
-                    <div className="p-16 text-center bg-muted/30 rounded-2xl border border-dashed border-border space-y-3">
+                    <div className="p-16 text-center bg-muted/30 rounded-xl border border-dashed border-border space-y-3">
                         <Users className="w-10 h-10 text-muted-foreground/30 mx-auto" />
                         <p className="text-sm text-muted-foreground font-medium">Chưa có mentee nào được phân công.</p>
                     </div>

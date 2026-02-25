@@ -16,7 +16,7 @@ export default function NotFound() {
                 </div>
                 <Link
                     href="/"
-                    className="inline-flex items-center justify-center h-10 px-6 rounded-[8px] bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                    className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
                     Về trang chủ
                 </Link>

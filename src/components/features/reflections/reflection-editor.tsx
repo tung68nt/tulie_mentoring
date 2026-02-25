@@ -39,11 +39,11 @@ export function ReflectionEditor({ meetingId, meetingTitle, mentorName, initialC
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card className="p-6 border-none shadow-sm bg-secondary/30 rounded-2xl">
+            <Card className="p-6 border border-border/60 shadow-none bg-muted/10 rounded-xl">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="bg-background/50 border-border/50 text-[10px] font-medium no-uppercase">Buổi học</Badge>
+                            <Badge variant="outline" className="bg-background/50 border-border/50 text-[10px] font-medium">Buổi học</Badge>
                             <span className="text-xs text-muted-foreground/60">{mentorName}</span>
                         </div>
                         <h3 className="text-lg font-semibold text-foreground leading-tight">{meetingTitle}</h3>
@@ -58,7 +58,7 @@ export function ReflectionEditor({ meetingId, meetingTitle, mentorName, initialC
                         <Button
                             onClick={handleSave}
                             disabled={isSaving || !content}
-                            className="rounded-xl shadow-lg shadow-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            className="rounded-lg shadow-none transition-all hover:bg-primary/90"
                             size="sm"
                         >
                             {isSaving ? (

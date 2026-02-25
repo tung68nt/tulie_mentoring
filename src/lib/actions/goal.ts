@@ -60,10 +60,41 @@ export async function getGoals(mentorshipId: string) {
     });
 }
 
+export async function confirmGoal(id: string) {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "mentor") {
+        throw new Error("Only mentors can confirm goals");
+    }
+
+    const goal = await prisma.goal.update({
+        where: { id },
+        data: { mentorConfirmed: true },
+    });
+
+    revalidatePath("/goals");
+    revalidatePath(`/admin/mentorships/${goal.mentorshipId}`);
+    return goal;
+}
+
 export async function deleteGoal(id: string) {
-    const goal = await prisma.goal.delete({
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const goal = await prisma.goal.findUnique({
         where: { id },
     });
+
+    if (!goal) throw new Error("Goal not found");
+
+    const role = (session.user as any).role;
+    if (role === "mentee" && goal.mentorConfirmed) {
+        throw new Error("Cannot delete a confirmed goal");
+    }
+
+    await prisma.goal.delete({
+        where: { id },
+    });
+
     revalidatePath("/goals");
     revalidatePath(`/admin/mentorships/${goal.mentorshipId}`);
     return goal;

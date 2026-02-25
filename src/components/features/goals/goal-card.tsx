@@ -13,9 +13,11 @@ import {
     Plus,
     History,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Check
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { confirmGoal } from "@/lib/actions/goal";
 
 interface GoalCardProps {
     goal: any;
@@ -42,6 +44,17 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
         }
     };
 
+    const handleConfirm = async () => {
+        setIsLoading(true);
+        try {
+            await confirmGoal(goal.id);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const handleDelete = async () => {
         if (confirm("Bạn có chắc chắn muốn xóa mục tiêu này?")) {
             await deleteGoal(goal.id);
@@ -57,28 +70,53 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
     };
 
     return (
-        <Card className="group overflow-hidden">
+        <Card className="group overflow-hidden rounded-lg border border-border/60 bg-background shadow-none transition-all">
             <div className="p-6 space-y-4">
                 <div className="flex items-start justify-between">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-[4px] ${getPriorityColor(goal.priority)}`}>
+                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${getPriorityColor(goal.priority)}`}>
                                 {goal.priority}
                             </span>
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-[4px] bg-muted text-muted-foreground border border-border">
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border">
                                 {goal.category}
                             </span>
+                            {goal.mentorConfirmed && (
+                                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-green-500/10 text-green-600 border border-green-200">
+                                    Đã xác nhận
+                                </span>
+                            )}
                         </div>
                         <h4 className="text-base font-semibold text-foreground leading-tight">{goal.title}</h4>
                     </div>
                     {(userRole === "admin" || goal.creatorId === goal.creatorId) && (
                         <div className="flex items-center gap-1">
+                            {userRole === "mentor" && !goal.mentorConfirmed && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleConfirm}
+                                    isLoading={isLoading}
+                                    className="h-8 rounded-md border-primary/20 text-primary hover:bg-primary/5 mr-2 text-[11px] font-semibold"
+                                >
+                                    <Check className="w-3.5 h-3.5 mr-1" />
+                                    Xác nhận
+                                </Button>
+                            )}
                             <Button variant="ghost" size="sm" onClick={() => setShowHistory(!showHistory)}>
                                 <History className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={handleDelete} className="text-destructive hover:text-destructive hover:bg-destructive/5">
-                                <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {/* Deletion restriction for confirmed goals */}
+                            {!(userRole === "mentee" && goal.mentorConfirmed) && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleDelete}
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/5"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            )}
                         </div>
                     )}
                 </div>
@@ -105,30 +143,31 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                 {!isUpdating ? (
                     <Button
                         variant="outline"
-                        className="w-full h-11 rounded-xl no-uppercase font-medium"
+                        className="w-full h-10 rounded-lg font-semibold text-[13px] border-border/60 hover:bg-muted"
                         onClick={() => setIsUpdating(true)}
                         disabled={goal.status === "completed"}
                     >
                         {goal.status === "completed" ? "Đã hoàn thành" : "Cập nhật tiến độ"}
                     </Button>
                 ) : (
-                    <div className="bg-muted p-4 rounded-[8px] space-y-3 border border-border animate-in fade-in slide-in-from-top-2">
+                    <div className="bg-muted/10 p-4 rounded-lg space-y-3 border border-border/40 animate-in fade-in slide-in-from-top-2">
                         <div className="grid grid-cols-2 gap-3">
                             <Input
                                 label="Tiến độ mới (%)"
                                 type="number"
                                 value={newValue}
                                 onChange={(e) => setNewValue(Number(e.target.value))}
+                                className="h-9 text-xs rounded-md"
                             />
                             <div className="flex items-end pb-1">
                                 <div className="flex items-center gap-2 w-full">
-                                    <Button variant="ghost" size="sm" className="flex-1 h-10 rounded-lg no-uppercase" onClick={() => setIsUpdating(false)}>Hủy</Button>
-                                    <Button size="sm" className="flex-1 h-10 rounded-lg no-uppercase" onClick={handleUpdate} isLoading={isLoading}>Lưu</Button>
+                                    <Button variant="ghost" size="sm" className="flex-1 h-9 rounded-md text-[11px]" onClick={() => setIsUpdating(false)}>Hủy</Button>
+                                    <Button size="sm" className="flex-1 h-9 rounded-md text-[11px]" onClick={handleUpdate} isLoading={isLoading}>Lưu</Button>
                                 </div>
                             </div>
                         </div>
                         <textarea
-                            className="w-full p-2 text-xs border border-border rounded-[6px] focus:outline-none focus:ring-4 focus:ring-foreground/5 focus:border-foreground text-foreground"
+                            className="w-full p-2.5 text-xs border border-border/60 rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-foreground transition-all"
                             placeholder="Ghi chú tiến độ (tùy chọn)..."
                             value={note}
                             onChange={(e) => setNote(e.target.value)}

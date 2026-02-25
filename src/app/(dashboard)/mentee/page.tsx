@@ -113,7 +113,7 @@ export default async function MenteeDashboard() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {serializedGoals.length > 0 ? (
                                     serializedGoals.map((goal: any) => (
-                                        <Card key={goal.id} className="p-5 space-y-4 shadow-sm border-border/50 hover:border-primary/30 transition-colors rounded-2xl">
+                                        <Card key={goal.id} className="p-5 space-y-4 border-border/50 hover:border-primary/30 transition-colors rounded-xl shadow-none">
                                             <div className="flex items-center justify-between">
                                                 <p className="text-sm font-semibold text-foreground truncate flex-1 pr-4 no-uppercase">{goal.title}</p>
                                                 <span className="text-[10px] font-bold text-muted-foreground/60 tabular-nums">{goal.currentValue}%</span>
@@ -122,7 +122,7 @@ export default async function MenteeDashboard() {
                                         </Card>
                                     ))
                                 ) : (
-                                    <div className="col-span-full py-10 text-center bg-muted/20 border border-dashed border-border rounded-2xl">
+                                    <div className="col-span-full py-10 text-center bg-muted/20 border border-dashed border-border rounded-xl">
                                         <p className="text-xs text-muted-foreground no-uppercase">Chưa có mục tiêu nào được thiết lập.</p>
                                     </div>
                                 )}
@@ -141,13 +141,13 @@ export default async function MenteeDashboard() {
                             </div>
                             <div className="space-y-3">
                                 {serializedUpcomingMeetings.length === 0 ? (
-                                    <div className="p-8 rounded-2xl border border-dashed border-border bg-muted/20 text-center space-y-2">
+                                    <div className="p-8 rounded-xl border border-dashed border-border bg-muted/20 text-center space-y-2">
                                         <Calendar className="w-6 h-6 text-muted-foreground/30 mx-auto" />
                                         <p className="text-xs text-muted-foreground no-uppercase">Hiện không có lịch họp.</p>
                                     </div>
                                 ) : (
                                     serializedUpcomingMeetings.map((meeting: any) => (
-                                        <div key={meeting.id} className="p-4 rounded-xl border border-border/60 flex items-center gap-4 hover:border-primary/20 transition-all bg-background shadow-sm group">
+                                        <div key={meeting.id} className="p-4 rounded-xl border border-border/60 flex items-center gap-4 hover:border-primary/20 transition-all bg-background shadow-none group">
                                             <div className="w-10 h-10 rounded-lg bg-muted/40 border border-border/50 flex items-center justify-center text-muted-foreground/40 group-hover:bg-primary/10 group-hover:text-primary transition-colors shrink-0">
                                                 <Calendar className="w-4 h-4" />
                                             </div>
@@ -173,7 +173,7 @@ export default async function MenteeDashboard() {
     } catch (error) {
         console.error("Failed to fetch mentee dashboard data:", error);
         return (
-            <div className="p-10 text-center bg-destructive/5 rounded-3xl border border-destructive/20">
+            <div className="p-10 text-center bg-destructive/5 rounded-xl border border-destructive/20">
                 <p className="text-sm text-destructive font-medium">Không thể tải dữ liệu dashboard. Vui lòng kiểm tra kết nối và thử lại.</p>
             </div>
         );

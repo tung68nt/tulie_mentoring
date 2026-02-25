@@ -54,7 +54,7 @@ export default async function FeedbackPage() {
                             <div className="space-y-6">
                                 {received.map((fb: any) => (
                                     <Card key={fb.id} className="relative overflow-visible">
-                                        <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg">
+                                        <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-none">
                                             <Quote className="w-4 h-4 fill-current" />
                                         </div>
                                         <div className="space-y-4">
@@ -80,7 +80,7 @@ export default async function FeedbackPage() {
                                                 </div>
                                             </div>
 
-                                            <blockquote className="text-sm text-foreground leading-relaxed bg-muted p-4 rounded-[8px] border-l-4 border-foreground">
+                                            <blockquote className="text-sm text-foreground leading-relaxed bg-muted p-4 rounded-lg border-l-4 border-foreground">
                                                 "{fb.content}"
                                             </blockquote>
 
@@ -119,7 +119,7 @@ export default async function FeedbackPage() {
                         </h3>
                         <div className="space-y-4">
                             {given.map((fb: any) => (
-                                <div key={fb.id} className="p-4 rounded-[8px] border border-border flex items-center justify-between bg-card">
+                                <div key={fb.id} className="p-4 rounded-lg border border-border flex items-center justify-between bg-card">
                                     <div className="flex items-center gap-3">
                                         <Avatar
                                             firstName={fb.toUser.firstName}

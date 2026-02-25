@@ -109,8 +109,8 @@ export default async function MentorDashboard() {
                                 <p className="text-sm text-muted-foreground">Chưa có lịch họp nào.</p>
                             ) : (
                                 serializedUpcomingMeetings.map((meeting: any) => (
-                                    <div key={meeting.id} className="flex gap-5 p-5 rounded-2xl border border-border bg-background group hover:border-foreground/20 transition-all shadow-sm">
-                                        <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex flex-col items-center justify-center shrink-0">
+                                    <div key={meeting.id} className="flex gap-5 p-5 rounded-xl border border-border bg-background group hover:border-foreground/20 transition-all shadow-none">
+                                        <div className="w-12 h-12 rounded-lg bg-primary text-primary-foreground flex flex-col items-center justify-center shrink-0">
                                             <span className="text-[10px] font-bold leading-none no-uppercase">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                             <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                         </div>

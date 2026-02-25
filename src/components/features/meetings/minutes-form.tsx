@@ -49,7 +49,7 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
             {error && (
-                <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
+                <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-md border border-destructive/10">
                     {error}
                 </div>
             )}
@@ -60,7 +60,7 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
                 <label className="block text-[12px] font-medium text-muted-foreground">Nội dung chính *</label>
                 <textarea
                     {...register("keyPoints")}
-                    className="w-full min-h-[100px] p-3 rounded-[8px] border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
+                    className="w-full min-h-[100px] p-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
                     placeholder="Những điểm chính đã thảo luận trong buổi họp..."
                 />
                 {errors.keyPoints && (
@@ -72,7 +72,7 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
                 <label className="block text-[12px] font-medium text-muted-foreground">Agenda / Chương trình</label>
                 <textarea
                     {...register("agenda")}
-                    className="w-full min-h-[60px] p-3 rounded-[8px] border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
+                    className="w-full min-h-[60px] p-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
                     placeholder="Các mục đã được bàn..."
                     rows={2}
                 />
@@ -82,7 +82,7 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
                 <label className="block text-[12px] font-medium text-muted-foreground">Action items</label>
                 <textarea
                     {...register("actionItems")}
-                    className="w-full min-h-[60px] p-3 rounded-[8px] border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
+                    className="w-full min-h-[60px] p-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
                     placeholder="Các công việc cần thực hiện sau buổi họp..."
                     rows={2}
                 />

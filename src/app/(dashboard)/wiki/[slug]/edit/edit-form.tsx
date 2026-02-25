@@ -82,7 +82,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
             <header className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-5">
                     <Link href={`/wiki/${page.slug}`}>
-                        <Button variant="ghost" size="icon" className="rounded-2xl hover:bg-accent/50 transition-colors">
+                        <Button variant="ghost" size="icon" className="rounded-lg hover:bg-accent/50 transition-colors">
                             <ChevronLeft className="w-5 h-5" />
                         </Button>
                     </Link>
@@ -97,12 +97,12 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                 <div className="flex items-center gap-3">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" className="rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive no-uppercase gap-2">
+                            <Button variant="ghost" className="rounded-lg text-destructive hover:bg-destructive/5 hover:text-destructive no-uppercase gap-2">
                                 <Trash2 className="w-4 h-4" />
                                 Xóa trang
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="rounded-3xl border-none shadow-2xl">
+                        <DialogContent className="rounded-xl border border-border/60 shadow-none">
                             <DialogHeader>
                                 <DialogTitle className="no-uppercase font-bold">Xác nhận xóa tài liệu?</DialogTitle>
                                 <DialogDescription className="no-uppercase">
@@ -111,11 +111,11 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                             </DialogHeader>
                             <DialogFooter>
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                <Button variant="ghost" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()} className="rounded-xl no-uppercase border-border">Hủy</Button>
+                                <Button variant="ghost" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()} className="rounded-lg no-uppercase border-border">Hủy</Button>
                                 <Button
                                     variant="destructive"
                                     onClick={handleDelete}
-                                    className="rounded-xl no-uppercase bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    className="rounded-lg no-uppercase bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
                                     {isDeleting ? "Đang xóa..." : "Xóa tài liệu"}
                                 </Button>
@@ -126,7 +126,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                     <Button
                         onClick={handleSave}
                         disabled={isSubmitting}
-                        className="rounded-xl no-uppercase min-w-[120px] shadow-lg shadow-primary/20"
+                        className="rounded-lg no-uppercase min-w-[120px]"
                     >
                         {isSubmitting ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -146,13 +146,13 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Nhập tiêu đề ấn tượng..."
-                            className="text-3xl font-bold h-20 rounded-3xl border-border/40 focus:border-primary/20 px-8 flex-1 bg-background/50 backdrop-blur-sm transition-all shadow-sm"
+                            className="text-3xl font-bold h-20 rounded-xl border-border/40 focus:border-primary/20 px-8 flex-1 bg-background/50 backdrop-blur-sm transition-all shadow-none"
                         />
                     </div>
 
                     <div className="space-y-3">
                         <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.1em] px-1">Nội dung chi tiết</label>
-                        <div className="rounded-[2.5rem] border border-border/40 bg-background/50 backdrop-blur-sm shadow-xl shadow-primary/5 overflow-hidden ring-1 ring-border/5">
+                        <div className="rounded-xl border border-border/40 bg-background/50 backdrop-blur-sm shadow-none overflow-hidden ring-1 ring-border/5">
                             <BlockEditor
                                 initialContent={content}
                                 onChange={setContent}
@@ -163,7 +163,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                 </div>
 
                 <aside className="space-y-6">
-                    <Card className="p-6 rounded-3xl border-border/40 shadow-sm bg-muted/20 space-y-6">
+                    <Card className="p-8 rounded-xl border-border/40 shadow-none bg-muted/20 space-y-6">
                         <div className="space-y-2">
                             <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Danh mục</label>
                             <div className="relative">
@@ -172,7 +172,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                                     value={category}
                                     onChange={(e) => setCategory(e.target.value)}
                                     placeholder="Danh mục..."
-                                    className="rounded-xl border-border/40 bg-background pl-10"
+                                    className="rounded-lg border-border/40 bg-background pl-10"
                                 />
                             </div>
                         </div>
@@ -183,10 +183,10 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                                 value={visibility}
                                 onValueChange={(v: string) => setVisibility(v)}
                             >
-                                <SelectTrigger className="rounded-xl border-border/40 bg-background h-11">
+                                <SelectTrigger className="rounded-lg border-border/40 bg-background h-11">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-xl">
+                                <SelectContent className="rounded-lg">
                                     <SelectItem value="public">
                                         <div className="flex items-center gap-2">
                                             <Globe className="w-3.5 h-3.5 text-blue-500" />

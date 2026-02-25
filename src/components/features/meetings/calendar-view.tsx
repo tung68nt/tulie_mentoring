@@ -62,11 +62,11 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                     <h2 className="text-xl font-bold text-foreground capitalize min-w-[140px]">
                         {format(currentDate, "MMMM yyyy", { locale: vi })}
                     </h2>
-                    <div className="flex items-center border border-border rounded-[6px] p-0.5 bg-muted">
+                    <div className="flex items-center border border-border/60 rounded-md p-0.5 bg-muted">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 hover:bg-card hover:shadow-sm"
+                            className="h-7 w-7 p-0 hover:bg-background"
                             onClick={viewMode === "month" ? prevMonth : prevWeek}
                         >
                             <ChevronLeft className="w-4 h-4" />
@@ -74,7 +74,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 px-2 text-[11px] font-bold hover:bg-card hover:shadow-sm"
+                            className="h-7 px-2 text-[10px] font-semibold hover:bg-background"
                             onClick={() => setCurrentDate(new Date())}
                         >
                             Hôm nay
@@ -82,7 +82,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 hover:bg-card hover:shadow-sm"
+                            className="h-7 w-7 p-0 hover:bg-background"
                             onClick={viewMode === "month" ? nextMonth : nextWeek}
                         >
                             <ChevronRight className="w-4 h-4" />
@@ -90,13 +90,13 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                     </div>
                 </div>
 
-                <div className="flex items-center border border-border rounded-[6px] p-0.5 bg-muted">
+                <div className="flex items-center border border-border/60 rounded-md p-0.5 bg-muted">
                     <Button
                         variant={viewMode === "month" ? "secondary" : "ghost"}
                         size="sm"
                         className={cn(
-                            "h-7 px-3 text-[11px] font-bold transition-all",
-                            viewMode === "month" ? "bg-card shadow-sm text-foreground border-border" : "text-muted-foreground"
+                            "h-7 px-3 text-[10px] font-semibold transition-colors",
+                            viewMode === "month" ? "bg-background text-foreground border-border/60" : "text-muted-foreground"
                         )}
                         onClick={() => setViewMode("month")}
                     >
@@ -106,8 +106,8 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                         variant={viewMode === "week" ? "secondary" : "ghost"}
                         size="sm"
                         className={cn(
-                            "h-7 px-3 text-[11px] font-bold transition-all",
-                            viewMode === "week" ? "bg-card shadow-sm text-foreground border-border" : "text-muted-foreground"
+                            "h-7 px-3 text-[10px] font-semibold transition-colors",
+                            viewMode === "week" ? "bg-background text-foreground border-border/60" : "text-muted-foreground"
                         )}
                         onClick={() => setViewMode("week")}
                     >
@@ -117,8 +117,8 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                         variant={viewMode === "list" ? "secondary" : "ghost"}
                         size="sm"
                         className={cn(
-                            "h-7 px-3 text-[11px] font-bold transition-all",
-                            viewMode === "list" ? "bg-card shadow-sm text-foreground border-border" : "text-muted-foreground"
+                            "h-7 px-3 text-[10px] font-semibold transition-colors",
+                            viewMode === "list" ? "bg-background text-foreground border-border/60" : "text-muted-foreground"
                         )}
                         onClick={() => setViewMode("list")}
                     >
@@ -139,10 +139,10 @@ export function CalendarView({ meetings }: CalendarViewProps) {
         const dayLabels = ["Th 2", "Th 3", "Th 4", "Th 5", "Th 6", "Th 7", "CN"];
 
         return (
-            <div className="border border-border rounded-[8px] overflow-hidden bg-card shadow-sm">
+            <div className="border border-border rounded-lg overflow-hidden bg-card shadow-none">
                 <div className="grid grid-cols-7 border-b border-border bg-muted">
                     {dayLabels.map(day => (
-                        <div key={day} className="py-2.5 text-center text-[10px] font-bold text-muted-foreground">
+                        <div key={day} className="py-2.5 text-center text-[10px] font-semibold text-muted-foreground/60">
                             {day}
                         </div>
                     ))}
@@ -172,10 +172,10 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                                         <Link
                                             key={meeting.id}
                                             href={`/meetings/${meeting.id}`}
-                                            className="block px-1.5 py-0.5 bg-primary/5 hover:bg-primary/10 rounded-[3px] text-[10px] font-medium text-foreground truncate border border-transparent hover:border-foreground/20/10 transition-all"
+                                            className="block px-2 py-1 bg-primary/5 hover:bg-primary/10 rounded-md text-[10px] font-medium text-foreground truncate border border-transparent transition-colors"
                                             title={meeting.title}
                                         >
-                                            <span className="font-bold mr-1">{format(new Date(meeting.scheduledAt), "HH:mm")}</span>
+                                            <span className="font-semibold mr-1">{format(new Date(meeting.scheduledAt), "HH:mm")}</span>
                                             {meeting.title}
                                         </Link>
                                     ))}
@@ -194,15 +194,15 @@ export function CalendarView({ meetings }: CalendarViewProps) {
         const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
         return (
-            <div className="border border-border rounded-[8px] overflow-hidden bg-card shadow-sm">
-                <div className="grid grid-cols-7 border-b border-border bg-muted">
+            <div className="border border-border/60 rounded-xl overflow-hidden bg-background shadow-none">
+                <div className="grid grid-cols-7 border-b border-border/60 bg-muted/30">
                     {days.map(day => (
-                        <div key={day.toString()} className="py-4 text-center">
-                            <p className="text-[10px] font-bold text-muted-foreground mb-2">
+                        <div key={day.toString()} className="py-3 text-center">
+                            <p className="text-[10px] font-semibold text-muted-foreground/60 mb-2">
                                 {format(day, "EEE", { locale: vi })}
                             </p>
                             <p className={cn(
-                                "text-lg font-bold w-8 h-8 flex items-center justify-center rounded-full mx-auto",
+                                "text-base font-bold w-7 h-7 flex items-center justify-center rounded-md mx-auto",
                                 isToday(day) ? "bg-primary text-primary-foreground" : "text-foreground"
                             )}>
                                 {format(day, "d")}
@@ -264,9 +264,9 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                     <Card key={meeting.id} hover padding="none" className="flex flex-col group">
                         <div className="p-6 flex-1 space-y-4">
                             <div className="flex items-start justify-between">
-                                <div className="w-12 h-12 rounded-[8px] bg-primary flex flex-col items-center justify-center text-primary-foreground shrink-0">
-                                    <span className="text-[10px] font-bold leading-none">{format(new Date(meeting.scheduledAt), "MMM", { locale: vi })}</span>
-                                    <span className="text-lg font-bold leading-none mt-1">{format(new Date(meeting.scheduledAt), "dd")}</span>
+                                <div className="w-11 h-11 rounded-lg bg-primary flex flex-col items-center justify-center text-primary-foreground shrink-0 shadow-none">
+                                    <span className="text-[9px] font-semibold leading-none">{format(new Date(meeting.scheduledAt), "MMM", { locale: vi })}</span>
+                                    <span className="text-base font-bold leading-none mt-1">{format(new Date(meeting.scheduledAt), "dd")}</span>
                                 </div>
                                 <Badge status={meeting.status} />
                             </div>

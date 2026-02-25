@@ -5,15 +5,15 @@ import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "h-5 gap-1 rounded-full border border-transparent px-2.5 py-0.5 text-[11px] font-semibold transition-all inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden no-uppercase",
+  "h-5 gap-1 rounded-md border border-transparent px-2.5 py-0.5 text-[11px] font-semibold transition-all inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden no-uppercase",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground",
         primary: "bg-primary text-primary-foreground",
-        secondary: "bg-secondary text-foreground border-border shadow-sm",
+        secondary: "bg-secondary text-foreground border-border shadow-none",
         success: "bg-primary text-primary-foreground",
-        warning: "bg-secondary text-foreground border-border shadow-sm",
+        warning: "bg-secondary text-foreground border-border shadow-none",
         error: "bg-destructive/10 text-destructive border-destructive/20",
         destructive: "bg-destructive/10 text-destructive border-destructive/20",
         outline: "border-border text-foreground/60 hover:text-foreground hover:bg-muted font-medium",
@@ -21,9 +21,9 @@ const badgeVariants = cva(
         link: "text-foreground font-semibold underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-5 px-2.5 text-[11px]",
-        sm: "h-4 px-2 text-[10px]",
-        lg: "h-6 px-3 text-xs",
+        default: "h-5 px-2.5 text-[11px] rounded-md",
+        sm: "h-4 px-1.5 min-w-[1rem] text-[10px] rounded-full",
+        lg: "h-6 px-3 text-xs rounded-md",
       },
     },
     defaultVariants: {

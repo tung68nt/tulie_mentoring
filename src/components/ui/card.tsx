@@ -15,9 +15,9 @@ function Card({
 }) {
   const paddingClasses = {
     none: "p-0",
-    sm: "p-3",
-    default: "p-5",
-    lg: "p-8",
+    sm: "p-4",
+    default: "p-7",
+    lg: "p-10",
   };
 
   return (
@@ -25,9 +25,9 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "ring-foreground/10 bg-card text-card-foreground gap-4 overflow-hidden rounded-3xl text-sm ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 group/card flex flex-col",
+        "border border-border/60 bg-card text-card-foreground gap-4 overflow-hidden rounded-xl text-sm shadow-none has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 group/card flex flex-col",
         paddingClasses[padding],
-        hover && "hover:border-foreground/20 transition-all cursor-pointer shadow-xl shadow-primary/5 hover:-translate-y-0.5",
+        hover && "hover:border-foreground/20 transition-all cursor-pointer shadow-none hover:bg-muted/5",
         className
       )}
       {...props}
@@ -40,7 +40,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "gap-1 rounded-t-3xl px-4 group-data-[size=sm]/card:px-3 [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3 group/card-header @container/card-header grid auto-rows-min items-start has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
+        "gap-1 rounded-t-xl px-4 group-data-[size=sm]/card:px-3 [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3 group/card-header @container/card-header grid auto-rows-min items-start has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
         className
       )}
       {...props}
@@ -95,7 +95,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-footer"
-      className={cn("bg-muted/50 rounded-b-3xl border-t p-4 group-data-[size=sm]/card:p-3 flex items-center", className)}
+      className={cn("bg-muted/50 rounded-b-xl border-t p-4 group-data-[size=sm]/card:p-3 flex items-center", className)}
       {...props}
     />
   )
@@ -117,7 +117,7 @@ function StatCard({
   className?: string
 }) {
   return (
-    <Card className={cn("p-6 shadow-sm", className)}>
+    <Card className={cn("p-6 shadow-none", className)}>
       <div className="flex items-start justify-between">
         <div className="space-y-1.5">
           <p className="text-[11px] font-semibold text-muted-foreground/60 no-uppercase tracking-normal">{title}</p>
@@ -125,7 +125,7 @@ function StatCard({
           {subtitle && <p className="text-[11px] text-muted-foreground/60 no-uppercase font-medium">{subtitle}</p>}
         </div>
         {icon && (
-          <div className="w-12 h-12 rounded-2xl bg-muted/50 border border-border flex items-center justify-center text-foreground/60 shrink-0 shadow-sm transition-all hover:bg-muted">
+          <div className="w-12 h-12 rounded-xl bg-muted/50 border border-border flex items-center justify-center text-foreground/60 shrink-0 shadow-none transition-all hover:bg-muted">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {React.cloneElement(icon as React.ReactElement<any>, { className: "w-6 h-6" })}
           </div>

@@ -53,12 +53,12 @@ export function StatsCards({ stats }: StatsCardsProps) {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {items.map((item, i) => (
-                <Card key={i} className="p-5 rounded-2xl border-border/50 shadow-sm hover:shadow-md transition-all">
+                <Card key={i} className="p-6 rounded-lg border border-border/60 bg-background shadow-none h-full">
                     <div className="flex items-center justify-between mb-4">
-                        <div className={cn("p-2 rounded-xl", item.bg)}>
+                        <div className={cn("p-2 rounded-lg", item.bg)}>
                             <item.icon className={cn("w-5 h-5", item.color)} />
                         </div>
-                        <Badge variant="outline" className="text-[10px] font-medium no-uppercase">Thống kê</Badge>
+                        <Badge variant="outline" className="text-[10px] font-semibold h-5 px-2 rounded-md border-border/60">Thống kê</Badge>
                     </div>
                     <div className="space-y-1">
                         <h4 className="text-[13px] font-medium text-muted-foreground">{item.title}</h4>

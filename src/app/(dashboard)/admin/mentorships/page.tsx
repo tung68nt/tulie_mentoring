@@ -80,7 +80,7 @@ export default async function MentorshipsPage() {
                                 <div className="p-6 flex-1">
                                     <div className="flex items-start justify-between mb-6" data-status={m.status}>
                                         <Badge status={m.status} />
-                                        <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-[4px] border border-border">
+                                        <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded border border-border">
                                             {m.programCycle?.name || "Program"}
                                         </span>
                                     </div>

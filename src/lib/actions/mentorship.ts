@@ -127,9 +127,21 @@ export async function getMentorshipDetail(id: string) {
                 programCycle: true,
                 meetings: {
                     orderBy: { scheduledAt: "desc" },
-                    take: 10,
+                    take: 20,
                     include: {
                         attendances: true,
+                        sessionReflections: {
+                            include: {
+                                mentee: {
+                                    select: {
+                                        id: true,
+                                        firstName: true,
+                                        lastName: true,
+                                        avatar: true,
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
                 goals: {
@@ -149,7 +161,18 @@ export async function getMentorshipDetail(id: string) {
             }
         }
 
-        return JSON.parse(JSON.stringify(mentorship));
+        // Flatten reflections for the UI
+        const sessionReflections = mentorship.meetings.flatMap(m =>
+            m.sessionReflections.map(r => ({
+                ...r,
+                meeting: { title: m.title, id: m.id }
+            }))
+        ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+        return JSON.parse(JSON.stringify({
+            ...mentorship,
+            sessionReflections
+        }));
     } catch (error) {
         console.error("Error in getMentorshipDetail:", error);
         return null;

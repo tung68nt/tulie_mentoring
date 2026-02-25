@@ -21,7 +21,7 @@ export default async function CheckinPage() {
                 <QRScannerClient />
             </div>
 
-            <div className="max-w-md mx-auto p-4 bg-muted/50 rounded-2xl border border-border/50">
+            <div className="max-w-md mx-auto p-4 bg-muted/50 rounded-xl border border-border/50">
                 <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
                     Lưu ý: Hệ thống sẽ ghi nhận thời gian và vị trí của bạn khi check-in để đảm bảo tính minh bạch.
                     Vui lòng đảm bảo bạn đang ở cùng địa điểm với Mentor.

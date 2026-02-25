@@ -77,7 +77,7 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Tìm kiếm tài liệu theo tên, từ khóa..."
-                    className="w-full pl-10 pr-10 h-10 rounded-[8px] border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 transition-all hover:border-foreground/30"
+                    className="w-full pl-10 pr-10 h-11 rounded-lg border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground focus:ring-2 focus:ring-foreground/5 transition-all hover:border-foreground/30"
                 />
                 {search && (
                     <button
@@ -98,13 +98,13 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                             <button
                                 onClick={() => setActiveCategory(null)}
                                 className={cn(
-                                    "w-full text-left px-3 py-2 rounded-[6px] text-sm font-medium flex items-center justify-between transition-colors",
+                                    "w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium flex items-center justify-between transition-colors",
                                     !activeCategory ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
                                 )}
                             >
                                 Tất cả tài liệu
                                 <span className={cn(
-                                    "text-[10px] px-1.5 py-0.5 rounded-[4px]",
+                                    "text-[10px] px-1.5 py-0.5 rounded",
                                     !activeCategory ? "bg-card/20" : "bg-border text-muted-foreground"
                                 )}>
                                     {resources.length}
@@ -115,14 +115,14 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                                     key={cat}
                                     onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
                                     className={cn(
-                                        "w-full text-left px-3 py-2 rounded-[6px] text-sm font-medium flex items-center justify-between transition-colors",
+                                        "w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center justify-between transition-colors",
                                         activeCategory === cat ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
                                     )}
                                 >
                                     {cat}
                                     {getCategoryCount(cat) > 0 && (
                                         <span className={cn(
-                                            "text-[10px] px-1.5 py-0.5 rounded-[4px]",
+                                            "text-[10px] px-1.5 py-0.5 rounded",
                                             activeCategory === cat ? "bg-card/20" : "bg-border text-muted-foreground"
                                         )}>
                                             {getCategoryCount(cat)}
@@ -180,7 +180,7 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {filtered.map(res => (
                                     <Card key={res.id} hover className="p-5 flex items-start gap-4">
-                                        <div className="w-12 h-12 rounded-[8px] flex items-center justify-center shrink-0 bg-muted border border-border">
+                                        <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 bg-muted border border-border">
                                             {getIcon(res.type)}
                                         </div>
                                         <div className="flex-1 min-w-0 space-y-1">

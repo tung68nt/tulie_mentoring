@@ -43,14 +43,14 @@ export function DeleteWikiButton({ id, title }: DeleteWikiButtonProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="rounded-xl no-uppercase text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
+                <Button variant="ghost" size="sm" className="rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
                     <Trash2 className="w-4 h-4" />
                     Xóa trang
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] rounded-3xl border-none shadow-2xl">
+            <DialogContent className="sm:max-w-[425px] rounded-xl border border-border/60 shadow-none">
                 <DialogHeader>
-                    <DialogTitle className="text-xl font-bold no-uppercase">Xác nhận xóa</DialogTitle>
+                    <DialogTitle className="text-xl font-bold">Xác nhận xóa</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground pt-2">
                         Bạn có chắc chắn muốn xóa trang <span className="font-bold text-foreground">"{title}"</span>? Hành động này không thể hoàn tác.
                     </DialogDescription>
@@ -59,7 +59,7 @@ export function DeleteWikiButton({ id, title }: DeleteWikiButtonProps) {
                     <Button
                         variant="ghost"
                         onClick={() => setOpen(false)}
-                        className="rounded-xl no-uppercase"
+                        className="rounded-lg h-9"
                     >
                         Hủy
                     </Button>
@@ -67,7 +67,7 @@ export function DeleteWikiButton({ id, title }: DeleteWikiButtonProps) {
                         variant="destructive"
                         onClick={handleDelete}
                         disabled={isDeleting}
-                        className="rounded-xl no-uppercase min-w-[100px]"
+                        className="rounded-lg h-9 min-w-[100px]"
                     >
                         {isDeleting ? (
                             <>

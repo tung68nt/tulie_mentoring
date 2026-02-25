@@ -30,22 +30,22 @@ export default async function TasksPage() {
             </div>
 
             <Tabs defaultValue="kanban" className="w-full">
-                <TabsList className="bg-muted/10 p-1.5 rounded-2xl border border-border/40 mb-8 self-start flex-wrap lg:flex-nowrap">
-                    <TabsTrigger value="kanban" className="rounded-xl px-6 py-3 data-[state=active]:bg-background shadow-none transition-all">
-                        <LayoutGrid className="w-4 h-4 mr-2" />
-                        <span className="no-uppercase font-medium">Kanban</span>
+                <TabsList className="bg-muted h-10 p-1 rounded-lg mb-6 self-start flex-nowrap overflow-x-auto">
+                    <TabsTrigger value="kanban" className="rounded-md h-full px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all text-sm">
+                        <LayoutGrid className="w-4 h-4 mr-1.5" />
+                        Kanban
                     </TabsTrigger>
-                    <TabsTrigger value="list" className="rounded-xl px-6 py-3 data-[state=active]:bg-background shadow-none transition-all">
-                        <List className="w-4 h-4 mr-2" />
-                        <span className="no-uppercase font-medium">Danh sách</span>
+                    <TabsTrigger value="list" className="rounded-md h-full px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all text-sm">
+                        <List className="w-4 h-4 mr-1.5" />
+                        Danh sách
                     </TabsTrigger>
-                    <TabsTrigger value="calendar" className="rounded-xl px-6 py-3 data-[state=active]:bg-background shadow-none transition-all">
-                        <CalendarIcon className="w-4 h-4 mr-2" />
-                        <span className="no-uppercase font-medium">Lịch</span>
+                    <TabsTrigger value="calendar" className="rounded-md h-full px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all text-sm">
+                        <CalendarIcon className="w-4 h-4 mr-1.5" />
+                        Lịch
                     </TabsTrigger>
-                    <TabsTrigger value="gantt" className="rounded-xl px-6 py-3 data-[state=active]:bg-background shadow-none transition-all">
-                        <Clock className="w-4 h-4 mr-2" />
-                        <span className="no-uppercase font-medium">Lịch trình</span>
+                    <TabsTrigger value="gantt" className="rounded-md h-full px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all text-sm">
+                        <Clock className="w-4 h-4 mr-1.5" />
+                        Lịch trình
                     </TabsTrigger>
                 </TabsList>
 

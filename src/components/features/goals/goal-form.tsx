@@ -53,7 +53,7 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
         <Card className="p-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {error && (
-                    <div className="p-2 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
+                    <div className="p-2 text-sm text-destructive bg-destructive/5 rounded-md border border-destructive/10">
                         {error}
                     </div>
                 )}
@@ -109,7 +109,7 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
                     <label className="block text-[12px] font-medium text-muted-foreground">Mô tả chi tiết</label>
                     <textarea
                         {...register("description")}
-                        className="w-full min-h-[80px] p-3 rounded-[8px] border border-border text-sm text-foreground focus:ring-4 focus:ring-foreground/5 focus:border-foreground focus:outline-none transition-all duration-200 hover:border-foreground/30 placeholder:text-muted-foreground"
+                        className="w-full min-h-[80px] p-3 rounded-lg border border-border text-sm text-foreground focus:ring-4 focus:ring-foreground/5 focus:border-foreground focus:outline-none transition-all duration-200 hover:border-foreground/30 placeholder:text-muted-foreground"
                     />
                 </div>
 

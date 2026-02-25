@@ -86,7 +86,7 @@ export function RegisterForm() {
                 type="button"
                 onClick={handleGoogleRegister}
                 disabled={isGoogleLoading}
-                className="w-full flex items-center justify-center gap-3 h-10 px-4 rounded-[6px] border border-border bg-card text-sm font-medium text-foreground hover:bg-muted hover:border-foreground/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 h-10 px-4 rounded-md border border-border bg-card text-sm font-medium text-foreground hover:bg-muted hover:border-foreground/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isGoogleLoading ? (
                     <div className="w-4 h-4 border-2 border-border border-t-black rounded-full animate-spin" />
@@ -105,7 +105,7 @@ export function RegisterForm() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {error && (
-                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
+                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-md border border-destructive/10">
                         {error}
                     </div>
                 )}

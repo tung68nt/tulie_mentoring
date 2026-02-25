@@ -74,7 +74,7 @@ export default function NewWikiPage() {
                     <Button
                         onClick={handleSave}
                         disabled={isSubmitting}
-                        className="rounded-xl no-uppercase min-w-[120px] shadow-lg shadow-primary/20"
+                        className="rounded-xl no-uppercase min-w-[120px] shadow-none"
                     >
                         {isSubmitting ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -94,7 +94,7 @@ export default function NewWikiPage() {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Nhập tiêu đề ấn tượng..."
-                            className="text-2xl font-bold h-16 rounded-2xl border-border/40 focus:border-primary/30 px-6 shadow-sm"
+                            className="text-2xl font-bold h-16 rounded-xl border-border/40 focus:border-primary/30 px-6 shadow-none"
                         />
                     </div>
 
@@ -102,13 +102,13 @@ export default function NewWikiPage() {
                         <label className="text-xs font-bold text-muted-foreground/60 no-uppercase px-1">Nội dung chi tiết</label>
                         <BlockEditor
                             onChange={setContent}
-                            className="min-h-[500px] rounded-3xl border-border/40 shadow-sm"
+                            className="min-h-[500px] rounded-xl border-border/40 shadow-none"
                         />
                     </div>
                 </div>
 
                 <aside className="space-y-6">
-                    <Card className="p-6 rounded-3xl border-border/40 shadow-sm bg-muted/20 space-y-6">
+                    <Card className="p-6 rounded-xl border-border/40 shadow-none bg-muted/20 space-y-6">
                         <div className="space-y-2">
                             <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Danh mục</label>
                             <Input

@@ -248,6 +248,7 @@ model Goal {
   priority     String    @default("medium") // low, medium, high
   dueDate      DateTime?
   completedAt  DateTime?
+  mentorConfirmed Boolean @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -387,6 +388,7 @@ model SessionReflection {
   meetingId    String
   menteeId     String
   content      String?   // JSON string from BlockNote
+  mentorConfirmed Boolean @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

@@ -113,8 +113,8 @@ export function GlobalSearch() {
     return (
         <div ref={containerRef} className="relative">
             {/* Inline search input - always visible */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-muted border border-border rounded-lg hover:border-foreground/20 focus-within:border-foreground focus-within:bg-card transition-all w-[220px] sm:w-[260px]">
-                <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/60 border border-border rounded-lg focus-within:border-primary focus-within:bg-background transition-all w-[220px] sm:w-[260px]">
+                <Search className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
                 <input
                     ref={inputRef}
                     value={query}
@@ -122,23 +122,23 @@ export function GlobalSearch() {
                     onKeyDown={handleKeyDown}
                     onFocus={() => { if (query.trim() && results.length > 0) setShowResults(true); }}
                     placeholder="Tìm kiếm..."
-                    className="w-full text-sm bg-transparent focus:outline-none placeholder:text-muted-foreground text-foreground"
+                    className="w-full text-sm bg-transparent focus:outline-none placeholder:text-muted-foreground/40 text-foreground"
                 />
                 {query ? (
                     <button
                         onClick={() => { setQuery(""); setResults([]); setShowResults(false); }}
-                        className="p-0.5 text-muted-foreground hover:text-foreground transition-colors"
+                        className="p-0.5 text-muted-foreground/60 hover:text-foreground transition-colors"
                     >
                         <X className="w-3.5 h-3.5" />
                     </button>
                 ) : (
-                    <kbd className="hidden md:inline text-[10px] bg-card border border-border px-1.5 py-0.5 rounded text-muted-foreground shrink-0">⌘K</kbd>
+                    <kbd className="hidden md:inline text-[9px] font-semibold bg-background border border-border/60 px-1.5 py-0.5 rounded text-muted-foreground/60 shrink-0">⌘K</kbd>
                 )}
             </div>
 
             {/* Dropdown results */}
             {showResults && query && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-card rounded-lg border border-border shadow-lg overflow-hidden z-50 w-[360px]">
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-card rounded-lg border border-border shadow-none overflow-hidden z-50 w-[360px]">
                     <div className="max-h-[320px] overflow-y-auto py-1">
                         {isLoading ? (
                             <div className="px-4 py-6 text-center">

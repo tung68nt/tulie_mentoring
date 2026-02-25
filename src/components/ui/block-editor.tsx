@@ -58,7 +58,7 @@ export function BlockEditor({
     }, []);
 
     return (
-        <div className={`block-editor-wrapper rounded-xl border border-border overflow-hidden bg-background ${className}`}>
+        <div className={`block-editor-wrapper rounded-lg border border-border overflow-hidden bg-background ${className}`}>
             <BlockNoteView
                 editor={editor}
                 editable={editable}
@@ -69,7 +69,7 @@ export function BlockEditor({
             <style jsx global>{`
                 .block-editor-wrapper .bn-editor {
                     font-family: var(--font-sans), Inter, system-ui, sans-serif;
-                    padding: 1rem 1.25rem;
+                    padding: 1rem 1rem 1rem 3rem; /* Increased left padding for side handles */
                 }
                 .block-editor-wrapper .bn-editor [class*="blockContent"] {
                     font-size: 14px;

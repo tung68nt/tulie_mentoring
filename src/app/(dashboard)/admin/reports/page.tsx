@@ -117,7 +117,7 @@ export default async function AdminReportsPage() {
                         <h1 className="text-2xl font-semibold text-foreground">Báo cáo & Thống kê</h1>
                         <p className="text-sm text-muted-foreground mt-1">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-bold text-foreground bg-muted border border-border px-3 py-1.5 rounded-full shadow-sm">
+                    <div className="flex items-center gap-2 text-xs font-bold text-foreground bg-muted border border-border px-3 py-1.5 rounded-full shadow-none">
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                         Dữ liệu thời gian thực
                     </div>
@@ -153,10 +153,10 @@ export default async function AdminReportsPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Program Performance */}
-                    <Card className="lg:col-span-7 bg-card shadow-sm" padding="lg">
+                    <Card className="lg:col-span-7 bg-card shadow-none" padding="lg">
                         <CardHeader className="mb-6">
                             <CardTitle className="text-xl flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-primary text-primary-foreground shadow-sm">
+                                <div className="p-2 rounded-lg bg-primary text-primary-foreground shadow-none">
                                     <BarChart3 className="w-5 h-5" />
                                 </div>
                                 Hiệu suất theo chương trình
@@ -197,10 +197,10 @@ export default async function AdminReportsPage() {
                     </Card>
 
                     {/* Top Mentees */}
-                    <Card className="lg:col-span-5 bg-muted border-none shadow-inner" padding="lg">
+                    <Card className="lg:col-span-5 bg-muted border-none shadow-none" padding="lg">
                         <CardHeader className="mb-6">
                             <CardTitle className="text-xl flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-card text-foreground shadow-md border border-border">
+                                <div className="p-2 rounded-lg bg-card text-foreground shadow-none border border-border">
                                     <Award className="w-5 h-5" />
                                 </div>
                                 Mentees tiêu biểu
@@ -216,9 +216,9 @@ export default async function AdminReportsPage() {
                         ) : (
                             <div className="space-y-4">
                                 {menteesWithProgress.map((mentee: any, idx: number) => (
-                                    <div key={mentee.id} className="flex items-center justify-between p-5 rounded-[16px] bg-card border border-border hover:border-foreground/20/10 hover:shadow-sm hover:-translate-y-0.5 transition-all group">
+                                    <div key={mentee.id} className="flex items-center justify-between p-5 rounded-xl bg-card border border-border hover:border-foreground/20/10 transition-all group shadow-none">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-sm">
+                                            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-none">
                                                 {idx + 1}
                                             </div>
                                             <Avatar

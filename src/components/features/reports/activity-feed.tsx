@@ -22,10 +22,10 @@ const ACTION_CONFIG: Record<string, { icon: any, label: string, color: string }>
 
 export function ActivityFeed({ logs }: { logs: ActivityLog[] }) {
     return (
-        <Card className="p-6 rounded-2xl border-border/50 shadow-sm h-full">
+        <Card className="p-6 rounded-lg border border-border/60 bg-background shadow-none h-full">
             <div className="flex items-center justify-between mb-6">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-primary" />
+                    <Activity className="w-4 h-4 text-primary/60" />
                     Hoạt động gần đây
                 </h3>
             </div>

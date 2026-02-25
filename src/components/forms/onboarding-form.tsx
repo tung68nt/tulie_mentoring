@@ -190,7 +190,7 @@ export function OnboardingForm() {
                                     {...register("strengths")}
                                     placeholder="Những điều bạn tự tin và làm tốt..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
+                                    className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -199,7 +199,7 @@ export function OnboardingForm() {
                                     {...register("weaknesses")}
                                     placeholder="Những điều bạn muốn cải thiện..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
+                                    className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -208,7 +208,7 @@ export function OnboardingForm() {
                                     {...register("currentChallenges")}
                                     placeholder="Những thách thức bạn đang gặp phải trong học tập, công việc, cuộc sống..."
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
+                                    className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                         </>
@@ -235,7 +235,7 @@ export function OnboardingForm() {
                                     {...register("endGoals")}
                                     placeholder="Sau khi kết thúc mentoring, bạn kỳ vọng đạt được gì?"
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
+                                    className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -244,7 +244,7 @@ export function OnboardingForm() {
                                     {...register("expectations")}
                                     placeholder="Bạn mong muốn nhận được gì từ mentor và chương trình?"
                                     rows={3}
-                                    className="w-full px-3 py-2.5 rounded-[6px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
+                                    className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>
                         </>

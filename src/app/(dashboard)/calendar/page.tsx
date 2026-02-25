@@ -30,7 +30,7 @@ export default async function CalendarPage() {
                         <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Quản lý và theo dõi các buổi họp sắp tới</p>
                     </div>
                     {(role === "admin" || role === "mentor") && (
-                        <Button asChild className="rounded-xl shadow-sm">
+                        <Button asChild className="rounded-xl shadow-none">
                             <Link href="/meetings/new">
                                 <Plus className="w-4 h-4 mr-2" />
                                 <span className="no-uppercase">Lên lịch mới</span>

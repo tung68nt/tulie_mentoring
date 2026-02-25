@@ -58,7 +58,7 @@ export function ResourceForm() {
         <Card className="w-full max-w-xl mx-auto p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {error && (
-                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[8px] border border-destructive/10">
+                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-lg border border-destructive/10">
                         {error}
                     </div>
                 )}
@@ -120,7 +120,7 @@ export function ResourceForm() {
                     <label className="block text-[12px] font-medium text-muted-foreground">Mô tả</label>
                     <textarea
                         {...register("description")}
-                        className="w-full min-h-[100px] p-3 rounded-[8px] border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
+                        className="w-full min-h-[100px] p-3 rounded-lg border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30"
                         placeholder="Mô tả ngắn gọn về tài liệu này..."
                     />
                 </div>

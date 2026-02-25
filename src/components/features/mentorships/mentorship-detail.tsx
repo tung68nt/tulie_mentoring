@@ -8,17 +8,21 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import {
+    Plus,
+    History,
+    Check,
     Calendar,
     Target,
     User as UserIcon,
     Briefcase,
     GraduationCap,
     Clock,
-    ChevronRight,
-    Plus
+    ChevronRight
 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { confirmGoal } from "@/lib/actions/goal";
+import { confirmReflection } from "@/lib/actions/reflection";
 
 interface MentorshipDetailProps {
     mentorship: any;
@@ -32,7 +36,32 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
         { id: "overview", label: "Tổng quan", icon: <UserIcon className="w-4 h-4" /> },
         { id: "meetings", label: "Cuộc họp", icon: <Calendar className="w-4 h-4" /> },
         { id: "goals", label: "Mục tiêu", icon: <Target className="w-4 h-4" /> },
+        { id: "reflections", label: "Nhật ký thu hoạch", icon: <History className="w-4 h-4" /> },
     ];
+
+    const [isLoading, setIsLoading] = useState<string | null>(null);
+
+    const handleConfirmGoal = async (id: string) => {
+        setIsLoading(id);
+        try {
+            await confirmGoal(id);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(null);
+        }
+    };
+
+    const handleConfirmReflection = async (id: string) => {
+        setIsLoading(id);
+        try {
+            await confirmReflection(id);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(null);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -159,9 +188,9 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                     <p className="text-sm text-muted-foreground text-center py-8">Chưa có cuộc họp nào được ghi lại.</p>
                                 ) : (
                                     mentorship.meetings.map((meeting: any) => (
-                                        <div key={meeting.id} className="flex items-center justify-between p-4 rounded-[8px] border border-border hover:bg-muted transition-colors">
+                                        <div key={meeting.id} className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted transition-colors">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-[6px] bg-primary flex flex-col items-center justify-center text-primary-foreground">
+                                                <div className="w-10 h-10 rounded-md bg-primary flex flex-col items-center justify-center text-primary-foreground">
                                                     <span className="text-[10px] font-bold leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                                     <span className="text-sm font-bold leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
                                                 </div>
@@ -202,12 +231,85 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                     <p className="text-sm text-muted-foreground text-center py-8">Chưa có mục tiêu nào được thiết lập.</p>
                                 ) : (
                                     mentorship.goals.map((goal: any) => (
-                                        <div key={goal.id} className="space-y-2">
+                                        <div key={goal.id} className="space-y-3 p-4 rounded-xl border border-border/50">
                                             <div className="flex items-center justify-between">
-                                                <p className="text-sm font-semibold text-foreground">{goal.title}</p>
-                                                <span className="text-xs font-medium text-muted-foreground">{goal.currentValue}/{goal.targetValue || 100}%</span>
+                                                <div>
+                                                    <p className="text-sm font-semibold text-foreground">{goal.title}</p>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="text-[10px] font-medium text-muted-foreground">{goal.category}</span>
+                                                        {goal.mentorConfirmed && (
+                                                            <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200 text-[9px] h-4">Đã xác nhận</Badge>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    {userRole === "mentor" && !goal.mentorConfirmed && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 text-[11px] rounded-lg"
+                                                            onClick={() => handleConfirmGoal(goal.id)}
+                                                            isLoading={isLoading === goal.id}
+                                                        >
+                                                            <Check className="w-3 h-3 mr-1" />
+                                                            Xác nhận
+                                                        </Button>
+                                                    )}
+                                                    <span className="text-xs font-medium text-muted-foreground">{goal.currentValue}/{goal.targetValue || 100}%</span>
+                                                </div>
                                             </div>
                                             <Progress value={goal.currentValue} max={goal.targetValue || 100} size="sm" />
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </Card>
+                    )}
+
+                    {activeTab === "reflections" && (
+                        <Card>
+                            <h3 className="text-lg font-semibold text-foreground mb-6">Nhật ký thu hoạch từ Mentee</h3>
+                            <div className="space-y-4">
+                                {mentorship.sessionReflections.length === 0 ? (
+                                    <p className="text-sm text-muted-foreground text-center py-8">Chưa có nhật ký thu hoạch nào.</p>
+                                ) : (
+                                    mentorship.sessionReflections.map((ref: any) => (
+                                        <div key={ref.id} className="p-4 rounded-xl border border-border/50 space-y-3">
+                                            <div className="flex items-start justify-between gap-4">
+                                                <div className="space-y-1">
+                                                    <p className="text-[10px] font-bold text-muted-foreground/40 tracking-wider">
+                                                        {formatDate(ref.createdAt)}
+                                                    </p>
+                                                    <h4 className="font-semibold text-foreground text-sm leading-snug">
+                                                        {ref.meeting?.title}
+                                                    </h4>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    {ref.mentorConfirmed && (
+                                                        <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200 text-[10px]">Đã xác nhận</Badge>
+                                                    )}
+                                                    {userRole === "mentor" && !ref.mentorConfirmed && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-8 rounded-lg"
+                                                            onClick={() => handleConfirmReflection(ref.id)}
+                                                            isLoading={isLoading === ref.id}
+                                                        >
+                                                            <Check className="w-3.5 h-3.5 mr-1.5" />
+                                                            Xác nhận đọc
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="pt-2 border-t border-border/5">
+                                                <p className="text-[13px] text-muted-foreground italic line-clamp-2">
+                                                    Nội dung đã được ghi nhận...
+                                                </p>
+                                                <Button variant="link" size="sm" className="h-auto p-0 text-xs text-primary" asChild>
+                                                    <Link href="/reflections">Xem chi tiết</Link>
+                                                </Button>
+                                            </div>
                                         </div>
                                     ))
                                 )}

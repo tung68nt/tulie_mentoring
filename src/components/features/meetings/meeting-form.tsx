@@ -58,7 +58,7 @@ export function MeetingForm({ mentorships, defaultMentorshipId }: MeetingFormPro
         <Card className="w-full max-w-xl mx-auto p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {error && (
-                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-[6px] border border-destructive/10">
+                    <div className="p-3 text-sm text-destructive bg-destructive/5 rounded-md border border-destructive/10">
                         {error}
                     </div>
                 )}
@@ -131,7 +131,7 @@ export function MeetingForm({ mentorships, defaultMentorshipId }: MeetingFormPro
                     <label className="block text-[12px] font-medium text-muted-foreground">Ghi chú / Nội dung</label>
                     <textarea
                         {...register("description")}
-                        className="w-full min-h-[100px] p-3 rounded-[8px] border border-border focus:ring-4 focus:ring-foreground/5 focus:border-foreground focus:outline-none text-sm text-foreground transition-all hover:border-foreground/30 placeholder:text-muted-foreground"
+                        className="w-full min-h-[100px] p-3 rounded-lg border border-border focus:ring-2 focus:ring-foreground/5 focus:border-foreground focus:outline-none text-sm text-foreground transition-all hover:border-foreground/30 placeholder:text-muted-foreground"
                         placeholder="Mô tả nội dung buổi họp..."
                     />
                 </div>
