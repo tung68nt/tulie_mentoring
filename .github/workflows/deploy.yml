@@ -73,6 +73,7 @@ jobs:
             mkdir -p /srv/mentoring
             cd /srv/mentoring
             echo "$G_TOKEN" | docker login ghcr.io -u "$G_ACTOR" --password-stdin
+            docker system prune -af
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
