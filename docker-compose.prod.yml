@@ -1,22 +1,4 @@
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: mentoring_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: mentoring
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-      POSTGRES_DB: mentoring_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U mentoring -d mentoring_db" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
     image: ${M_IMAGE:-ghcr.io/tung68nt/tulie-mentoring:latest}
     container_name: mentoring_app
@@ -25,21 +7,14 @@ services:
       - "${APP_PORT:-3002}:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://mentoring:${POSTGRES_PASSWORD}@postgres:5432/mentoring_db
-      - DIRECT_URL=postgresql://mentoring:${POSTGRES_PASSWORD}@postgres:5432/mentoring_db
+      - DATABASE_URL=${DATABASE_URL:?DATABASE_URL is required}
+      - DIRECT_URL=${DIRECT_URL:?DIRECT_URL is required}
       - AUTH_SECRET=${AUTH_SECRET:?AUTH_SECRET is required}
       - AUTH_URL=${AUTH_URL:-https://mentoring.tulie.vn}
       - NEXTAUTH_URL=${AUTH_URL:-https://mentoring.tulie.vn}
       - AUTH_TRUST_HOST=true
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - app-network
-
-volumes:
-  postgres_data:
-    name: mentoring_postgres_data
 
 networks:
   app-network:

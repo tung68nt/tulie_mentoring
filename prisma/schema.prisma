@@ -387,7 +387,6 @@ model SessionReflection {
   meetingId    String
   menteeId     String
   content      String?   // JSON string from BlockNote
-  actionItems  String?   // JSON array of action items (deprecated for TodoItem but kept for backward compatibility)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
