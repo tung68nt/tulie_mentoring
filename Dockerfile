@@ -14,13 +14,14 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma Client
+ENV NEXTAUTH_URL="http://localhost:3000"
 RUN npx prisma generate
+RUN ls -la node_modules/.prisma/client || echo "Prisma client not found in node_modules/.prisma/client"
 
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/mentoring_db"
 ENV AUTH_SECRET="build_secret_for_build_step"
-ENV NEXTAUTH_URL="http://localhost:3000"
 RUN npm run build
 
 # Stage 3: Runner
