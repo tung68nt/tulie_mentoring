@@ -16,7 +16,7 @@ COPY . .
 # Generate Prisma Client
 ENV NEXTAUTH_URL="http://localhost:3000"
 RUN npx prisma generate
-RUN ls -la node_modules/.prisma/client || echo "Prisma client not found in node_modules/.prisma/client"
+RUN ls -la prisma/generated/client || echo "Prisma client not found in prisma/generated/client"
 
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
