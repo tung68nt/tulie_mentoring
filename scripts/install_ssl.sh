@@ -24,11 +24,26 @@ apt-get install -y certbot python3-certbot-nginx
 
 # Check if certs already exist
 if [ ! -f /etc/letsencrypt/live/mentoring.tulie.vn/fullchain.pem ]; then
-    echo "Certs not found. Stopping Nginx and running certbot standalone..."
-    systemctl stop nginx
-    # Request certs (standalone because we stop nginx to free port 80)
-    certbot certonly --standalone -d $DOMAIN --non-interactive --agree-tos -m $EMAIL
-    systemctl start nginx
+    echo "Certs not found. Attempting to get certs..."
+    
+    # Try webroot mode first (doesn't require stopping nginx)
+    echo "Trying Certbot webroot mode..."
+    certbot certonly --webroot -w /www/wwwroot/mentoring.tulie.vn -d $DOMAIN --non-interactive --agree-tos -m $EMAIL --quiet
+    
+    # If webroot fails, try standalone (requires stopping nginx)
+    if [ ! -f /etc/letsencrypt/live/mentoring.tulie.vn/fullchain.pem ]; then
+        echo "Webroot mode failed or certs still missing. Trying standalone mode (stopping Nginx)..."
+        # Force stop Nginx
+        systemctl stop nginx 2>/dev/null || true
+        /etc/init.d/nginx stop 2>/dev/null || true
+        # Kill anything on port 80
+        fuser -k 80/tcp 2>/dev/null || true
+        
+        certbot certonly --standalone -d $DOMAIN --non-interactive --agree-tos -m $EMAIL
+        
+        # Restart Nginx
+        /etc/init.d/nginx start 2>/dev/null || systemctl start nginx
+    fi
 else
     echo "Certs already exist. Skipping Certbot."
 fi
