@@ -14,6 +14,11 @@ fi
 # Update package list
 apt-get update
 
+# Create webroot for aaPanel discovery
+mkdir -p /www/wwwroot/mentoring.tulie.vn
+chmod 755 /www/wwwroot/mentoring.tulie.vn
+chown www:www /www/wwwroot/mentoring.tulie.vn 2>/dev/null || true
+
 # Install Certbot and Nginx plugin
 apt-get install -y certbot python3-certbot-nginx
 
@@ -56,17 +61,28 @@ fi
 
 # Test and Reload Nginx
 echo "Testing Nginx configuration..."
-NGINX_TEST=$(nginx -t 2>&1)
+# Try to find aaPanel nginx binary
+if [ -f "/www/server/nginx/sbin/nginx" ]; then
+    NGINX_BIN="/www/server/nginx/sbin/nginx"
+else
+    NGINX_BIN="nginx"
+fi
+
+NGINX_TEST=$($NGINX_BIN -t 2>&1)
 if [ $? -eq 0 ]; then
     echo "Reloading Nginx..."
-    systemctl reload nginx
+    if [ -f "/etc/init.d/nginx" ]; then
+        /etc/init.d/nginx reload
+    else
+        systemctl reload nginx
+    fi
     echo "SSL setup complete!"
 else
     echo "WARNING: Nginx configuration test failed."
     echo "This usually happens if OTHER sites on this VPS have broken SSL paths or invalid configs."
     echo "Nginx Output:"
     echo "$NGINX_TEST"
-    echo "Please fix the global Nginx issues in aaPanel (e.g., check 'thelab.tulie.vn' SSL) and rerun this deploy."
+    echo "Please fix the global Nginx issues in aaPanel (e.g., check 'mentoring.tulie.vn' SSL) and rerun this deploy."
     # We exit 0 here so the CI/CD doesn't show a red failure for the entire build
     # if the application itself was successfully built and updated.
     exit 0
