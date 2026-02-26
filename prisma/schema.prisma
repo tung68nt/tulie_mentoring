@@ -47,6 +47,8 @@ model User {
   assignedTickets    SupportTicket[]  @relation("TicketAssignee")
   ticketComments     TicketComment[]
   wikiPages          WikiPage[]
+  whiteboards        Whiteboard[] @relation("WhiteboardCreator")
+  slides             Slide[] @relation("SlideCreator")
 
   @@index([role])
   @@index([email])
@@ -485,4 +487,54 @@ model WikiPage {
 
   @@index([authorId])
   @@index([category])
+}
+
+// ─── Phase 6: Extensions (Whiteboard & Slides) ───────────────────
+model Whiteboard {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  thumbnail   String?   @db.Text
+  status      String    @default("private") // public, private
+  creatorId   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  creator     User       @relation("WhiteboardCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  artboards   Artboard[]
+
+  @@index([creatorId])
+  @@index([status])
+}
+
+model Artboard {
+  id           String     @id @default(cuid())
+  whiteboardId String
+  order        Int        @default(0)
+  name         String?
+  elements     Json?      // Excalidraw elements JSON
+  appState     Json?      // Excalidraw appState JSON
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  whiteboard   Whiteboard @relation(fields: [whiteboardId], references: [id], onDelete: Cascade)
+
+  @@index([whiteboardId])
+  @@index([order])
+}
+
+model Slide {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  content     String?  @db.Text // Markdown content
+  theme       String   @default("black")
+  status      String   @default("private")
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator     User     @relation("SlideCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([creatorId])
 }

@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Tulie TSS Mentoring Management System",
 };
 
+import { Providers } from "@/components/providers/providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased">
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

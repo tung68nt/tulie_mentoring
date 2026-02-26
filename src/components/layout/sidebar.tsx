@@ -20,6 +20,7 @@ import {
     FileText,
     LifeBuoy,
     BookMarked,
+    Presentation,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -78,6 +79,8 @@ export function Sidebar({ role }: SidebarProps) {
                 items: [
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
+                    { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
+                    { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
                     { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
                 ],
             },
@@ -100,6 +103,8 @@ export function Sidebar({ role }: SidebarProps) {
                 title: "Nội dung",
                 items: [
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
+                    { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
+                    { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
                     { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
                 ],
             },
@@ -124,6 +129,8 @@ export function Sidebar({ role }: SidebarProps) {
                 items: [
                     { id: "goals", label: "Mục tiêu", icon: Target, href: "/goals" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
+                    { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
+                    { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
                     { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
                 ],
             },
