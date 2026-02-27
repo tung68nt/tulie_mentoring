@@ -16,6 +16,7 @@ import {
 import { Trash2, Shield, User } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
+import { UserRoleSelector } from "@/components/features/admin/user-role-selector";
 
 export default async function AdminUsersPage() {
     const session = await auth();
@@ -65,11 +66,12 @@ export default async function AdminUsersPage() {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            {user.role === "admin" && <Shield className="w-4 h-4 text-primary" />}
-                                            <span className={`capitalize ${user.role === 'admin' ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
-                                                {user.role}
-                                            </span>
+                                        <div className="-ml-3">
+                                            <UserRoleSelector
+                                                userId={user.id}
+                                                currentRole={user.role}
+                                                isCurrentUser={user.id === session.user.id}
+                                            />
                                         </div>
                                     </TableCell>
                                     <TableCell>

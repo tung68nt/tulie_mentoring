@@ -106,3 +106,24 @@ export async function deleteUser(userId: string) {
 
     revalidatePath("/admin/users");
 }
+
+export async function updateUserRole(userId: string, newRole: string) {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "admin") {
+        throw new Error("Unauthorized");
+    }
+
+    // Prevent changing own role
+    if (userId === session.user.id) {
+        throw new Error("Cannot change your own role");
+    }
+
+    const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { role: newRole },
+    });
+
+    revalidatePath("/admin/users");
+    revalidatePath(`/admin/users/${userId}`);
+    return JSON.parse(JSON.stringify(updatedUser));
+}
