@@ -227,7 +227,7 @@ export function Sidebar({ role }: SidebarProps) {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-border shrink-0 bg-muted/20">
+            <div className="p-4 border-t border-border shrink-0 bg-muted/20 space-y-1">
                 <Link
                     href="/profile"
                     className={cn(
