@@ -31,10 +31,9 @@ jobs:
       - name: Set lower case owner name
         id: set_owner
         run: |
-          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
-          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_OUTPUT}
-        env:
-          OWNER: "${{ github.repository_owner }}"
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "OWNER_LC=${OWNER_LC}" >> ${GITHUB_ENV}
+          echo "OWNER_LC=${OWNER_LC}" >> ${GITHUB_OUTPUT}
 
       - name: Build and push
         uses: docker/build-push-action@v5
