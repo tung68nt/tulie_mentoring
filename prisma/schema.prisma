@@ -1,6 +1,28 @@
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Phase 1: Authentication & User ─────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  firstName     String?
+  lastName      String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  avatar        String?
+  bio           String?
+  passwordHash  String?
+  role          String    @default("mentee") // admin, mentor, mentee, viewer
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   mentorProfile MentorProfile?
   menteeProfile MenteeProfile?
