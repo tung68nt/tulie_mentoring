@@ -24,7 +24,7 @@ export const meetingSchema = z.object({
     description: z.string().optional(),
     type: z.enum(["offline", "online"]),
     meetingType: z.enum(["session", "workshop", "checkin"]),
-    scheduledAt: z.string().min(1, "Vui lòng chọn thời gian"),
+    scheduledAt: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date({ message: "Vui lòng chọn thời gian" })),
     duration: z.coerce.number().min(15).max(180),
     location: z.string().optional(),
     meetingUrl: z.string().url().optional().or(z.literal("")),
@@ -40,7 +40,7 @@ export const goalSchema = z.object({
     currentValue: z.coerce.number().min(0).max(100).default(0),
     unit: z.string().optional().default("percent"),
     priority: z.enum(["low", "medium", "high"]),
-    dueDate: z.string().optional(),
+    dueDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date().optional()),
     mentorshipId: z.string().min(1),
 });
 
@@ -93,8 +93,8 @@ export const mentorshipSchema = z.object({
     mentorId: z.string().min(1, "Vui lòng chọn mentor"),
     type: z.enum(["one_on_one", "group"]),
     programCycleId: z.string().min(1, "Vui lòng chọn chương trình"),
-    startDate: z.string().min(1, "Vui lòng chọn ngày bắt đầu"),
-    endDate: z.string().min(1, "Vui lòng chọn ngày kết thúc"),
+    startDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date({ message: "Vui lòng chọn ngày bắt đầu" })),
+    endDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date({ message: "Vui lòng chọn ngày kết thúc" })),
     maxMentees: z.coerce.number().min(1).max(20).default(1),
     menteeIds: z.array(z.string()).min(1, "Vui lòng chọn ít nhất 1 mentee"),
 });
@@ -129,7 +129,7 @@ export const todoSchema = z.object({
     priority: z.enum(["low", "medium", "high"]).default("medium"),
     status: z.enum(["todo", "doing", "review", "done"]).default("todo"),
     column: z.string().default("todo"),
-    dueDate: z.string().optional().nullable(),
+    dueDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date().optional().nullable()),
     reflectionId: z.string().optional().nullable(),
 });
 
