@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import SlideEditor from "@/components/features/slides/SlideEditor";
+import SlideEditorClient from "@/components/features/slides/SlideEditorClient";
 
 export default async function SlidePage({ params }: { params: { id: string } }) {
     const session = await auth();
@@ -12,7 +12,9 @@ export default async function SlidePage({ params }: { params: { id: string } }) 
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            <SlideEditor id={id} />
+            <SlideEditorClient id={id} />
         </div>
     );
 }
+
+

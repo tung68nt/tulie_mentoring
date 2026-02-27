@@ -1,26 +1,45 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
     ChevronLeft,
     Save,
     Play,
-    Eye,
     Settings,
     Trash2,
     Globe,
     Lock,
-    Type,
-    Layout,
     Clock,
-    User
+    User,
+    PanelLeft,
+    Plus,
+    X,
+    Columns,
+    Layout
 } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Link from 'next/link';
 import * as actions from '@/lib/actions/slide';
 import SlidePresenter from './SlidePresenter';
+import SlideBlockEditor from './SlideBlockEditor';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface SlideEditorProps {
     id: string;
@@ -31,18 +50,28 @@ export default function SlideEditor({ id }: SlideEditorProps) {
     const [slide, setSlide] = useState<any>(null);
     const [content, setContent] = useState('');
     const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [theme, setTheme] = useState('black');
+    const [theme, setTheme] = useState('white');
     const [status, setStatus] = useState('private');
     const [isSaving, setIsSaving] = useState(false);
     const [isPreviewing, setIsPreviewing] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [showNavigator, setShowNavigator] = useState(true);
+    const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
+
+    const slides = useMemo(() => {
+        // Robust splitting that handles different newline/whitespace combinations and standard markdown separators
+        // This regex matches lines that only contain 3+ dashes or asterisks
+        return content
+            .split(/(?:\r?\n|^)[-*]{3,}\s*(?:\r?\n|$)/)
+            .map(s => s.trim())
+            .filter(s => s.length > 0);
+    }, [content]);
 
     useEffect(() => {
         const loadSlide = async () => {
             if (id === 'new') {
                 setTitle('New Presentation');
-                setContent('# Welcome\n---\n## Slide 2');
+                setContent('# Title Slide\n\nSubheading here...\n\n---\n\n## Slide 2\n\n- Point 1\n- Point 2');
                 setIsLoaded(true);
                 return;
             }
@@ -51,9 +80,8 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                 const data = await actions.getSlideDetail(id);
                 setSlide(data);
                 setTitle(data.title);
-                setDescription(data.description || '');
                 setContent(data.content || '');
-                setTheme(data.theme || 'black');
+                setTheme(data.theme || 'white');
                 setStatus(data.status || 'private');
             } catch (error) {
                 console.error('Failed to load slide:', error);
@@ -66,181 +94,377 @@ export default function SlideEditor({ id }: SlideEditorProps) {
         loadSlide();
     }, [id, router]);
 
-    const handleSave = async () => {
-        setIsSaving(true);
+    const handleSave = async (silent = false) => {
+        if (!silent) setIsSaving(true);
         try {
             if (id === 'new') {
-                const newSlide = await actions.createSlide({ title, description });
+                const newSlide = await actions.createSlide({ title, description: "" });
                 await actions.updateSlide(newSlide.id, { content, theme, status });
                 router.replace(`/slides/${newSlide.id}`);
+                if (!silent) toast.success("Đã tạo slide mới!");
             } else {
-                await actions.updateSlide(id, { title, description, content, theme, status });
+                await actions.updateSlide(id, { title, description: "", content, theme, status });
+                if (!silent) toast.success("Đã lưu thay đổi!");
             }
         } catch (error) {
             console.error('Failed to save slide:', error);
+            if (!silent) toast.error("Lỗi khi lưu slide");
         } finally {
-            setIsSaving(false);
+            if (!silent) setIsSaving(false);
         }
     };
 
     const handleDelete = async () => {
-        if (!confirm('Bạn có chắc chắn muốn xóa bài thuyết trình này?')) return;
-        try {
-            await actions.deleteSlide(id);
-            router.push('/slides');
-        } catch (error) {
-            console.error('Failed to delete slide:', error);
-        }
+        toast("Xóa bài thuyết trình này?", {
+            action: {
+                label: "Xóa",
+                onClick: async () => {
+                    try {
+                        await actions.deleteSlide(id);
+                        toast.success("Đã xóa slide");
+                        router.push('/slides');
+                    } catch (error) {
+                        console.error('Failed to delete slide:', error);
+                        toast.error("Lỗi khi xóa slide");
+                    }
+                }
+            },
+            cancel: {
+                label: "Hủy",
+                onClick: () => { }
+            }
+        });
     };
 
-    if (!isLoaded) return <div className="p-8 text-center">Loading presentation...</div>;
+    const layouts = [
+        { name: "Title Slide", content: "# Title\n\nSubtitle here..." },
+        { name: "Content", content: "## Section Header\n\n- Key point 1\n- Key point 2\n- Key point 3" },
+        { name: "Two Columns", content: "## Two Column Layout\n\n[cols]\n[col]\n\n### Left Column\n- Info A\n- Info B\n\n[/col]\n[col]\n\n### Right Column\n- Detail 1\n- Detail 2\n\n[/col]\n[/cols]" },
+        { name: "Quote", content: "## Inspiring Quote\n\n> \"The best way to predict the future is to create it.\"\n> \n> — Peter Drucker" }
+    ];
+
+    const addSlide = (layoutIndex: number = 0) => {
+        const newSlideContent = "\n\n---\n\n" + layouts[layoutIndex].content;
+        setContent(content + newSlideContent);
+    };
+
+    const removeSlide = (idx: number) => {
+        if (slides.length <= 1) {
+            toast.error("Không thể xóa slide cuối cùng");
+            return;
+        }
+
+        toast("Xóa slide này?", {
+            action: {
+                label: "Xóa",
+                onClick: () => {
+                    const newSlides = [...slides];
+                    newSlides.splice(idx, 1);
+                    setContent(newSlides.join("\n---\n"));
+                    if (currentSlideIdx >= newSlides.length) {
+                        setCurrentSlideIdx(Math.max(0, newSlides.length - 1));
+                    }
+                }
+            },
+            cancel: {
+                label: "Hủy",
+                onClick: () => { }
+            }
+        });
+    };
+
+    if (!isLoaded) return (
+        <div className="flex flex-col items-center justify-center p-20 gap-4">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <p className="text-muted-foreground font-medium text-sm">Đang chuẩn bị trình biên tập...</p>
+        </div>
+    );
 
     return (
-        <div className="flex flex-col h-[calc(100vh-88px-40px)] animate-fade-in gap-6">
-            {/* Header Area */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="flex items-center gap-4">
+        <div className="flex flex-col h-[calc(100vh-88px-40px)] gap-4 px-4 pb-4">
+            {/* Toolbar Top */}
+            <div className="flex items-center justify-between py-2 border-b">
+                <div className="flex items-center gap-3">
                     <Link href="/slides">
-                        <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10">
-                            <ChevronLeft className="w-5 h-5" />
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <ChevronLeft className="w-4 h-4" />
                         </Button>
                     </Link>
-                    <div>
-                        <input
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="bg-transparent border-none text-2xl font-semibold focus:ring-0 p-0 text-foreground w-full md:w-[400px] no-uppercase"
-                            placeholder="Presentation Title"
-                        />
-                        <p className="text-sm text-muted-foreground mt-0.5">Markdown Presentation Creator</p>
-                    </div>
+                    <div className="h-4 w-px bg-border" />
+                    <input
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="bg-transparent border-none text-sm font-semibold focus:ring-0 p-0 text-foreground w-[200px] md:w-[300px] placeholder:text-muted-foreground/30"
+                        placeholder="Tên bài thuyết trình..."
+                    />
                 </div>
 
                 <div className="flex items-center gap-2">
                     <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`h-8 gap-2 px-3 ${showNavigator ? 'bg-muted' : ''}`}
+                        onClick={() => setShowNavigator(!showNavigator)}
+                    >
+                        <PanelLeft className="w-4 h-4" />
+                        <span className="hidden sm:inline">Navigator</span>
+                    </Button>
+
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 gap-2">
+                                <Layout className="w-4 h-4" />
+                                <span className="hidden sm:inline">Help Markup</span>
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px]">
+                            <DialogHeader>
+                                <DialogTitle>Cấu trúc chia cột (Markup)</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4 text-sm">
+                                <p>Sử dụng các thẻ sau để chia nội dung slide thành các cột:</p>
+                                <div className="p-3 bg-muted rounded-md font-mono text-xs space-y-2">
+                                    <p className="text-primary font-bold">[cols]</p>
+                                    <p className="pl-4 text-emerald-600 font-bold">[col]</p>
+                                    <p className="pl-8 text-muted-foreground">Nội dung cột trái...</p>
+                                    <p className="pl-4 text-emerald-600 font-bold">[/col]</p>
+                                    <p className="pl-4 text-emerald-600 font-bold">[col]</p>
+                                    <p className="pl-8 text-muted-foreground">Nội dung cột phải...</p>
+                                    <p className="pl-4 text-emerald-600 font-bold">[/col]</p>
+                                    <p className="text-primary font-bold">[/cols]</p>
+                                </div>
+                                <p className="text-xs text-muted-foreground italic">Lưu ý: Bạn có thể dùng [cols-3] để chia 3 cột.</p>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 gap-2">
+                                <Settings className="w-4 h-4" />
+                                <span className="hidden sm:inline">Settings</span>
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[400px] shadow-none border-border">
+                            <DialogHeader>
+                                <DialogTitle>Presentation Settings</DialogTitle>
+                            </DialogHeader>
+                            <div className="grid gap-5 py-4">
+                                <div className="space-y-4">
+                                    <Label className="text-[13px] font-semibold text-foreground/90">
+                                        Presentation Theme
+                                    </Label>
+                                    <div className="grid grid-cols-4 gap-3">
+                                        {[
+                                            { id: 'white', name: 'Light', bg: '#fff' },
+                                            { id: 'black', name: 'Dark', bg: '#000' },
+                                            { id: 'sky', name: 'Sky', bg: '#add8e6' },
+                                            { id: 'night', name: 'Night', bg: '#1a1a1a' },
+                                        ].map(t => (
+                                            <button
+                                                key={t.id}
+                                                className={`group relative flex flex-col items-center gap-2 p-2 rounded-lg border-2 shadow-none transition-all ${theme === t.id ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border hover:border-muted-foreground/30 bg-background'}`}
+                                                onClick={() => setTheme(t.id)}
+                                            >
+                                                <div
+                                                    className="w-full aspect-square rounded-md border shadow-none transition-transform group-hover:scale-105"
+                                                    style={{ backgroundColor: t.bg }}
+                                                />
+                                                <span className={`text-[10px] font-medium ${theme === t.id ? 'text-primary' : 'text-muted-foreground'}`}>{t.name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className="pt-2 space-y-3">
+                                        <Label className="text-[13px] font-semibold text-foreground/90">
+                                            Custom Brand Color
+                                        </Label>
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative flex-1">
+                                                <Input
+                                                    type="text"
+                                                    value={theme.startsWith('#') ? theme : ''}
+                                                    onChange={(e) => setTheme(e.target.value)}
+                                                    placeholder="#hexcode"
+                                                    className="pl-7 h-9 text-xs shadow-none"
+                                                />
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 font-mono text-[10px]">#</span>
+                                            </div>
+                                            <div className="relative">
+                                                <input
+                                                    type="color"
+                                                    value={theme.startsWith('#') ? theme : '#ffffff'}
+                                                    onChange={(e) => setTheme(e.target.value)}
+                                                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                                                />
+                                                <div
+                                                    className="h-9 w-9 border rounded-md shadow-none"
+                                                    style={{ backgroundColor: theme.startsWith('#') ? theme : '#ffffff' }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3 pt-5 border-t">
+                                    <Label className="text-[13px] font-semibold text-foreground/90">
+                                        Presentation Info
+                                    </Label>
+                                    <div className="grid gap-2">
+                                        <div className="flex items-center justify-between text-[12px] text-muted-foreground bg-muted/20 p-2 rounded-md">
+                                            <div className="flex items-center gap-2">
+                                                <User className="w-3.5 h-3.5" />
+                                                <span>Author</span>
+                                            </div>
+                                            <span className="font-medium text-foreground">{slide?.creator?.firstName || 'Current User'}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between text-[12px] text-muted-foreground bg-muted/20 p-2 rounded-md">
+                                            <div className="flex items-center gap-2">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                <span>Updated</span>
+                                            </div>
+                                            <span className="font-medium text-foreground">{slide ? new Date(slide.updatedAt).toLocaleDateString() : 'Just now'}</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center justify-between text-[12px] text-muted-foreground bg-muted/20 p-2 rounded-md cursor-pointer hover:bg-muted/40 transition-colors"
+                                            onClick={() => setStatus(status === 'private' ? 'public' : 'private')}
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                {status === 'private' ? <Lock className="w-3.5 h-3.5" /> : <Globe className="w-3.5 h-3.5" />}
+                                                <span>Visibility</span>
+                                            </div>
+                                            <span className={`font-semibold capitalize ${status === 'public' ? 'text-green-600' : 'text-amber-600'}`}>{status}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {id !== 'new' && (
+                                    <div className="pt-4 border-t">
+                                        <Button variant="ghost" size="sm" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 h-8 gap-2" onClick={handleDelete}>
+                                            <Trash2 className="w-4 h-4" />
+                                            Delete Presentation
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+
+                    <div className="w-px h-4 bg-border mx-1" />
+
+                    <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-xl gap-2 h-10"
+                        className="h-8 gap-2 px-4 shadow-none"
                         onClick={() => setIsPreviewing(true)}
                     >
                         <Play className="w-4 h-4 fill-current" />
-                        Presentation
+                        Present
                     </Button>
                     <Button
                         size="sm"
-                        className="rounded-xl gap-2 h-10 px-4"
-                        onClick={handleSave}
+                        className="h-8 gap-2 px-5 shadow-none"
+                        onClick={() => handleSave()}
                         disabled={isSaving}
                     >
                         {isSaving ? <div className="h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
-                        Save Changes
+                        Save
                     </Button>
-                    {id !== 'new' && (
-                        <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-muted-foreground hover:text-red-500" onClick={handleDelete}>
-                            <Trash2 className="w-4 h-4" />
-                        </Button>
-                    )}
                 </div>
             </div>
 
-            {/* Main Editor Grid */}
-            <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-6 pb-6">
-                {/* Left Panel: Editor */}
-                <Card className="lg:col-span-8 rounded-xl overflow-hidden border-border/60 flex flex-col bg-background">
-                    <div className="bg-muted/30 px-5 py-3 border-b border-border/60 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Type className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-[13px] font-medium">Markdown Editor</span>
-                        </div>
-                        <div className="text-[11px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-md border border-border/40">Dùng --- để phân tách các trang slide</div>
-                    </div>
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        className="flex-1 w-full p-6 text-[15px] font-mono leading-relaxed resize-none focus:outline-none bg-background custom-scrollbar"
-                        placeholder="# Title\n\nContent here...\n\n---\n\n# Slide 2\n\n- Point 1\n- Point 2"
-                    />
-                </Card>
-
-                {/* Right Panel: Settings */}
-                <Card className="lg:col-span-4 rounded-xl overflow-hidden border-border/60 bg-muted/5 p-6 flex flex-col gap-6 shadow-none">
-                    <div>
-                        <h4 className="flex items-center gap-2 text-[14px] font-semibold mb-4 text-foreground">
-                            <Settings className="w-4 h-4" />
-                            Cấu hình slide
-                        </h4>
-
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-[12px] font-medium text-muted-foreground">Chế độ hiển thị</label>
-                                <div className="flex p-1 bg-background rounded-lg border border-border/60">
-                                    <button
-                                        onClick={() => setStatus('private')}
-                                        className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-[13px] transition-all font-medium ${status === 'private' ? 'bg-zinc-800 text-white dark:bg-zinc-100 dark:text-zinc-900' : 'text-muted-foreground hover:bg-muted'}`}
+            {/* Main Design Area */}
+            <div className="flex-1 min-h-0 flex gap-4">
+                {/* Slide Navigator Sidebar */}
+                {
+                    showNavigator && (
+                        <div className="w-56 flex-shrink-0 flex flex-col gap-3 custom-scrollbar overflow-y-auto">
+                            {slides.map((s, idx) => (
+                                <div key={idx} className="group relative">
+                                    <span className="absolute -left-3 top-2 text-[10px] font-medium text-muted-foreground/40">{idx + 1}</span>
+                                    <div
+                                        className={`w-full aspect-[16/9] bg-background border-2 rounded-xl p-3 overflow-hidden cursor-pointer transition-all ${idx === currentSlideIdx ? 'border-primary' : 'border-border hover:border-muted-foreground/30'}`}
+                                        onClick={() => {
+                                            setCurrentSlideIdx(idx);
+                                        }}
                                     >
-                                        <Lock className="w-3.5 h-3.5" />
-                                        Riêng tư
-                                    </button>
-                                    <button
-                                        onClick={() => setStatus('public')}
-                                        className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-[13px] transition-all font-medium ${status === 'public' ? 'bg-emerald-500 text-white' : 'text-muted-foreground hover:bg-muted'}`}
+                                        <div
+                                            className="scale-[0.25] origin-top-left w-[400%] h-[400%] p-8 text-[12px] prose prose-invert max-w-none pointer-events-none overflow-hidden"
+                                            style={{
+                                                backgroundColor: theme.startsWith('#') ? theme : (theme === 'white' ? '#fff' : (theme === 'black' ? '#000' : '#fff')),
+                                                color: (['black', 'night', 'moon', 'blood', 'league'].includes(theme) || (theme.startsWith('#') && (0.299 * parseInt(theme.slice(1, 3), 16) + 0.587 * parseInt(theme.slice(3, 5), 16) + 0.114 * parseInt(theme.slice(5, 7), 16)) / 255 < 0.5)) ? '#ffffff' : '#1a1a1a'
+                                            }}
+                                        >
+                                            <div
+                                                dangerouslySetInnerHTML={{
+                                                    __html: s
+                                                        .replace(/^# (.*$)/gm, '<h1 style="color: inherit; font-size: 3em; font-weight: bold; margin-bottom: 0.5em;">$1</h1>')
+                                                        .replace(/^## (.*$)/gm, '<h2 style="color: inherit; font-size: 2.5em; font-weight: bold; margin-bottom: 0.5em;">$1</h2>')
+                                                        .replace(/^### (.*$)/gm, '<h3 style="color: inherit; font-size: 2em; font-weight: bold; margin-bottom: 0.5em;">$1</h3>')
+                                                        .replace(/\\*\[cols-3\]\\*/gi, '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; color: inherit;">')
+                                                        .replace(/\\*\[cols\]\\*/gi, '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: inherit;">')
+                                                        .replace(/\\*\[col\]\\*/gi, '<div style="color: inherit;">')
+                                                        .replace(/\\*\[\/col\]\\*/gi, '</div>')
+                                                        .replace(/\\*\[\/cols\]\\*/gi, '</div>')
+                                                        .replace(/\n/g, '<br/>')
+                                                }}
+                                                className="text-current"
+                                            />
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute top-1 right-1 h-6 w-6 rounded-md opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-destructive hover:text-destructive-foreground border border-border"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeSlide(idx);
+                                        }}
                                     >
-                                        <Globe className="w-3.5 h-3.5" />
-                                        Công khai
-                                    </button>
+                                        <Trash2 className="w-3 h-3" />
+                                    </Button>
                                 </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-[12px] font-medium text-muted-foreground">Chủ đề (Theme)</label>
-                                <select
-                                    value={theme}
-                                    onChange={(e) => setTheme(e.target.value)}
-                                    className="w-full bg-background rounded-lg border-border/60 py-2.5 px-3 text-[13px] transition-all focus:ring-1 focus:ring-primary outline-none appearance-none cursor-pointer"
-                                >
-                                    <option value="black">Màu tối (Mặc định)</option>
-                                    <option value="white">Màu sáng</option>
-                                    <option value="league">League</option>
-                                    <option value="beige">Beige</option>
-                                    <option value="sky">Sky</option>
-                                    <option value="night">Night</option>
-                                    <option value="serif">Serif</option>
-                                    <option value="simple">Simple</option>
-                                    <option value="solarized">Solarized</option>
-                                    <option value="blood">Blood</option>
-                                    <option value="moon">Moon</option>
-                                </select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-[12px] font-medium text-muted-foreground">Mô tả</label>
-                                <textarea
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full bg-background rounded-lg border-border/60 py-2.5 px-3 text-[13px] focus:ring-1 focus:ring-primary outline-none min-h-[100px] resize-none transition-all placeholder:text-muted-foreground/40"
-                                    placeholder="Nội dung giới thiệu về bài thuyết trình này là gì?"
-                                />
-                            </div>
+                            ))}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full h-12 flex items-center justify-center gap-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all text-xs border-2 border-dashed border-border shadow-none shrink-0"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Add Slide
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56">
+                                    {layouts.map((l, lidx) => (
+                                        <DropdownMenuItem
+                                            key={lidx}
+                                            className="gap-2"
+                                            onClick={() => {
+                                                addSlide(lidx);
+                                                setTimeout(() => setCurrentSlideIdx(slides.length), 0);
+                                            }}
+                                        >
+                                            {l.name === "Two Columns" ? <Columns className="w-4 h-4" /> : <Layout className="w-4 h-4" />}
+                                            {l.name}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
-                    </div>
+                    )
+                }
 
-                    <div className="mt-auto pt-6 border-t border-border/50 space-y-3">
-                        <div className="flex items-center justify-between text-[12px]">
-                            <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
-                                <Clock className="w-3.5 h-3.5 opacity-70" />
-                                Cập nhật lúc
-                            </span>
-                            <span className="font-medium text-foreground">{slide ? new Date(slide.updatedAt).toLocaleString() : 'Vừa xong'}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-[12px]">
-                            <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
-                                <User className="w-3.5 h-3.5 opacity-70" />
-                                Tác giả
-                            </span>
-                            <span className="font-medium text-foreground">{slide?.creator?.firstName || 'Current User'}</span>
-                        </div>
-                    </div>
-                </Card>
+                {/* Editor Surface */}
+                <div className="flex-1 min-h-0 flex flex-col gap-4">
+                    <Card className="flex-1 rounded-xl overflow-hidden border flex flex-col bg-background shadow-none">
+                        {/* BlockNote Editor */}
+                        <SlideBlockEditor
+                            content={content}
+                            onChange={(newMarkdown) => setContent(newMarkdown)}
+                            currentSlideIdx={currentSlideIdx}
+                        />
+                    </Card>
+                </div>
             </div>
 
             {/* Presentation Overlay */}
@@ -254,4 +478,3 @@ export default function SlideEditor({ id }: SlideEditorProps) {
         </div>
     );
 }
-

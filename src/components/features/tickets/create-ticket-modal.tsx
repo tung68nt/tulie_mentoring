@@ -71,49 +71,55 @@ export function CreateTicketModal() {
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold">Yêu cầu hỗ trợ mới</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
-                    <div className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 pt-4">
+                    <div className="space-y-5">
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold text-muted-foreground/60">Tiêu đề</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground ml-0.5">Tiêu đề</Label>
                             <Input
                                 placeholder="Ví dụ: Lỗi không thể check-in"
                                 {...form.register("title")}
-                                className="rounded-lg border-border/60 focus:border-primary focus:ring-1 focus:ring-primary h-10 transition-all"
+                                className="rounded-md border-border/40 focus-visible:ring-1 focus-visible:ring-primary h-10 transition-all shadow-none"
                             />
                             {form.formState.errors.title && (
-                                <p className="text-xs text-destructive">{form.formState.errors.title.message}</p>
+                                <p className="text-[11px] font-medium text-destructive mt-1 italic ml-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                                    {form.formState.errors.title.message}
+                                </p>
                             )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold text-muted-foreground/60">Mức độ ưu tiên</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground ml-0.5">Mức độ ưu tiên</Label>
                             <Select
                                 onValueChange={(val) => form.setValue("priority", val as any)}
                                 defaultValue={form.getValues("priority")}
                             >
-                                <SelectTrigger className="rounded-lg border-border/60 h-10">
+                                <SelectTrigger className="rounded-md border-border/40 h-10 shadow-none">
                                     <SelectValue placeholder="Chọn mức độ ưu tiên" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-lg border-border/60 shadow-none">
+                                <SelectContent className="rounded-md border-border/40 shadow-none">
                                     <SelectItem value="low">Thấp</SelectItem>
                                     <SelectItem value="medium">Trung bình</SelectItem>
                                     <SelectItem value="high">Cao</SelectItem>
                                 </SelectContent>
                             </Select>
                             {form.formState.errors.priority && (
-                                <p className="text-xs text-destructive">{form.formState.errors.priority.message}</p>
+                                <p className="text-[11px] font-medium text-destructive mt-1 italic ml-0.5">
+                                    {form.formState.errors.priority.message}
+                                </p>
                             )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold text-muted-foreground/60">Chi tiết yêu cầu</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground ml-0.5">Chi tiết yêu cầu</Label>
                             <Textarea
                                 placeholder="Mô tả chi tiết vấn đề bạn đang gặp phải..."
                                 {...form.register("description")}
-                                className="rounded-lg border-border/60 focus:border-primary focus:ring-1 focus:ring-primary min-h-[120px] py-3 transition-all"
+                                className="rounded-md border-border/40 focus-visible:ring-1 focus-visible:ring-primary min-h-[140px] py-3 transition-all shadow-none resize-none"
                             />
                             {form.formState.errors.description && (
-                                <p className="text-xs text-destructive">{form.formState.errors.description.message}</p>
+                                <p className="text-[11px] font-medium text-destructive mt-1 italic ml-0.5">
+                                    {form.formState.errors.description.message}
+                                </p>
                             )}
                         </div>
                     </div>

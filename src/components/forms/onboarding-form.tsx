@@ -17,7 +17,7 @@ export function OnboardingForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [step, setStep] = useState(1);
-    const totalSteps = 4;
+    const totalSteps = 5;
 
     const {
         register,
@@ -33,6 +33,7 @@ export function OnboardingForm() {
         2: ["background", "experience", "skills"],
         3: ["strengths", "weaknesses", "currentChallenges"],
         4: ["careerGoals", "endGoals", "expectations"],
+        5: ["startupIdeas", "personalNotes"],
     };
 
     const handleNext = async () => {
@@ -62,6 +63,7 @@ export function OnboardingForm() {
         <Briefcase key="2" className="w-4 h-4" />,
         <AlertTriangle key="3" className="w-4 h-4" />,
         <Target key="4" className="w-4 h-4" />,
+        <Sparkles key="5" className="w-4 h-4" />,
     ];
 
     const stepLabels = [
@@ -69,6 +71,7 @@ export function OnboardingForm() {
         "Kinh nghiệm",
         "Điểm mạnh & Thách thức",
         "Mục tiêu",
+        "Tâm sự & Ý tưởng",
     ];
 
     return (
@@ -244,6 +247,30 @@ export function OnboardingForm() {
                                     {...register("expectations")}
                                     placeholder="Bạn mong muốn nhận được gì từ mentor và chương trình?"
                                     rows={3}
+                                    className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {/* Step 5: Startup & Personal Notes */}
+                    {step === 5 && (
+                        <>
+                            <div className="space-y-1.5">
+                                <label className="block text-[12px] font-medium text-muted-foreground">Ý tưởng muốn phát triển / Startup</label>
+                                <textarea
+                                    {...register("startupIdeas")}
+                                    placeholder="Dự án bạn đang ấp ủ hoặc muốn thực hiện trong tương lai..."
+                                    rows={3}
+                                    className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="block text-[12px] font-medium text-muted-foreground">Tâm sự / Mong muốn khác (thể hiện hết con người bạn)</label>
+                                <textarea
+                                    {...register("personalNotes")}
+                                    placeholder="Chia sẻ bất cứ điều gì khác bạn muốn mentor biết về mình..."
+                                    rows={5}
                                     className="w-full px-3 py-2.5 rounded-md border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/5 hover:border-foreground/30 resize-none"
                                 />
                             </div>

@@ -36,8 +36,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     id: user.id,
                     email: user.email,
                     role: user.role,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    firstName: user.firstName || undefined,
+                    lastName: user.lastName || undefined,
                 };
             },
         }),
@@ -79,8 +79,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                     user.id = existingUser.id;
                     user.role = existingUser.role;
-                    user.firstName = existingUser.firstName;
-                    user.lastName = existingUser.lastName;
+                    user.firstName = existingUser.firstName || undefined;
+                    user.lastName = existingUser.lastName || undefined;
                 } else {
                     const firstName = (profile as any).given_name || profile.name?.split(" ")[0] || "";
                     const lastName = (profile as any).family_name || profile.name?.split(" ").slice(1).join(" ") || "";
@@ -116,21 +116,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                     user.id = newUser.id;
                     user.role = newUser.role;
-                    user.firstName = newUser.firstName;
-                    user.lastName = newUser.lastName;
+                    user.firstName = newUser.firstName || undefined;
+                    user.lastName = newUser.lastName || undefined;
                 }
             }
             return true;
         },
         async jwt({ token, user, trigger, session }) {
             if (user) {
-                // If it's a sign-in, we use the user object we populated in signIn()
-                token.id = user.id;
-                token.role = user.role;
-                token.firstName = user.firstName;
-                token.lastName = user.lastName;
+                // For Credentials, user already has the DB info
+                // For OAuth, we need to fetch the DB user we just created/updated in signIn()
+                const dbUser = await prisma.user.findUnique({
+                    where: { email: user.email! },
+                    select: { id: true, role: true, firstName: true, lastName: true }
+                });
+
+                if (dbUser) {
+                    token.id = dbUser.id;
+                    token.role = dbUser.role;
+                    token.firstName = dbUser.firstName || undefined;
+                    token.lastName = dbUser.lastName || undefined;
+                } else {
+                    // Fallback to provider info if DB fetch fails (shouldn't happen)
+                    token.id = user.id;
+                    token.role = (user as any).role || "mentee";
+                    token.firstName = (user as any).firstName || undefined;
+                    token.lastName = (user as any).lastName || undefined;
+                }
             } else if (token.email && !token.id) {
-                // Background check if ID is missing for some reason
                 const dbUser = await prisma.user.findUnique({
                     where: { email: token.email },
                     select: { id: true, role: true, firstName: true, lastName: true }
@@ -138,8 +151,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 if (dbUser) {
                     token.id = dbUser.id;
                     token.role = dbUser.role;
-                    token.firstName = dbUser.firstName;
-                    token.lastName = dbUser.lastName;
+                    token.firstName = dbUser.firstName || undefined;
+                    token.lastName = dbUser.lastName || undefined;
                 }
             }
 

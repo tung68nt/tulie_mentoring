@@ -29,20 +29,32 @@ export async function upsertPortfolio(data: {
     personalityMbti?: string;
     personalityDisc?: string;
     personalityHolland?: string;
-    competencies?: string;
     shortTermGoals?: string;
     longTermGoals?: string;
-    finalGoalsAchieved?: number;
-    finalSkillsGained?: string;
-    finalMentorFeedback?: string;
-    finalSelfAssessment?: string;
-    finalRecommendations?: string;
+    initialStrengths?: string;
+    initialWeaknesses?: string;
+    initialChallenges?: string;
+    initialStartupIdeas?: string;
+    initialPersonalNotes?: string;
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    const userId = session.user.id!;
     const existing = await prisma.portfolio.findFirst({
-        where: { menteeId: session.user.id! },
+        where: { menteeId: userId },
+    });
+
+    // Update MenteeProfile as well to keep current state in sync
+    await prisma.menteeProfile.update({
+        where: { userId: userId },
+        data: {
+            strengths: data.initialStrengths,
+            weaknesses: data.initialWeaknesses,
+            currentChallenges: data.initialChallenges,
+            startupIdeas: data.initialStartupIdeas,
+            personalNotes: data.initialPersonalNotes,
+        }
     });
 
     if (existing) {
@@ -50,7 +62,7 @@ export async function upsertPortfolio(data: {
             where: { id: existing.id },
             data: {
                 ...data,
-                initialCompletedAt: data.personalityMbti && !existing.initialCompletedAt
+                initialCompletedAt: (data.personalityMbti || data.initialChallenges) && !existing.initialCompletedAt
                     ? new Date()
                     : existing.initialCompletedAt,
             },
@@ -61,9 +73,9 @@ export async function upsertPortfolio(data: {
 
     const portfolio = await prisma.portfolio.create({
         data: {
-            menteeId: session.user.id!,
+            menteeId: userId,
             ...data,
-            initialCompletedAt: data.personalityMbti ? new Date() : null,
+            initialCompletedAt: (data.personalityMbti || data.initialChallenges) ? new Date() : null,
         },
     });
 
@@ -77,15 +89,33 @@ export async function completePortfolio(data: {
     finalMentorFeedback: string;
     finalSelfAssessment: string;
     finalRecommendations: string;
+    finalStrengths?: string;
+    finalWeaknesses?: string;
+    finalChallenges?: string;
+    finalStartupIdeas?: string;
+    finalPersonalNotes?: string;
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    const userId = session.user.id!;
     const existing = await prisma.portfolio.findFirst({
-        where: { menteeId: session.user.id! },
+        where: { menteeId: userId },
     });
 
     if (!existing) throw new Error("Portfolio not found");
+
+    // Update MenteeProfile to latest state
+    await prisma.menteeProfile.update({
+        where: { userId: userId },
+        data: {
+            strengths: data.finalStrengths,
+            weaknesses: data.finalWeaknesses,
+            currentChallenges: data.finalChallenges,
+            startupIdeas: data.finalStartupIdeas,
+            personalNotes: data.finalPersonalNotes,
+        }
+    });
 
     const portfolio = await prisma.portfolio.update({
         where: { id: existing.id },

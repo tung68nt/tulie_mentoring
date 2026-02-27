@@ -58,7 +58,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
                         <div className={cn("p-2 rounded-lg", item.bg)}>
                             <item.icon className={cn("w-5 h-5", item.color)} />
                         </div>
-                        <Badge variant="outline" className="text-[10px] font-semibold h-5 px-2 rounded-md border-border/60">Thống kê</Badge>
+
                     </div>
                     <div className="space-y-1">
                         <h4 className="text-[13px] font-medium text-muted-foreground">{item.title}</h4>

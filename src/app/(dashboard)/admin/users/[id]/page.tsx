@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Progress } from "@/components/ui/progress";
 import {
     ChevronLeft, Mail, Phone, Building2, Calendar,
-    Users, Target, Star, MessageSquare, Briefcase
+    Users, Target, Star, MessageSquare, Briefcase, GraduationCap
 } from "lucide-react";
 import Link from "next/link";
 import { formatDate, getRoleLabel, getStatusLabel, getStatusColor } from "@/lib/utils";
@@ -209,7 +209,6 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                 </Card>
             </div>
 
-            {/* Role-specific Info */}
             {user.mentorProfile && (
                 <Card>
                     <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -236,6 +235,54 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                 </div>
                             </div>
                         )}
+                    </div>
+                </Card>
+            )}
+
+            {user.menteeProfile && (
+                <Card>
+                    <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                        <GraduationCap className="w-4 h-4 text-muted-foreground" />
+                        Hồ sơ năng lực Mentee
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                        <div className="space-y-4">
+                            <div>
+                                <span className="text-muted-foreground block mb-1">Ngành học & MSSV:</span>
+                                <span className="text-foreground font-medium">{user.menteeProfile.major} {user.menteeProfile.studentId ? `(${user.menteeProfile.studentId})` : ""} - Năm {user.menteeProfile.year}</span>
+                            </div>
+                            <div>
+                                <span className="text-muted-foreground block mb-1">Mục tiêu nghề nghiệp:</span>
+                                <p className="text-foreground leading-relaxed italic">"{user.menteeProfile.careerGoals}"</p>
+                            </div>
+                            <div>
+                                <span className="text-muted-foreground block mb-1">Điểm mạnh:</span>
+                                <p className="text-foreground leading-relaxed">{user.menteeProfile.strengths || "Chưa cập nhật"}</p>
+                            </div>
+                            <div>
+                                <span className="text-muted-foreground block mb-1">Khó khăn hiện tại:</span>
+                                <p className="text-foreground leading-relaxed">{user.menteeProfile.currentChallenges || "Chưa cập nhật"}</p>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <span className="text-muted-foreground block mb-1">Điểm yếu / Hạn chế:</span>
+                                <p className="text-foreground leading-relaxed">{user.menteeProfile.weaknesses || "Chưa cập nhật"}</p>
+                            </div>
+                            <div>
+                                <span className="text-muted-foreground block mb-1">Ý tưởng / Startup:</span>
+                                <p className="text-foreground leading-relaxed">{user.menteeProfile.startupIdeas || "Chưa cập nhật"}</p>
+                            </div>
+                            <div>
+                                <span className="text-muted-foreground block mb-1">Tâm sự & Mong muốn:</span>
+                                <p className="text-foreground leading-relaxed whitespace-pre-wrap">{user.menteeProfile.personalNotes || "Chưa cập nhật"}</p>
+                            </div>
+                        </div>
+                        <div className="md:col-span-2 pt-4 border-t border-border/50">
+                            <span className="text-muted-foreground block mb-1">Giới thiệu & Kinh nghiệm:</span>
+                            <p className="text-foreground leading-relaxed">{user.menteeProfile.background}</p>
+                            <p className="text-foreground leading-relaxed mt-2">{user.menteeProfile.experience}</p>
+                        </div>
                     </div>
                 </Card>
             )}

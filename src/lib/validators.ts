@@ -113,6 +113,8 @@ export const menteeOnboardingSchema = z.object({
     careerGoals: z.string().min(1, "Vui lòng nhập mục tiêu nghề nghiệp"),
     endGoals: z.string().optional(),
     expectations: z.string().optional(),
+    startupIdeas: z.string().optional(),
+    personalNotes: z.string().optional(),
 });
 
 // ─── Availability ────────────────────────────────────────────────

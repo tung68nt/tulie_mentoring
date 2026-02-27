@@ -151,23 +151,7 @@ export default function NewWikiPage() {
                             </Select>
                         </div>
 
-                        <div className="pt-4 space-y-3">
-                            <h4 className="text-[11px] font-bold text-muted-foreground/40 no-uppercase px-1">Mẹo trình bày</h4>
-                            <ul className="text-[11px] text-muted-foreground/60 space-y-2 px-1 leading-relaxed">
-                                <li className="flex gap-2">
-                                    <div className="w-1 h-1 rounded-full bg-border mt-1.5 shrink-0" />
-                                    Sử dụng các tiêu đề (H1, H2) để phân đoạn nội dung.
-                                </li>
-                                <li className="flex gap-2">
-                                    <div className="w-1 h-1 rounded-full bg-border mt-1.5 shrink-0" />
-                                    Bôi đậm các từ khóa quan trọng để dễ theo dõi.
-                                </li>
-                                <li className="flex gap-2">
-                                    <div className="w-1 h-1 rounded-full bg-border mt-1.5 shrink-0" />
-                                    Chèn ảnh minh họa nếu cần thiết.
-                                </li>
-                            </ul>
-                        </div>
+
                     </Card>
                 </aside>
             </div>

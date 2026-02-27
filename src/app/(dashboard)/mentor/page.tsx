@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SystemClock, Countdown } from "@/components/ui/fomo-timer";
 
 import { redirect } from "next/navigation";
 
@@ -54,7 +55,7 @@ export default async function MentorDashboard() {
         ];
 
         return (
-            <div className="space-y-8 pb-10 animate-fade-in">
+            <div className="space-y-8 pb-32 animate-fade-in">
                 {isAdmin && (
                     <div className="flex items-center gap-2 px-4 py-2 bg-muted border border-border rounded-xl text-xs text-muted-foreground/60 no-uppercase">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -62,8 +63,20 @@ export default async function MentorDashboard() {
                     </div>
                 )}
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Bảng điều khiển Mentor</h1>
+                    <SystemClock />
+                    <h1 className="text-2xl font-semibold text-foreground mt-4">Bảng điều khiển Mentor</h1>
                     <p className="text-sm text-muted-foreground mt-1">{isAdmin ? "Xem trước giao diện Mentor (tổng hợp dữ liệu toàn hệ thống)" : `Chào buổi sáng, ${session?.user?.name || "Mentor"}.`}</p>
+                </div>
+
+                {/* FOMO Countdown for Mentor */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {serializedMentorships?.[0]?.programCycle?.endDate && (
+                        <Countdown
+                            targetDate={serializedMentorships[0].programCycle.endDate}
+                            label={`Thời gian còn lại của đợt: ${serializedMentorships[0].programCycle.name}`}
+                            className="bg-primary/5 border-primary/10 shadow-sm"
+                        />
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

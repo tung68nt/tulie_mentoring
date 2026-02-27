@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatRelative, getStatusLabel, getStatusColor } from "@/lib/utils";
+import { SystemClock, Countdown } from "@/components/ui/fomo-timer";
 import Link from "next/link";
 
 import { redirect } from "next/navigation";
@@ -119,11 +120,12 @@ export default async function AdminDashboard() {
     }
 
     return (
-        <div className="space-y-10 pb-20 animate-fade-in max-w-7xl mx-auto">
+        <div className="space-y-10 pb-32 animate-fade-in max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground no-uppercase">Dashboard</h1>
+                    <SystemClock />
+                    <h1 className="text-2xl font-semibold text-foreground no-uppercase mt-4">Dashboard Admin</h1>
                     <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Tổng quan hoạt động của {session?.user?.name || "Admin"}</p>
                 </div>
                 <div className="flex gap-4">
@@ -134,6 +136,17 @@ export default async function AdminDashboard() {
                         <Link href="/admin/mentorships/new">Tạo Mentorship</Link>
                     </Button>
                 </div>
+            </div>
+
+            {/* FOMO Countdown for Admin */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {serializedRecentMentorships?.[0]?.programCycle?.endDate && (
+                    <Countdown
+                        targetDate={serializedRecentMentorships[0].programCycle.endDate}
+                        label={`Thời gian còn lại của đợt: ${serializedRecentMentorships[0].programCycle.name}`}
+                        className="bg-primary/5 border-primary/10 shadow-sm"
+                    />
+                )}
             </div>
 
             {/* Stats Row - Single container with shared borders */}

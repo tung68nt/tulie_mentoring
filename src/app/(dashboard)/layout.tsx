@@ -58,8 +58,10 @@ export default async function DashboardLayout({
                     </div>
                 </main>
 
-                <footer className="py-8 text-center text-[13px] text-muted-foreground/60 border-t border-border no-uppercase">
-                    © {new Date().getFullYear()} Tulie Mentoring. All rights reserved.
+                <footer className="border-t border-border bg-background/50 backdrop-blur-sm">
+                    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-[13px] text-muted-foreground/60 no-uppercase">
+                        © {new Date().getFullYear()} Tulie Mentoring. All rights reserved.
+                    </div>
                 </footer>
             </div>
         </div>

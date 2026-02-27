@@ -114,7 +114,7 @@ export default async function AdminReportsPage() {
             <div className="space-y-8 pb-10 animate-fade-in">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-semibold text-foreground">Báo cáo & Thống kê</h1>
+                        <h1 className="text-2xl font-semibold text-foreground">Báo cáo</h1>
                         <p className="text-sm text-muted-foreground mt-1">Phân tích hiệu quả hoạt động chương trình Mentoring.</p>
                     </div>
                     <div className="flex items-center gap-2 text-xs font-bold text-foreground bg-muted border border-border px-3 py-1.5 rounded-full shadow-none">

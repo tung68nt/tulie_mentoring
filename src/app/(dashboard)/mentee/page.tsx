@@ -16,6 +16,7 @@ import { getMenteeStats } from "@/lib/actions/report";
 import { getActivityLogs } from "@/lib/actions/activity";
 import { StatsCards } from "@/components/features/reports/stats-cards";
 import { ActivityFeed } from "@/components/features/reports/activity-feed";
+import { SystemClock, Countdown } from "@/components/ui/fomo-timer";
 
 export default async function MenteeDashboard() {
     const session = await auth();
@@ -78,7 +79,7 @@ export default async function MenteeDashboard() {
         const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings || []));
 
         return (
-            <div className="space-y-10 pb-20 animate-fade-in">
+            <div className="space-y-10 pb-32 animate-fade-in">
                 {isAdmin && (
                     <div className="flex items-center gap-2 px-4 py-2 bg-muted border border-border rounded-xl text-xs text-muted-foreground/60 no-uppercase">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -88,12 +89,39 @@ export default async function MenteeDashboard() {
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-semibold text-foreground no-uppercase">Bảng điều khiển Mentee</h1>
+                        <SystemClock />
+                        <h1 className="text-2xl font-semibold text-foreground no-uppercase mt-4">Bảng điều khiển Mentee</h1>
                         <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Chào mừng bạn trở lại, {session?.user?.name || "Mentee"}.</p>
                     </div>
                     <Button variant="outline" className="rounded-xl no-uppercase h-11 px-6 font-medium" asChild>
                         <Link href="/reports">Xem báo cáo chi tiết</Link>
                     </Button>
+                </div>
+
+                {/* FOMO Countdowns */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {serializedMentorship?.programCycle?.endDate && (
+                        <Countdown
+                            targetDate={serializedMentorship.programCycle.endDate}
+                            label="Thời gian còn lại của chương trình"
+                            className="bg-primary/5 border-primary/10 shadow-sm"
+                        />
+                    )}
+
+                    {serializedGoals.find((g: any) => g.dueDate) && (
+                        <Countdown
+                            targetDate={serializedGoals.find((g: any) => g.dueDate).dueDate}
+                            label={`Hạn chót mục tiêu: ${serializedGoals.find((g: any) => g.dueDate).title}`}
+                            variant="warning"
+                            className="shadow-sm"
+                        />
+                    )}
+
+                    {!isAdmin && !serializedMentorship && (
+                        <div className="p-4 rounded-xl bg-muted/20 border border-dashed border-border flex items-center justify-center text-xs text-muted-foreground italic">
+                            Chưa có chương trình hoạt động
+                        </div>
+                    )}
                 </div>
 
                 {/* New Stats Cards Component */}

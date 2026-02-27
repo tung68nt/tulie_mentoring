@@ -60,9 +60,9 @@ export function Header({ userName, userRole, avatar, onMenuClick, notifications 
                     />
 
                     {/* Help */}
-                    <button className="hidden sm:flex p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                    <Link href="/wiki" className="hidden sm:flex p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Trung tâm trợ giúp">
                         <HelpCircle className="w-[18px] h-[18px]" />
-                    </button>
+                    </Link>
 
                     <div className="h-6 w-px bg-border mx-2" />
 

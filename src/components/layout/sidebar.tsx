@@ -59,23 +59,20 @@ export function Sidebar({ role }: SidebarProps) {
                 ],
             },
             {
-                title: "Quản lý",
                 items: [
                     { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
                     { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
                     { id: "programs", label: "Chương trình", icon: Target, href: "/admin/mentorships/new" },
-                    { id: "reports", label: "Báo cáo & Thống kê", icon: BarChart, href: "/admin/reports" },
+                    { id: "reports", label: "Báo cáo", icon: BarChart, href: "/admin/reports" },
                 ],
             },
             {
-                title: "Xem trước",
                 items: [
                     { id: "mentor-view", label: "Giao diện Mentor", icon: Eye, href: "/mentor" },
                     { id: "mentee-view", label: "Giao diện Mentee", icon: Eye, href: "/mentee" },
                 ],
             },
             {
-                title: "Hệ thống",
                 items: [
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
@@ -92,15 +89,12 @@ export function Sidebar({ role }: SidebarProps) {
                 ],
             },
             {
-                title: "Quản lý",
                 items: [
                     { id: "calendar", label: "Lịch gặp & QR", icon: Calendar, href: "/calendar" },
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
-                    { id: "reports", label: "Báo cáo & Tiến bộ", icon: BarChart, href: "/reports" },
                 ],
             },
             {
-                title: "Nội dung",
                 items: [
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                     { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
@@ -116,16 +110,13 @@ export function Sidebar({ role }: SidebarProps) {
                 ],
             },
             {
-                title: "Học tập",
                 items: [
                     { id: "checkin", label: "Check-in / Check-out", icon: QrCode, href: "/checkin" },
                     { id: "reflections", label: "Thu hoạch & Nhật ký", icon: PenLine, href: "/reflections" },
                     { id: "tasks", label: "Công việc", icon: CheckSquare, href: "/tasks" },
-                    { id: "reports", label: "Báo cáo", icon: FileText, href: "/reports" },
                 ],
             },
             {
-                title: "Hỗ trợ",
                 items: [
                     { id: "goals", label: "Mục tiêu", icon: Target, href: "/goals" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
@@ -135,7 +126,6 @@ export function Sidebar({ role }: SidebarProps) {
                 ],
             },
             {
-                title: "Cá nhân",
                 items: [
                     { id: "portfolio", label: "Hồ sơ năng lực", icon: FolderOpen, href: "/portfolio" },
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
@@ -150,7 +140,6 @@ export function Sidebar({ role }: SidebarProps) {
                 ],
             },
             {
-                title: "Hệ thống",
                 items: [
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
@@ -206,11 +195,7 @@ export function Sidebar({ role }: SidebarProps) {
                 <nav className="flex-1 py-4 px-4 overflow-y-auto space-y-4">
                     {sections.map((section, sIdx) => (
                         <div key={sIdx} className="space-y-1">
-                            {section.title && !isCollapsed && (
-                                <div className="px-3 mb-1">
-                                    <span className="text-[11px] font-semibold text-muted-foreground/60 no-uppercase tracking-normal">{section.title}</span>
-                                </div>
-                            )}
+
                             <div className="space-y-1">
                                 {section.items.map((item) => {
                                     const active = isActive(item.href);

@@ -339,7 +339,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                     </Card>
 
                     <Card className="bg-primary text-primary-foreground border-none">
-                        <h4 className="text-sm font-semibold mb-4 opacity-70">Thống kê nhanh</h4>
+                        <h4 className="text-sm font-semibold mb-4 opacity-70">Hiệu suất</h4>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs opacity-70">Số buổi họp</span>

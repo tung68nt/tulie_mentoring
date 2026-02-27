@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import WhiteboardEditor from "@/components/features/whiteboard/WhiteboardEditor";
+import WhiteboardEditorClient from "@/components/features/whiteboard/WhiteboardEditorClient";
 
 export default async function WhiteboardPage({ params }: { params: { id: string } }) {
     const session = await auth();
@@ -12,7 +12,7 @@ export default async function WhiteboardPage({ params }: { params: { id: string 
 
     return (
         <div className="fixed inset-0 z-50 bg-background overflow-hidden">
-            <WhiteboardEditor id={id} />
+            <WhiteboardEditorClient id={id} />
         </div>
     );
 }
