@@ -2,11 +2,17 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { QRScannerClient } from "@/components/features/meetings/qr-scanner-client";
 
-export default async function CheckinPage() {
+interface PageProps {
+    searchParams: Promise<{ m?: string; t?: string }>;
+}
+
+export default async function CheckinPage({ searchParams }: PageProps) {
     const session = await auth();
     if (!session?.user) {
         redirect("/login");
     }
+
+    const { m, t } = await searchParams;
 
     return (
         <div className="space-y-10 pb-20 animate-fade-in">
@@ -18,7 +24,7 @@ export default async function CheckinPage() {
             </div>
 
             <div className="mt-8">
-                <QRScannerClient />
+                <QRScannerClient initialMeetingId={m} initialToken={t} />
             </div>
 
             <div className="max-w-md mx-auto p-4 bg-muted/50 rounded-xl border border-border/50">

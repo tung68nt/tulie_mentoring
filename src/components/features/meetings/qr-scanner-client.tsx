@@ -7,11 +7,43 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, AlertCircle, Loader2, Camera } from "lucide-react";
 import { checkIn } from "@/lib/actions/meeting";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 
-export function QRScannerClient() {
+interface QRScannerClientProps {
+    initialMeetingId?: string;
+    initialToken?: string;
+}
+
+export function QRScannerClient({ initialMeetingId, initialToken }: QRScannerClientProps) {
     const [status, setStatus] = useState<"idle" | "scanning" | "loading" | "success" | "error">("idle");
     const [errorMsg, setErrorMsg] = useState<string>("");
     const router = useRouter();
+    const hasAutoCheckedIn = useRef(false);
+
+    useEffect(() => {
+        if (initialMeetingId && initialToken && !hasAutoCheckedIn.current) {
+            hasAutoCheckedIn.current = true;
+            handleCheckIn(initialMeetingId, initialToken);
+        }
+    }, [initialMeetingId, initialToken]);
+
+    const handleCheckIn = async (meetingId: string, token: string) => {
+        setStatus("loading");
+        try {
+            await checkIn(meetingId, token);
+            setStatus("success");
+
+            // Redirect after success
+            setTimeout(() => {
+                router.push("/calendar");
+                router.refresh();
+            }, 2000);
+        } catch (err: any) {
+            console.error("Check-in error:", err);
+            setErrorMsg(err.message || "Mã QR không hợp lệ hoặc đã hết hạn");
+            setStatus("error");
+        }
+    };
 
     const handleScan = async (result: any) => {
         if (!result || !result[0]?.rawValue || status === "loading") return;
@@ -20,24 +52,28 @@ export function QRScannerClient() {
         console.log("Scanned QR:", rawValue);
 
         try {
-            const data = JSON.parse(rawValue);
-            if (!data.m || !data.t) {
+            // Support both URL format and JSON format (legacy)
+            let meetingId, token;
+
+            if (rawValue.includes("/checkin?")) {
+                const url = new URL(rawValue);
+                meetingId = url.searchParams.get("m");
+                token = url.searchParams.get("t");
+            } else {
+                const data = JSON.parse(rawValue);
+                meetingId = data.m;
+                token = data.t;
+            }
+
+            if (!meetingId || !token) {
                 throw new Error("Mã QR không đúng định dạng hệ thống");
             }
 
-            setStatus("loading");
-            await checkIn(data.m, data.t);
-            setStatus("success");
-
-            // Redirect after success
-            setTimeout(() => {
-                router.push("/calendar");
-                router.refresh();
-            }, 2000);
+            await handleCheckIn(meetingId, token);
 
         } catch (err: any) {
-            console.error("Check-in error:", err);
-            setErrorMsg(err.message || "Mã QR không hợp lệ hoặc đã hết hạn");
+            console.error("Parsing error:", err);
+            setErrorMsg(err.message || "Mã QR không hợp lệ");
             setStatus("error");
         }
     };

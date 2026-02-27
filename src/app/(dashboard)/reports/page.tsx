@@ -16,7 +16,8 @@ export default async function ReportsPage() {
     }
 
     const userId = session.user.id!;
-    const isAdmin = (session.user as any).role === "admin";
+    const role = (session.user as any).role;
+    const isAdmin = role === "admin" || role === "viewer";
 
     try {
         const [stats, logs, goals, tasks] = await Promise.all([
@@ -46,7 +47,9 @@ export default async function ReportsPage() {
                 <div className="flex flex-col gap-1">
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Báo cáo</h1>
                     <p className="text-sm text-muted-foreground mt-1 max-w-lg">
-                        Theo dõi tiến độ học tập và rèn luyện của bạn thông qua các số liệu thống kê chi tiết theo ngày, tuần và tháng.
+                        {role === "mentee"
+                            ? "Theo dõi tiến độ học tập và rèn luyện của bạn thông qua các số liệu thống kê chi tiết."
+                            : "Theo dõi tiến độ học tập và rèn luyện của toàn bộ sinh viên thông qua các số liệu thống kê."}
                     </p>
                 </div>
 

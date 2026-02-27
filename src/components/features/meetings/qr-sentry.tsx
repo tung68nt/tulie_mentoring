@@ -5,29 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Camera, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { checkIn } from "@/lib/actions/meeting";
+import { useRouter } from "next/navigation";
 
 interface QRSentryProps {
     meetingId: string;
 }
 
 export function QRSentry({ meetingId }: QRSentryProps) {
+    const router = useRouter();
     const [status, setStatus] = useState<"idle" | "scanning" | "loading" | "success" | "error">("idle");
     const [errorMsg, setErrorMsg] = useState<string>("");
 
-    const handleManualCheckIn = async () => {
-        // This is for demo. In real app, we use a QR scanner hook.
-        // Here we'll prompt for token manually to demonstrate the logic.
-        const token = prompt("Nhập mã token điểm danh (demo):");
-        if (!token) return;
-
-        setStatus("loading");
-        try {
-            await checkIn(meetingId, token);
-            setStatus("success");
-        } catch (err: any) {
-            setErrorMsg(err.message || "Điểm danh thất bại");
-            setStatus("error");
-        }
+    const handleManualCheckIn = () => {
+        // Redirect to the scanner page
+        router.push("/checkin");
     };
 
     return (

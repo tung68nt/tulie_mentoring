@@ -30,7 +30,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
-    role: "admin" | "mentor" | "mentee";
+    role: "admin" | "mentor" | "mentee" | "viewer";
 }
 
 interface MenuItem {
@@ -139,6 +139,21 @@ export function Sidebar({ role }: SidebarProps) {
                 items: [
                     { id: "portfolio", label: "Hồ sơ năng lực", icon: FolderOpen, href: "/portfolio" },
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
+                ],
+            },
+        ],
+        viewer: [
+            {
+                items: [
+                    { id: "reports", label: "Báo cáo & Tiến bộ", icon: BarChart, href: "/reports" },
+                    { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
+                ],
+            },
+            {
+                title: "Hệ thống",
+                items: [
+                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
+                    { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                 ],
             },
         ],

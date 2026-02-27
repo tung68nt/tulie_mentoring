@@ -16,12 +16,12 @@ export default async function MenteesPage() {
     const userId = session.user.id;
     const role = (session.user as any).role;
 
-    if (role !== "mentor" && role !== "admin") {
+    if (role !== "mentor" && role !== "admin" && role !== "viewer") {
         redirect("/");
     }
 
     try {
-        const mentorFilter = role === "admin" ? { status: "active" } : { mentorId: userId, status: "active" };
+        const mentorFilter = (role === "admin" || role === "viewer") ? { status: "active" } : { mentorId: userId, status: "active" };
         const mentorships = await prisma.mentorship.findMany({
             where: mentorFilter,
             include: {
@@ -49,8 +49,14 @@ export default async function MenteesPage() {
         return (
             <div className="space-y-8 pb-10 animate-fade-in">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Mentees của tôi</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Theo dõi tiến bộ và quản lý mentees trong chương trình</p>
+                    <h1 className="text-2xl font-semibold text-foreground">
+                        {role === "mentor" ? "Mentees của tôi" : "Danh sách Mentee"}
+                    </h1>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        {role === "mentor"
+                            ? "Theo dõi tiến bộ và quản lý mentees trong chương trình"
+                            : "Theo dõi toàn bộ sinh viên đang tham gia chương trình mentoring"}
+                    </p>
                 </div>
 
                 {serialized.length === 0 ? (

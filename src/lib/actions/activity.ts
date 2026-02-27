@@ -27,16 +27,33 @@ export async function logActivity(
     }
 }
 
-export async function getActivityLogs(limit = 10) {
+export async function getActivityLogs(limit = 10, targetUserId?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    const role = (session.user as any).role;
+    const isAdmin = role === "admin" || role === "viewer";
+
+    if (targetUserId && !isAdmin && targetUserId !== session.user.id) {
+        throw new Error("Unauthorized");
+    }
+
+    const where = (isAdmin && !targetUserId)
+        ? {}
+        : { userId: targetUserId || session.user.id! };
+
     const logs = await prisma.activityLog.findMany({
-        where: {
-            userId: session.user.id!,
-        },
+        where,
         orderBy: {
             createdAt: "desc",
+        },
+        include: {
+            user: {
+                select: {
+                    firstName: true,
+                    lastName: true,
+                }
+            }
         },
         take: limit,
     });

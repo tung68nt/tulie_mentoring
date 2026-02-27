@@ -53,8 +53,19 @@ export default auth((req) => {
         if (nextUrl.pathname.startsWith("/mentor") && !nextUrl.pathname.startsWith("/mentees") && role !== "mentor" && role !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
+
         if ((nextUrl.pathname === "/mentee" || nextUrl.pathname.startsWith("/mentee/")) && role !== "mentee") {
             return NextResponse.redirect(new URL("/", nextUrl));
+        }
+
+        // Viewer access control
+        const viewerAllowedRoutes = ["/reports", "/mentees", "/calendar", "/wiki", "/whiteboard", "/slides", "/tickets", "/portfolio"];
+        const isViewerTargetRoute = viewerAllowedRoutes.some(route => nextUrl.pathname === route || nextUrl.pathname.startsWith(route + "/"));
+
+        if (role === "viewer") {
+            if (!isViewerTargetRoute && nextUrl.pathname !== "/" && nextUrl.pathname !== "/profile") {
+                return NextResponse.redirect(new URL("/reports", nextUrl));
+            }
         }
     }
 

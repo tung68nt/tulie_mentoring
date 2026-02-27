@@ -16,15 +16,19 @@ export function QRManager({ meetingId, qrToken, expiresAt }: QRManagerProps) {
     const [qrDataUrl, setQrDataUrl] = useState<string>("");
     const [timeLeft, setTimeLeft] = useState<number>(0);
 
-    useEffect(() => {
-        if (qrToken) {
-            // Data in QR is the meeting ID and the token
-            const qrValue = JSON.stringify({ m: meetingId, t: qrToken });
-            QRCode.toDataURL(qrValue, { width: 300, margin: 2, color: { dark: "#111827" } })
-                .then(setQrDataUrl)
-                .catch(console.error);
-        }
-    }, [qrToken, meetingId]);
+    if (qrToken) {
+        // Encode as URL for native camera scanning
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        const qrValue = `${origin}/checkin?m=${meetingId}&t=${qrToken}`;
+
+        QRCode.toDataURL(qrValue, {
+            width: 300,
+            margin: 2,
+            color: { dark: "#111827" }
+        })
+            .then(setQrDataUrl)
+            .catch(console.error);
+    }
 
     useEffect(() => {
         if (!expiresAt) return;

@@ -127,41 +127,65 @@ export default function WhiteboardEditor({ id }: WhiteboardEditorProps) {
                 setWhiteboard(data);
                 setIsReadOnly(data.status === 'private' && data.creatorId !== user?.id);
 
-                // Parse initial data for Excalidraw
-                const rawElements = data.artboards?.[0]?.elements;
+                const artboard = data.artboards?.[0];
+                const rawElements = artboard?.elements;
+                const rawAppState = artboard?.appState;
+
                 console.log('=== PARSING INITIAL DATA ===');
 
+                let elements: any[] = [];
+                let appState: any = {};
+
+                // 1. Parse Elements
                 if (rawElements) {
                     try {
-                        const parsed = typeof rawElements === 'string'
+                        const parsedElements = typeof rawElements === 'string'
                             ? JSON.parse(rawElements)
                             : rawElements;
 
-                        let elements: any[] = [];
-                        let appState = {};
-
-                        if (Array.isArray(parsed)) {
-                            elements = parsed; // Legacy
-                        } else if (parsed && parsed.elements) {
-                            elements = parsed.elements;
-                            appState = parsed.appState || {};
-                        }
-
-                        if (elements.length > 0) {
-                            setParsedInitialData({ elements, appState: { ...appState, gridModeEnabled: true, theme: 'light', viewBackgroundColor: '#ffffff' } });
-                            currentElementsRef.current = elements;
-                        } else {
-                            setParsedInitialData({ elements: [], appState: { gridModeEnabled: true, theme: 'light', viewBackgroundColor: '#ffffff' } });
-                            setShowWelcome(true);
+                        if (Array.isArray(parsedElements)) {
+                            elements = parsedElements;
+                        } else if (parsedElements && parsedElements.elements) {
+                            // Recover from format { elements: [], appState: {} } inside elements column
+                            elements = parsedElements.elements;
+                            appState = { ...appState, ...(parsedElements.appState || {}) };
                         }
                     } catch (e) {
                         console.error('Failed to parse elements:', e);
-                        setShowWelcome(true);
                     }
-                } else {
-                    setParsedInitialData({ elements: [], appState: { gridModeEnabled: true } });
-                    setShowWelcome(true);
                 }
+
+                // 2. Parse AppState from its own column (New format)
+                if (rawAppState) {
+                    try {
+                        const parsedAppState = typeof rawAppState === 'string'
+                            ? JSON.parse(rawAppState)
+                            : rawAppState;
+                        appState = { ...appState, ...parsedAppState };
+                    } catch (e) {
+                        console.error('Failed to parse appState:', e);
+                    }
+                }
+
+                // Default fallbacks if empty
+                if (elements.length === 0) {
+                    setShowWelcome(true);
+                    elements = [];
+                }
+
+                // Ensure some sensible defaults for appState
+                appState = {
+                    ...appState,
+                    theme: 'light',
+                    viewBackgroundColor: appState.viewBackgroundColor || '#ffffff',
+                    gridModeEnabled: appState.gridModeEnabled !== undefined ? appState.gridModeEnabled : true,
+                };
+
+                console.log('Final parsed data:', elements.length, 'elements');
+                setParsedInitialData({ elements, appState });
+                currentElementsRef.current = elements;
+                setGridEnabled(!!appState.gridModeEnabled);
+
             } catch (error: any) {
                 console.error('Failed to load whiteboard:', error);
                 if (error.status === 403 || error.message?.includes('Access denied') || error.message?.includes('private')) {
@@ -214,77 +238,13 @@ export default function WhiteboardEditor({ id }: WhiteboardEditorProps) {
         };
     }, [id, excalidrawAPI]);
 
-    // Handle initial data for Excalidraw
+    // This redundant useEffect is removed as data is now handled via Initial Load
+    /*
     useEffect(() => {
         if (!excalidrawAPI || !whiteboard?.artboards?.[0]) return;
-
-        const rawElements = whiteboard.artboards[0].elements;
-        console.log('=== DEBUG: Data Loading ===');
-        console.log('1. Raw elements from API:', rawElements);
-        console.log('2. Type of rawElements:', typeof rawElements);
-
-        if (!rawElements) {
-            console.log('3. No elements found, skipping load');
-            return;
-        }
-
-        console.log('Loading data into Excalidraw', whiteboard.title);
-
-        try {
-            const elementsData = typeof rawElements === 'string'
-                ? JSON.parse(rawElements)
-                : rawElements;
-
-            console.log('4. Parsed elementsData:', elementsData);
-            console.log('5. elementsData type:', typeof elementsData);
-            console.log('6. Is array?:', Array.isArray(elementsData));
-
-            let finalElements: any[] = [];
-            let finalAppState: any = {};
-
-            if (Array.isArray(elementsData)) {
-                // Recovery: Handle data saved during bug period (just array of elements)
-                console.warn('7. Recovering legacy array data format');
-                finalElements = elementsData;
-            } else if (elementsData && elementsData.elements) {
-                // Correct format: { elements: [...], appState: {...} }
-                console.log('7. Using correct format with elements key');
-                finalElements = elementsData.elements;
-                finalAppState = elementsData.appState || {};
-            } else if (elementsData && typeof elementsData === 'object') {
-                // Maybe double-stringified?
-                console.warn('7. Unknown format, trying to extract elements:', Object.keys(elementsData));
-            }
-
-            console.log('8. Final elements count:', finalElements?.length);
-            console.log('9. Sample element:', finalElements?.[0]);
-
-            if (finalElements && finalElements.length > 0) {
-                console.log('10. Calling updateScene with', finalElements.length, 'elements');
-                excalidrawAPI.updateScene({
-                    elements: finalElements,
-                    appState: {
-                        ...finalAppState,
-                        theme: 'light',
-                        gridModeEnabled: finalAppState.gridModeEnabled !== undefined ? finalAppState.gridModeEnabled : true,
-                        viewBackgroundColor: '#ffffff'
-                    }
-                });
-                currentElementsRef.current = finalElements;
-                console.log('11. updateScene called successfully');
-            } else {
-                console.warn('10. No elements to load');
-                // Ensure grid and background are set even if no elements
-                excalidrawAPI.updateScene({
-                    appState: { ...finalAppState, gridModeEnabled: true, viewBackgroundColor: '#f9f9f9' }
-                });
-            }
-        } catch (e) {
-            console.error('Failed to parse whiteboard elements:', e);
-            console.error('Raw data was:', rawElements);
-        }
-
+        // Logic moved to initial load
     }, [excalidrawAPI, whiteboard]);
+    */
 
     // Style HintViewer text with kbd tags (Layout fixes only)
     useEffect(() => {

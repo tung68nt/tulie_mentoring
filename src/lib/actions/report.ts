@@ -3,26 +3,41 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 
-export async function getMenteeStats() {
+export async function getMenteeStats(specificUserId?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
-    const userId = session.user.id!;
+
+    const role = (session.user as any).role;
+    const isAdmin = role === "admin" || role === "viewer";
+
+    // If specificUserId is provided, use it (only if authorized or if it's the current user)
+    // If not, use session.user.id for mentees, or global stats for admin/viewer
+    const targetUserId = specificUserId || session.user.id!;
+
+    // Authorization check: only admin/viewer or the owner can see specific stats
+    if (specificUserId && !isAdmin && specificUserId !== session.user.id) {
+        throw new Error("Unauthorized access to specific user stats");
+    }
+
+    // Determine filter based on whether we want global stats or specific user stats
+    const userFilter = (isAdmin && !specificUserId) ? {} : { userId: targetUserId };
+    const menteeFilter = (isAdmin && !specificUserId) ? {} : { menteeId: targetUserId };
 
     // 1. Attendance Rate
     const totalMeetings = await prisma.attendance.count({
-        where: { userId }
+        where: userFilter
     });
     const presentMeetings = await prisma.attendance.count({
-        where: { userId, status: "present" }
+        where: { ...userFilter, status: "present" }
     });
     const attendanceRate = totalMeetings > 0 ? Math.round((presentMeetings / totalMeetings) * 100) : 0;
 
     // 2. Goal Progress
     const goals = await prisma.goal.findMany({
-        where: {
+        where: (isAdmin && !specificUserId) ? {} : {
             mentorship: {
                 mentees: {
-                    some: { menteeId: userId }
+                    some: { menteeId: targetUserId }
                 }
             }
         }
@@ -33,10 +48,10 @@ export async function getMenteeStats() {
 
     // 3. Tasks Completion
     const totalTasks = await prisma.todoItem.count({
-        where: { menteeId: userId }
+        where: menteeFilter
     });
     const completedTasks = await prisma.todoItem.count({
-        where: { menteeId: userId, status: "done" }
+        where: { ...menteeFilter, status: "done" }
     });
     const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
@@ -46,7 +61,7 @@ export async function getMenteeStats() {
 
     const recentActivitiesCount = await prisma.activityLog.count({
         where: {
-            userId,
+            ...userFilter,
             createdAt: { gte: sevenDaysAgo }
         }
     });
