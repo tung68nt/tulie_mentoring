@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Clock, Calendar, AlertCircle } from "lucide-react";
-import { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
 
 export function SystemClock() {
@@ -49,7 +49,7 @@ interface CountdownProps {
 }
 
 export function Countdown({ targetDate, label, className, variant = "default" }: CountdownProps) {
-    const [timeLeft, setTimeLeft] = useState<{ d: number, h: number, m: number, s: number } | null>(null);
+    const [timeLeft, setTimeLeft] = useState<{ d: number } | null>(null);
 
     useEffect(() => {
         const target = new Date(targetDate);
@@ -57,20 +57,17 @@ export function Countdown({ targetDate, label, className, variant = "default" }:
         const update = () => {
             const now = new Date();
             if (now >= target) {
-                setTimeLeft({ d: 0, h: 0, m: 0, s: 0 });
+                setTimeLeft({ d: 0 });
                 return;
             }
 
             setTimeLeft({
-                d: Math.max(0, differenceInDays(target, now)),
-                h: Math.max(0, differenceInHours(target, now) % 24),
-                m: Math.max(0, differenceInMinutes(target, now) % 60),
-                s: Math.max(0, differenceInSeconds(target, now) % 60)
+                d: Math.max(0, differenceInDays(target, now))
             });
         };
 
         update();
-        const timer = setInterval(update, 1000);
+        const timer = setInterval(update, 60000); // Update every minute is enough for days
         return () => clearInterval(timer);
     }, [targetDate]);
 
@@ -94,12 +91,6 @@ export function Countdown({ targetDate, label, className, variant = "default" }:
 
             <div className="flex items-center gap-2">
                 <TimeUnit value={timeLeft.d} label="Ngày" />
-                <span className="text-lg font-bold opacity-30">:</span>
-                <TimeUnit value={timeLeft.h} label="Giờ" />
-                <span className="text-lg font-bold opacity-30">:</span>
-                <TimeUnit value={timeLeft.m} label="Phút" />
-                <span className="text-lg font-bold opacity-30">:</span>
-                <TimeUnit value={timeLeft.s} label="Giây" />
             </div>
         </div>
     );
