@@ -78,22 +78,23 @@ export function Countdown({ targetDate, label, className, variant = "default" }:
 
     return (
         <div className={cn(
-            "p-5 rounded-2xl border transition-all duration-300 w-full max-w-[320px]",
-            finalVariant === "default" && "bg-background border-border shadow-sm",
-            finalVariant === "warning" && "bg-amber-500/5 border-amber-500/20 text-amber-700 dark:text-amber-400 shadow-sm",
-            finalVariant === "danger" && "bg-destructive/5 border-destructive/20 text-destructive shadow-sm",
+            "flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all duration-300",
+            finalVariant === "default" && "bg-background border-border/60",
+            finalVariant === "warning" && "bg-amber-50/80 border-amber-200/60 dark:bg-amber-950/20 dark:border-amber-800/30",
+            finalVariant === "danger" && "bg-destructive/5 border-destructive/20",
             className
         )}>
-            <div className="flex items-center justify-between mb-4">
-                <span className="text-[11px] font-bold uppercase tracking-wider opacity-60">{label}</span>
-                {isUrgent && <AlertCircle className="w-3.5 h-3.5 animate-pulse text-amber-500" />}
+            <div className={cn(
+                "flex items-center justify-center min-w-[36px] h-[28px] px-2 rounded-lg font-mono font-bold text-sm tabular-nums",
+                finalVariant === "default" && "bg-primary/10 text-primary",
+                finalVariant === "warning" && "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+                finalVariant === "danger" && "bg-destructive/10 text-destructive"
+            )}>
+                {timeLeft.d}d
             </div>
-
-            <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold font-mono tracking-tighter">
-                    {String(timeLeft.d).padStart(2, '0')}
-                </span>
-                <span className="text-xs font-semibold opacity-40">Ngày</span>
+            <div className="flex items-center gap-2 min-w-0">
+                <span className="text-xs text-muted-foreground font-medium truncate no-uppercase">{label}</span>
+                {isUrgent && <AlertCircle className="w-3.5 h-3.5 shrink-0 animate-pulse text-amber-500" />}
             </div>
         </div>
     );

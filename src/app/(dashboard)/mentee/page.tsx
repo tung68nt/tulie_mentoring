@@ -106,12 +106,11 @@ export default async function MenteeDashboard() {
                 </div>
 
                 {/* FOMO Countdowns */}
-                <div className="flex flex-wrap gap-6">
+                <div className="flex flex-wrap gap-3">
                     {serializedMentorship?.programCycle?.endDate && (
                         <Countdown
                             targetDate={serializedMentorship.programCycle.endDate}
                             label="Thời gian còn lại của chương trình"
-                            className="bg-primary/5 border-primary/10 shadow-sm"
                         />
                     )}
 
@@ -120,7 +119,6 @@ export default async function MenteeDashboard() {
                             targetDate={serializedGoals.find((g: any) => g.dueDate).dueDate}
                             label={`Hạn chót mục tiêu: ${serializedGoals.find((g: any) => g.dueDate).title}`}
                             variant="warning"
-                            className="shadow-sm"
                         />
                     )}
 
