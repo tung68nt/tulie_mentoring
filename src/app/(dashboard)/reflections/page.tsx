@@ -18,11 +18,17 @@ export default async function ReflectionsPage() {
         redirect("/login");
     }
 
+    const [pendingMeetings, reflections, stats, logs] = await Promise.all([
+        getRecentMeetingsForReflection().catch(e => { console.error("Recent meetings fetch error:", e); return []; }),
+        getReflections().catch(e => { console.error("Reflections fetch error:", e); return []; }),
+        getMenteeStats().catch(e => {
+            console.error("Stats fetch error:", e);
+            return { attendanceRate: 0, avgGoalProgress: 0, taskCompletionRate: 0, recentActivitiesCount: 0 };
+        }),
+        getActivityLogs(10).catch(e => { console.error("Logs fetch error:", e); return []; }),
+    ]);
+
     try {
-        const pendingMeetings = await getRecentMeetingsForReflection();
-        const reflections = await getReflections();
-        const stats = await getMenteeStats();
-        const logs = await getActivityLogs(10);
 
         return (
             <div className="space-y-10 pb-20 animate-fade-in">

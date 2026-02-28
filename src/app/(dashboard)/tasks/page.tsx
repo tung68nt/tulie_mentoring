@@ -15,7 +15,12 @@ export default async function TasksPage() {
         redirect("/login");
     }
 
-    const tasks = await getTasks();
+    let tasks = [];
+    try {
+        tasks = await getTasks();
+    } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+    }
 
     return (
         <div className="space-y-10 pb-20 animate-fade-in">

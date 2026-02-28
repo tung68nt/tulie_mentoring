@@ -166,6 +166,7 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                                                 {task.checklist && (() => {
                                                     try {
                                                         const parsed = JSON.parse(task.checklist);
+                                                        if (!Array.isArray(parsed)) return null;
                                                         const completed = parsed.filter((i: any) => i.isCompleted).length;
                                                         return parsed.length > 0 && (
                                                             <div className="flex items-center gap-1 text-[10px] text-primary/80 font-bold bg-primary/5 px-1.5 py-0.5 rounded-md">
@@ -180,6 +181,7 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                                                 {task.attachments && (() => {
                                                     try {
                                                         const parsed = JSON.parse(task.attachments);
+                                                        if (!Array.isArray(parsed)) return null;
                                                         return parsed.length > 0 && (
                                                             <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
                                                                 <Paperclip className="w-3.5 h-3.5 opacity-60" />
@@ -193,6 +195,7 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                                                 {task.comments && (() => {
                                                     try {
                                                         const parsed = JSON.parse(task.comments);
+                                                        if (!Array.isArray(parsed)) return null;
                                                         return parsed.length > 0 && (
                                                             <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
                                                                 <MessageSquare className="w-3.5 h-3.5 opacity-60" />

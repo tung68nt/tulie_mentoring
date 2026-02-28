@@ -20,7 +20,6 @@ export default async function PortfolioPage() {
     const userId = session.user.id;
     const role = (session.user as any).role;
     let portfolio = null;
-
     try {
         portfolio = await getPortfolio();
     } catch (error) {
@@ -31,11 +30,14 @@ export default async function PortfolioPage() {
     let mentorshipGoals: any[] = [];
     try {
         const mentorships = await getMentorships();
-        const userMentorships = role === "mentor"
+        const userMentorships = Array.isArray(mentorships) ? (role === "mentor"
             ? mentorships.filter((m: any) => m.mentorId === userId)
-            : mentorships.filter((m: any) => m.mentees.some((mt: any) => mt.menteeId === userId));
+            : mentorships.filter((m: any) => m.mentees?.some((mt: any) => mt.menteeId === userId))) : [];
 
-        const goalPromises = userMentorships.map((m: any) => getGoals(m.id));
+        const goalPromises = userMentorships.map((m: any) => getGoals(m.id).catch(e => {
+            console.error(`Failed to fetch goals for mentorship ${m.id}:`, e);
+            return [];
+        }));
         const results = await Promise.all(goalPromises);
         mentorshipGoals = results.flat();
     } catch (error) {

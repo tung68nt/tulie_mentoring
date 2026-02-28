@@ -67,7 +67,7 @@ export function Countdown({ targetDate, label, className, variant = "default" }:
         };
 
         update();
-        const timer = setInterval(update, 60000); // Update every minute is enough for days
+        const timer = setInterval(update, 60000);
         return () => clearInterval(timer);
     }, [targetDate]);
 
@@ -78,31 +78,24 @@ export function Countdown({ targetDate, label, className, variant = "default" }:
 
     return (
         <div className={cn(
-            "p-4 rounded-xl border transition-all duration-300",
-            finalVariant === "default" && "bg-background border-border",
-            finalVariant === "warning" && "bg-amber-500/5 border-amber-500/20 text-amber-700 dark:text-amber-400",
-            finalVariant === "danger" && "bg-destructive/5 border-destructive/20 text-destructive",
+            "p-5 rounded-2xl border transition-all duration-300 w-full max-w-[320px]",
+            finalVariant === "default" && "bg-background border-border shadow-sm",
+            finalVariant === "warning" && "bg-amber-500/5 border-amber-500/20 text-amber-700 dark:text-amber-400 shadow-sm",
+            finalVariant === "danger" && "bg-destructive/5 border-destructive/20 text-destructive shadow-sm",
             className
         )}>
-            <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold opacity-70">{label}</span>
-                {isUrgent && <AlertCircle className="w-4 h-4 animate-pulse text-amber-500" />}
+            <div className="flex items-center justify-between mb-4">
+                <span className="text-[11px] font-bold uppercase tracking-wider opacity-60">{label}</span>
+                {isUrgent && <AlertCircle className="w-3.5 h-3.5 animate-pulse text-amber-500" />}
             </div>
 
-            <div className="flex items-center gap-2">
-                <TimeUnit value={timeLeft.d} label="Ngày" />
+            <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-bold font-mono tracking-tighter">
+                    {String(timeLeft.d).padStart(2, '0')}
+                </span>
+                <span className="text-xs font-semibold opacity-40">Ngày</span>
             </div>
         </div>
     );
 }
 
-function TimeUnit({ value, label }: { value: number, label: string }) {
-    return (
-        <div className="flex flex-col items-center min-w-[3rem]">
-            <span className="text-2xl font-bold font-mono tracking-tighter">
-                {String(value).padStart(2, '0')}
-            </span>
-            <span className="text-[10px] font-medium opacity-50">{label}</span>
-        </div>
-    );
-}
