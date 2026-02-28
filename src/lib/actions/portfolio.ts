@@ -8,9 +8,28 @@ export async function getPortfolio(menteeId?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
-    const targetId = menteeId || session.user.id!;
+    const userId = session.user.id!;
+    const role = (session.user as any).role;
+    const targetId = menteeId || userId;
 
-    return await prisma.portfolio.findFirst({
+    // Security check
+    if (role !== "admin" && targetId !== userId) {
+        // Only admin or the user themselves can see the portfolio
+        // Check if mentor?
+        if (role === "mentor") {
+            const isMentor = await prisma.mentorship.findFirst({
+                where: {
+                    mentorId: userId,
+                    mentees: { some: { menteeId: targetId } }
+                }
+            });
+            if (!isMentor) throw new Error("Unauthorized");
+        } else {
+            throw new Error("Unauthorized");
+        }
+    }
+
+    const portfolio = await prisma.portfolio.findUnique({
         where: { menteeId: targetId },
         include: {
             mentee: {
@@ -21,110 +40,142 @@ export async function getPortfolio(menteeId?: string) {
                     menteeProfile: true,
                 },
             },
+            entries: {
+                orderBy: { createdAt: "desc" }
+            },
+            snapshots: {
+                orderBy: { createdAt: "desc" }
+            }
         },
     });
+
+    return JSON.parse(JSON.stringify(portfolio));
 }
 
-export async function upsertPortfolio(data: {
+export async function updatePortfolio(data: {
     personalityMbti?: string;
     personalityDisc?: string;
     personalityHolland?: string;
     shortTermGoals?: string;
     longTermGoals?: string;
-    initialStrengths?: string;
-    initialWeaknesses?: string;
-    initialChallenges?: string;
-    initialStartupIdeas?: string;
-    initialPersonalNotes?: string;
+    strengths?: string;
+    weaknesses?: string;
+    challenges?: string;
+    startupIdeas?: string;
+    personalNotes?: string;
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
     const userId = session.user.id!;
-    const existing = await prisma.portfolio.findFirst({
-        where: { menteeId: userId },
-    });
 
-    // Update MenteeProfile as well to keep current state in sync
-    await prisma.menteeProfile.update({
-        where: { userId: userId },
-        data: {
-            strengths: data.initialStrengths,
-            weaknesses: data.initialWeaknesses,
-            currentChallenges: data.initialChallenges,
-            startupIdeas: data.initialStartupIdeas,
-            personalNotes: data.initialPersonalNotes,
-        }
-    });
-
-    if (existing) {
-        const portfolio = await prisma.portfolio.update({
-            where: { id: existing.id },
+    // Update MenteeProfile as well for shared access
+    if (data.strengths || data.weaknesses || data.challenges || data.startupIdeas || data.personalNotes) {
+        await prisma.menteeProfile.update({
+            where: { userId: userId },
             data: {
-                ...data,
-                initialCompletedAt: (data.personalityMbti || data.initialChallenges) && !existing.initialCompletedAt
-                    ? new Date()
-                    : existing.initialCompletedAt,
-            },
-        });
-        revalidatePath("/portfolio");
-        return portfolio;
+                strengths: data.strengths,
+                weaknesses: data.weaknesses,
+                currentChallenges: data.challenges,
+                startupIdeas: data.startupIdeas,
+                personalNotes: data.personalNotes,
+            }
+        }).catch(() => null); // Ignore if no menteeProfile exists yet
     }
 
-    const portfolio = await prisma.portfolio.create({
-        data: {
+    const portfolio = await prisma.portfolio.upsert({
+        where: { menteeId: userId },
+        update: data,
+        create: {
             menteeId: userId,
-            ...data,
-            initialCompletedAt: (data.personalityMbti || data.initialChallenges) ? new Date() : null,
-        },
+            ...data
+        }
     });
 
     revalidatePath("/portfolio");
-    return portfolio;
+    return JSON.parse(JSON.stringify(portfolio));
 }
 
-export async function completePortfolio(data: {
-    finalGoalsAchieved: number;
-    finalSkillsGained: string;
-    finalMentorFeedback: string;
-    finalSelfAssessment: string;
-    finalRecommendations: string;
-    finalStrengths?: string;
-    finalWeaknesses?: string;
-    finalChallenges?: string;
-    finalStartupIdeas?: string;
-    finalPersonalNotes?: string;
+export async function addPortfolioEntry(data: {
+    title: string;
+    content: string;
+    type?: string;
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
     const userId = session.user.id!;
-    const existing = await prisma.portfolio.findFirst({
-        where: { menteeId: userId },
+    const portfolio = await prisma.portfolio.findUnique({
+        where: { menteeId: userId }
     });
 
-    if (!existing) throw new Error("Portfolio not found");
+    if (!portfolio) throw new Error("Portfolio not found. Please initialize your portfolio first.");
 
-    // Update MenteeProfile to latest state
-    await prisma.menteeProfile.update({
-        where: { userId: userId },
+    const entry = await prisma.portfolioEntry.create({
         data: {
-            strengths: data.finalStrengths,
-            weaknesses: data.finalWeaknesses,
-            currentChallenges: data.finalChallenges,
-            startupIdeas: data.finalStartupIdeas,
-            personalNotes: data.finalPersonalNotes,
+            portfolioId: portfolio.id,
+            title: data.title,
+            content: data.content,
+            type: data.type || "reflection"
         }
     });
 
-    const portfolio = await prisma.portfolio.update({
-        where: { id: existing.id },
+    revalidatePath("/portfolio");
+    return JSON.parse(JSON.stringify(entry));
+}
+
+export async function createPortfolioSnapshot(title: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const userId = session.user.id!;
+    const portfolio = await prisma.portfolio.findUnique({
+        where: { menteeId: userId }
+    });
+
+    if (!portfolio) throw new Error("Portfolio not found.");
+
+    const snapshotData = {
+        personalityMbti: portfolio.personalityMbti,
+        personalityDisc: portfolio.personalityDisc,
+        personalityHolland: portfolio.personalityHolland,
+        shortTermGoals: portfolio.shortTermGoals,
+        longTermGoals: portfolio.longTermGoals,
+        strengths: portfolio.strengths,
+        weaknesses: portfolio.weaknesses,
+        challenges: portfolio.challenges,
+        startupIdeas: portfolio.startupIdeas,
+        personalNotes: portfolio.personalNotes,
+    };
+
+    const snapshot = await prisma.portfolioSnapshot.create({
         data: {
-            ...data,
-            finalCompletedAt: new Date(),
-        },
+            portfolioId: portfolio.id,
+            title: title || `Snapshot ${new Date().toLocaleDateString()}`,
+            data: JSON.stringify(snapshotData)
+        }
     });
 
     revalidatePath("/portfolio");
-    return portfolio;
+    return JSON.parse(JSON.stringify(snapshot));
+}
+
+export async function deletePortfolioEntry(id: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const entry = await prisma.portfolioEntry.findUnique({
+        where: { id },
+        include: { portfolio: true }
+    });
+
+    if (!entry || entry.portfolio.menteeId !== session.user.id) {
+        throw new Error("Unauthorized");
+    }
+
+    await prisma.portfolioEntry.delete({
+        where: { id }
+    });
+
+    revalidatePath("/portfolio");
 }

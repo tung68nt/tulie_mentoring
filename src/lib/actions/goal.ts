@@ -46,8 +46,8 @@ async function recalculateGoalProgress(goalId: string) {
 
     if (!goal || goal.subGoals.length === 0) return;
 
-    const totalWeight = goal.subGoals.reduce((sum, sg) => sum + sg.weight, 0);
-    const weightedSum = goal.subGoals.reduce((sum, sg) => sum + (sg.currentValue * sg.weight), 0);
+    const totalWeight = goal.subGoals.reduce((sum: number, sg: any) => sum + sg.weight, 0);
+    const weightedSum = goal.subGoals.reduce((sum: number, sg: any) => sum + (sg.currentValue * sg.weight), 0);
 
     // Ensure we don't divide by zero
     const progress = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
@@ -127,7 +127,7 @@ export async function updateGoalProgress(id: string, value: number, note?: strin
 }
 
 export async function getGoals(mentorshipId: string) {
-    return await prisma.goal.findMany({
+    const goals = await prisma.goal.findMany({
         where: { mentorshipId },
         include: {
             subGoals: {
@@ -139,6 +139,7 @@ export async function getGoals(mentorshipId: string) {
         },
         orderBy: { createdAt: "desc" },
     });
+    return JSON.parse(JSON.stringify(goals));
 }
 
 export async function confirmGoal(id: string) {
