@@ -50,7 +50,7 @@ export function ProgramGrid({
     return (
         <div className={cn("space-y-5", className)}>
             {/* Grid cells */}
-            <div className="flex flex-wrap gap-[5px]">
+            <div className="flex flex-wrap gap-[5px] p-1">
                 <TooltipProvider delayDuration={100}>
                     {days.map((day, idx) => {
                         const dateStr = format(day, "yyyy-MM-dd");
@@ -69,9 +69,9 @@ export function ProgramGrid({
                         // Determine cell color similar to heatmap style
                         const getCellStyle = () => {
                             if (isSubmitted) return "bg-emerald-400 dark:bg-emerald-500/80";
-                            if (isToday) return "bg-muted/60 ring-1 ring-ring ring-offset-1 ring-offset-background";
-                            if (isPast) return "bg-muted/20";
-                            return "bg-muted/10"; // future
+                            if (isToday) return "bg-muted ring-1 ring-ring ring-offset-1 ring-offset-background";
+                            if (isPast) return "bg-muted/50";
+                            return "bg-muted/30"; // future
                         };
 
                         return (
@@ -80,7 +80,7 @@ export function ProgramGrid({
                                     <div
                                         onClick={() => onCellClick?.(day)}
                                         className={cn(
-                                            "relative w-3.5 h-3.5 rounded-[2px] transition-all duration-300 hover:scale-[1.6] hover:z-30",
+                                            "relative w-3.5 h-3.5 rounded-[2px] transition-all duration-200 hover:scale-125 hover:z-30",
                                             onCellClick ? "cursor-pointer" : "cursor-help",
                                             getCellStyle(),
                                             isSelected && "ring-1.5 ring-primary ring-offset-1 ring-offset-background scale-[1.4] z-20",
@@ -107,11 +107,11 @@ export function ProgramGrid({
                         <span>Đã hoàn thành</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-[2px] bg-muted/20" />
+                        <div className="w-2.5 h-2.5 rounded-[2px] bg-muted/50" />
                         <span>Bỏ lỡ</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-[2px] bg-muted/10" />
+                        <div className="w-2.5 h-2.5 rounded-[2px] bg-muted/30" />
                         <span>Sắp tới</span>
                     </div>
                     {deadlines.length > 0 && (
