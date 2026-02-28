@@ -21,6 +21,7 @@ import {
     LifeBuoy,
     BookMarked,
     Presentation,
+    ListTodo,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -119,6 +120,7 @@ export function Sidebar({ role }: SidebarProps) {
             },
             {
                 items: [
+                    { id: "daily", label: "Nhật ký hằng ngày", icon: ListTodo, href: "/daily" },
                     { id: "reflections", label: "Thu hoạch & Nhật ký", icon: PenLine, href: "/reflections" },
                     { id: "portfolio", label: "Nhật ký hành trình", icon: FolderOpen, href: "/portfolio" },
                 ],
