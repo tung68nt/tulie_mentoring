@@ -106,24 +106,27 @@ export default async function MenteeDashboard() {
                 </div>
 
                 {/* FOMO Countdowns */}
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-col gap-1 w-full max-w-2xl bg-muted/10 rounded-2xl p-4 border border-border/40">
+                    <h3 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Danh sách mục tiêu
+                    </h3>
                     {serializedMentorship?.programCycle?.endDate && (
                         <Countdown
                             targetDate={serializedMentorship.programCycle.endDate}
-                            label="Thời gian còn lại của chương trình"
+                            label="Thời gian còn lại"
                         />
                     )}
 
                     {serializedGoals.find((g: any) => g.dueDate) && (
                         <Countdown
                             targetDate={serializedGoals.find((g: any) => g.dueDate).dueDate}
-                            label={`Hạn chót mục tiêu: ${serializedGoals.find((g: any) => g.dueDate).title}`}
-                            variant="warning"
+                            label={serializedGoals.find((g: any) => g.dueDate).title}
                         />
                     )}
 
                     {!isAdmin && !serializedMentorship && (
-                        <div className="p-4 rounded-xl bg-muted/20 border border-dashed border-border flex items-center justify-center text-xs text-muted-foreground">
+                        <div className="py-4 text-center text-xs text-muted-foreground">
                             Chưa có chương trình hoạt động
                         </div>
                     )}
