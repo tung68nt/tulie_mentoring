@@ -258,7 +258,7 @@ function FullPortfolioForm({ isPending, startTransition, portfolio }: any) {
             </div>
 
             <Button type="submit" disabled={isPending} className="w-full h-11 rounded-lg text-sm font-medium shadow-none">
-                {isPending ? "Đang lưu..." : "Cập nhật nhật ký hành trình"}
+                {isPending ? "Đang lưu..." : "Cập nhật"}
             </Button>
         </form>
     );
