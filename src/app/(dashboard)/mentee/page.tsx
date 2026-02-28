@@ -14,9 +14,12 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { getMenteeStats } from "@/lib/actions/report";
 import { getActivityLogs } from "@/lib/actions/activity";
+import { getProgramGridData } from "@/lib/actions/daily";
 import { StatsCards } from "@/components/features/reports/stats-cards";
 import { ActivityFeed } from "@/components/features/reports/activity-feed";
+import { ProgramGrid } from "@/components/features/daily/program-grid";
 import { SystemClock, Countdown } from "@/components/ui/fomo-timer";
+import { CheckCircle2, Trophy } from "lucide-react";
 
 export default async function MenteeDashboard() {
     const session = await auth();
@@ -30,7 +33,7 @@ export default async function MenteeDashboard() {
     const isAdmin = role === "admin";
 
     try {
-        const [mentorship, goals, upcomingMeetings, stats, logs] = await Promise.all([
+        const [mentorship, goals, upcomingMeetings, stats, logs, gridData] = await Promise.all([
             prisma.mentorship.findFirst({
                 where: isAdmin ? { status: "active" } : {
                     mentees: { some: { menteeId: userId } },
@@ -75,6 +78,7 @@ export default async function MenteeDashboard() {
                 return { attendanceRate: 0, avgGoalProgress: 0, taskCompletionRate: 0, recentActivitiesCount: 0 };
             }),
             getActivityLogs(8).catch(e => { console.error("Logs fetch error:", e); return []; }),
+            getProgramGridData().catch(e => { console.error("Grid data fetch error:", e); return null; }),
         ]);
 
         const serializedMentorship = JSON.parse(JSON.stringify(mentorship));
@@ -129,6 +133,33 @@ export default async function MenteeDashboard() {
 
                 {/* New Stats Cards Component */}
                 <StatsCards stats={stats} />
+
+                {/* Program Tracker Grid Section */}
+                {gridData && (
+                    <Card className="p-8 border-border/50 shadow-none bg-background/40 hover:bg-background/60 transition-colors rounded-3xl group">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                            <div className="space-y-1.5 px-1">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
+                                        <Trophy className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-foreground no-uppercase">Lộ trình rèn luyện</h3>
+                                </div>
+                                <p className="text-[13px] text-muted-foreground/60 no-uppercase font-medium max-w-md">Theo dõi sự kỷ luật qua từng ngày và chinh phục các cột mốc quan trọng.</p>
+                            </div>
+                            <Button variant="secondary" size="sm" asChild className="rounded-xl no-uppercase h-10 px-5 text-sm font-bold bg-muted/50 hover:bg-muted transition-all active:scale-95 shrink-0">
+                                <Link href="/daily">Nhật ký hằng ngày</Link>
+                            </Button>
+                        </div>
+                        <ProgramGrid
+                            startDate={gridData.startDate}
+                            endDate={gridData.endDate}
+                            submittedDates={gridData.submittedDates}
+                            deadlines={gridData.deadlines}
+                            className="w-full overflow-x-auto pb-4 scrollbar-none"
+                        />
+                    </Card>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     <div className="lg:col-span-8 space-y-12">

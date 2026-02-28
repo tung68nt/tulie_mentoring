@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronLeft, ChevronRight, Save, Plus, Trash2, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Save, Plus, Trash2, CheckCircle2, Trophy } from "lucide-react";
+import { ProgramGrid } from "@/components/features/daily/program-grid";
 import {
     getDiariesAndHabits,
     toggleHabitLog,
@@ -56,6 +57,7 @@ export function DailyTracker() {
     const [habits, setHabits] = useState<Habit[]>([]);
     const [diary, setDiary] = useState<DailyDiary | null>(null);
     const [submittedDates, setSubmittedDates] = useState<string[]>([]);
+    const [deadlines, setDeadlines] = useState<any[]>([]);
     const [programInfo, setProgramInfo] = useState<ProgramInfo | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -80,6 +82,7 @@ export function DailyTracker() {
             setHabits(data.habits || []);
             setDiary(data.diary || null);
             setSubmittedDates(data.submittedDates || []);
+            setDeadlines(data.deadlines || []);
             setProgramInfo(data.programInfo || null);
             setDiaryMood(data.diary?.mood || "neutral");
 
@@ -194,53 +197,29 @@ export function DailyTracker() {
             {!isLoading && programInfo && (
                 <Card className="overflow-hidden border-border/50 bg-background/50">
                     <CardHeader className="pb-4 border-b border-border/50 bg-muted/20">
-                        <CardTitle className="text-lg flex items-center gap-2">
-                            Tiến độ rèn luyện ({programInfo.totalDays} ngày)
-                        </CardTitle>
-                        <CardDescription>
-                            Chương trình huấn luyện của bạn. Mỗi ô vuông tương ứng với một ngày. Đánh dấu các ngày bạn viết nhật ký để quan sát quá trình tiến bộ của mình.
-                        </CardDescription>
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
+                                <Trophy className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <CardTitle className="text-lg flex items-center gap-2 no-uppercase">
+                                    Tiến độ rèn luyện ({programInfo.totalDays} ngày)
+                                </CardTitle>
+                                <CardDescription className="no-uppercase">
+                                    Nhấn vào ô bất kỳ để chuyển ngày. Cờ cam = deadline mục tiêu, cờ đỏ = kết thúc chương trình.
+                                </CardDescription>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent className="p-6">
-                        <div className="grid grid-cols-[repeat(auto-fill,minmax(24px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(28px,1fr))] gap-2">
-                            <TooltipProvider delayDuration={100}>
-                                {Array.from({ length: programInfo.totalDays }).map((_, i) => {
-                                    const dayDate = addDays(new Date(programInfo.startDate), i);
-                                    const dayStr = format(dayDate, "yyyy-MM-dd");
-                                    const isPassed = isBefore(dayDate, new Date()) || isSameDay(dayDate, new Date());
-                                    const isSubmitted = submittedDates.includes(dayStr);
-                                    const isSelected = format(selectedDate, "yyyy-MM-dd") === dayStr;
-
-                                    let cellClasses = "w-full aspect-square rounded-sm border transition-all duration-300 ";
-                                    if (isSelected) {
-                                        cellClasses += "ring-2 ring-primary ring-offset-2 ring-offset-background border-primary bg-primary/20 shadow-sm scale-110 z-10";
-                                    } else if (isSubmitted) {
-                                        cellClasses += "bg-primary border-primary/50 text-primary-foreground shadow-sm hover:opacity-80";
-                                    } else if (isPassed) {
-                                        cellClasses += "bg-muted border-border/80 hover:bg-muted/90 opacity-80";
-                                    } else {
-                                        cellClasses += "bg-transparent border-dashed border-border/60 opacity-50";
-                                    }
-
-                                    return (
-                                        <Tooltip key={i}>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    onClick={() => setSelectedDate(dayDate)}
-                                                    className={cellClasses}
-                                                    aria-label={`Ngày ${format(dayDate, "dd/MM/yyyy")}`}
-                                                />
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top">
-                                                <p className="font-medium text-xs">Ngày {i + 1}</p>
-                                                <p className="text-[10px] text-muted-foreground">{format(dayDate, "dd/MM/yyyy")}</p>
-                                                {isSubmitted && <p className="text-[10px] text-green-500 font-medium mt-1">Đã viết nhật ký</p>}
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    );
-                                })}
-                            </TooltipProvider>
-                        </div>
+                        <ProgramGrid
+                            startDate={programInfo.startDate}
+                            endDate={programInfo.endDate}
+                            submittedDates={submittedDates}
+                            deadlines={deadlines}
+                            selectedDate={selectedDate}
+                            onCellClick={(date) => setSelectedDate(date)}
+                        />
                     </CardContent>
                 </Card>
             )}

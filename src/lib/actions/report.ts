@@ -100,10 +100,11 @@ export async function getProgramProgress(specificUserId?: string) {
 
     const userId = session.user.id!;
     const role = (session.user as any).role;
+    const isAdmin = role === "admin" || role === "viewer";
     const targetUserId = specificUserId || userId;
 
-    // Find the current active mentorship for the user
-    const mentorship = await prisma.mentorship.findFirst({
+    // Find the current active mentorship for the user (or any active mentorship for admin)
+    let mentorship = await prisma.mentorship.findFirst({
         where: {
             mentees: { some: { menteeId: targetUserId } },
             status: "active"
@@ -113,15 +114,24 @@ export async function getProgramProgress(specificUserId?: string) {
         }
     });
 
+    // If admin has no mentorship as mentee, find any active mentorship
+    if (!mentorship && isAdmin) {
+        mentorship = await prisma.mentorship.findFirst({
+            where: { status: "active" },
+            include: { programCycle: true }
+        });
+    }
+
     if (!mentorship) return null;
 
     const startDate = mentorship.programCycle.startDate;
     const endDate = mentorship.programCycle.endDate;
 
     // Fetch activity logs for the program period
+    const activityFilter = (isAdmin && !specificUserId) ? {} : { userId: targetUserId };
     const activities = await prisma.activityLog.findMany({
         where: {
-            userId: targetUserId,
+            ...activityFilter,
             createdAt: {
                 gte: startDate,
                 lte: endDate
@@ -132,16 +142,21 @@ export async function getProgramProgress(specificUserId?: string) {
         }
     });
 
-    // Fetch daily diary entries from portfolio
-    const portfolio = await prisma.portfolio.findUnique({
-        where: { menteeId: targetUserId },
-        include: {
-            entries: {
-                where: { type: "daily_log" },
-                orderBy: { createdAt: "asc" }
+    // Fetch daily diary entries from portfolio (may not exist for admin)
+    let portfolio = null;
+    try {
+        portfolio = await prisma.portfolio.findUnique({
+            where: { menteeId: targetUserId },
+            include: {
+                entries: {
+                    where: { type: "daily_log" },
+                    orderBy: { createdAt: "asc" }
+                }
             }
-        }
-    });
+        });
+    } catch (e) {
+        // Portfolio may not exist for this user, that's fine
+    }
 
     // Group activities by day
     const activityMap: Record<string, number> = {};
@@ -152,7 +167,7 @@ export async function getProgramProgress(specificUserId?: string) {
 
     // Group diary entries by day
     const diaryMap: Record<string, any> = {};
-    portfolio?.entries.forEach(entry => {
+    portfolio?.entries?.forEach((entry: any) => {
         const dateStr = entry.createdAt.toISOString().split("T")[0];
         diaryMap[dateStr] = {
             id: entry.id,

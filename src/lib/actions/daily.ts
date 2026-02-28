@@ -42,7 +42,14 @@ export async function getDiariesAndHabits(dateStr: string) {
                 include: {
                     mentorship: {
                         include: {
-                            programCycle: true
+                            programCycle: true,
+                            goals: {
+                                where: {
+                                    dueDate: { not: null },
+                                    status: { not: "completed" }
+                                },
+                                select: { dueDate: true, title: true }
+                            }
                         }
                     }
                 },
@@ -68,10 +75,30 @@ export async function getDiariesAndHabits(dateStr: string) {
     // Ensure we don't have unrealistic 0 or negative days
     if (programDays <= 0) programDays = 62;
 
+    // Collect deadlines
+    const deadlines: any[] = [];
+    if (activeMentorship?.goals) {
+        activeMentorship.goals.forEach((goal: any) => {
+            if (goal.dueDate) {
+                deadlines.push({
+                    date: format(new Date(goal.dueDate), "yyyy-MM-dd"),
+                    title: goal.title,
+                    type: "goal"
+                });
+            }
+        });
+    }
+    deadlines.push({
+        date: format(programEndDate, "yyyy-MM-dd"),
+        title: "Kết thúc chương trình",
+        type: "program_end"
+    });
+
     return JSON.parse(JSON.stringify({
         habits,
         diary,
         submittedDates,
+        deadlines,
         programInfo: {
             startDate: programStartDate,
             endDate: programEndDate,
@@ -171,4 +198,78 @@ export async function deleteHabit(habitId: string) {
     });
 
     revalidatePath("/daily");
+}
+
+export async function getProgramGridData() {
+    const session = await auth();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+    const userId = session.user.id;
+
+    // Fetch user with mentorship and program cycle
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+            menteeships: {
+                include: {
+                    mentorship: {
+                        include: {
+                            programCycle: true,
+                            goals: {
+                                where: {
+                                    dueDate: { not: null },
+                                    status: { not: "completed" }
+                                },
+                                select: { dueDate: true, title: true }
+                            }
+                        }
+                    }
+                },
+                where: { status: "active" }
+            }
+        }
+    });
+
+    const activeMentorship = user?.menteeships?.[0]?.mentorship;
+    let programStartDate = activeMentorship?.startDate || activeMentorship?.programCycle?.startDate || user?.createdAt || new Date();
+    let programEndDate = activeMentorship?.endDate || activeMentorship?.programCycle?.endDate || new Date(programStartDate.getTime() + 61 * 24 * 60 * 60 * 1000);
+
+    programStartDate = new Date(programStartDate);
+    programEndDate = new Date(programEndDate);
+
+    // Fetch all diaries to mark submitted days
+    const allDiaries = await prisma.dailyDiary.findMany({
+        where: { userId },
+        select: { date: true }
+    });
+    const submittedDates = allDiaries.map(d => format(new Date(d.date), "yyyy-MM-dd"));
+
+    // Collect deadlines
+    const deadlines: any[] = [];
+
+    // Goal deadlines
+    if (activeMentorship?.goals) {
+        activeMentorship.goals.forEach(goal => {
+            if (goal.dueDate) {
+                deadlines.push({
+                    date: format(new Date(goal.dueDate), "yyyy-MM-dd"),
+                    title: goal.title,
+                    type: "goal"
+                });
+            }
+        });
+    }
+
+    // Program end date
+    deadlines.push({
+        date: format(programEndDate, "yyyy-MM-dd"),
+        title: "Kết thúc chương trình",
+        type: "program_end"
+    });
+
+    return JSON.parse(JSON.stringify({
+        startDate: programStartDate,
+        endDate: programEndDate,
+        submittedDates,
+        deadlines
+    }));
 }

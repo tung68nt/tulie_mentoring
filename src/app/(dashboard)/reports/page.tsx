@@ -23,8 +23,11 @@ export default async function ReportsPage() {
 
     try {
         const [stats, logs, goals, tasks, programData] = await Promise.all([
-            getMenteeStats(),
-            getActivityLogs(10),
+            getMenteeStats().catch(e => {
+                console.error("Stats fetch error:", e);
+                return { attendanceRate: 0, avgGoalProgress: 0, taskCompletionRate: 0, totalTasks: 0, completedTasks: 0, presentMeetings: 0, totalMeetings: 0, recentActivitiesCount: 0 };
+            }),
+            getActivityLogs(10).catch(e => { console.error("Logs fetch error:", e); return []; }),
             prisma.goal.findMany({
                 where: isAdmin ? {} : {
                     mentorship: {
@@ -33,13 +36,13 @@ export default async function ReportsPage() {
                 },
                 orderBy: { createdAt: "desc" },
                 take: 4,
-            }),
+            }).catch(e => { console.error("Goals fetch error:", e); return []; }),
             prisma.todoItem.findMany({
                 where: isAdmin ? {} : { menteeId: userId },
                 orderBy: { createdAt: "desc" },
                 take: 6,
-            }),
-            getProgramProgress(),
+            }).catch(e => { console.error("Tasks fetch error:", e); return []; }),
+            getProgramProgress().catch(e => { console.error("Program progress error:", e); return null; }),
         ]);
 
         const serializedGoals = JSON.parse(JSON.stringify(goals || []));
