@@ -19,7 +19,7 @@ import { StatsCards } from "@/components/features/reports/stats-cards";
 import { ActivityFeed } from "@/components/features/reports/activity-feed";
 import { ProgramGrid } from "@/components/features/daily/program-grid";
 import { SystemClock, Countdown } from "@/components/ui/fomo-timer";
-import { CheckCircle2, Trophy } from "lucide-react";
+
 
 export default async function MenteeDashboard() {
     const session = await auth();
@@ -136,28 +136,27 @@ export default async function MenteeDashboard() {
 
                 {/* Program Tracker Grid Section */}
                 {gridData && (
-                    <Card className="p-8 border-border/50 shadow-none bg-background/40 hover:bg-background/60 transition-colors rounded-3xl group">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-                            <div className="space-y-1.5 px-1">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
-                                        <Trophy className="w-4 h-4" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-foreground no-uppercase">Lộ trình rèn luyện</h3>
+                    <Card className="p-6 shadow-none border-border/60 bg-background/50 backdrop-blur-sm">
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-sm font-semibold text-foreground no-uppercase">Lộ trình rèn luyện</h3>
+                                    <p className="text-[11px] text-muted-foreground mt-0.5 no-uppercase">
+                                        Theo dõi sự kỷ luật qua từng ngày và chinh phục các cột mốc quan trọng.
+                                    </p>
                                 </div>
-                                <p className="text-[13px] text-muted-foreground/60 no-uppercase font-medium max-w-md">Theo dõi sự kỷ luật qua từng ngày và chinh phục các cột mốc quan trọng.</p>
+                                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground no-uppercase h-8 text-xs">
+                                    <Link href="/daily">Nhật ký hằng ngày</Link>
+                                </Button>
                             </div>
-                            <Button variant="secondary" size="sm" asChild className="rounded-xl no-uppercase h-10 px-5 text-sm font-bold bg-muted/50 hover:bg-muted transition-all active:scale-95 shrink-0">
-                                <Link href="/daily">Nhật ký hằng ngày</Link>
-                            </Button>
+                            <ProgramGrid
+                                startDate={gridData.startDate}
+                                endDate={gridData.endDate}
+                                submittedDates={gridData.submittedDates}
+                                deadlines={gridData.deadlines}
+                                className="w-full overflow-x-auto pb-1 scrollbar-none"
+                            />
                         </div>
-                        <ProgramGrid
-                            startDate={gridData.startDate}
-                            endDate={gridData.endDate}
-                            submittedDates={gridData.submittedDates}
-                            deadlines={gridData.deadlines}
-                            className="w-full overflow-x-auto pb-4 scrollbar-none"
-                        />
                     </Card>
                 )}
 

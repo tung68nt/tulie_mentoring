@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronLeft, ChevronRight, Save, Plus, Trash2, CheckCircle2, Trophy } from "lucide-react";
+import { ChevronLeft, ChevronRight, Save, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import { ProgramGrid } from "@/components/features/daily/program-grid";
 import {
     getDiariesAndHabits,
@@ -195,23 +195,16 @@ export function DailyTracker() {
     return (
         <div className="flex flex-col gap-6">
             {!isLoading && programInfo && (
-                <Card className="overflow-hidden border-border/50 bg-background/50">
-                    <CardHeader className="pb-4 border-b border-border/50 bg-muted/20">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
-                                <Trophy className="w-4 h-4" />
-                            </div>
+                <Card className="p-6 shadow-none border-border/60 bg-background/50 backdrop-blur-sm">
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-lg flex items-center gap-2 no-uppercase">
-                                    Tiến độ rèn luyện ({programInfo.totalDays} ngày)
-                                </CardTitle>
-                                <CardDescription className="no-uppercase">
-                                    Nhấn vào ô bất kỳ để chuyển ngày. Cờ cam = deadline mục tiêu, cờ đỏ = kết thúc chương trình.
-                                </CardDescription>
+                                <h3 className="text-sm font-semibold text-foreground no-uppercase">Tiến độ rèn luyện</h3>
+                                <p className="text-[11px] text-muted-foreground mt-0.5 no-uppercase">
+                                    Nhấn vào ô bất kỳ để chuyển ngày. Theo dõi sự kỷ luật qua từng ngày.
+                                </p>
                             </div>
                         </div>
-                    </CardHeader>
-                    <CardContent className="p-6">
                         <ProgramGrid
                             startDate={programInfo.startDate}
                             endDate={programInfo.endDate}
@@ -220,7 +213,7 @@ export function DailyTracker() {
                             selectedDate={selectedDate}
                             onCellClick={(date) => setSelectedDate(date)}
                         />
-                    </CardContent>
+                    </div>
                 </Card>
             )}
 
