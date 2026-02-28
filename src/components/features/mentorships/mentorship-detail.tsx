@@ -303,7 +303,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                                 </div>
                                             </div>
                                             <div className="pt-2 border-t border-border/5">
-                                                <p className="text-[13px] text-muted-foreground italic line-clamp-2">
+                                                <p className="text-[13px] text-muted-foreground line-clamp-2">
                                                     Nội dung đã được ghi nhận...
                                                 </p>
                                                 <Button variant="link" size="sm" className="h-auto p-0 text-xs text-primary" asChild>

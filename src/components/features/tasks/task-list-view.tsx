@@ -111,7 +111,7 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
                                             S: {formatDate(task.actualStartDate)}
                                         </div>
                                     ) : (
-                                        <div className="text-[10px] text-muted-foreground/30 italic">Chưa bắt đầu</div>
+                                        <div className="text-[10px] text-muted-foreground/30">Chưa bắt đầu</div>
                                     )}
                                     {task.actualCompletedAt && (
                                         <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">

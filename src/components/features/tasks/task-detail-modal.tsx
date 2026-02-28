@@ -321,7 +321,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                                 </div>
                             ))}
                             {checklist.length === 0 && (
-                                <p className="text-xs text-muted-foreground italic bg-muted/40 p-3 rounded-xl border border-dashed text-center">
+                                <p className="text-xs text-muted-foreground bg-muted/40 p-3 rounded-xl border border-dashed text-center">
                                     Chưa có mục checklist nào. Hãy thêm các đầu việc con để tự động tính % hoàn thành.
                                 </p>
                             )}
@@ -412,7 +412,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                                 </div>
                             ))}
                             {comments.length === 0 && (
-                                <p className="text-xs text-muted-foreground italic">Chưa có bình luận nào.</p>
+                                <p className="text-xs text-muted-foreground">Chưa có bình luận nào.</p>
                             )}
                         </div>
 

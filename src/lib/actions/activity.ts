@@ -38,9 +38,12 @@ export async function getActivityLogs(limit = 10, targetUserId?: string) {
         throw new Error("Unauthorized");
     }
 
+    const userId = targetUserId || session.user.id;
+    if (!userId && !isAdmin) return [];
+
     const where = (isAdmin && !targetUserId)
         ? {}
-        : { userId: targetUserId || session.user.id! };
+        : { userId: userId! };
 
     const logs = await prisma.activityLog.findMany({
         where,

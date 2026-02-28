@@ -48,7 +48,7 @@ export default async function MenteeDashboard() {
                     },
                     programCycle: true,
                 },
-            }),
+            }).catch(e => { console.error("Mentorship fetch error:", e); return null; }),
             prisma.goal.findMany({
                 where: isAdmin ? {} : {
                     mentorship: {
@@ -57,7 +57,7 @@ export default async function MenteeDashboard() {
                 },
                 orderBy: { createdAt: "desc" },
                 take: 4,
-            }),
+            }).catch(e => { console.error("Goals fetch error:", e); return []; }),
             prisma.meeting.findMany({
                 where: isAdmin ? {
                     status: "scheduled"
@@ -69,9 +69,12 @@ export default async function MenteeDashboard() {
                 },
                 orderBy: { scheduledAt: "asc" },
                 take: 5,
+            }).catch(e => { console.error("Meetings fetch error:", e); return []; }),
+            getMenteeStats(userId).catch(e => {
+                console.error("Stats fetch error:", e);
+                return { attendanceRate: 0, avgGoalProgress: 0, taskCompletionRate: 0, recentActivitiesCount: 0 };
             }),
-            getMenteeStats(),
-            getActivityLogs(8),
+            getActivityLogs(8).catch(e => { console.error("Logs fetch error:", e); return []; }),
         ]);
 
         const serializedMentorship = JSON.parse(JSON.stringify(mentorship));
@@ -118,7 +121,7 @@ export default async function MenteeDashboard() {
                     )}
 
                     {!isAdmin && !serializedMentorship && (
-                        <div className="p-4 rounded-xl bg-muted/20 border border-dashed border-border flex items-center justify-center text-xs text-muted-foreground italic">
+                        <div className="p-4 rounded-xl bg-muted/20 border border-dashed border-border flex items-center justify-center text-xs text-muted-foreground">
                             Chưa có chương trình hoạt động
                         </div>
                     )}

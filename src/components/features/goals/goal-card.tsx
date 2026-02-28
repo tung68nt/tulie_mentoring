@@ -361,7 +361,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                                         <span className="text-sm font-bold text-primary">{note.value}%</span>
                                         <span className="text-xs text-muted-foreground font-medium">{formatDate(note.createdAt, "dd/MM HH:mm")}</span>
                                     </div>
-                                    {note.note && <p className="text-sm text-foreground leading-relaxed italic">&quot;{note.note}&quot;</p>}
+                                    {note.note && <p className="text-sm text-foreground leading-relaxed">&quot;{note.note}&quot;</p>}
                                 </div>
                             </div>
                         ))}

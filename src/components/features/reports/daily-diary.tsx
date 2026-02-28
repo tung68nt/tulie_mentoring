@@ -79,7 +79,7 @@ export function DailyDiary({ startDate, endDate, diaryMap }: DailyDiaryProps) {
                                     <div>
                                         <p className="text-sm font-medium text-foreground">
                                             {format(day, "eeee, dd/MM/yyyy", { locale: vi })}
-                                            {isToday && <span className="ml-2 text-[10px] text-purple-600 font-bold bg-purple-100 px-1.5 py-0.5 rounded tracking-normal italic">Hôm nay</span>}
+                                            {isToday && <span className="ml-2 text-[10px] text-purple-600 font-bold bg-purple-100 px-1.5 py-0.5 rounded tracking-normal">Hôm nay</span>}
                                         </p>
                                     </div>
                                 </div>

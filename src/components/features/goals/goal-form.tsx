@@ -191,7 +191,7 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
                             </div>
                         ))}
                         {fields.length === 0 && (
-                            <p className="text-center py-4 text-sm text-muted-foreground italic border-2 border-dashed rounded-xl">
+                            <p className="text-center py-4 text-sm text-muted-foreground border-2 border-dashed rounded-xl">
                                 Bạn có thể thêm các mục tiêu con để theo dõi tiến độ chính xác hơn theo tỉ trọng.
                             </p>
                         )}

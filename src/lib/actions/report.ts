@@ -14,7 +14,20 @@ export async function getMenteeStats(specificUserId?: string) {
 
     // If specificUserId is provided, use it (only if authorized or if it's the current user)
     // If not, use session.user.id for mentees, or global stats for admin/viewer
-    const targetUserId = specificUserId || session.user.id!;
+    const targetUserId = specificUserId || session.user.id;
+
+    if (!targetUserId && !isAdmin) {
+        return {
+            attendanceRate: 0,
+            avgGoalProgress: 0,
+            taskCompletionRate: 0,
+            totalTasks: 0,
+            completedTasks: 0,
+            presentMeetings: 0,
+            totalMeetings: 0,
+            recentActivitiesCount: 0
+        };
+    }
 
     // Authorization check: only admin/viewer or the owner can see specific stats
     if (specificUserId && !isAdmin && specificUserId !== session.user.id) {
@@ -22,8 +35,15 @@ export async function getMenteeStats(specificUserId?: string) {
     }
 
     // Determine filter based on whether we want global stats or specific user stats
-    const userFilter = (isAdmin && !specificUserId) ? {} : { userId: targetUserId };
-    const menteeFilter = (isAdmin && !specificUserId) ? {} : { menteeId: targetUserId };
+    const userFilter = (isAdmin && !specificUserId) ? {} : { userId: targetUserId! };
+    const menteeFilter = (isAdmin && !specificUserId) ? {} : { menteeId: targetUserId! };
+    const goalFilter = (isAdmin && !specificUserId) ? {} : {
+        mentorship: {
+            mentees: {
+                some: { menteeId: targetUserId! }
+            }
+        }
+    };
 
     // 1. Attendance Rate
     const totalMeetings = await prisma.attendance.count({
@@ -36,13 +56,7 @@ export async function getMenteeStats(specificUserId?: string) {
 
     // 2. Goal Progress
     const goals = await prisma.goal.findMany({
-        where: (isAdmin && !specificUserId) ? {} : {
-            mentorship: {
-                mentees: {
-                    some: { menteeId: targetUserId }
-                }
-            }
-        }
+        where: goalFilter
     });
     const avgGoalProgress = goals.length > 0
         ? Math.round(goals.reduce((acc, goal) => acc + (goal.currentValue || 0), 0) / goals.length)

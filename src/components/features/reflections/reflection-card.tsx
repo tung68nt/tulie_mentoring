@@ -64,7 +64,7 @@ export function ReflectionCard({ reflection, userRole }: ReflectionCardProps) {
                     </p>
                 </div>
                 <div className="pt-2 border-t border-border/10">
-                    <p className="text-[13px] text-muted-foreground line-clamp-3 leading-relaxed italic">
+                    <p className="text-[13px] text-muted-foreground line-clamp-3 leading-relaxed">
                         "Vào trang chi tiết để xem đầy đủ nội dung thu hoạch này..."
                     </p>
                 </div>

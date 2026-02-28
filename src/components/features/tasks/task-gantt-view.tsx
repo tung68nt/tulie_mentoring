@@ -161,7 +161,7 @@ export function TaskGanttView({ initialTasks }: TaskGanttViewProps) {
                             ));
                         })}
                         {initialTasks.length === 0 && (
-                            <div className="p-16 text-center text-muted-foreground/30 text-sm font-medium italic">Không có công việc nào.</div>
+                            <div className="p-16 text-center text-muted-foreground/30 text-sm font-medium">Không có công việc nào.</div>
                         )}
                     </div>
                 </div>
