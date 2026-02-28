@@ -56,14 +56,15 @@ export function Sidebar({ role }: SidebarProps) {
             {
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/admin" },
+                    { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
+                    { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
+                    { id: "programs", label: "Chương trình", icon: Target, href: "/admin/mentorships/new" },
                 ],
             },
             {
                 items: [
-                    { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
-                    { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
-                    { id: "programs", label: "Chương trình", icon: Target, href: "/admin/mentorships/new" },
                     { id: "reports", label: "Báo cáo", icon: BarChart, href: "/admin/reports" },
+                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                 ],
             },
             {
@@ -74,7 +75,6 @@ export function Sidebar({ role }: SidebarProps) {
             },
             {
                 items: [
-                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                     { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
                     { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
@@ -86,12 +86,13 @@ export function Sidebar({ role }: SidebarProps) {
             {
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentor" },
+                    { id: "calendar", label: "Lịch gặp & QR", icon: Calendar, href: "/calendar" },
                 ],
             },
             {
                 items: [
-                    { id: "calendar", label: "Lịch gặp & QR", icon: Calendar, href: "/calendar" },
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
+                    { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
                 ],
             },
             {
@@ -99,7 +100,6 @@ export function Sidebar({ role }: SidebarProps) {
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                     { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
                     { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
-                    { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
                 ],
             },
         ],
@@ -107,28 +107,28 @@ export function Sidebar({ role }: SidebarProps) {
             {
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentee" },
+                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                 ],
             },
             {
                 items: [
                     { id: "checkin", label: "Check-in / Check-out", icon: QrCode, href: "/checkin" },
-                    { id: "reflections", label: "Thu hoạch & Nhật ký", icon: PenLine, href: "/reflections" },
                     { id: "tasks", label: "Công việc", icon: CheckSquare, href: "/tasks" },
+                    { id: "goals", label: "Mục tiêu", icon: Target, href: "/goals" },
                 ],
             },
             {
                 items: [
-                    { id: "goals", label: "Mục tiêu", icon: Target, href: "/goals" },
+                    { id: "reflections", label: "Thu hoạch & Nhật ký", icon: PenLine, href: "/reflections" },
+                    { id: "portfolio", label: "Nhật ký hành trình", icon: FolderOpen, href: "/portfolio" },
+                ],
+            },
+            {
+                items: [
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                     { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
                     { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
                     { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
-                ],
-            },
-            {
-                items: [
-                    { id: "portfolio", label: "Nhật ký hành trình", icon: FolderOpen, href: "/portfolio" },
-                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                 ],
             },
         ],
@@ -137,10 +137,6 @@ export function Sidebar({ role }: SidebarProps) {
                 items: [
                     { id: "reports", label: "Báo cáo & Tiến bộ", icon: BarChart, href: "/reports" },
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
-                ],
-            },
-            {
-                items: [
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                 ],
