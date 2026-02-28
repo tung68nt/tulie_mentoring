@@ -47,9 +47,9 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
                                 </div>
                                 <div>
                                     <h2 className="text-lg font-semibold text-foreground">
-                                        {mentorship.programCycle.name} - {mentorship.mentor.firstName} {mentorship.mentor.lastName} ➔ {mentorship.mentees.map((m: any) => `${m.mentee.firstName} ${m.mentee.lastName}`).join(", ")}
+                                        {mentorship.programCycle?.name || "N/A"} - {mentorship.mentor?.firstName || "N/A"} {mentorship.mentor?.lastName || ""} ➔ {mentorship.mentees?.map((m: any) => `${m.mentee?.firstName || ""} ${m.mentee?.lastName || ""}`).join(", ") || "N/A"}
                                     </h2>
-                                    <p className="text-[10px] text-muted-foreground/60 font-semibold">{mentorshipGoals.length} mục tiêu</p>
+                                    <p className="text-[10px] text-muted-foreground/60 font-semibold">{mentorshipGoals?.length || 0} mục tiêu</p>
                                 </div>
                             </div>
                             <Button

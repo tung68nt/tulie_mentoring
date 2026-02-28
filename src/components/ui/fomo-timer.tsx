@@ -6,15 +6,28 @@ import { differenceInDays, differenceInHours, differenceInMinutes, differenceInS
 import { cn } from "@/lib/utils";
 
 export function SystemClock() {
-    const [now, setNow] = useState(new Date());
+    const [now, setNow] = useState<Date | null>(null);
 
     useEffect(() => {
+        setNow(new Date());
         const timer = setInterval(() => setNow(new Date()), 1000);
         return () => clearInterval(timer);
     }, []);
 
+    // Don't render until mounted to avoid hydration mismatch
+    if (!now) {
+        return (
+            <div className="flex items-center gap-4 px-4 py-2 bg-background/50 backdrop-blur-md border border-border/50 rounded-xl shadow-sm opacity-0">
+                <div className="flex items-center gap-2 text-primary font-mono font-medium">
+                    <Clock className="w-4 h-4" />
+                    <span>00:00:00</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex items-center gap-4 px-4 py-2 bg-background/50 backdrop-blur-md border border-border/50 rounded-xl shadow-sm">
+        <div className="flex items-center gap-4 px-4 py-2 bg-background/50 backdrop-blur-md border border-border/50 rounded-xl shadow-sm animate-fade-in">
             <div className="flex items-center gap-2 text-primary font-mono font-medium">
                 <Clock className="w-4 h-4" />
                 <span>{now.toLocaleTimeString("vi-VN", { hour12: false })}</span>
