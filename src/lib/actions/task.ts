@@ -89,18 +89,37 @@ export async function updateTaskStatus(id: string, status: string, column?: stri
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    const existingTask = await prisma.todoItem.findUnique({
+        where: { id, menteeId: session.user.id! }
+    });
+
+    if (!existingTask) throw new Error("Task not found");
+
+    const updateData: any = {
+        status,
+        column: column || status
+    };
+
+    if (status === "done" && existingTask.status !== "done") {
+        updateData.completedPercentage = 100;
+        if (!existingTask.actualCompletedAt) {
+            updateData.actualCompletedAt = new Date();
+        }
+    }
+
+    if (status === "doing" && existingTask.status !== "doing" && !existingTask.actualStartDate) {
+        updateData.actualStartDate = new Date();
+    }
+
     const task = await prisma.todoItem.update({
         where: { id, menteeId: session.user.id! },
-        data: {
-            status,
-            column: column || status
-        }
+        data: updateData
     });
 
     revalidatePath("/tasks");
 
     // Log activity if completed
-    if (status === "done") {
+    if (status === "done" && existingTask.status !== "done") {
         await logActivity("complete_task", id, "task", { title: task.title });
     }
 
