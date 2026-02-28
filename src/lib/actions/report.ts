@@ -185,55 +185,66 @@ export async function getProgramProgress(specificUserId?: string) {
 }
 
 export async function saveDailyLog(dateStr: string, content: string) {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    try {
+        const session = await auth();
+        if (!session?.user) throw new Error("Unauthorized");
 
-    const userId = session.user.id!;
-    const date = new Date(dateStr);
+        const userId = session.user.id!;
 
-    // Find or create portfolio for user
-    const portfolio = await prisma.portfolio.upsert({
-        where: { menteeId: userId },
-        update: {},
-        create: { menteeId: userId }
-    });
+        // Use UTC date properly to avoid local timezone offset shifts
+        const [year, month, day] = dateStr.split("-").map(Number);
+        const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
 
-    // Find if there's already an entry for this exact day (within 00:00:00 to 23:59:59)
-    const startDate = new Date(date);
-    startDate.setHours(0, 0, 0, 0);
-    const endDate = new Date(date);
-    endDate.setHours(23, 59, 59, 999);
+        // Find or create portfolio for user safely
+        let portfolio = await prisma.portfolio.findUnique({
+            where: { menteeId: userId }
+        });
 
-    const existingEntry = await prisma.portfolioEntry.findFirst({
-        where: {
-            portfolioId: portfolio.id,
-            type: "daily_log",
-            createdAt: {
-                gte: startDate,
-                lte: endDate
-            }
+        if (!portfolio) {
+            portfolio = await prisma.portfolio.create({
+                data: { menteeId: userId }
+            });
         }
-    });
 
-    if (existingEntry) {
-        await prisma.portfolioEntry.update({
-            where: { id: existingEntry.id },
-            data: { content }
-        });
-    } else {
-        await prisma.portfolioEntry.create({
-            data: {
+        // Find if there's already an entry for this exact day 
+        const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+        const endDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+
+        const existingEntry = await prisma.portfolioEntry.findFirst({
+            where: {
                 portfolioId: portfolio.id,
-                title: `Nhật ký ngày ${format(date, "dd/MM/yyyy")}`,
-                content,
                 type: "daily_log",
-                createdAt: date // Set the date manually for the entry
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                }
             }
         });
-    }
 
-    revalidatePath("/reports");
-    return { success: true };
+        if (existingEntry) {
+            await prisma.portfolioEntry.update({
+                where: { id: existingEntry.id },
+                data: { content }
+            });
+        } else {
+            await prisma.portfolioEntry.create({
+                data: {
+                    portfolioId: portfolio.id,
+                    title: `Nhật ký ngày ${format(date, "dd/MM/yyyy")}`,
+                    content,
+                    type: "daily_log",
+                    createdAt: date // Set the date manually for the entry
+                }
+            });
+        }
+
+        revalidatePath("/reports");
+        revalidatePath("/portfolio");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Failed to save daily log:", error);
+        throw new Error(error.message || "Failed to save daily log");
+    }
 }
 
 
