@@ -1,6 +1,6 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Input({
   className,
@@ -10,14 +10,14 @@ function Input({
   endIcon,
   ...props
 }: React.ComponentProps<"input"> & {
-  label?: string
-  error?: string
-  endIcon?: React.ReactNode
+  label?: string;
+  error?: string;
+  endIcon?: React.ReactNode;
 }) {
   return (
     <div className="space-y-1.5 w-full">
       {label && (
-        <label className="block text-[11px] font-bold text-muted-foreground/60 no-uppercase tracking-normal mb-1.5 px-0.5">
+        <label className="block text-[12px] font-medium text-muted-foreground px-0.5">
           {label}
         </label>
       )}
@@ -29,7 +29,7 @@ function Input({
             "bg-background border-border/40 focus-visible:border-primary/30 focus-visible:ring-1 focus-visible:ring-primary h-10 rounded-xl border px-4 py-1 text-sm transition-all file:h-6 file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground/40 w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 shadow-none",
             endIcon ? "pr-10" : "",
             error && "border-destructive focus-visible:ring-destructive/10",
-            className
+            className,
           )}
           {...props}
         />
@@ -43,7 +43,7 @@ function Input({
         <p className="text-[12px] text-destructive font-medium">{error}</p>
       )}
     </div>
-  )
+  );
 }
 
-export { Input }
+export { Input };

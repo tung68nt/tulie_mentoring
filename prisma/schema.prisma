@@ -346,7 +346,7 @@ model Portfolio {
   initialChallenges    String?
   initialStartupIdeas  String?
   initialPersonalNotes String?
-  
+
   finalGoalsAchieved   Int? // percentage 0-100
   finalSkillsGained    String? // JSON array
   finalMentorFeedback  String?
@@ -430,6 +430,9 @@ model TodoItem {
   startDate    DateTime?
   column       String    @default("todo")
   labels       String? // JSON array string
+  description  String?   @db.Text
+  attachments  String? // JSON array string
+  comments     String?   @db.Text // JSON array string
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

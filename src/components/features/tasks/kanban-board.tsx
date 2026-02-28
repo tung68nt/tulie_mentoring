@@ -5,19 +5,23 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, MoreHorizontal, Calendar, CheckCircle2, Clock, X } from "lucide-react";
+import { Plus, MoreHorizontal, Calendar, CheckCircle2, Clock, X, MessageSquare, Paperclip } from "lucide-react";
 import { updateTaskStatus, deleteTask, createTask } from "@/lib/actions/task";
 import { formatDate } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { TaskDetailModal } from "./task-detail-modal";
 
-interface Task {
+export interface Task {
     id: string;
     title: string;
     status: string;
     priority: string;
-    dueDate?: string;
+    dueDate?: string | null;
     column: string;
+    description?: string | null;
+    attachments?: string | null;
+    comments?: string | null;
 }
 
 interface KanbanBoardProps {
@@ -42,6 +46,7 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     const [addingTo, setAddingTo] = useState<string | null>(null);
     const [newTitle, setNewTitle] = useState("");
     const [isCreating, setIsCreating] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -106,25 +111,25 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                         {tasks
                             .filter(task => (task.column || task.status) === column.id)
                             .map(task => (
-                                <Card key={task.id} className="p-4 rounded-lg border-border/40 hover:border-border transition-all duration-200 group bg-background shadow-none">
+                                <Card key={task.id} onClick={() => setSelectedTask(task)} className="p-4 rounded-lg border-border/40 hover:border-border transition-all duration-200 group bg-background shadow-none cursor-pointer">
                                     <div className="flex flex-col gap-3">
                                         <div className="flex items-start justify-between gap-2">
                                             <Badge variant="outline" className={cn("text-[9px] font-semibold px-2 h-4.5 rounded-md", PRIORITY_COLORS[task.priority])}>
                                                 {task.priority}
                                             </Badge>
                                             <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
+                                                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                                                     <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all rounded-md">
                                                         <MoreHorizontal className="w-4 h-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="rounded-lg border-border/40 shadow-none p-1 min-w-[160px]">
                                                     {COLUMNS.filter(c => c.id !== column.id).map(c => (
-                                                        <DropdownMenuItem key={c.id} onClick={() => moveTask(task.id, c.id)} className="text-xs rounded-md">
+                                                        <DropdownMenuItem key={c.id} onClick={(e) => { e.stopPropagation(); moveTask(task.id, c.id); }} className="text-xs rounded-md">
                                                             Chuyển sang {c.title}
                                                         </DropdownMenuItem>
                                                     ))}
-                                                    <DropdownMenuItem onClick={() => handleDelete(task.id)} className="text-xs rounded-md text-destructive">
+                                                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(task.id); }} className="text-xs rounded-md text-destructive">
                                                         Xóa công việc
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -141,6 +146,32 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-2">
+                                                {task.attachments && (() => {
+                                                    try {
+                                                        const parsed = JSON.parse(task.attachments);
+                                                        return parsed.length > 0 && (
+                                                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+                                                                <Paperclip className="w-3.5 h-3.5 opacity-60" />
+                                                                {parsed.length}
+                                                            </div>
+                                                        );
+                                                    } catch {
+                                                        return null;
+                                                    }
+                                                })()}
+                                                {task.comments && (() => {
+                                                    try {
+                                                        const parsed = JSON.parse(task.comments);
+                                                        return parsed.length > 0 && (
+                                                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+                                                                <MessageSquare className="w-3.5 h-3.5 opacity-60" />
+                                                                {parsed.length}
+                                                            </div>
+                                                        );
+                                                    } catch {
+                                                        return null;
+                                                    }
+                                                })()}
                                                 {task.status === "done" ? (
                                                     <CheckCircle2 className="w-4 h-4 text-primary" />
                                                 ) : (
@@ -199,6 +230,15 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                     </div>
                 </div>
             ))}
+
+            <TaskDetailModal
+                task={selectedTask}
+                isOpen={!!selectedTask}
+                onClose={() => setSelectedTask(null)}
+                onUpdate={(updatedTask) => {
+                    setTasks(tasks.map(t => t.id === updatedTask.id ? updatedTask : t));
+                }}
+            />
         </div>
     );
 }

@@ -10,13 +10,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { updateTaskStatus, deleteTask } from "@/lib/actions/task";
 import { useState } from "react";
 
-interface Task {
-    id: string;
-    title: string;
-    status: string;
-    priority: string;
-    dueDate?: string;
-}
+import { TaskDetailModal } from "./task-detail-modal";
+import { Task } from "./kanban-board";
 
 interface TaskListViewProps {
     initialTasks: Task[];
@@ -36,7 +31,8 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export function TaskListView({ initialTasks }: TaskListViewProps) {
-    const [tasks, setTasks] = useState(initialTasks);
+    const [tasks, setTasks] = useState<Task[]>(initialTasks as Task[]);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
     async function handleStatusChange(taskId: string, newStatus: string) {
         try {
@@ -72,7 +68,11 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
                 </TableHeader>
                 <TableBody>
                     {tasks.map((task) => (
-                        <TableRow key={task.id} className="group hover:bg-muted/30 border-border/60 transition-colors">
+                        <TableRow
+                            key={task.id}
+                            onClick={() => setSelectedTask(task)}
+                            className="group hover:bg-muted/30 border-border/60 transition-colors cursor-pointer"
+                        >
                             <TableCell className="py-3">
                                 {task.status === "done" ? (
                                     <CheckCircle2 className="w-4.5 h-4.5 text-primary" />
@@ -105,19 +105,19 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
                             </TableCell>
                             <TableCell>
                                 <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
+                                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                                         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
                                             <MoreHorizontal className="w-4 h-4" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="rounded-lg border-border/60 shadow-none p-1 min-w-[140px]">
                                         {Object.entries(STATUS_LABELS).map(([val, label]) => (
-                                            <DropdownMenuItem key={val} onClick={() => handleStatusChange(task.id, val)} className="text-[12px] rounded-md px-2.5 py-1.5 focus:bg-accent cursor-pointer">
+                                            <DropdownMenuItem key={val} onClick={(e) => { e.stopPropagation(); handleStatusChange(task.id, val); }} className="text-[12px] rounded-md px-2.5 py-1.5 focus:bg-accent cursor-pointer">
                                                 {label}
                                             </DropdownMenuItem>
                                         ))}
                                         <div className="h-px bg-border/60 my-1 mx-1" />
-                                        <DropdownMenuItem onClick={() => handleDelete(task.id)} className="text-[12px] rounded-md px-2.5 py-1.5 text-destructive focus:bg-destructive/10 cursor-pointer">
+                                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(task.id); }} className="text-[12px] rounded-md px-2.5 py-1.5 text-destructive focus:bg-destructive/10 cursor-pointer">
                                             Xóa công việc
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -134,6 +134,12 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
                     )}
                 </TableBody>
             </Table>
+            <TaskDetailModal
+                task={selectedTask}
+                isOpen={!!selectedTask}
+                onClose={() => setSelectedTask(null)}
+                onUpdate={(updatedTask) => setTasks(tasks.map(t => t.id === updatedTask.id ? updatedTask : t))}
+            />
         </div>
     );
 }

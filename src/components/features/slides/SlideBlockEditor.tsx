@@ -19,13 +19,22 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
     // Load initial content
     useEffect(() => {
         if (content && isInitialLoad && editor) {
-            try {
-                const blocks = editor.tryParseMarkdownToBlocks(content);
-                editor.replaceBlocks(editor.document, blocks);
-                setIsInitialLoad(false);
-            } catch (e) {
-                console.error("Failed to parse markdown", e);
-            }
+            const loadContent = async () => {
+                try {
+                    let blocks;
+                    const isHtml = content.includes('<p>') || content.includes('<h1>') || content.includes('<ul>');
+                    if (isHtml) {
+                        blocks = await editor.tryParseHTMLToBlocks(content);
+                    } else {
+                        blocks = await editor.tryParseMarkdownToBlocks(content);
+                    }
+                    editor.replaceBlocks(editor.document, blocks);
+                    setIsInitialLoad(false);
+                } catch (e) {
+                    console.error("Failed to parse content", e);
+                }
+            };
+            loadContent();
         }
     }, [content, editor, isInitialLoad]);
 
@@ -33,13 +42,20 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
     useEffect(() => {
         if (!isInitialLoad && editor) {
             const updateExternal = async () => {
-                const currentMarkdown = await editor.blocksToMarkdownLossy(editor.document);
-                if (content !== currentMarkdown) {
+                const currentHtml = await editor.blocksToHTMLLossy(editor.document);
+                // Simple comparison (might not trigger perfectly if whitespaces differ, but enough for structural changes)
+                if (content !== currentHtml && !content.includes(currentHtml.substring(0, 10))) {
                     try {
-                        const blocks = editor.tryParseMarkdownToBlocks(content);
+                        let blocks;
+                        const isHtml = content.includes('<p>') || content.includes('<h1>') || content.includes('<ul>');
+                        if (isHtml) {
+                            blocks = await editor.tryParseHTMLToBlocks(content);
+                        } else {
+                            blocks = await editor.tryParseMarkdownToBlocks(content);
+                        }
                         editor.replaceBlocks(editor.document, blocks);
                     } catch (e) {
-                        console.error("Failed to update markdown externally", e);
+                        console.error("Failed to update content externally", e);
                     }
                 }
             };
@@ -85,8 +101,8 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
                 theme="light"
                 onChange={async () => {
                     if (isInitialLoad) return;
-                    const markdown = await editor.blocksToMarkdownLossy(editor.document);
-                    onChange(markdown);
+                    const html = await editor.blocksToHTMLLossy(editor.document);
+                    onChange(html);
                 }}
                 className="min-h-full p-8"
             />
@@ -115,6 +131,40 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
                     padding: 0 10px;
                     font-size: 10px;
                     color: hsl(var(--muted-foreground));
+                }
+                
+                /* Fix for BlockNote color picker checkmark (tick) alignment */
+                .bn-menu-item {
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: space-between !important;
+                    width: 100% !important;
+                }
+                
+                .bn-menu-item-icon-wrapper {
+                    flex-shrink: 0 !important;
+                    display: flex !important;
+                    align-items: center !important;
+                }
+                
+                .bn-color-picker-dropdown .bn-menu-item-icon-wrapper svg {
+                    display: inline-block !important;
+                }
+                
+                .bn-menu-item-check-icon {
+                    margin-left: auto !important;
+                    flex-shrink: 0 !important;
+                    width: 16px !important;
+                    height: 16px !important;
+                    color: inherit !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                }
+                
+                .bn-menu-item-check-icon svg {
+                    width: 100% !important;
+                    height: 100% !important;
                 }
             `}</style>
         </div>

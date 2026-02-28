@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Target, Plus } from "lucide-react";
 import { GoalCard } from "@/components/features/goals/goal-card";
 import { GoalForm } from "@/components/features/goals/goal-form";
-import { cn } from "@/lib/utils";
+
 
 interface GoalsListProps {
     mentorships: any[];
@@ -88,16 +89,17 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
                                 <p className="text-sm text-muted-foreground font-medium">Chưa có mục tiêu nào. Nhấn để thêm.</p>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="flex flex-col gap-4">
                                 {mentorshipGoals.map(goal => (
                                     <GoalCard key={goal.id} goal={goal} userRole={userRole} />
                                 ))}
                                 {!isFormOpen && (
                                     <div
-                                        className="border-2 border-dashed border-border rounded-lg p-6 flex items-center justify-center group hover:border-foreground/20 transition-colors cursor-pointer"
+                                        className="border-2 border-dashed border-border rounded-lg p-4 flex items-center justify-center group hover:border-foreground/20 hover:bg-muted/50 transition-colors cursor-pointer"
                                         onClick={() => setShowFormFor(mentorship.id)}
                                     >
-                                        <Plus className="w-8 h-8 text-muted-foreground group-hover:text-foreground transition-colors" />
+                                        <Plus className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors mr-2" />
+                                        <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">Thêm mục tiêu mới</span>
                                     </div>
                                 )}
                             </div>

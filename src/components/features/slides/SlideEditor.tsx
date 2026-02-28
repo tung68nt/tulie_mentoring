@@ -59,10 +59,9 @@ export default function SlideEditor({ id }: SlideEditorProps) {
     const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
 
     const slides = useMemo(() => {
-        // Robust splitting that handles different newline/whitespace combinations and standard markdown separators
-        // This regex matches lines that only contain 3+ dashes or asterisks
+        // Robust splitting that handles both HTML dividers and standard markdown separators
         return content
-            .split(/(?:\r?\n|^)[-*]{3,}\s*(?:\r?\n|$)/)
+            .split(/(?:<hr\s*\/?>|(?:\r?\n|^)[-*]{3,}\s*(?:\r?\n|$))/i)
             .map(s => s.trim())
             .filter(s => s.length > 0);
     }, [content]);
@@ -71,7 +70,7 @@ export default function SlideEditor({ id }: SlideEditorProps) {
         const loadSlide = async () => {
             if (id === 'new') {
                 setTitle('New Presentation');
-                setContent('# Title Slide\n\nSubheading here...\n\n---\n\n## Slide 2\n\n- Point 1\n- Point 2');
+                setContent('<h1>Title Slide</h1><p>Subheading here...</p><hr /><h2>Slide 2</h2><ul><li>Point 1</li><li>Point 2</li></ul>');
                 setIsLoaded(true);
                 return;
             }
@@ -137,14 +136,14 @@ export default function SlideEditor({ id }: SlideEditorProps) {
     };
 
     const layouts = [
-        { name: "Title Slide", content: "# Title\n\nSubtitle here..." },
-        { name: "Content", content: "## Section Header\n\n- Key point 1\n- Key point 2\n- Key point 3" },
-        { name: "Two Columns", content: "## Two Column Layout\n\n[cols]\n[col]\n\n### Left Column\n- Info A\n- Info B\n\n[/col]\n[col]\n\n### Right Column\n- Detail 1\n- Detail 2\n\n[/col]\n[/cols]" },
-        { name: "Quote", content: "## Inspiring Quote\n\n> \"The best way to predict the future is to create it.\"\n> \n> — Peter Drucker" }
+        { name: "Title Slide", content: "<h1>Title Slide</h1><p>Subtitle here...</p>" },
+        { name: "Content", content: "<h2>Section Header</h2><ul><li>Key point 1</li><li>Key point 2</li><li>Key point 3</li></ul>" },
+        { name: "Two Columns", content: "<h2>Two Column Layout</h2><p>[cols]</p><p>[col]</p><h3>Left Column</h3><ul><li>Info A</li><li>Info B</li></ul><p>[/col]</p><p>[col]</p><h3>Right Column</h3><ul><li>Detail 1</li><li>Detail 2</li></ul><p>[/col]</p><p>[/cols]</p>" },
+        { name: "Quote", content: "<h2>Inspiring Quote</h2><blockquote>The best way to predict the future is to create it. <br/> — Peter Drucker</blockquote>" }
     ];
 
     const addSlide = (layoutIndex: number = 0) => {
-        const newSlideContent = "\n\n---\n\n" + layouts[layoutIndex].content;
+        const newSlideContent = "\n<hr />\n" + layouts[layoutIndex].content;
         setContent(content + newSlideContent);
     };
 
@@ -160,7 +159,7 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                 onClick: () => {
                     const newSlides = [...slides];
                     newSlides.splice(idx, 1);
-                    setContent(newSlides.join("\n---\n"));
+                    setContent(newSlides.join("\n<hr />\n"));
                     if (currentSlideIdx >= newSlides.length) {
                         setCurrentSlideIdx(Math.max(0, newSlides.length - 1));
                     }
@@ -254,12 +253,10 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                                     <Label className="text-[13px] font-semibold text-foreground/90">
                                         Presentation Theme
                                     </Label>
-                                    <div className="grid grid-cols-4 gap-3">
+                                    <div className="grid grid-cols-2 gap-3">
                                         {[
-                                            { id: 'white', name: 'Light', bg: '#fff' },
-                                            { id: 'black', name: 'Dark', bg: '#000' },
-                                            { id: 'sky', name: 'Sky', bg: '#add8e6' },
-                                            { id: 'night', name: 'Night', bg: '#1a1a1a' },
+                                            { id: 'white', name: 'Light Theme', bg: '#fff' },
+                                            { id: 'black', name: 'Dark Theme', bg: '#000' },
                                         ].map(t => (
                                             <button
                                                 key={t.id}
@@ -267,41 +264,41 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                                                 onClick={() => setTheme(t.id)}
                                             >
                                                 <div
-                                                    className="w-full aspect-square rounded-md border shadow-none transition-transform group-hover:scale-105"
+                                                    className="w-full aspect-video rounded-md border shadow-none transition-transform group-hover:scale-105"
                                                     style={{ backgroundColor: t.bg }}
                                                 />
                                                 <span className={`text-[10px] font-medium ${theme === t.id ? 'text-primary' : 'text-muted-foreground'}`}>{t.name}</span>
                                             </button>
                                         ))}
                                     </div>
+                                </div>
 
-                                    <div className="pt-2 space-y-3">
-                                        <Label className="text-[13px] font-semibold text-foreground/90">
-                                            Custom Brand Color
-                                        </Label>
-                                        <div className="flex items-center gap-2">
-                                            <div className="relative flex-1">
-                                                <Input
-                                                    type="text"
-                                                    value={theme.startsWith('#') ? theme : ''}
-                                                    onChange={(e) => setTheme(e.target.value)}
-                                                    placeholder="#hexcode"
-                                                    className="pl-7 h-9 text-xs shadow-none"
-                                                />
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 font-mono text-[10px]">#</span>
-                                            </div>
-                                            <div className="relative">
-                                                <input
-                                                    type="color"
-                                                    value={theme.startsWith('#') ? theme : '#ffffff'}
-                                                    onChange={(e) => setTheme(e.target.value)}
-                                                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
-                                                />
-                                                <div
-                                                    className="h-9 w-9 border rounded-md shadow-none"
-                                                    style={{ backgroundColor: theme.startsWith('#') ? theme : '#ffffff' }}
-                                                />
-                                            </div>
+                                <div className="space-y-3 pt-2">
+                                    <Label className="text-[13px] font-semibold text-foreground/90">
+                                        Custom Color
+                                    </Label>
+                                    <div className="flex items-center gap-2">
+                                        <div className="relative flex-1">
+                                            <Input
+                                                type="text"
+                                                value={theme.startsWith('#') ? theme : ''}
+                                                onChange={(e) => setTheme(e.target.value)}
+                                                placeholder="#hexcode"
+                                                className="pl-7 h-9 text-xs shadow-none"
+                                            />
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 font-mono text-[10px]">#</span>
+                                        </div>
+                                        <div className="relative">
+                                            <input
+                                                type="color"
+                                                value={theme.startsWith('#') ? theme : '#ffffff'}
+                                                onChange={(e) => setTheme(e.target.value)}
+                                                className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                                            />
+                                            <div
+                                                className="h-9 w-9 border rounded-md shadow-none"
+                                                style={{ backgroundColor: theme.startsWith('#') ? theme : '#ffffff' }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -388,26 +385,33 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                                         }}
                                     >
                                         <div
-                                            className="scale-[0.25] origin-top-left w-[400%] h-[400%] p-8 text-[12px] prose prose-invert max-w-none pointer-events-none overflow-hidden"
+                                            className="scale-[0.25] origin-top-left w-[400%] h-[400%] p-8 text-[12px] max-w-none pointer-events-none overflow-hidden"
                                             style={{
                                                 backgroundColor: theme.startsWith('#') ? theme : (theme === 'white' ? '#fff' : (theme === 'black' ? '#000' : '#fff')),
-                                                color: (['black', 'night', 'moon', 'blood', 'league'].includes(theme) || (theme.startsWith('#') && (0.299 * parseInt(theme.slice(1, 3), 16) + 0.587 * parseInt(theme.slice(3, 5), 16) + 0.114 * parseInt(theme.slice(5, 7), 16)) / 255 < 0.5)) ? '#ffffff' : '#1a1a1a'
+                                                color: (['black', 'night', 'moon', 'blood', 'league'].includes(theme) || (theme.startsWith('#') && (0.299 * parseInt(theme.slice(1, 3), 16) + 0.587 * parseInt(theme.slice(3, 5), 16) + 0.114 * parseInt(theme.slice(5, 7), 16)) / 255 < 0.5)) ? '#ffffff' : '#1a1a1a',
+                                                fontFamily: 'inherit'
                                             }}
                                         >
                                             <div
                                                 dangerouslySetInnerHTML={{
-                                                    __html: s
-                                                        .replace(/^# (.*$)/gm, '<h1 style="color: inherit; font-size: 3em; font-weight: bold; margin-bottom: 0.5em;">$1</h1>')
-                                                        .replace(/^## (.*$)/gm, '<h2 style="color: inherit; font-size: 2.5em; font-weight: bold; margin-bottom: 0.5em;">$1</h2>')
-                                                        .replace(/^### (.*$)/gm, '<h3 style="color: inherit; font-size: 2em; font-weight: bold; margin-bottom: 0.5em;">$1</h3>')
-                                                        .replace(/\\*\[cols-3\]\\*/gi, '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; color: inherit;">')
-                                                        .replace(/\\*\[cols\]\\*/gi, '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: inherit;">')
-                                                        .replace(/\\*\[col\]\\*/gi, '<div style="color: inherit;">')
-                                                        .replace(/\\*\[\/col\]\\*/gi, '</div>')
-                                                        .replace(/\\*\[\/cols\]\\*/gi, '</div>')
-                                                        .replace(/\n/g, '<br/>')
+                                                    __html: (s.includes('<p>') || s.includes('<h1>') || s.includes('<ul>')) ? s
+                                                        .replace(/<p>\s*\[cols(-3)?\]\s*<\/p>|\[cols(-3)?\]/gi, '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(0,1fr)); gap: 20px;">')
+                                                        .replace(/<p>\s*\[col\]\s*<\/p>|\[col\]/gi, '<div>')
+                                                        .replace(/<p>\s*\[\/col\]\s*<\/p>|\[\/col\]/gi, '</div>')
+                                                        .replace(/<p>\s*\[\/cols\]\s*<\/p>|\[\/cols\]/gi, '</div>')
+                                                        : s.replace(/^# (.*$)/gm, '<h1 style="font-size: 3.5em; font-weight: bold; margin-bottom: 0.5em; line-height: 1.2;">$1</h1>')
+                                                            .replace(/^## (.*$)/gm, '<h2 style="font-size: 2.8em; font-weight: bold; margin-bottom: 0.5em; line-height: 1.2;">$1</h2>')
+                                                            .replace(/^### (.*$)/gm, '<h3 style="font-size: 2.2em; font-weight: bold; margin-bottom: 0.5em; line-height: 1.2;">$1</h3>')
+                                                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                                            .replace(/\[([^\]]+)\]\(textColor=([^\)]+)\)/g, '<span class="bn-color-$2">$1</span>')
+                                                            .replace(/\\*\[cols-3\]\\*/gi, '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">')
+                                                            .replace(/\\*\[cols\]\\*/gi, '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">')
+                                                            .replace(/\\*\[col\]\\*/gi, '<div>')
+                                                            .replace(/\\*\[\/col\]\\*/gi, '</div>')
+                                                            .replace(/\\*\[\/cols\]\\*/gi, '</div>')
+                                                            .replace(/\n/g, '<br/>')
                                                 }}
-                                                className="text-current"
                                             />
                                         </div>
                                     </div>
@@ -475,6 +479,18 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                     onClose={() => setIsPreviewing(false)}
                 />
             )}
+
+            <style jsx global>{`
+                .bn-color-red { color: #e03e3e !important; }
+                .bn-color-orange { color: #d9730d !important; }
+                .bn-color-yellow { color: #dfab01 !important; }
+                .bn-color-green { color: #4d6461 !important; }
+                .bn-color-blue { color: #0b6e99 !important; }
+                .bn-color-purple { color: #6940a5 !important; }
+                .bn-color-pink { color: #ad1a72 !important; }
+                .bn-color-gray { color: #9b9a97 !important; }
+                .bn-color-brown { color: #64473a !important; }
+            `}</style>
         </div>
     );
 }

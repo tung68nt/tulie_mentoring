@@ -25817,6 +25817,9 @@ export namespace Prisma {
     startDate: Date | null
     column: string | null
     labels: string | null
+    description: string | null
+    attachments: string | null
+    comments: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -25832,6 +25835,9 @@ export namespace Prisma {
     startDate: Date | null
     column: string | null
     labels: string | null
+    description: string | null
+    attachments: string | null
+    comments: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -25847,6 +25853,9 @@ export namespace Prisma {
     startDate: number
     column: number
     labels: number
+    description: number
+    attachments: number
+    comments: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -25864,6 +25873,9 @@ export namespace Prisma {
     startDate?: true
     column?: true
     labels?: true
+    description?: true
+    attachments?: true
+    comments?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -25879,6 +25891,9 @@ export namespace Prisma {
     startDate?: true
     column?: true
     labels?: true
+    description?: true
+    attachments?: true
+    comments?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -25894,6 +25909,9 @@ export namespace Prisma {
     startDate?: true
     column?: true
     labels?: true
+    description?: true
+    attachments?: true
+    comments?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -25982,6 +26000,9 @@ export namespace Prisma {
     startDate: Date | null
     column: string
     labels: string | null
+    description: string | null
+    attachments: string | null
+    comments: string | null
     createdAt: Date
     updatedAt: Date
     _count: TodoItemCountAggregateOutputType | null
@@ -26014,6 +26035,9 @@ export namespace Prisma {
     startDate?: boolean
     column?: boolean
     labels?: boolean
+    description?: boolean
+    attachments?: boolean
+    comments?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     reflection?: boolean | TodoItem$reflectionArgs<ExtArgs>
@@ -26031,6 +26055,9 @@ export namespace Prisma {
     startDate?: boolean
     column?: boolean
     labels?: boolean
+    description?: boolean
+    attachments?: boolean
+    comments?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     reflection?: boolean | TodoItem$reflectionArgs<ExtArgs>
@@ -26048,6 +26075,9 @@ export namespace Prisma {
     startDate?: boolean
     column?: boolean
     labels?: boolean
+    description?: boolean
+    attachments?: boolean
+    comments?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     reflection?: boolean | TodoItem$reflectionArgs<ExtArgs>
@@ -26065,11 +26095,14 @@ export namespace Prisma {
     startDate?: boolean
     column?: boolean
     labels?: boolean
+    description?: boolean
+    attachments?: boolean
+    comments?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TodoItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reflectionId" | "menteeId" | "title" | "status" | "priority" | "dueDate" | "startDate" | "column" | "labels" | "createdAt" | "updatedAt", ExtArgs["result"]["todoItem"]>
+  export type TodoItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reflectionId" | "menteeId" | "title" | "status" | "priority" | "dueDate" | "startDate" | "column" | "labels" | "description" | "attachments" | "comments" | "createdAt" | "updatedAt", ExtArgs["result"]["todoItem"]>
   export type TodoItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     reflection?: boolean | TodoItem$reflectionArgs<ExtArgs>
     mentee?: boolean | UserDefaultArgs<ExtArgs>
@@ -26100,6 +26133,9 @@ export namespace Prisma {
       startDate: Date | null
       column: string
       labels: string | null
+      description: string | null
+      attachments: string | null
+      comments: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["todoItem"]>
@@ -26537,6 +26573,9 @@ export namespace Prisma {
     readonly startDate: FieldRef<"TodoItem", 'DateTime'>
     readonly column: FieldRef<"TodoItem", 'String'>
     readonly labels: FieldRef<"TodoItem", 'String'>
+    readonly description: FieldRef<"TodoItem", 'String'>
+    readonly attachments: FieldRef<"TodoItem", 'String'>
+    readonly comments: FieldRef<"TodoItem", 'String'>
     readonly createdAt: FieldRef<"TodoItem", 'DateTime'>
     readonly updatedAt: FieldRef<"TodoItem", 'DateTime'>
   }
@@ -35114,6 +35153,9 @@ export namespace Prisma {
     startDate: 'startDate',
     column: 'column',
     labels: 'labels',
+    description: 'description',
+    attachments: 'attachments',
+    comments: 'comments',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -37159,6 +37201,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"TodoItem"> | Date | string | null
     column?: StringFilter<"TodoItem"> | string
     labels?: StringNullableFilter<"TodoItem"> | string | null
+    description?: StringNullableFilter<"TodoItem"> | string | null
+    attachments?: StringNullableFilter<"TodoItem"> | string | null
+    comments?: StringNullableFilter<"TodoItem"> | string | null
     createdAt?: DateTimeFilter<"TodoItem"> | Date | string
     updatedAt?: DateTimeFilter<"TodoItem"> | Date | string
     reflection?: XOR<SessionReflectionNullableScalarRelationFilter, SessionReflectionWhereInput> | null
@@ -37176,6 +37221,9 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     column?: SortOrder
     labels?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    attachments?: SortOrderInput | SortOrder
+    comments?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     reflection?: SessionReflectionOrderByWithRelationInput
@@ -37196,6 +37244,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"TodoItem"> | Date | string | null
     column?: StringFilter<"TodoItem"> | string
     labels?: StringNullableFilter<"TodoItem"> | string | null
+    description?: StringNullableFilter<"TodoItem"> | string | null
+    attachments?: StringNullableFilter<"TodoItem"> | string | null
+    comments?: StringNullableFilter<"TodoItem"> | string | null
     createdAt?: DateTimeFilter<"TodoItem"> | Date | string
     updatedAt?: DateTimeFilter<"TodoItem"> | Date | string
     reflection?: XOR<SessionReflectionNullableScalarRelationFilter, SessionReflectionWhereInput> | null
@@ -37213,6 +37264,9 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     column?: SortOrder
     labels?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    attachments?: SortOrderInput | SortOrder
+    comments?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TodoItemCountOrderByAggregateInput
@@ -37234,6 +37288,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableWithAggregatesFilter<"TodoItem"> | Date | string | null
     column?: StringWithAggregatesFilter<"TodoItem"> | string
     labels?: StringNullableWithAggregatesFilter<"TodoItem"> | string | null
+    description?: StringNullableWithAggregatesFilter<"TodoItem"> | string | null
+    attachments?: StringNullableWithAggregatesFilter<"TodoItem"> | string | null
+    comments?: StringNullableWithAggregatesFilter<"TodoItem"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"TodoItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"TodoItem"> | Date | string
   }
@@ -39789,6 +39846,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reflection?: SessionReflectionCreateNestedOneWithoutTodoItemsInput
@@ -39806,6 +39866,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -39819,6 +39882,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reflection?: SessionReflectionUpdateOneWithoutTodoItemsNestedInput
@@ -39836,6 +39902,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39851,6 +39920,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -39864,6 +39936,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39879,6 +39954,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -41844,6 +41922,9 @@ export namespace Prisma {
     startDate?: SortOrder
     column?: SortOrder
     labels?: SortOrder
+    description?: SortOrder
+    attachments?: SortOrder
+    comments?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -41859,6 +41940,9 @@ export namespace Prisma {
     startDate?: SortOrder
     column?: SortOrder
     labels?: SortOrder
+    description?: SortOrder
+    attachments?: SortOrder
+    comments?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -41874,6 +41958,9 @@ export namespace Prisma {
     startDate?: SortOrder
     column?: SortOrder
     labels?: SortOrder
+    description?: SortOrder
+    attachments?: SortOrder
+    comments?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -45127,6 +45214,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reflection?: SessionReflectionCreateNestedOneWithoutTodoItemsInput
@@ -45142,6 +45232,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -45959,6 +46052,9 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"TodoItem"> | Date | string | null
     column?: StringFilter<"TodoItem"> | string
     labels?: StringNullableFilter<"TodoItem"> | string | null
+    description?: StringNullableFilter<"TodoItem"> | string | null
+    attachments?: StringNullableFilter<"TodoItem"> | string | null
+    comments?: StringNullableFilter<"TodoItem"> | string | null
     createdAt?: DateTimeFilter<"TodoItem"> | Date | string
     updatedAt?: DateTimeFilter<"TodoItem"> | Date | string
   }
@@ -50122,6 +50218,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mentee: UserCreateNestedOneWithoutTodoItemsInput
@@ -50137,6 +50236,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -52216,6 +52318,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -52938,6 +53043,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reflection?: SessionReflectionUpdateOneWithoutTodoItemsNestedInput
@@ -52953,6 +53061,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -52967,6 +53078,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -53679,6 +53793,9 @@ export namespace Prisma {
     startDate?: Date | string | null
     column?: string
     labels?: string | null
+    description?: string | null
+    attachments?: string | null
+    comments?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -53692,6 +53809,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentee?: UserUpdateOneRequiredWithoutTodoItemsNestedInput
@@ -53707,6 +53827,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -53721,6 +53844,9 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     column?: StringFieldUpdateOperationsInput | string
     labels?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableStringFieldUpdateOperationsInput | string | null
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

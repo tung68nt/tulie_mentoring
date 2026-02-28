@@ -41,8 +41,8 @@ export default function SlidePresenter({ content, theme = 'black', onClose }: Sl
                         const section = document.createElement('section');
                         section.setAttribute('data-markdown', '');
 
-                        // Flexible splitting: 3 or more dashes/asterisks on their own line
-                        section.setAttribute('data-separator', '(?:\\r?\\n|^)[-*]{3,}\\s*(?:\\r?\\n|$)');
+                        // Flexible splitting: 3 or more dashes/asterisks on their own line OR an HR element
+                        section.setAttribute('data-separator', '(?:<hr\\s*\\/?>)|(?:(?:\\r?\\n|^)[-*]{3,}\\s*(?:\\r?\\n|$))');
                         section.setAttribute('data-separator-vertical', '(?:\\r?\\n|^)-{2}\\s*(?:\\r?\\n|$)');
 
                         const textarea = document.createElement('textarea');
@@ -52,11 +52,17 @@ export default function SlidePresenter({ content, theme = 'black', onClose }: Sl
                         // Handling both [cols] and escaped variations like \[cols\] or \\[[cols\\]
                         // We use a more permissive regex but still targeted
                         let processedContent = content
-                            .replace(/\\*\[cols-3\]\\*/gi, '\n\n<div class="grid grid-cols-3 gap-6">\n\n')
-                            .replace(/\\*\[cols\]\\*/gi, '\n\n<div class="grid grid-cols-2 gap-8">\n\n')
-                            .replace(/\\*\[col\]\\*/gi, '\n\n<div class="column-item">\n\n')
-                            .replace(/\\*\[\/col\]\\*/gi, '\n\n</div>\n\n')
-                            .replace(/\\*\[\/cols\]\\*/gi, '\n\n</div>\n\n');
+                            .replace(/\[([^\]]+)\]\(textColor=([^\)]+)\)/g, '<span class="bn-color-$2">$1</span>')
+                            .replace(/\\*\[cols-3\]\\*/gi, '\n<div class="grid grid-cols-3 gap-6">\n')
+                            .replace(/\\*\[cols\]\\*/gi, '\n<div class="grid grid-cols-2 gap-8">\n')
+                            .replace(/\\*\[col\]\\*/gi, '\n<div class="column-item">\n')
+                            .replace(/\\*\[\/col\]\\*/gi, '\n</div>\n')
+                            .replace(/\\*\[\/cols\]\\*/gi, '\n</div>\n')
+                            .replace(/<p>\s*\[cols-3\]\s*<\/p>/gi, '\n<div class="grid grid-cols-3 gap-6">\n')
+                            .replace(/<p>\s*\[cols\]\s*<\/p>/gi, '\n<div class="grid grid-cols-2 gap-8">\n')
+                            .replace(/<p>\s*\[col\]\s*<\/p>/gi, '\n<div class="column-item">\n')
+                            .replace(/<p>\s*\[\/col\]\s*<\/p>/gi, '\n</div>\n')
+                            .replace(/<p>\s*\[\/cols\]\s*<\/p>/gi, '\n</div>\n');
 
                         // Final cleanup: if any standalone backslashes remain near our tag locations, remove them
                         processedContent = processedContent.replace(/\\+(?=\s*<div)/g, '');
@@ -161,8 +167,21 @@ export default function SlidePresenter({ content, theme = 'black', onClose }: Sl
                     background-color: ${themeColor} !important;
                     color: ${isDark ? '#ffffff' : '#1a1a1a'} !important;
                 }
+                
+                /* Smaller arrows and better positioning */
+                .reveal .controls {
+                    bottom: 24px !important; /* Move up slightly from the progress bar */
+                    right: 12px !important;
+                    transform: scale(0.7) !important; /* Make arrows smaller */
+                }
+                
+                .reveal .progress {
+                    height: 4px !important;
+                    margin-bottom: 0px !important;
+                }
+
                 .reveal .controls button {
-                    opacity: 1 !important;
+                    opacity: 0.8 !important;
                     color: ${isDark ? '#ffffff' : '#000000'} !important;
                 }
                 .reveal .controls .controls-arrow {
@@ -170,24 +189,40 @@ export default function SlidePresenter({ content, theme = 'black', onClose }: Sl
                 }
                 .reveal .slides section {
                     text-align: left;
-                    padding: 60px !important;
+                    padding: 80px !important;
                     box-sizing: border-box;
                     color: ${isDark ? '#ffffff' : '#1a1a1a'};
                 }
                 .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6,
                 .reveal p, .reveal li, .reveal span, .reveal div, .reveal strong, .reveal em {
                     text-transform: none !important;
-                    color: inherit;
                     margin-bottom: 0.5em !important;
                 }
                 .reveal p, .reveal li {
                     line-height: 1.4 !important;
                 }
                 
+                /* Support for custom text colors - remove global color:inherit to let inline styles through */
+                .reveal span[style*="color"] {
+                    color: initial !important; 
+                }
+
+                /* BlockNote specific color support */
+                .reveal .bn-color-red, .reveal [data-text-color="red"] { color: #e53e3e !important; }
+                .reveal .bn-color-orange, .reveal [data-text-color="orange"] { color: #dd6b20 !important; }
+                .reveal .bn-color-yellow, .reveal [data-text-color="yellow"] { color: #d69e2e !important; }
+                .reveal .bn-color-green, .reveal [data-text-color="green"] { color: #38a169 !important; }
+                .reveal .bn-color-blue, .reveal [data-text-color="blue"] { color: #3182ce !important; }
+                .reveal .bn-color-purple, .reveal [data-text-color="purple"] { color: #805ad5 !important; }
+                .reveal .bn-color-pink, .reveal [data-text-color="pink"] { color: #d53f8c !important; }
+                .reveal .bn-color-gray, .reveal [data-text-color="gray"] { color: #718096 !important; }
+                .reveal .bn-color-brown, .reveal [data-text-color="brown"] { color: #a52a2a !important; }
+                .reveal [data-text-color="default"] { color: inherit !important; }
+                
                 /* Column layouts */
                 .reveal .grid {
                     display: grid !important;
-                    gap: 2rem !important;
+                    gap: 3rem !important;
                     align-items: start !important;
                     width: 100% !important;
                     margin: 2rem 0 !important;
@@ -207,12 +242,14 @@ export default function SlidePresenter({ content, theme = 'black', onClose }: Sl
 
                 .reveal ul, .reveal ol {
                     margin-left: 1.5em !important;
+                    margin-top: 0.5em !important;
                 }
 
                 /* Ensure arrows are icons */
                 .reveal .controls .navigate-left:after { border-right-color: currentColor !important; }
                 .reveal .controls .navigate-right:after { border-left-color: currentColor !important; }
                 .reveal .controls .navigate-up:after { border-bottom-color: currentColor !important; }
+                .reveal .controls .navigate-up:active { border-bottom-color: currentColor !important; }
                 .reveal .controls .navigate-down:after { border-top-color: currentColor !important; }
             `}</style>
         </div>

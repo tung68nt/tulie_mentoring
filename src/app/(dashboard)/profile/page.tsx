@@ -1,7 +1,8 @@
-import { auth } from "@/lib/auth";
+import { auth, signOut } from "@/lib/auth";
 import { getUserProfile } from "@/lib/actions/user";
 import { getMeetings } from "@/lib/actions/meeting";
 import { ProfileEditor } from "@/components/features/profile/profile-editor";
+import { Button } from "@/components/ui/button";
 
 import { redirect } from "next/navigation";
 
@@ -17,8 +18,14 @@ export default async function ProfilePage() {
         const user = await getUserProfile(userId!);
         if (!user) {
             return (
-                <div className="flex items-center justify-center min-h-[400px]">
-                    <p className="text-muted-foreground">Không tìm thấy thông tin người dùng.</p>
+                <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+                    <p className="text-muted-foreground">Không tìm thấy thông tin người dùng (hoặc phiên đăng nhập đã cũ).</p>
+                    <form action={async () => {
+                        "use server";
+                        await signOut({ redirectTo: "/login" });
+                    }}>
+                        <Button variant="outline">Đăng xuất</Button>
+                    </form>
                 </div>
             );
         }
@@ -32,10 +39,16 @@ export default async function ProfilePage() {
         console.error("Failed to fetch profile:", error);
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-                <p className="text-destructive font-semibold">Không thể tải thông tin hồ sơ.</p>
-                <code className="text-xs bg-muted p-4 rounded max-w-2xl overflow-auto whitespace-pre-wrap">
+                <p className="text-destructive font-semibold">Không thể tải thông tin hồ sơ do lỗi hệ thống (có thể do database chưa cập nhật).</p>
+                <code className="text-xs bg-muted p-4 rounded max-w-2xl overflow-auto whitespace-pre-wrap max-h-[200px]">
                     {error?.message || String(error)}
                 </code>
+                <form action={async () => {
+                    "use server";
+                    await signOut({ redirectTo: "/login" });
+                }}>
+                    <Button variant="outline">Đăng xuất</Button>
+                </form>
             </div>
         );
     }

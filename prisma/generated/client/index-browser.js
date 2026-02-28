@@ -407,6 +407,9 @@ exports.Prisma.TodoItemScalarFieldEnum = {
   startDate: 'startDate',
   column: 'column',
   labels: 'labels',
+  description: 'description',
+  attachments: 'attachments',
+  comments: 'comments',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

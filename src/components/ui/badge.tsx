@@ -1,11 +1,11 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { Slot } from "@radix-ui/react-slot"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { Slot } from "@radix-ui/react-slot";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "h-5 gap-1 rounded-md border border-transparent px-2.5 py-0.5 text-[11px] font-semibold transition-all inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden no-uppercase",
+  "gap-1 rounded-md border border-transparent text-[11px] font-semibold transition-all inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden no-uppercase",
   {
     variants: {
       variant: {
@@ -16,24 +16,31 @@ const badgeVariants = cva(
         warning: "bg-secondary text-foreground border-border shadow-none",
         error: "bg-destructive/10 text-destructive border-destructive/20",
         destructive: "bg-destructive/10 text-destructive border-destructive/20",
-        outline: "border-border text-foreground/60 hover:text-foreground hover:bg-muted font-medium",
+        outline:
+          "border-border text-foreground/60 hover:text-foreground hover:bg-muted font-medium",
         ghost: "hover:bg-muted text-foreground/60 hover:text-foreground",
         link: "text-foreground font-semibold underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-5 px-2.5 text-[11px] rounded-md",
-        sm: "h-4 px-1.5 min-w-[1rem] text-[10px] rounded-full",
-        lg: "h-6 px-3 text-xs rounded-md",
+        default: "px-2.5 py-1 text-[11px] rounded-md",
+        sm: "px-2 py-0.5 min-w-[1rem] text-[10px] rounded-md",
+        lg: "px-3 py-1.5 text-xs rounded-md",
       },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
     },
-  }
-)
+  },
+);
 
-const statusConfig: Record<string, { variant: "primary" | "secondary" | "destructive" | "outline", label: string }> = {
+const statusConfig: Record<
+  string,
+  {
+    variant: "primary" | "secondary" | "destructive" | "outline";
+    label: string;
+  }
+> = {
   active: { variant: "primary", label: "Đang hoạt động" },
   completed: { variant: "primary", label: "Hoàn thành" },
   in_progress: { variant: "primary", label: "Đang diễn ra" },
@@ -58,10 +65,10 @@ function Badge({
   ...props
 }: React.ComponentProps<"span"> &
   VariantProps<typeof badgeVariants> & {
-    asChild?: boolean
-    status?: string
+    asChild?: boolean;
+    status?: string;
   }) {
-  const Comp = asChild ? Slot : "span"
+  const Comp = asChild ? Slot : "span";
 
   let finalVariant = variant || "default";
   let displayChildren = children;
@@ -87,7 +94,7 @@ function Badge({
     >
       {displayChildren}
     </Comp>
-  )
+  );
 }
 
-export { Badge, badgeVariants }
+export { Badge, badgeVariants };

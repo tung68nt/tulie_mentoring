@@ -35,7 +35,7 @@ export async function getUserProfile(userId: string) {
         return user ? JSON.parse(JSON.stringify(user)) : null;
     } catch (error) {
         console.error("Error in getUserProfile:", error);
-        return null;
+        throw error;
     }
 }
 
