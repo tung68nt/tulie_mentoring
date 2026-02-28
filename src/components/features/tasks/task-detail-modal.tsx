@@ -5,11 +5,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, Paperclip, MessageSquare, Send } from "lucide-react";
+import { Calendar, Clock, Paperclip, MessageSquare, Send, CheckCircle2, Circle, Plus, Trash2, ListChecks } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { updateTask } from "@/lib/actions/task";
 import { useSession } from "next-auth/react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
 
 interface Task {
     id: string;
@@ -17,10 +18,15 @@ interface Task {
     status: string;
     priority: string;
     dueDate?: string | null;
+    startDate?: string | null;
+    actualStartDate?: string | null;
+    actualCompletedAt?: string | null;
     column: string;
     description?: string | null;
     attachments?: string | null;
     comments?: string | null;
+    checklist?: string | null;
+    completedPercentage?: number;
 }
 
 interface TaskDetailModalProps {
@@ -35,9 +41,15 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [actualStartDate, setActualStartDate] = useState("");
+    const [actualCompletedAt, setActualCompletedAt] = useState("");
     const [comments, setComments] = useState<any[]>([]);
     const [attachments, setAttachments] = useState<any[]>([]);
+    const [checklist, setChecklist] = useState<any[]>([]);
+    const [completedPercentage, setCompletedPercentage] = useState(0);
     const [newComment, setNewComment] = useState("");
+    const [newChecklistItem, setNewChecklistItem] = useState("");
     const [newAttachmentUrl, setNewAttachmentUrl] = useState("");
     const [newAttachmentName, setNewAttachmentName] = useState("");
     const [isSaving, setIsSaving] = useState(false);
@@ -46,14 +58,18 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
         if (task) {
             setTitle(task.title || "");
             setDescription(task.description || "");
+            setCompletedPercentage(task.completedPercentage || 0);
 
-            if (task.dueDate) {
-                // simple yyyy-mm-dd format for input type="date"
-                const date = new Date(task.dueDate);
-                setDueDate(date.toISOString().split("T")[0]);
-            } else {
-                setDueDate("");
-            }
+            const formatDateForInput = (dateString?: string | null) => {
+                if (!dateString) return "";
+                const date = new Date(dateString);
+                return date.toISOString().split("T")[0];
+            };
+
+            setDueDate(formatDateForInput(task.dueDate));
+            setStartDate(formatDateForInput(task.startDate));
+            setActualStartDate(formatDateForInput(task.actualStartDate));
+            setActualCompletedAt(formatDateForInput(task.actualCompletedAt));
 
             try {
                 setComments(task.comments ? JSON.parse(task.comments) : []);
@@ -65,6 +81,12 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                 setAttachments(task.attachments ? JSON.parse(task.attachments) : []);
             } catch (e) {
                 setAttachments([]);
+            }
+
+            try {
+                setChecklist(task.checklist ? JSON.parse(task.checklist) : []);
+            } catch (e) {
+                setChecklist([]);
             }
         }
     }, [task]);
@@ -78,8 +100,13 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                 title,
                 description,
                 dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+                startDate: startDate ? new Date(startDate).toISOString() : null,
+                actualStartDate: actualStartDate ? new Date(actualStartDate).toISOString() : null,
+                actualCompletedAt: actualCompletedAt ? new Date(actualCompletedAt).toISOString() : null,
                 comments: JSON.stringify(comments),
-                attachments: JSON.stringify(attachments)
+                attachments: JSON.stringify(attachments),
+                checklist: JSON.stringify(checklist),
+                completedPercentage: completedPercentage
             });
             onUpdate(updated);
             onClose();
@@ -88,6 +115,39 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
         } finally {
             setIsSaving(false);
         }
+    };
+
+    const calculatePercentage = (items: any[]) => {
+        if (items.length === 0) return completedPercentage; // Keep manually set or default
+        const completed = items.filter(item => item.isCompleted).length;
+        return Math.round((completed / items.length) * 100);
+    };
+
+    const handleAddChecklistItem = () => {
+        if (!newChecklistItem.trim()) return;
+        const newItem = {
+            id: Date.now().toString(),
+            title: newChecklistItem,
+            isCompleted: false
+        };
+        const updatedChecklist = [...checklist, newItem];
+        setChecklist(updatedChecklist);
+        setCompletedPercentage(calculatePercentage(updatedChecklist));
+        setNewChecklistItem("");
+    };
+
+    const toggleChecklistItem = (id: string) => {
+        const updatedChecklist = checklist.map(item =>
+            item.id === id ? { ...item, isCompleted: !item.isCompleted } : item
+        );
+        setChecklist(updatedChecklist);
+        setCompletedPercentage(calculatePercentage(updatedChecklist));
+    };
+
+    const removeChecklistItem = (id: string) => {
+        const updatedChecklist = checklist.filter(item => item.id !== id);
+        setChecklist(updatedChecklist);
+        setCompletedPercentage(calculatePercentage(updatedChecklist));
     };
 
     const handleAddComment = () => {
@@ -137,32 +197,148 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Status / Priority */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground">Trạng thái & Độ ưu tiên</label>
-                            <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="h-8">
-                                    {task.status === "todo" ? "Cần làm" : task.status === "doing" ? "Đang làm" : task.status === "review" ? "Đang xem xét" : "Hoàn thành"}
-                                </Badge>
-                                <Badge variant="secondary" className="h-8">
-                                    {task.priority === "high" ? "Cao" : task.priority === "medium" ? "Trung bình" : "Thấp"}
-                                </Badge>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Dates Group 1 */}
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Ngày bắt đầu dự kiến</label>
+                                <div className="flex items-center gap-2 group">
+                                    <Calendar className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="h-9 text-sm flex-1 rounded-xl"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Ngày bắt đầu thực tế</label>
+                                <div className="flex items-center gap-2 group">
+                                    <Clock className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        type="date"
+                                        value={actualStartDate}
+                                        onChange={(e) => setActualStartDate(e.target.value)}
+                                        className="h-9 text-sm flex-1 rounded-xl"
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        {/* Due Date */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground">Hạn chót (Deadline)</label>
-                            <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-muted-foreground" />
+                        {/* Dates Group 2 */}
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Hạn chót dự kiến</label>
+                                <div className="flex items-center gap-2 group">
+                                    <Calendar className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        type="date"
+                                        value={dueDate}
+                                        onChange={(e) => setDueDate(e.target.value)}
+                                        className="h-9 text-sm flex-1 rounded-xl"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Ngày hoàn thành thực tế</label>
+                                <div className="flex items-center gap-2 group">
+                                    <CheckCircle2 className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        type="date"
+                                        value={actualCompletedAt}
+                                        onChange={(e) => setActualCompletedAt(e.target.value)}
+                                        className="h-9 text-sm flex-1 rounded-xl"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Progress */}
+                    <div className="space-y-3 bg-muted/30 p-4 rounded-2xl border border-border/40">
+                        <div className="flex justify-between items-center mb-1">
+                            <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider">Tiến độ hoàn thành</label>
+                            <span className="text-sm font-bold text-primary">{completedPercentage}%</span>
+                        </div>
+                        <Progress value={completedPercentage} className="h-2" />
+                        {checklist.length === 0 && (
+                            <div className="flex items-center gap-3 pt-2">
+                                <span className="text-[11px] font-medium text-muted-foreground">Tự chỉnh %:</span>
                                 <Input
-                                    type="date"
-                                    value={dueDate}
-                                    onChange={(e) => setDueDate(e.target.value)}
-                                    className="h-8 text-sm flex-1"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    value={completedPercentage}
+                                    onChange={(e) => setCompletedPercentage(Number(e.target.value))}
+                                    className="h-7 w-16 text-xs text-center rounded-lg"
                                 />
                             </div>
+                        )}
+                    </div>
+
+                    {/* Checklist */}
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <ListChecks className="w-4 h-4 text-primary" />
+                                <label className="text-xs font-semibold text-foreground">Danh sách việc cần làm (Checklist)</label>
+                            </div>
+                            {checklist.length > 0 && (
+                                <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                    {checklist.filter(i => i.isCompleted).length}/{checklist.length}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                            {checklist.map((item) => (
+                                <div key={item.id} className="flex items-center gap-3 group bg-muted/20 p-2 rounded-xl border border-transparent hover:border-border/60 transition-all">
+                                    <button
+                                        onClick={() => toggleChecklistItem(item.id)}
+                                        className="text-muted-foreground hover:text-primary transition-colors"
+                                    >
+                                        {item.isCompleted ? (
+                                            <CheckCircle2 className="w-5 h-5 text-green-500 fill-green-500/10" />
+                                        ) : (
+                                            <Circle className="w-5 h-5" />
+                                        )}
+                                    </button>
+                                    <span className={cn(
+                                        "text-sm flex-1 transition-all",
+                                        item.isCompleted ? "text-muted-foreground line-through" : "text-foreground font-medium"
+                                    )}>
+                                        {item.title}
+                                    </span>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={() => removeChecklistItem(item.id)}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            ))}
+                            {checklist.length === 0 && (
+                                <p className="text-xs text-muted-foreground italic bg-muted/40 p-3 rounded-xl border border-dashed text-center">
+                                    Chưa có mục checklist nào. Hãy thêm các đầu việc con để tự động tính % hoàn thành.
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="flex gap-2 items-center">
+                            <Input
+                                placeholder="Thêm việc cần làm..."
+                                value={newChecklistItem}
+                                onChange={(e) => setNewChecklistItem(e.target.value)}
+                                className="h-9 text-sm flex-1 rounded-xl"
+                                onKeyDown={(e) => e.key === "Enter" && handleAddChecklistItem()}
+                            />
+                            <Button size="sm" className="h-9 px-3 rounded-xl gap-2" onClick={handleAddChecklistItem} disabled={!newChecklistItem.trim()}>
+                                <Plus className="w-4 h-4" />
+                                Thêm
+                            </Button>
                         </div>
                     </div>
 

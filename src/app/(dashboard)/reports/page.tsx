@@ -1,9 +1,11 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getMenteeStats } from "@/lib/actions/report";
+import { getMenteeStats, getProgramProgress } from "@/lib/actions/report";
 import { getActivityLogs } from "@/lib/actions/activity";
 import { StatsCards } from "@/components/features/reports/stats-cards";
 import { ActivityFeed } from "@/components/features/reports/activity-feed";
+import { ProgramMatrix } from "@/components/features/reports/program-matrix";
+import { DailyDiary } from "@/components/features/reports/daily-diary";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { prisma } from "@/lib/db";
@@ -20,7 +22,7 @@ export default async function ReportsPage() {
     const isAdmin = role === "admin" || role === "viewer";
 
     try {
-        const [stats, logs, goals, tasks] = await Promise.all([
+        const [stats, logs, goals, tasks, programData] = await Promise.all([
             getMenteeStats(),
             getActivityLogs(10),
             prisma.goal.findMany({
@@ -30,20 +32,21 @@ export default async function ReportsPage() {
                     }
                 },
                 orderBy: { createdAt: "desc" },
-                take: 6,
+                take: 4,
             }),
             prisma.todoItem.findMany({
                 where: isAdmin ? {} : { menteeId: userId },
                 orderBy: { createdAt: "desc" },
-                take: 8,
+                take: 6,
             }),
+            getProgramProgress(),
         ]);
 
         const serializedGoals = JSON.parse(JSON.stringify(goals || []));
         const serializedTasks = JSON.parse(JSON.stringify(tasks || []));
 
         return (
-            <div className="space-y-10 pb-20 animate-fade-in">
+            <div className="space-y-10 pb-20 animate-fade-in px-4 md:px-6 max-w-7xl mx-auto">
                 <div className="flex flex-col gap-1">
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Báo cáo</h1>
                     <p className="text-sm text-muted-foreground mt-1 max-w-lg">
@@ -56,9 +59,35 @@ export default async function ReportsPage() {
                 {/* Stats Overview */}
                 <StatsCards stats={stats} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* Left Column: Goals & Tasks */}
-                    <div className="lg:col-span-8 space-y-8">
+                {/* Habit Tracking Matrix */}
+                {programData && (
+                    <div className="space-y-4">
+                        <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                            Tần suất hoạt động
+                        </h3>
+                        <ProgramMatrix
+                            startDate={programData.startDate}
+                            endDate={programData.endDate}
+                            activityMap={programData.activityMap}
+                        />
+                    </div>
+                )}
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    {/* Left Column: Daily Diary */}
+                    <div className="lg:col-span-8 space-y-10">
+                        {programData && (
+                            <DailyDiary
+                                startDate={programData.startDate}
+                                endDate={programData.endDate}
+                                diaryMap={programData.diaryMap}
+                            />
+                        )}
+                    </div>
+
+                    {/* Right Column: Side Info */}
+                    <div className="lg:col-span-4 space-y-10">
                         {/* Goal Progress */}
                         <div className="space-y-4">
                             <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
@@ -66,15 +95,15 @@ export default async function ReportsPage() {
                                 Tiến độ mục tiêu
                             </h3>
                             {serializedGoals.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4">
                                     {serializedGoals.map((goal: any) => (
-                                        <Card key={goal.id} className="p-5 space-y-3 shadow-none">
+                                        <Card key={goal.id} className="p-4 space-y-3 shadow-none border-border/60 bg-background/50">
                                             <div className="flex items-center justify-between">
                                                 <p className="text-sm font-medium text-foreground truncate flex-1 pr-4">{goal.title}</p>
                                                 <span className="text-xs font-bold text-muted-foreground tabular-nums">{goal.currentValue || 0}%</span>
                                             </div>
                                             <Progress value={goal.currentValue || 0} size="sm" />
-                                            <p className="text-[11px] text-muted-foreground">
+                                            <p className="text-[10px] text-muted-foreground">
                                                 {goal.status === "completed" ? "Đã hoàn thành" : goal.status === "in_progress" ? "Đang thực hiện" : "Chưa bắt đầu"}
                                             </p>
                                         </Card>
@@ -96,7 +125,7 @@ export default async function ReportsPage() {
                             {serializedTasks.length > 0 ? (
                                 <div className="space-y-2">
                                     {serializedTasks.map((task: any) => (
-                                        <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-background">
+                                        <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-background/50 backdrop-blur-sm">
                                             {task.status === "done" ? (
                                                 <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                                             ) : (
@@ -105,9 +134,6 @@ export default async function ReportsPage() {
                                             <p className={`text-sm flex-1 truncate ${task.status === "done" ? "line-through text-muted-foreground" : "text-foreground font-medium"}`}>
                                                 {task.title}
                                             </p>
-                                            <span className="text-[10px] font-medium text-muted-foreground px-2 py-0.5 rounded bg-muted border border-border">
-                                                {task.priority || "medium"}
-                                            </span>
                                         </div>
                                     ))}
                                 </div>
@@ -117,15 +143,13 @@ export default async function ReportsPage() {
                                 </div>
                             )}
                         </div>
-                    </div>
 
-                    {/* Right Column: Activity */}
-                    <div className="lg:col-span-4">
                         <ActivityFeed logs={logs} />
                     </div>
                 </div>
             </div>
         );
+
     } catch (error) {
         console.error("Failed to load reports:", error);
         return (

@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, MoreHorizontal, Calendar, CheckCircle2, Clock, X, MessageSquare, Paperclip } from "lucide-react";
+import { Plus, MoreHorizontal, Calendar, CheckCircle2, Clock, X, MessageSquare, Paperclip, ListChecks } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { updateTaskStatus, deleteTask, createTask } from "@/lib/actions/task";
 import { formatDate } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -18,10 +19,15 @@ export interface Task {
     status: string;
     priority: string;
     dueDate?: string | null;
+    startDate?: string | null;
+    actualStartDate?: string | null;
+    actualCompletedAt?: string | null;
     column: string;
     description?: string | null;
     attachments?: string | null;
     comments?: string | null;
+    checklist?: string | null;
+    completedPercentage?: number;
 }
 
 interface KanbanBoardProps {
@@ -135,7 +141,18 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
-                                        <p className="text-[13px] font-medium text-foreground leading-snug">{task.title}</p>
+                                        <div className="space-y-2">
+                                            <p className="text-[13px] font-medium text-foreground leading-snug">{task.title}</p>
+                                            {(task.completedPercentage !== undefined && task.completedPercentage > 0) && (
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground/60">
+                                                        <span>Tiến độ</span>
+                                                        <span>{task.completedPercentage}%</span>
+                                                    </div>
+                                                    <Progress value={task.completedPercentage} className="h-1" />
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="flex items-center justify-between mt-1">
                                             <div className="flex items-center gap-3">
                                                 {task.dueDate && (
@@ -146,6 +163,20 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-2">
+                                                {task.checklist && (() => {
+                                                    try {
+                                                        const parsed = JSON.parse(task.checklist);
+                                                        const completed = parsed.filter((i: any) => i.isCompleted).length;
+                                                        return parsed.length > 0 && (
+                                                            <div className="flex items-center gap-1 text-[10px] text-primary/80 font-bold bg-primary/5 px-1.5 py-0.5 rounded-md">
+                                                                <ListChecks className="w-3.5 h-3.5" />
+                                                                {completed}/{parsed.length}
+                                                            </div>
+                                                        );
+                                                    } catch {
+                                                        return null;
+                                                    }
+                                                })()}
                                                 {task.attachments && (() => {
                                                     try {
                                                         const parsed = JSON.parse(task.attachments);

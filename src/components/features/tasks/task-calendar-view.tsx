@@ -24,6 +24,7 @@ interface Task {
     status: string;
     priority: string;
     dueDate?: string;
+    completedPercentage?: number;
 }
 
 interface TaskCalendarViewProps {
@@ -122,12 +123,23 @@ export function TaskCalendarView({ initialTasks }: TaskCalendarViewProps) {
                                         <div
                                             key={task.id}
                                             className={cn(
-                                                "px-2 py-1 rounded-md border text-[9px] font-medium truncate",
+                                                "px-2 py-1 rounded-md border text-[9px] font-medium truncate relative overflow-hidden group/task transition-all hover:ring-1 hover:ring-primary/20",
                                                 PRIORITY_COLORS[task.priority] || "bg-secondary text-foreground"
                                             )}
-                                            title={task.title}
+                                            title={`${task.title} - ${task.completedPercentage || 0}%`}
                                         >
-                                            {task.title}
+                                            <div className="relative z-10 flex justify-between gap-1 items-center">
+                                                <span className="truncate">{task.title}</span>
+                                                {task.completedPercentage !== undefined && task.completedPercentage > 0 && (
+                                                    <span className="shrink-0 text-[7px] opacity-70 font-bold">{task.completedPercentage}%</span>
+                                                )}
+                                            </div>
+                                            {task.completedPercentage !== undefined && task.completedPercentage > 0 && (
+                                                <div
+                                                    className="absolute bottom-0 left-0 h-[2px] bg-primary/40 group-hover/task:bg-primary/60 transition-all"
+                                                    style={{ width: `${task.completedPercentage}%` }}
+                                                />
+                                            )}
                                         </div>
                                     ))}
                                 </div>

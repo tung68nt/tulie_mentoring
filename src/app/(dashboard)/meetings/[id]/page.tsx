@@ -161,6 +161,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                         <QRManager
                             meetingId={meeting.id}
                             qrToken={meeting.qrToken}
+                            checkInCode={meeting.checkInCode}
                             expiresAt={meeting.qrExpiresAt || new Date().toISOString()}
                         />
                     ) : (

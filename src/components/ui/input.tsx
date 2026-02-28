@@ -17,7 +17,7 @@ function Input({
   return (
     <div className="space-y-1.5 w-full">
       {label && (
-        <label className="block text-[12px] font-medium text-muted-foreground px-0.5">
+        <label className="block text-[12px] font-medium text-muted-foreground px-4">
           {label}
         </label>
       )}
@@ -40,7 +40,7 @@ function Input({
         )}
       </div>
       {error && (
-        <p className="text-[12px] text-destructive font-medium">{error}</p>
+        <p className="text-[12px] text-destructive font-medium px-4">{error}</p>
       )}
     </div>
   );

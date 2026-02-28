@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, AlertCircle, Loader2, Camera } from "lucide-react";
+import { CheckCircle, AlertCircle, Loader2, Camera, KeyRound } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { checkIn } from "@/lib/actions/meeting";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
@@ -17,6 +18,7 @@ interface QRScannerClientProps {
 export function QRScannerClient({ initialMeetingId, initialToken }: QRScannerClientProps) {
     const [status, setStatus] = useState<"idle" | "scanning" | "loading" | "success" | "error">("idle");
     const [errorMsg, setErrorMsg] = useState<string>("");
+    const [manualCode, setManualCode] = useState<string>("");
     const router = useRouter();
     const hasAutoCheckedIn = useRef(false);
 
@@ -27,10 +29,10 @@ export function QRScannerClient({ initialMeetingId, initialToken }: QRScannerCli
         }
     }, [initialMeetingId, initialToken]);
 
-    const handleCheckIn = async (meetingId: string, token: string) => {
+    const handleCheckIn = async (idOrCode: string, token?: string) => {
         setStatus("loading");
         try {
-            await checkIn(meetingId, token);
+            await checkIn(idOrCode, token);
             setStatus("success");
 
             // Redirect after success
@@ -94,6 +96,36 @@ export function QRScannerClient({ initialMeetingId, initialToken }: QRScannerCli
                     <Button className="w-full rounded-lg" onClick={() => setStatus("scanning")}>
                         Bắt đầu quét mã
                     </Button>
+
+                    <div className="relative w-full">
+                        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center">
+                            <div className="w-full border-t border-border" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">Hoặc nhập mã</span>
+                        </div>
+                    </div>
+
+                    <div className="w-full space-y-3">
+                        <div className="relative">
+                            <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Nhập mã 6 ký tự"
+                                className="pl-10 h-11 text-center font-mono text-lg tracking-[0.2em] uppercase rounded-lg"
+                                maxLength={6}
+                                value={manualCode}
+                                onChange={(e) => setManualCode(e.target.value)}
+                            />
+                        </div>
+                        <Button
+                            variant="secondary"
+                            className="w-full rounded-lg"
+                            disabled={manualCode.length < 6}
+                            onClick={() => handleCheckIn(manualCode)}
+                        >
+                            Xác nhận mã
+                        </Button>
+                    </div>
                 </Card>
             )}
 
@@ -149,8 +181,11 @@ export function QRScannerClient({ initialMeetingId, initialToken }: QRScannerCli
                         <h3 className="text-xl font-semibold text-foreground">Lỗi điểm danh</h3>
                         <p className="text-sm text-destructive font-bold">{errorMsg}</p>
                     </div>
-                    <Button variant="outline" onClick={() => setStatus("scanning")} className="rounded-lg mt-2 border-border/60">
-                        Thử lại
+                    <Button variant="outline" onClick={() => {
+                        setStatus("idle");
+                        setErrorMsg("");
+                    }} className="rounded-lg mt-2 border-border/60">
+                        Quay lại
                     </Button>
                 </Card>
             )}

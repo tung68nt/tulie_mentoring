@@ -34,6 +34,7 @@ export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void 
                 title: data.title,
                 priority: data.priority,
                 dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+                startDate: data.startDate ? new Date(data.startDate) : undefined,
                 reflectionId: data.reflectionId || undefined,
             });
             reset();
@@ -73,20 +74,13 @@ export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void 
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground/60 px-0.5">Độ ưu tiên</Label>
-                                <Select
-                                    defaultValue="medium"
-                                    onValueChange={(val) => setValue("priority", val as any)}
-                                >
-                                    <SelectTrigger className="h-10 rounded-lg border-border/60 bg-muted/10 px-3 font-medium">
-                                        <SelectValue placeholder="Chọn..." />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-lg border-border/60">
-                                        <SelectItem value="low" className="rounded-md">Thấp</SelectItem>
-                                        <SelectItem value="medium" className="rounded-md">Trung bình</SelectItem>
-                                        <SelectItem value="high" className="rounded-md">Cao</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Label htmlFor="startDate" className="text-xs font-semibold text-muted-foreground/60 px-0.5">Ngày bắt đầu</Label>
+                                <Input
+                                    id="startDate"
+                                    type="date"
+                                    {...register("startDate")}
+                                    className="h-10 rounded-lg border-border/60 bg-muted/10 px-3 font-medium"
+                                />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="dueDate" className="text-xs font-semibold text-muted-foreground/60 px-0.5">Hạn chót</Label>
@@ -97,6 +91,23 @@ export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void 
                                     className="h-10 rounded-lg border-border/60 bg-muted/10 px-3 font-medium"
                                 />
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold text-muted-foreground/60 px-0.5">Độ ưu tiên</Label>
+                            <Select
+                                defaultValue="medium"
+                                onValueChange={(val) => setValue("priority", val as any)}
+                            >
+                                <SelectTrigger className="h-10 rounded-lg border-border/60 bg-muted/10 px-4 font-medium">
+                                    <SelectValue placeholder="Chọn..." />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-lg border-border/60">
+                                    <SelectItem value="low" className="rounded-md">Thấp</SelectItem>
+                                    <SelectItem value="medium" className="rounded-md">Trung bình</SelectItem>
+                                    <SelectItem value="high" className="rounded-md">Cao</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 

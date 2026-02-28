@@ -71,7 +71,7 @@ export function GoalsList({ mentorships, allGoals, userRole }: GoalsListProps) {
 
                         {/* Inline GoalForm */}
                         {isFormOpen && (
-                            <div className="animate-fade-in max-w-xl">
+                            <div className="animate-fade-in">
                                 <GoalForm
                                     mentorshipId={mentorship.id}
                                     onSuccess={() => setShowFormFor(null)}

@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 interface QRManagerProps {
     meetingId: string;
     qrToken: string | null;
+    checkInCode: string | null;
     expiresAt: Date | null;
 }
 
-export function QRManager({ meetingId, qrToken, expiresAt }: QRManagerProps) {
+export function QRManager({ meetingId, qrToken, checkInCode, expiresAt }: QRManagerProps) {
     const [qrDataUrl, setQrDataUrl] = useState<string>("");
     const [timeLeft, setTimeLeft] = useState<number>(0);
 
@@ -73,11 +74,20 @@ export function QRManager({ meetingId, qrToken, expiresAt }: QRManagerProps) {
                 )}
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-full border border-border">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-semibold text-foreground">
-                    Còn lại: {minutes}:{seconds.toString().padStart(2, "0")}
-                </span>
+            <div className="flex flex-col gap-4 w-full">
+                <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-full border border-border mx-auto">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold text-foreground">
+                        Còn lại: {minutes}:{seconds.toString().padStart(2, "0")}
+                    </span>
+                </div>
+
+                {checkInCode && (
+                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                        <p className="text-[10px] text-primary font-bold tracking-wider mb-1 uppercase">Mã điểm danh thủ công</p>
+                        <p className="text-3xl font-mono font-black tracking-[0.2em] text-primary">{checkInCode}</p>
+                    </div>
+                )}
             </div>
         </Card>
     );

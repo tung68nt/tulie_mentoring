@@ -25,6 +25,7 @@ export async function createTask(data: {
     title: string;
     priority?: string;
     dueDate?: Date;
+    startDate?: Date;
     reflectionId?: string;
 }) {
     const session = await auth();
@@ -35,6 +36,7 @@ export async function createTask(data: {
             title: data.title,
             priority: data.priority || "medium",
             dueDate: data.dueDate,
+            startDate: data.startDate,
             reflectionId: data.reflectionId,
             menteeId: session.user.id!,
             status: "todo",

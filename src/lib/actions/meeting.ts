@@ -8,6 +8,11 @@ import { v4 as uuidv4 } from "uuid";
 import { addMinutes } from "date-fns";
 import { logActivity } from "./activity";
 
+function generateCheckInCode() {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+
 export async function createMeeting(data: MeetingInput) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
@@ -28,6 +33,7 @@ export async function createMeeting(data: MeetingInput) {
             ...validatedData,
             creatorId: session.user.id!,
             qrToken: uuidv4(),
+            checkInCode: generateCheckInCode(),
             qrExpiresAt: addMinutes(validatedData.scheduledAt, validatedData.duration + 60), // Allow 1 hour grace
         },
     });
@@ -124,21 +130,35 @@ export async function getMeetingDetail(id: string) {
     }
 }
 
-export async function checkIn(meetingId: string, token: string) {
+export async function checkIn(meetingIdOrCode: string, token?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
-    const meeting = await prisma.meeting.findUnique({
-        where: { id: meetingId },
-    });
+    let meeting;
 
-    if (!meeting) throw new Error("Meeting not found");
-    if (meeting.qrToken !== token) throw new Error("Mã QR không hợp lệ");
+    if (token) {
+        // QR Check-in
+        meeting = await prisma.meeting.findUnique({
+            where: { id: meetingIdOrCode },
+        });
+
+        if (!meeting) throw new Error("Cuộc họp không tồn tại");
+        if (meeting.qrToken !== token) throw new Error("Mã QR không hợp lệ");
+    } else {
+        // Code Check-in
+        meeting = await prisma.meeting.findFirst({
+            where: { checkInCode: meetingIdOrCode.toUpperCase() },
+        });
+
+        if (!meeting) throw new Error("Mã điểm danh không hợp lệ");
+    }
 
     // Expiry check logic
     if (meeting.qrExpiresAt && new Date() > meeting.qrExpiresAt) {
-        throw new Error("Mã QR đã hết hạn");
+        throw new Error("Mã điểm danh đã hết hạn");
     }
+
+    const meetingId = meeting.id;
 
     const attendance = await prisma.attendance.upsert({
         where: {

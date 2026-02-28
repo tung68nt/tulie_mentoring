@@ -35,7 +35,7 @@ model User {
   mentorships        Mentorship[]        @relation("MentorUser")
   menteeships        MentorshipMentee[]
   notifications      Notification[]
-  portfolios         Portfolio[]
+  portfolios         Portfolio?
   resourcesUploaded  Resource[]
   sessionReflections SessionReflection[]
   slides             Slide[]             @relation("SlideCreator")
@@ -173,6 +173,7 @@ model Meeting {
   qrExpiresAt        DateTime?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+  checkInCode        String?             @unique
   attendances        Attendance[]
   creator            User                @relation("MeetingCreator", fields: [creatorId], references: [id])
   mentorship         Mentorship          @relation(fields: [mentorshipId], references: [id])
@@ -320,24 +321,24 @@ model Resource {
 }
 
 model Portfolio {
-  id                   String              @id @default(cuid())
-  menteeId             String              @unique
-  personalityMbti      String?
-  personalityDisc      String?
-  personalityHolland   String?
-  competencies         String?
-  shortTermGoals       String?             // JSON
-  longTermGoals        String?             // JSON
-  strengths            String?
-  weaknesses           String?
-  challenges           String?
-  personalNotes        String?
-  startupIdeas         String?
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  mentee               User                @relation(fields: [menteeId], references: [id])
-  entries              PortfolioEntry[]
-  snapshots            PortfolioSnapshot[]
+  id                 String              @id @default(cuid())
+  menteeId           String              @unique
+  personalityMbti    String?
+  personalityDisc    String?
+  personalityHolland String?
+  competencies       String?
+  shortTermGoals     String?
+  longTermGoals      String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  challenges         String?
+  personalNotes      String?
+  startupIdeas       String?
+  strengths          String?
+  weaknesses         String?
+  mentee             User                @relation(fields: [menteeId], references: [id])
+  entries            PortfolioEntry[]
+  snapshots          PortfolioSnapshot[]
 
   @@index([menteeId])
 }
@@ -347,7 +348,7 @@ model PortfolioEntry {
   portfolioId String
   title       String
   content     String
-  type        String    @default("reflection") // assessment, reflection, milestone
+  type        String    @default("reflection")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
@@ -359,7 +360,7 @@ model PortfolioSnapshot {
   id          String    @id @default(cuid())
   portfolioId String
   title       String
-  data        String    // JSON stringified snapshot
+  data        String
   createdAt   DateTime  @default(now())
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
 
@@ -414,23 +415,27 @@ model SessionReflection {
 }
 
 model TodoItem {
-  id           String             @id @default(cuid())
-  reflectionId String?
-  menteeId     String
-  title        String
-  status       String             @default("todo")
-  priority     String             @default("medium")
-  dueDate      DateTime?
-  startDate    DateTime?
-  column       String             @default("todo")
-  labels       String?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  attachments  String?
-  comments     String?
-  description  String?
-  mentee       User               @relation(fields: [menteeId], references: [id], onDelete: Cascade)
-  reflection   SessionReflection? @relation(fields: [reflectionId], references: [id])
+  id                  String             @id @default(cuid())
+  reflectionId        String?
+  menteeId            String
+  title               String
+  status              String             @default("todo")
+  priority            String             @default("medium")
+  dueDate             DateTime?
+  startDate           DateTime?
+  column              String             @default("todo")
+  labels              String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  attachments         String?
+  comments            String?
+  description         String?
+  checklist           String?
+  completedPercentage Int                @default(0)
+  actualCompletedAt   DateTime?
+  actualStartDate     DateTime?
+  mentee              User               @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  reflection          SessionReflection? @relation(fields: [reflectionId], references: [id])
 
   @@index([menteeId])
   @@index([reflectionId])

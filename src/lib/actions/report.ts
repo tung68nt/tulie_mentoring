@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { format } from "date-fns";
+import { revalidatePath } from "next/cache";
 
 export async function getMenteeStats(specificUserId?: string) {
     const session = await auth();
@@ -77,3 +79,132 @@ export async function getMenteeStats(specificUserId?: string) {
         recentActivitiesCount
     };
 }
+
+export async function getProgramProgress(specificUserId?: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const userId = session.user.id!;
+    const role = (session.user as any).role;
+    const targetUserId = specificUserId || userId;
+
+    // Find the current active mentorship for the user
+    const mentorship = await prisma.mentorship.findFirst({
+        where: {
+            mentees: { some: { menteeId: targetUserId } },
+            status: "active"
+        },
+        include: {
+            programCycle: true
+        }
+    });
+
+    if (!mentorship) return null;
+
+    const startDate = mentorship.programCycle.startDate;
+    const endDate = mentorship.programCycle.endDate;
+
+    // Fetch activity logs for the program period
+    const activities = await prisma.activityLog.findMany({
+        where: {
+            userId: targetUserId,
+            createdAt: {
+                gte: startDate,
+                lte: endDate
+            }
+        },
+        select: {
+            createdAt: true
+        }
+    });
+
+    // Fetch daily diary entries from portfolio
+    const portfolio = await prisma.portfolio.findUnique({
+        where: { menteeId: targetUserId },
+        include: {
+            entries: {
+                where: { type: "daily_log" },
+                orderBy: { createdAt: "asc" }
+            }
+        }
+    });
+
+    // Group activities by day
+    const activityMap: Record<string, number> = {};
+    activities.forEach(log => {
+        const dateStr = log.createdAt.toISOString().split("T")[0];
+        activityMap[dateStr] = (activityMap[dateStr] || 0) + 1;
+    });
+
+    // Group diary entries by day
+    const diaryMap: Record<string, any> = {};
+    portfolio?.entries.forEach(entry => {
+        const dateStr = entry.createdAt.toISOString().split("T")[0];
+        diaryMap[dateStr] = {
+            id: entry.id,
+            content: entry.content,
+            title: entry.title
+        };
+    });
+
+    return {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        activityMap,
+        diaryMap
+    };
+}
+
+export async function saveDailyLog(dateStr: string, content: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const userId = session.user.id!;
+    const date = new Date(dateStr);
+
+    // Find or create portfolio for user
+    const portfolio = await prisma.portfolio.upsert({
+        where: { menteeId: userId },
+        update: {},
+        create: { menteeId: userId }
+    });
+
+    // Find if there's already an entry for this exact day (within 00:00:00 to 23:59:59)
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(date);
+    endDate.setHours(23, 59, 59, 999);
+
+    const existingEntry = await prisma.portfolioEntry.findFirst({
+        where: {
+            portfolioId: portfolio.id,
+            type: "daily_log",
+            createdAt: {
+                gte: startDate,
+                lte: endDate
+            }
+        }
+    });
+
+    if (existingEntry) {
+        await prisma.portfolioEntry.update({
+            where: { id: existingEntry.id },
+            data: { content }
+        });
+    } else {
+        await prisma.portfolioEntry.create({
+            data: {
+                portfolioId: portfolio.id,
+                title: `Nhật ký ngày ${format(date, "dd/MM/yyyy")}`,
+                content,
+                type: "daily_log",
+                createdAt: date // Set the date manually for the entry
+            }
+        });
+    }
+
+    revalidatePath("/reports");
+    return { success: true };
+}
+
+

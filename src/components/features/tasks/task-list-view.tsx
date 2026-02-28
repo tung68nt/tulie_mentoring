@@ -60,8 +60,10 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
                     <TableRow className="hover:bg-transparent border-border/60">
                         <TableHead className="w-[48px]"></TableHead>
                         <TableHead className="text-[11px] font-semibold text-muted-foreground py-4">Công việc</TableHead>
+                        <TableHead className="text-[11px] font-semibold text-muted-foreground">Tiến độ</TableHead>
+                        <TableHead className="text-[11px] font-semibold text-muted-foreground">Thực tế</TableHead>
                         <TableHead className="text-[11px] font-semibold text-muted-foreground">Trạng thái</TableHead>
-                        <TableHead className="text-[11px] font-semibold text-muted-foreground">Độ ưu tiên</TableHead>
+                        <TableHead className="text-[11px] font-semibold text-muted-foreground text-center">Độ ưu tiên</TableHead>
                         <TableHead className="text-[11px] font-semibold text-muted-foreground">Hạn chót</TableHead>
                         <TableHead className="w-[80px]"></TableHead>
                     </TableRow>
@@ -80,15 +82,51 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
                                     <Circle className="w-4.5 h-4.5 text-muted-foreground/40" />
                                 )}
                             </TableCell>
-                            <TableCell className="font-medium text-[13.5px] text-foreground py-3">
-                                {task.title}
+                            <TableCell className="py-3">
+                                <div className="space-y-1">
+                                    <div className="font-semibold text-[13.5px] text-foreground">{task.title}</div>
+                                    {task.startDate && (
+                                        <div className="text-[10px] text-muted-foreground/60">Bắt đầu: {formatDate(task.startDate)}</div>
+                                    )}
+                                </div>
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex flex-col gap-1 w-24">
+                                    <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground/80">
+                                        <span>{task.completedPercentage || 0}%</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-primary transition-all"
+                                            style={{ width: `${task.completedPercentage || 0}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            </TableCell>
+                            <TableCell>
+                                <div className="space-y-0.5 min-w-[120px]">
+                                    {task.actualStartDate ? (
+                                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                                            S: {formatDate(task.actualStartDate)}
+                                        </div>
+                                    ) : (
+                                        <div className="text-[10px] text-muted-foreground/30 italic">Chưa bắt đầu</div>
+                                    )}
+                                    {task.actualCompletedAt && (
+                                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-green-500/50" />
+                                            F: {formatDate(task.actualCompletedAt)}
+                                        </div>
+                                    )}
+                                </div>
                             </TableCell>
                             <TableCell>
                                 <Badge variant="outline" className="rounded-md px-2 py-0 h-5 text-[10px] font-medium bg-muted/20 border-border/60">
                                     {STATUS_LABELS[task.status]}
                                 </Badge>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-center">
                                 <Badge className={cn("rounded-md px-2 py-0 h-5 text-[10px] font-medium border-transparent shadow-none", PRIORITY_COLORS[task.priority])}>
                                     {task.priority}
                                 </Badge>
@@ -127,7 +165,7 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
                     ))}
                     {tasks.length === 0 && (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-32 text-center">
+                            <TableCell colSpan={8} className="h-32 text-center">
                                 <p className="text-sm text-muted-foreground opacity-60 font-medium">Không có công việc nào.</p>
                             </TableCell>
                         </TableRow>

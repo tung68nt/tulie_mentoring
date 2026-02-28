@@ -21,7 +21,9 @@ interface Task {
     status: string;
     priority: string;
     dueDate?: string;
+    startDate?: string;
     createdAt: string;
+    completedPercentage?: number;
 }
 
 interface TaskGanttViewProps {
@@ -98,7 +100,7 @@ export function TaskGanttView({ initialTasks }: TaskGanttViewProps) {
                     {/* Task Rows */}
                     <div className="divide-y divide-border/20">
                         {initialTasks.map((task) => {
-                            const taskStart = new Date(task.createdAt);
+                            const taskStart = task.startDate ? new Date(task.startDate) : new Date(task.createdAt);
                             const taskEnd = task.dueDate ? new Date(task.dueDate) : taskStart;
 
                             // Calculate position relative to timeline
@@ -132,7 +134,7 @@ export function TaskGanttView({ initialTasks }: TaskGanttViewProps) {
                                         {/* Task Bar */}
                                         <div
                                             className={cn(
-                                                "h-6 rounded-md border shadow-none relative z-10 mx-1 flex items-center px-3 overflow-hidden transition-all",
+                                                "h-7 rounded-md border shadow-none relative z-10 mx-1 flex items-center overflow-hidden transition-all group/gantt hover:h-8 hover:-translate-y-0.5",
                                                 STATUS_COLORS[task.status] || "bg-secondary"
                                             )}
                                             style={{
@@ -140,7 +142,19 @@ export function TaskGanttView({ initialTasks }: TaskGanttViewProps) {
                                                 gridColumnEnd: `span ${Math.min(displayDuration, daysToShow - displayOffset)}`
                                             }}
                                         >
-                                            <span className="text-[10px] font-medium text-foreground/80 truncate">{task.title}</span>
+                                            {/* Progress Fill */}
+                                            {task.completedPercentage !== undefined && task.completedPercentage > 0 && (
+                                                <div
+                                                    className="absolute inset-y-0 left-0 bg-primary/20 transition-all border-r border-primary/20"
+                                                    style={{ width: `${task.completedPercentage}%` }}
+                                                />
+                                            )}
+                                            <div className="relative z-10 flex items-center justify-between w-full px-3">
+                                                <span className="text-[10px] font-bold text-foreground truncate">{task.title}</span>
+                                                {task.completedPercentage !== undefined && task.completedPercentage > 0 && (
+                                                    <span className="text-[8px] font-black opacity-60 ml-2">{task.completedPercentage}%</span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
