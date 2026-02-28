@@ -59,7 +59,7 @@ export default async function PortfolioPage() {
         <div className="space-y-8 pb-10">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b pb-6">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Hồ sơ năng lực</h1>
+                    <h1 className="text-2xl font-semibold text-foreground">Hành trình trưởng thành</h1>
                     <p className="text-sm text-muted-foreground max-w-2xl">
                         Nhật ký tiến bộ trong tư duy và trưởng thành trong việc hoàn thành các mục tiêu.
                     </p>
