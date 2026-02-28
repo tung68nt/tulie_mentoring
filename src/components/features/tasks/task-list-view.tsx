@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { updateTaskStatus, deleteTask } from "@/lib/actions/task";
-import { useState } from "react";
-
 import { TaskDetailModal } from "./task-detail-modal";
 import { Task } from "./kanban-board";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface TaskListViewProps {
     initialTasks: Task[];
@@ -33,6 +33,10 @@ const STATUS_LABELS: Record<string, string> = {
 export function TaskListView({ initialTasks }: TaskListViewProps) {
     const [tasks, setTasks] = useState<Task[]>(initialTasks as Task[]);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+    useEffect(() => {
+        setTasks(initialTasks as Task[]);
+    }, [initialTasks]);
 
     async function handleStatusChange(taskId: string, newStatus: string) {
         try {

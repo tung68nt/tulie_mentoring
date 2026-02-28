@@ -12,6 +12,7 @@ import { formatDate } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { TaskDetailModal } from "./task-detail-modal";
+import { toast } from "sonner";
 
 export interface Task {
     id: string;
@@ -56,6 +57,10 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
+        setTasks(initialTasks);
+    }, [initialTasks]);
+
+    useEffect(() => {
         if (addingTo && inputRef.current) {
             inputRef.current.focus();
         }
@@ -93,8 +98,10 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
             }
             setNewTitle("");
             setAddingTo(null);
+            toast.success("Đã tạo công việc thành công!");
         } catch (error) {
             console.error("Failed to create task:", error);
+            toast.error("Không thể tạo công việc. Vui lòng thử lại.");
         } finally {
             setIsCreating(false);
         }

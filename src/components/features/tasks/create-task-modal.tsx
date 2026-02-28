@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, AlignLeft } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void }) {
     const [open, setOpen] = useState(false);
@@ -32,6 +34,7 @@ export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void 
         try {
             await createTask({
                 title: data.title,
+                description: data.description || undefined,
                 priority: data.priority,
                 dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
                 startDate: data.startDate ? new Date(data.startDate) : undefined,
@@ -39,9 +42,11 @@ export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void 
             });
             reset();
             setOpen(false);
+            toast.success("Đã tạo công việc thành công!");
             if (onTaskCreated) onTaskCreated();
         } catch (error) {
             console.error("Failed to create task:", error);
+            toast.error("Không thể tạo được công việc. Vui lòng kiểm tra lại.");
         } finally {
             setIsSubmitting(false);
         }
@@ -108,6 +113,19 @@ export function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void 
                                     <SelectItem value="high" className="rounded-md">Cao</SelectItem>
                                 </SelectContent>
                             </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="description" className="text-xs font-semibold text-muted-foreground/60 px-0.5">Mô tả chi tiết</Label>
+                            <div className="relative group">
+                                <AlignLeft className="absolute left-3 top-3 w-4 h-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
+                                <Textarea
+                                    id="description"
+                                    placeholder="Thêm mô tả về công việc này..."
+                                    {...register("description")}
+                                    className="min-h-[100px] pl-9 rounded-lg border-border/60 bg-muted/10 text-sm placeholder:text-muted-foreground/40 focus:border-primary/30 transition-all resize-none"
+                                />
+                            </div>
                         </div>
                     </div>
 

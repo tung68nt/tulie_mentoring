@@ -136,11 +136,20 @@ export const availabilitySchema = z.object({
 // ─── Todo / Tasks ───────────────────────────────────────────────
 export const todoSchema = z.object({
     title: z.string().min(1, "Tiêu đề không được để trống"),
+    description: z.string().optional().nullable(),
     priority: z.enum(["low", "medium", "high"]).default("medium"),
     status: z.enum(["todo", "doing", "review", "done"]).default("todo"),
     column: z.string().default("todo"),
-    dueDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date().optional().nullable()),
-    startDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date().optional().nullable()),
+    dueDate: z.preprocess((arg) => {
+        if (!arg || arg === "") return null;
+        const date = typeof arg === "string" ? new Date(arg) : arg;
+        return isNaN(date.getTime()) ? null : date;
+    }, z.date().optional().nullable()),
+    startDate: z.preprocess((arg) => {
+        if (!arg || arg === "") return null;
+        const date = typeof arg === "string" ? new Date(arg) : arg;
+        return isNaN(date.getTime()) ? null : date;
+    }, z.date().optional().nullable()),
     reflectionId: z.string().optional().nullable(),
 });
 

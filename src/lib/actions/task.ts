@@ -24,6 +24,7 @@ export async function getTasks() {
 export async function createTask(data: {
     title: string;
     priority?: string;
+    description?: string;
     dueDate?: Date;
     startDate?: Date;
     reflectionId?: string;
@@ -34,13 +35,16 @@ export async function createTask(data: {
     const task = await prisma.todoItem.create({
         data: {
             title: data.title,
+            description: data.description || null,
             priority: data.priority || "medium",
-            dueDate: data.dueDate,
-            startDate: data.startDate,
-            reflectionId: data.reflectionId,
+            dueDate: data.dueDate && !isNaN(data.dueDate?.getTime() || NaN) ? data.dueDate : null,
+            startDate: data.startDate && !isNaN(data.startDate?.getTime() || NaN) ? data.startDate : null,
+            reflectionId: data.reflectionId || null,
             menteeId: session.user.id!,
             status: "todo",
-            column: "todo"
+            column: "todo",
+            checklist: JSON.stringify([]),
+            completedPercentage: 0
         }
     });
 
