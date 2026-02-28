@@ -29,31 +29,36 @@ export async function createTask(data: {
     startDate?: Date;
     reflectionId?: string;
 }) {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    try {
+        const session = await auth();
+        if (!session?.user) throw new Error("Unauthorized");
 
-    const task = await prisma.todoItem.create({
-        data: {
-            title: data.title,
-            description: data.description || null,
-            priority: data.priority || "medium",
-            dueDate: data.dueDate && !isNaN(data.dueDate?.getTime() || NaN) ? data.dueDate : null,
-            startDate: data.startDate && !isNaN(data.startDate?.getTime() || NaN) ? data.startDate : null,
-            reflectionId: data.reflectionId || null,
-            menteeId: session.user.id!,
-            status: "todo",
-            column: "todo",
-            checklist: JSON.stringify([]),
-            completedPercentage: 0
-        }
-    });
+        const task = await prisma.todoItem.create({
+            data: {
+                title: data.title,
+                description: data.description || null,
+                priority: data.priority || "medium",
+                dueDate: data.dueDate ? new Date(data.dueDate) : null,
+                startDate: data.startDate ? new Date(data.startDate) : null,
+                reflectionId: data.reflectionId || null,
+                menteeId: session.user.id!,
+                status: "todo",
+                column: "todo",
+                checklist: JSON.stringify([]),
+                completedPercentage: 0
+            }
+        });
 
-    revalidatePath("/tasks");
+        revalidatePath("/tasks");
 
-    // Log activity
-    await logActivity("create_task", task.id, "task", { title: task.title });
+        // Log activity
+        await logActivity("create_task", task.id, "task", { title: task.title });
 
-    return JSON.parse(JSON.stringify(task));
+        return JSON.parse(JSON.stringify(task));
+    } catch (error) {
+        console.error("Error in createTask:", error);
+        throw error;
+    }
 }
 
 export async function updateTask(id: string, data: any) {
