@@ -217,9 +217,9 @@ export function DailyTracker() {
                                     } else if (isSubmitted) {
                                         cellClasses += "bg-primary border-primary/50 text-primary-foreground shadow-sm hover:opacity-80";
                                     } else if (isPassed) {
-                                        cellClasses += "bg-muted border-border/60 hover:bg-muted/80 opacity-60";
+                                        cellClasses += "bg-muted border-border/80 hover:bg-muted/90 opacity-80";
                                     } else {
-                                        cellClasses += "bg-transparent border-dashed border-border/40 opacity-30";
+                                        cellClasses += "bg-transparent border-dashed border-border/60 opacity-50";
                                     }
 
                                     return (

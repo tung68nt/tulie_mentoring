@@ -143,11 +143,18 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                     </div>
                                     <div className="text-right">
                                         <Badge status={attendance.status} size="sm" />
-                                        {attendance.checkInTime && (
-                                            <p className="text-[10px] font-medium text-muted-foreground mt-1">
-                                                Check-in: {formatDate(attendance.checkInTime, "HH:mm")}
-                                            </p>
-                                        )}
+                                        <div className="mt-1 space-y-0.5">
+                                            {attendance.checkInTime && (
+                                                <p className="text-[10px] font-medium text-muted-foreground">
+                                                    In: {formatDate(attendance.checkInTime, "HH:mm")}
+                                                </p>
+                                            )}
+                                            {attendance.checkOutTime && (
+                                                <p className="text-[10px] font-medium text-muted-foreground">
+                                                    Out: {formatDate(attendance.checkOutTime, "HH:mm")}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -163,9 +170,16 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                             qrToken={meeting.qrToken}
                             checkInCode={meeting.checkInCode}
                             expiresAt={meeting.qrExpiresAt || new Date().toISOString()}
+                            attendance={meeting.attendances.find((a: any) => a.userId === userId)}
+                            status={meeting.status}
                         />
                     ) : (
-                        <QRSentry meetingId={meeting.id} />
+                        <QRSentry
+                            meetingId={meeting.id}
+                            meetingType={meeting.type}
+                            meetingUrl={meeting.meetingUrl}
+                            attendance={meeting.attendances.find((a: any) => a.userId === userId)}
+                        />
                     )}
 
                     <MinutesSection meetingId={meeting.id} minutes={JSON.parse(JSON.stringify(minutes))} isMentor={isMentor} />

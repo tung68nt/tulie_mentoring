@@ -11,104 +11,108 @@ interface UserManualProps {
 
 const sections = [
     {
-        title: "Các thành phần chính",
+        title: "Tổng quan Dashboard",
         icon: LayoutDashboard,
         content: [
             {
-                term: "Logo Tulie (T)",
-                desc: "Nằm ở góc trên bên trái. Nhấn vào để quay lại trang chủ (tổng quan) từ bất kỳ đâu."
+                term: "Bảng tin (Home)",
+                desc: "Nơi tổng hợp mọi thứ quan trọng nhất: buổi họp sắp tới, mục tiêu đang thực hiện và biểu đồ tiến độ gần đây của bạn."
             },
             {
-                term: "Thanh tìm kiếm",
-                desc: "Giúp bạn tìm nhanh các tài liệu, công việc hoặc thông tin mentee/mentor trong hệ thống."
+                term: "Tiến độ rèn luyện",
+                desc: "Lưới 10 ngày (hoặc hơn) thể hiện sự kỷ luật của bạn. Các ô xanh đậm là những ngày bạn đã ghi nhật ký đầy đủ."
             },
             {
-                term: "Icon thông báo (Chuông)",
-                desc: "Nơi hiển thị các nhắc nhở về cuộc họp sắp tới, phản hồi mới hoặc các nhiệm vụ cần thực hiện."
+                term: "Widget Mục tiêu",
+                desc: "Hiển thị nhanh các mục tiêu quan trọng nhất. Bạn có thể theo dõi phần trăm hoàn thành ngay tại đây."
             },
             {
-                term: "Icon trợ giúp (?)",
-                desc: "Chính là nút bạn vừa nhấn để xem hướng dẫn sử dụng này."
+                term: "Thành phần thanh Menu",
+                desc: "Từ trên xuống: Dashboard, Wiki kiến thức, Lịch hoạt động, Danh sách công việc, Nhật ký hành trình, và Hỗ trợ."
             }
         ]
     },
     {
-        title: "Thuật ngữ hệ thống",
-        icon: Info,
-        content: [
-            {
-                term: "Mentor",
-                desc: "Người dẫn dắt, hỗ trợ và định hướng cho bạn trong suốt chương trình."
-            },
-            {
-                term: "Mentee",
-                desc: "Người học, người nhận sự dẫn dắt và thực hiện các mục tiêu phát triển."
-            },
-            {
-                term: "Mục tiêu (Goals)",
-                desc: "Các đích đến dài hạn, có tính chiến lược thường kéo dài 3-6 tháng."
-            },
-            {
-                term: "Công việc (Tasks)",
-                desc: "Các bước nhỏ, cụ thể để hoàn thành mục tiêu. Có trạng thái: đang làm, hoàn thành, chờ."
-            },
-            {
-                term: "Thu hoạch (Reflections)",
-                desc: "Những bài học, kinh nghiệm quý báu được đúc kết lại sau mỗi giai đoạn hoặc sự kiện."
-            }
-        ]
-    },
-    {
-        title: "Lịch & Điểm danh",
+        title: "Cuộc họp & Điểm danh",
         icon: Calendar,
         content: [
             {
-                term: "Đặt lịch hẹn",
-                desc: "Mentor và mentee có thể xem lịch trống để sắp xếp các buổi gặp mặt (1:1)."
+                term: "Chủ động lên lịch",
+                desc: "Trong vai trò Mentee, bạn có thể chủ động nhấn 'Lên lịch mới' trên trang Lịch để đề xuất buổi gặp với Mentor, thay vì chờ đợi."
             },
             {
-                term: "Mã QR / Check-in",
-                desc: "Tại mỗi buổi họp, Mentor sẽ cung cấp mã QR. Mentee dùng tính năng 'Check-in' để quét và ghi nhận sự hiện diện."
+                term: "Tham gia họp Online",
+                desc: "Với các buổi gọi video, chỉ cần nhấn 'Tham gia & Check-in'. Hệ thống sẽ tự động điểm danh khi bạn mở link họp."
             },
             {
-                term: "Quản lý cuộc họp",
-                desc: "Xem lại danh sách các buổi họp đã diễn ra và nội dung thảo luận (nếu có)."
+                term: "Check-in Offline",
+                desc: "Quét mã QR do Mentor cung cấp hoặc nhập mã 6 ký tự để ghi nhận sự hiện diện tại buổi họp trực tiếp."
+            },
+            {
+                term: "Check-out (Điểm danh ra)",
+                desc: "Đừng quên nhấn Check-out khi kết thúc buổi họp để ghi lại chính xác thời lượng bạn đã tham gia."
             }
         ]
     },
     {
-        title: "Theo dõi tiến độ",
-        icon: ListTodo,
+        title: "Mục tiêu & Công việc",
+        icon: Target,
         content: [
             {
-                term: "Nhật ký hằng ngày",
-                desc: "Nơi ghi lại các hoạt động mỗi ngày: Lòng biết ơn, trọng tâm, bài học và tự do ghi chép."
+                term: "Thiết lập Mục tiêu (Goals)",
+                desc: "Xác định các mục tiêu chiến lược (Career, Skill, Project...). Chia nhỏ mục tiêu lớn thành các giá trị định lượng (ví dụ: 0-100%)."
             },
             {
-                term: "Nhật ký hành trình (Portfolio)",
-                desc: "Lưu trữ toàn bộ quá trình phát triển của bạn dưới dạng nhật ký hình ảnh và văn bản."
+                term: "Mục tiêu nhỏ (Sub-goals)",
+                desc: "Mỗi mục tiêu lớn có thể chứa nhiều mục tiêu nhỏ với trọng số khác nhau để tính toán tiến độ chính xác nhất."
             },
             {
-                term: "Báo cáo tiến độ",
-                desc: "Biểu đồ và số liệu thống kê giúp bạn thấy rõ sự thay đổi của bản thân qua thời gian."
+                term: "Bảng Kanban (Tasks)",
+                desc: "Quản lý công việc hàng ngày qua 4 trạng thái: Cần làm, Đang làm, Đợi review, và Hoàn thành. Kéo thả để cập nhật trạng thái."
+            },
+            {
+                term: "Ghi chú & Đính kèm",
+                desc: "Trong mỗi công việc, bạn có thể lưu lại mô tả chi tiết, đính kèm tài liệu hoặc thảo luận trực tiếp với Mentor."
             }
         ]
     },
     {
-        title: "Công cụ hỗ trợ",
+        title: "Nhật ký & Thu hoạch",
+        icon: PenLine,
+        content: [
+            {
+                term: "Thực hành Lòng biết ơn",
+                desc: "Hãy khởi đầu mỗi ngày bằng việc ghi lại những điều khiến bạn cảm thấy trân trọng để nuôi dưỡng tâm thế tích cực."
+            },
+            {
+                term: "Trọng tâm & Bài học",
+                desc: "Xác định việc quan trọng nhất cần làm và đúc kết lại ít nhất một kinh nghiệm mới sau mỗi ngày làm việc."
+            },
+            {
+                term: "Nhật ký tự do",
+                desc: "Viết thoải mái suy nghĩ của bạn (Free-writing) để giải tỏa căng thẳng và khơi nguồn sáng tạo."
+            },
+            {
+                term: "Thu hoạch buổi họp",
+                desc: "Sau mỗi buổi họp, hãy viết 'Session Reflection' để tổng kết các nội dung chính đã học được từ Mentor."
+            }
+        ]
+    },
+    {
+        title: "Kiến thức & Tài liệu",
         icon: BookMarked,
         content: [
             {
-                term: "Wiki & Tài liệu",
-                desc: "Hệ thống kiến thức nền tảng, các quy trình và tài liệu học tập dùng chung."
+                term: "Thư viện tài liệu",
+                desc: "Nơi lưu trữ các file, link bài viết và giáo trình do Admin hoặc Mentor chia sẻ riêng cho lộ trình của bạn."
             },
             {
-                term: "Whiteboard",
-                desc: "Bảng vẽ trực tuyến dùng để brainstorming hoặc trình bày ý tưởng trong buổi họp."
+                term: "Wiki Agency",
+                desc: "Các quy trình chuẩn, triết lý vận hành và kiến thức nền tảng của Tulie giúp bạn hòa nhập nhanh hơn."
             },
             {
-                term: "Slides",
-                desc: "Các bài thuyết trình, giáo án điện tử phục vụ cho việc học tập và giảng dạy."
+                term: "Phân loại tags",
+                desc: "Sử dụng các nhãn (tags) để lọc nhanh tài liệu theo chủ đề (Marketing, Tech, Management...)."
             }
         ]
     },
@@ -117,16 +121,16 @@ const sections = [
         icon: Users,
         content: [
             {
-                term: "Hồ sơ cá nhân",
-                desc: "Cập nhật thông tin liên hệ, ảnh đại diện và đổi mật khẩu."
+                term: "Hồ sơ cá nhân (Portfolio)",
+                desc: "Xây dựng thương hiệu cá nhân qua các chỉ số MBTI, DISC, kỹ năng và mục tiêu dài hạn của bạn."
             },
             {
-                term: "Yêu cầu hỗ trợ (Tickets)",
-                desc: "Nếu gặp lỗi kỹ thuật hoặc cần sự giúp đỡ từ quản trị viên, hãy tạo một ticket tại đây."
+                term: "Vé hỗ trợ (Tickets)",
+                desc: "Nếu hệ thống bị lỗi hoặc bạn có ý kiến đóng góp, hãy tạo Ticket để đội ngũ kỹ thuật xử lý nhanh nhất."
             },
             {
-                term: "Đăng xuất",
-                desc: "Nhấn vào nút cuối cùng trên thanh menu để thoát khỏi hệ thống an toàn."
+                term: "Cài đặt & Bảo mật",
+                desc: "Thay đổi mật khẩu định kỳ và cập nhật ảnh đại diện để Mentor dễ dàng nhận diện và hỗ trợ bạn."
             }
         ]
     }
@@ -201,7 +205,7 @@ export function UserManual({ isOpen, onClose }: UserManualProps) {
                     {/* Section details */}
                     <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 scroll-smooth">
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <h3 className="text-[12px] font-bold text-primary no-uppercase tracking-widest mb-6 opacity-80">
+                            <h3 className="text-[12px] font-bold text-primary no-uppercase mb-6 opacity-80">
                                 {sections[activeSection].title}
                             </h3>
 
@@ -210,7 +214,7 @@ export function UserManual({ isOpen, onClose }: UserManualProps) {
                                     <div key={i} className="group flex gap-4">
                                         <div className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0 group-hover:bg-primary transition-colors duration-300 ml-1" />
                                         <div className="space-y-1.5">
-                                            <h4 className="text-[14px] font-bold text-foreground no-uppercase tracking-tight">
+                                            <h4 className="text-[14px] font-bold text-foreground no-uppercase">
                                                 {item.term}
                                             </h4>
                                             <p className="text-[13px] text-muted-foreground/90 leading-relaxed no-uppercase no-italic font-normal max-w-[320px]">

@@ -10,16 +10,13 @@ export default async function NewMeetingPage() {
     }
     const role = (session.user as any).role;
 
-    if (role === "mentee") {
-        redirect("/calendar");
-    }
-
     // Fetch mentorships the user is allowed to create meetings for
-    // For mentors, only their own groups. For admin, all groups.
     const allMentorships = await getMentorships();
     const filteredMentorships = role === "admin"
         ? allMentorships
-        : allMentorships.filter((m: any) => m.mentorId === session?.user?.id);
+        : role === "mentor"
+            ? allMentorships.filter((m: any) => m.mentorId === session?.user?.id)
+            : allMentorships.filter((m: any) => m.mentees.some((mentee: any) => mentee.menteeId === session?.user?.id));
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">

@@ -26,6 +26,15 @@ export async function createMeeting(data: MeetingInput) {
         if (mentorship?.mentorId !== session.user.id) {
             throw new Error("Unauthorized: You are not the mentor of this mentorship");
         }
+    } else if ((session.user as any).role === "mentee") {
+        const mentorship = await prisma.mentorship.findUnique({
+            where: { id: validatedData.mentorshipId },
+            include: { mentees: true }
+        });
+        const isParticipant = mentorship?.mentees.some(m => m.menteeId === session.user.id);
+        if (!isParticipant) {
+            throw new Error("Unauthorized: You are not a participant of this mentorship");
+        }
     }
 
     const meeting = await prisma.meeting.create({
@@ -144,13 +153,38 @@ export async function checkIn(meetingIdOrCode: string, token?: string) {
 
         if (!meeting) throw new Error("Cuộc họp không tồn tại");
         if (meeting.qrToken !== token) throw new Error("Mã QR không hợp lệ");
-    } else {
-        // Code Check-in
+    } else if (meetingIdOrCode.length === 6) {
+        // Code Check-in (assuming manual codes are 6 chars)
         meeting = await prisma.meeting.findFirst({
             where: { checkInCode: meetingIdOrCode.toUpperCase() },
         });
 
         if (!meeting) throw new Error("Mã điểm danh không hợp lệ");
+    } else {
+        // Direct Check-in by Meeting ID (for online meetings)
+        meeting = await prisma.meeting.findUnique({
+            where: { id: meetingIdOrCode },
+            include: {
+                mentorship: {
+                    include: {
+                        mentees: true
+                    }
+                }
+            }
+        });
+
+        if (!meeting) throw new Error("Cuộc họp không tồn tại");
+
+        // Ensure user is a participant
+        const isParticipant = meeting.mentorship.mentorId === session.user.id ||
+            meeting.mentorship.mentees.some(m => m.menteeId === session.user.id);
+
+        if (!isParticipant) throw new Error("Bạn không phải là thành viên của cuộc họp này");
+
+        // allow direct check-in for online meetings, or if it's already scheduled
+        if (meeting.type !== "online" && meeting.status !== "scheduled" && meeting.status !== "ongoing") {
+            throw new Error("Cuộc họp chưa bắt đầu hoặc đã kết thúc");
+        }
     }
 
     // Expiry check logic
@@ -185,6 +219,37 @@ export async function checkIn(meetingIdOrCode: string, token?: string) {
     await logActivity("check_in", meetingId, "meeting", { title: meeting.title });
 
     return JSON.parse(JSON.stringify(attendance));
+}
+
+export async function checkOut(meetingId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    try {
+        const attendance = await prisma.attendance.update({
+            where: {
+                meetingId_userId: {
+                    meetingId,
+                    userId: session.user.id!,
+                },
+            },
+            data: {
+                checkOutTime: new Date(),
+            },
+        });
+
+        const meeting = await prisma.meeting.findUnique({ where: { id: meetingId } });
+
+        revalidatePath(`/meetings/${meetingId}`);
+
+        // Log activity
+        await logActivity("check_out", meetingId, "meeting", { title: meeting?.title });
+
+        return JSON.parse(JSON.stringify(attendance));
+    } catch (error) {
+        console.error("Check-out error:", error);
+        throw new Error("Không tìm thấy thông tin điểm danh để check-out");
+    }
 }
 
 export async function updateMeetingStatus(id: string, status: string) {
