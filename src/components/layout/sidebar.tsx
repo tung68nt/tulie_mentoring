@@ -127,7 +127,7 @@ export function Sidebar({ role }: SidebarProps) {
             },
             {
                 items: [
-                    { id: "portfolio", label: "Hành trình trưởng thành", icon: FolderOpen, href: "/portfolio" },
+                    { id: "portfolio", label: "Nhật ký hành trình", icon: FolderOpen, href: "/portfolio" },
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                 ],
             },

@@ -258,7 +258,7 @@ function FullPortfolioForm({ isPending, startTransition, portfolio }: any) {
             </div>
 
             <Button type="submit" disabled={isPending} className="w-full h-11 rounded-lg text-sm font-medium shadow-none">
-                {isPending ? "Đang lưu..." : "Cập nhật hồ sơ năng lực"}
+                {isPending ? "Đang lưu..." : "Cập nhật nhật ký hành trình"}
             </Button>
         </form>
     );
@@ -279,7 +279,7 @@ function GoalListInput({ label, goals, setGoals, placeholder }: { label: string,
         <div className="space-y-3">
             <div className="flex items-center justify-between">
                 <label className="text-[11px] font-medium text-muted-foreground">{label}</label>
-                <Button type="button" variant="ghost" size="sm" onClick={addGoal} className="h-7 px-2 text-[10px] gap-1 hover:bg-muted font-normal uppercase tracking-tight">
+                <Button type="button" variant="ghost" size="sm" onClick={addGoal} className="h-7 px-2 text-[10px] gap-1 hover:bg-muted font-normal">
                     <Plus className="w-3 h-3" />
                     Thêm dòng
                 </Button>

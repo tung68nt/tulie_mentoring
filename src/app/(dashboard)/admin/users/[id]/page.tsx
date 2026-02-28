@@ -243,7 +243,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                 <Card>
                     <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
                         <GraduationCap className="w-4 h-4 text-muted-foreground" />
-                        Hành trình trưởng thành Mentee
+                        Nhật ký hành trình Mentee
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                         <div className="space-y-4">
