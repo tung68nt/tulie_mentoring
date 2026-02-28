@@ -277,7 +277,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                                         <div key={ref.id} className="p-4 rounded-xl border border-border/50 space-y-3">
                                             <div className="flex items-start justify-between gap-4">
                                                 <div className="space-y-1">
-                                                    <p className="text-[10px] font-bold text-muted-foreground/40 tracking-wider">
+                                                    <p className="text-[10px] font-bold text-muted-foreground/40">
                                                         {formatDate(ref.createdAt)}
                                                     </p>
                                                     <h4 className="font-semibold text-foreground text-sm leading-snug">

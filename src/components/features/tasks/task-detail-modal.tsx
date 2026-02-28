@@ -129,7 +129,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                 <div className="flex flex-col gap-6 py-4">
                     {/* Title */}
                     <div className="space-y-2">
-                        <label className="text-xs font-semibold text-muted-foreground uppercase">Tiêu đề</label>
+                        <label className="text-xs font-semibold text-muted-foreground">Tiêu đề</label>
                         <Input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -140,7 +140,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                     <div className="grid grid-cols-2 gap-4">
                         {/* Status / Priority */}
                         <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground uppercase">Trạng thái & Độ ưu tiên</label>
+                            <label className="text-xs font-semibold text-muted-foreground">Trạng thái & Độ ưu tiên</label>
                             <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="h-8">
                                     {task.status === "todo" ? "Cần làm" : task.status === "doing" ? "Đang làm" : task.status === "review" ? "Đang xem xét" : "Hoàn thành"}
@@ -153,7 +153,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
 
                         {/* Due Date */}
                         <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground uppercase">Hạn chót (Deadline)</label>
+                            <label className="text-xs font-semibold text-muted-foreground">Hạn chót (Deadline)</label>
                             <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-muted-foreground" />
                                 <Input
@@ -168,7 +168,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
 
                     {/* Description */}
                     <div className="space-y-2">
-                        <label className="text-xs font-semibold text-muted-foreground uppercase">Mô tả chi tiết</label>
+                        <label className="text-xs font-semibold text-muted-foreground">Mô tả chi tiết</label>
                         <Textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -181,7 +181,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <Paperclip className="w-4 h-4 text-muted-foreground" />
-                            <label className="text-xs font-semibold text-muted-foreground uppercase">Tệp & Liên kết đính kèm</label>
+                            <label className="text-xs font-semibold text-muted-foreground">Tệp & Liên kết đính kèm</label>
                         </div>
 
                         {attachments.length > 0 && (
@@ -222,7 +222,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                            <label className="text-xs font-semibold text-muted-foreground uppercase">Bình luận</label>
+                            <label className="text-xs font-semibold text-muted-foreground">Bình luận</label>
                         </div>
 
                         <div className="flex flex-col gap-3">

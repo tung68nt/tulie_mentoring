@@ -75,7 +75,7 @@ export function Countdown({ targetDate, label, className, variant = "default" }:
             className
         )}>
             <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold uppercase tracking-wider opacity-70">{label}</span>
+                <span className="text-xs font-semibold opacity-70">{label}</span>
                 {isUrgent && <AlertCircle className="w-4 h-4 animate-pulse text-amber-500" />}
             </div>
 
@@ -98,7 +98,7 @@ function TimeUnit({ value, label }: { value: number, label: string }) {
             <span className="text-2xl font-bold font-mono tracking-tighter">
                 {String(value).padStart(2, '0')}
             </span>
-            <span className="text-[10px] uppercase font-medium opacity-50">{label}</span>
+            <span className="text-[10px] font-medium opacity-50">{label}</span>
         </div>
     );
 }

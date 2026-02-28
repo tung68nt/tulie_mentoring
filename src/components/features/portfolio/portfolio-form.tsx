@@ -35,7 +35,7 @@ function GoalListInput({ label, goals, setGoals, placeholder }: { label: string,
     return (
         <div className="space-y-3">
             <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-muted-foreground tracking-wider">{label}</label>
+                <label className="text-xs font-semibold text-muted-foreground">{label}</label>
                 <Button type="button" variant="ghost" size="sm" onClick={addGoal} className="h-7 px-2 text-[11px] gap-1.5 hover:bg-primary/5 hover:text-primary transition-colors">
                     <Plus className="w-3 h-3" />
                     Thêm mục tiêu
@@ -147,22 +147,22 @@ function InitialForm({ isPending, startTransition, portfolio }: any) {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">MBTI</label>
+                        <label className="text-[11px] font-semibold text-muted-foreground">MBTI</label>
                         <Input value={mbti} onChange={e => setMbti(e.target.value)} placeholder="VD: INTJ" className="h-10" />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">DISC</label>
+                        <label className="text-[11px] font-semibold text-muted-foreground">DISC</label>
                         <Input value={disc} onChange={e => setDisc(e.target.value)} placeholder="VD: D/I" className="h-10" />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">Holland</label>
+                        <label className="text-[11px] font-semibold text-muted-foreground">Holland</label>
                         <Input value={holland} onChange={e => setHolland(e.target.value)} placeholder="VD: RIA" className="h-10" />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                     <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">ĐIỂM MẠNH</label>
+                        <label className="text-[11px] font-semibold text-muted-foreground">Điểm mạnh</label>
                         <textarea
                             value={strengths}
                             onChange={e => setStrengths(e.target.value)}
@@ -172,7 +172,7 @@ function InitialForm({ isPending, startTransition, portfolio }: any) {
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">HẠN CHẾ</label>
+                        <label className="text-[11px] font-semibold text-muted-foreground">Hạn chế</label>
                         <textarea
                             value={weaknesses}
                             onChange={e => setWeaknesses(e.target.value)}
@@ -184,7 +184,7 @@ function InitialForm({ isPending, startTransition, portfolio }: any) {
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">KHÓ KHĂN HIỆN TẠI</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground">Khó khăn hiện tại</label>
                     <textarea
                         value={challenges}
                         onChange={e => setChallenges(e.target.value)}
@@ -195,7 +195,7 @@ function InitialForm({ isPending, startTransition, portfolio }: any) {
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">Ý TƯỞNG / STARTUP</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground">Ý tưởng / Startup</label>
                     <textarea
                         value={startupIdeas}
                         onChange={e => setStartupIdeas(e.target.value)}
@@ -206,7 +206,7 @@ function InitialForm({ isPending, startTransition, portfolio }: any) {
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">TÂM SỰ / GHI CHÚ RIÊNG</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground">Tâm sự / Ghi chú riêng</label>
                     <textarea
                         value={personalNotes}
                         onChange={e => setPersonalNotes(e.target.value)}
@@ -317,7 +317,7 @@ function FinalForm({ isPending, startTransition, portfolio }: any) {
                             <h3 className="text-sm font-semibold text-foreground">Kết quả học tập</h3>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">Tỉ lệ mục tiêu đạt được (%)</label>
+                            <label className="text-[11px] font-semibold text-muted-foreground">Tỉ lệ mục tiêu đạt được (%)</label>
                             <Input type="number" min={0} max={100} value={goalsAchieved} onChange={e => setGoalsAchieved(e.target.value)} placeholder="0-100" className="h-10" />
                         </div>
 
@@ -330,7 +330,7 @@ function FinalForm({ isPending, startTransition, portfolio }: any) {
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">Tự đánh giá cá nhân</label>
+                        <label className="text-[11px] font-semibold text-muted-foreground">Tự đánh giá cá nhân</label>
                         <textarea
                             value={selfAssessment}
                             onChange={e => setSelfAssessment(e.target.value)}
@@ -341,14 +341,14 @@ function FinalForm({ isPending, startTransition, portfolio }: any) {
                     </div>
 
                     <div className="p-5 bg-primary/5 rounded-xl border border-primary/10 space-y-4">
-                        <h4 className="text-[11px] font-bold text-primary tracking-widest uppercase text-center">Cập nhật hồ sơ cuối kỳ</h4>
+                        <h4 className="text-[11px] font-bold text-primary text-center">Cập nhật hồ sơ cuối kỳ</h4>
                         <div className="space-y-3">
                             <div>
-                                <label className="text-[10px] font-bold text-muted-foreground">ĐIỂM MẠNH HIỆN TẠI</label>
+                                <label className="text-[10px] font-bold text-muted-foreground">Điểm mạnh hiện tại</label>
                                 <textarea value={strengths} onChange={e => setStrengths(e.target.value)} rows={2} className="w-full mt-1 bg-white dark:bg-zinc-900 border border-border/50 rounded-md text-sm p-2" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-muted-foreground">KHÓ KHĂN CÒN LẠI</label>
+                                <label className="text-[10px] font-bold text-muted-foreground">Khó khăn còn lại</label>
                                 <textarea value={challenges} onChange={e => setChallenges(e.target.value)} rows={2} className="w-full mt-1 bg-white dark:bg-zinc-900 border border-border/50 rounded-md text-sm p-2" />
                             </div>
                         </div>
@@ -362,7 +362,7 @@ function FinalForm({ isPending, startTransition, portfolio }: any) {
                             <h3 className="text-sm font-semibold text-foreground">Phản hồi & Định hướng</h3>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">Nhận xét từ Mentor</label>
+                            <label className="text-[11px] font-semibold text-muted-foreground">Nhận xét từ Mentor</label>
                             <textarea
                                 value={mentorFeedback}
                                 onChange={e => setMentorFeedback(e.target.value)}
@@ -373,7 +373,7 @@ function FinalForm({ isPending, startTransition, portfolio }: any) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-semibold text-muted-foreground tracking-wider">Đề xuất phát triển tiếp theo</label>
+                            <label className="text-[11px] font-semibold text-muted-foreground">Đề xuất phát triển tiếp theo</label>
                             <textarea
                                 value={recommendations}
                                 onChange={e => setRecommendations(e.target.value)}

@@ -32,6 +32,13 @@ export const meetingSchema = z.object({
 });
 
 // ─── Goal ────────────────────────────────────────────────────────
+export const subGoalSchema = z.object({
+    id: z.string().optional(),
+    title: z.string().min(1, "Tiêu đề mục tiêu con không được để trống"),
+    weight: z.coerce.number().min(1).default(1),
+    currentValue: z.coerce.number().min(0).max(100).default(0),
+});
+
 export const goalSchema = z.object({
     title: z.string().min(1, "Tiêu đề không được để trống"),
     description: z.string().optional(),
@@ -42,6 +49,7 @@ export const goalSchema = z.object({
     priority: z.enum(["low", "medium", "high"]),
     dueDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date().optional()),
     mentorshipId: z.string().min(1),
+    subGoals: z.array(subGoalSchema).optional(),
 });
 
 // ─── Feedback ────────────────────────────────────────────────────

@@ -261,10 +261,25 @@ model Goal {
 
   mentorship    Mentorship     @relation(fields: [mentorshipId], references: [id])
   creator       User           @relation("GoalCreator", fields: [creatorId], references: [id])
+  subGoals      SubGoal[]
   progressNotes ProgressNote[]
 
   @@index([mentorshipId])
   @@index([status])
+}
+
+model SubGoal {
+  id           String   @id @default(cuid())
+  goalId       String
+  title        String
+  weight       Int      @default(1)
+  currentValue Int      @default(0) // percentage 0-100
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
 }
 
 model ProgressNote {
