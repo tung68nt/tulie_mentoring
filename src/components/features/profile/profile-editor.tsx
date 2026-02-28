@@ -69,7 +69,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                             size="xl"
                             className="w-32 h-32 text-4xl mb-6 border-4 border-background"
                         />
-                        <h2 className="text-xl font-semibold text-foreground">{user.firstName} {user.lastName}</h2>
+                        <h2 className="text-xl font-semibold text-foreground capitalize">{user.firstName} {user.lastName}</h2>
                         <p className="text-xs font-medium text-muted-foreground mt-1 mb-4">{user.role}</p>
                         <Badge status={user.isActive ? "active" : "offline"} className="mb-6 text-[10px]" />
 
@@ -165,7 +165,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                 />
                             )}
                             <div className="md:col-span-2 space-y-1.5">
-                                <label className="text-[12px] font-medium text-muted-foreground px-4">Giới thiệu bản thân</label>
+                                <label className="block text-[12px] font-medium text-muted-foreground px-4">Giới thiệu bản thân</label>
                                 {isEditing ? (
                                     <textarea
                                         value={formData.bio}
@@ -193,7 +193,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                 <Input label="Công ty / Tổ chức" value={user.mentorProfile.company || "Tulie TSS"} readOnly />
                                 <Input label="Vị trí công việc" value={user.mentorProfile.jobTitle || "Professional"} readOnly />
                                 <div className="md:col-span-2 space-y-1.5">
-                                    <label className="text-[12px] font-medium text-muted-foreground">Chuyên môn</label>
+                                    <label className="block text-[12px] font-medium text-muted-foreground px-4">Chuyên môn</label>
                                     <div className="flex flex-wrap gap-2">
                                         {((user.mentorProfile.expertise as any) || ["Marketing", "Management"]).map((e: string) => (
                                             <Badge key={e} variant="outline" className="bg-card">{e}</Badge>
@@ -215,7 +215,7 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                 <Input label="Chuyên ngành" value={user.menteeProfile.major || "Marketing"} readOnly />
                                 <Input label="Năm học" value={`Năm thứ ${user.menteeProfile.year || 1}`} readOnly />
                                 <div className="md:col-span-2 space-y-1.5">
-                                    <label className="text-[12px] font-medium text-muted-foreground px-4">Mục tiêu nghề nghiệp</label>
+                                    <label className="block text-[12px] font-medium text-muted-foreground px-4">Mục tiêu nghề nghiệp</label>
                                     <p className="px-4 py-3 bg-muted rounded-xl text-sm text-muted-foreground border border-border">
                                         {user.menteeProfile.careerGoals || "Đang cập nhật..."}
                                     </p>

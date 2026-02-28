@@ -101,7 +101,7 @@ export function QRScannerClient({ initialMeetingId, initialToken }: QRScannerCli
                         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center">
                             <div className="w-full border-t border-border" />
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
+                        <div className="relative flex justify-center text-xs">
                             <span className="bg-background px-2 text-muted-foreground">Hoặc nhập mã</span>
                         </div>
                     </div>
@@ -111,7 +111,7 @@ export function QRScannerClient({ initialMeetingId, initialToken }: QRScannerCli
                             <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 placeholder="Nhập mã 6 ký tự"
-                                className="pl-10 h-11 text-center font-mono text-lg tracking-[0.2em] uppercase rounded-lg"
+                                className="pl-10 h-11 text-center font-mono text-lg tracking-[0.2em] rounded-lg"
                                 maxLength={6}
                                 value={manualCode}
                                 onChange={(e) => setManualCode(e.target.value)}

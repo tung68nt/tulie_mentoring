@@ -111,7 +111,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                 <div className="flex-1 space-y-4">
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2 flex-wrap mb-2">
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${getPriorityColor(goal.priority)}`}>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${getPriorityColor(goal.priority)}`}>
                                 {goal.priority}
                             </span>
                             <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border">
@@ -275,7 +275,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                     >
                         <div className="flex items-center gap-2 text-xs font-bold text-foreground/70">
                             <AlertCircle className="w-4 h-4 text-primary" />
-                            <span>CÁC MỤC TIÊU CON ({goal.subGoals.length})</span>
+                            <span>Các mục tiêu con ({goal.subGoals.length})</span>
                         </div>
                         {showSubGoals ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>
@@ -349,7 +349,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
             {/* History List Expansion */}
             {showHistory && goal.progressNotes.length > 0 && (
                 <div className="border-t border-border bg-muted/10 p-5 lg:px-6 animate-in slide-in-from-top-2">
-                    <h5 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 uppercase tracking-wider">
+                    <h5 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2">
                         <History className="w-4 h-4" /> Lịch sử cập nhật
                     </h5>
                     <div className="space-y-3">

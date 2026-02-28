@@ -201,6 +201,10 @@ p {
     background: var(--border);
     border-radius: 10px;
   }
+
+  .no-uppercase {
+    text-transform: none !important;
+  }
 }
 
 /* ─── Custom Font for Excalidraw (Vietnamese Support) ──────────────── */

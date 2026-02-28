@@ -84,7 +84,7 @@ export function QRManager({ meetingId, qrToken, checkInCode, expiresAt }: QRMana
 
                 {checkInCode && (
                     <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
-                        <p className="text-[10px] text-primary font-bold tracking-wider mb-1 uppercase">Mã điểm danh thủ công</p>
+                        <p className="text-[10px] text-primary font-bold tracking-wider mb-1">Mã điểm danh thủ công</p>
                         <p className="text-3xl font-mono font-black tracking-[0.2em] text-primary">{checkInCode}</p>
                     </div>
                 )}

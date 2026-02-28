@@ -201,7 +201,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                         {/* Dates Group 1 */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Ngày bắt đầu dự kiến</label>
+                                <label className="block text-[11px] font-bold text-muted-foreground/60 px-1">Ngày bắt đầu dự kiến</label>
                                 <div className="flex items-center gap-2 group">
                                     <Calendar className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                     <Input
@@ -213,7 +213,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Ngày bắt đầu thực tế</label>
+                                <label className="block text-[11px] font-bold text-muted-foreground/60 px-1">Ngày bắt đầu thực tế</label>
                                 <div className="flex items-center gap-2 group">
                                     <Clock className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                     <Input
@@ -229,7 +229,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                         {/* Dates Group 2 */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Hạn chót dự kiến</label>
+                                <label className="block text-[11px] font-bold text-muted-foreground/60 px-1">Hạn chót dự kiến</label>
                                 <div className="flex items-center gap-2 group">
                                     <Calendar className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                     <Input
@@ -241,7 +241,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1">Ngày hoàn thành thực tế</label>
+                                <label className="block text-[11px] font-bold text-muted-foreground/60 px-1">Ngày hoàn thành thực tế</label>
                                 <div className="flex items-center gap-2 group">
                                     <CheckCircle2 className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                     <Input
@@ -258,7 +258,7 @@ export function TaskDetailModal({ task, isOpen, onClose, onUpdate }: TaskDetailM
                     {/* Progress */}
                     <div className="space-y-3 bg-muted/30 p-4 rounded-2xl border border-border/40">
                         <div className="flex justify-between items-center mb-1">
-                            <label className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider">Tiến độ hoàn thành</label>
+                            <label className="block text-[11px] font-bold text-muted-foreground/60">Tiến độ hoàn thành</label>
                             <span className="text-sm font-bold text-primary">{completedPercentage}%</span>
                         </div>
                         <Progress value={completedPercentage} className="h-2" />
