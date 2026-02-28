@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "./activity";
+import { format } from "date-fns";
 
 export async function getDiariesAndHabits(dateStr: string) {
     const session = await auth();
@@ -28,9 +29,54 @@ export async function getDiariesAndHabits(dateStr: string) {
         where: { userId, date }
     });
 
+    const allDiaries = await prisma.dailyDiary.findMany({
+        where: { userId },
+        select: { date: true }
+    });
+    const submittedDates = allDiaries.map(d => format(new Date(d.date), "yyyy-MM-dd"));
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+            menteeships: {
+                include: {
+                    mentorship: {
+                        include: {
+                            programCycle: true
+                        }
+                    }
+                },
+                where: {
+                    status: "active"
+                }
+            }
+        }
+    });
+
+    const activeMentorship = user?.menteeships?.[0]?.mentorship;
+
+    let programStartDate = activeMentorship?.startDate || activeMentorship?.programCycle?.startDate || user?.createdAt || new Date();
+    let programEndDate = activeMentorship?.endDate || activeMentorship?.programCycle?.endDate || new Date(programStartDate.getTime() + 61 * 24 * 60 * 60 * 1000);
+
+    // Ensure we have a valid Date object if they came from JSON
+    programStartDate = new Date(programStartDate);
+    programEndDate = new Date(programEndDate);
+
+    const diffTime = Math.abs(programEndDate.getTime() - programStartDate.getTime());
+    let programDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    // Ensure we don't have unrealistic 0 or negative days
+    if (programDays <= 0) programDays = 62;
+
     return JSON.parse(JSON.stringify({
         habits,
-        diary
+        diary,
+        submittedDates,
+        programInfo: {
+            startDate: programStartDate,
+            endDate: programEndDate,
+            totalDays: programDays
+        }
     }));
 }
 

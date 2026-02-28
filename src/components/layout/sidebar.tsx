@@ -22,6 +22,7 @@ import {
     BookMarked,
     Presentation,
     ListTodo,
+    X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,6 +33,8 @@ import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
     role: "admin" | "mentor" | "mentee" | "viewer";
+    isMobileOpen?: boolean;
+    onMobileClose?: () => void;
 }
 
 interface MenuItem {
@@ -47,7 +50,7 @@ interface MenuSection {
     items: MenuItem[];
 }
 
-export function Sidebar({ role }: SidebarProps) {
+export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -162,21 +165,31 @@ export function Sidebar({ role }: SidebarProps) {
     return (
         <aside className={cn(
             "fixed top-0 left-0 h-screen bg-background border-r border-border transition-all duration-300 z-50 flex flex-col",
-            "hidden lg:flex",
-            isCollapsed ? "w-[80px]" : "w-[280px]"
-        )} style={!isCollapsed ? { "--sidebar-width": "280px" } as React.CSSProperties : { "--sidebar-width": "80px" } as React.CSSProperties}>
+            isMobileOpen ? "translate-x-0 w-[280px]" : "-translate-x-full lg:translate-x-0",
+            !isMobileOpen && (isCollapsed ? "lg:w-[80px]" : "lg:w-[280px]")
+        )} style={(!isCollapsed || isMobileOpen) ? { "--sidebar-width": "280px" } as React.CSSProperties : { "--sidebar-width": "80px" } as React.CSSProperties}>
             {/* Brand */}
             <div className="h-16 flex items-center justify-between px-6 shrink-0 relative">
                 <div className="flex items-center">
                     <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center shrink-0">
                         <span className="text-primary-foreground font-bold text-[11px]">T</span>
                     </div>
-                    {!isCollapsed && (
+                    {(!isCollapsed || isMobileOpen) && (
                         <span className="ml-3 font-semibold text-foreground text-[14px] tracking-normal whitespace-nowrap">Tulie Mentoring</span>
                     )}
                 </div>
 
-                <div className="absolute top-4 -right-4 z-50">
+                {/* Mobile Close Button */}
+                {isMobileOpen && (
+                    <button
+                        onClick={onMobileClose}
+                        className="lg:hidden p-2 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                )}
+
+                <div className="absolute top-4 -right-4 z-50 hidden lg:block">
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         className="flex items-center justify-center w-8 h-8 rounded-full border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-accent transition-all shadow-none"
