@@ -151,7 +151,7 @@ export function UserManual({ isOpen, onClose }: UserManualProps) {
 
             {/* Content Panel */}
             <div className={cn(
-                "relative w-[95%] sm:w-[450px] max-w-lg h-[90vh] sm:h-full bg-background border border-border sm:border-l sm:border-t-0 sm:border-b-0 sm:border-r-0 flex flex-col shadow-none animate-in slide-in-from-bottom sm:slide-in-from-right duration-500 rounded-t-2xl sm:rounded-none",
+                "relative w-[95%] sm:w-[450px] max-w-lg h-[90vh] sm:h-full bg-background border border-border sm:border-l sm:border-t-0 sm:border-b-0 sm:border-r-0 flex flex-col shadow-none animate-in slide-in-from-right duration-500 rounded-t-2xl sm:rounded-none",
             )}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 h-20 border-b border-border shrink-0">

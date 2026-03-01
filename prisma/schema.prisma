@@ -136,7 +136,7 @@ model Mentorship {
   feedbacks      Feedback[]
   goals          Goal[]
   meetings       Meeting[]
-  mentor         User               @relation("MentorUser", fields: [mentorId], references: [id])
+  mentor         User               @relation("MentorUser", fields: [mentorId], references: [id], onDelete: Cascade)
   programCycle   ProgramCycle       @relation(fields: [programCycleId], references: [id])
   mentees        MentorshipMentee[]
 
@@ -151,7 +151,7 @@ model MentorshipMentee {
   menteeId     String
   joinedAt     DateTime   @default(now())
   status       String     @default("active")
-  mentee       User       @relation(fields: [menteeId], references: [id])
+  mentee       User       @relation(fields: [menteeId], references: [id], onDelete: Cascade)
   mentorship   Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
 
   @@unique([mentorshipId, menteeId])
@@ -177,8 +177,8 @@ model Meeting {
   updatedAt          DateTime            @updatedAt
   checkInCode        String?             @unique
   attendances        Attendance[]
-  creator            User                @relation("MeetingCreator", fields: [creatorId], references: [id])
-  mentorship         Mentorship          @relation(fields: [mentorshipId], references: [id])
+  creator            User                @relation("MeetingCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship         Mentorship          @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
   minutes            MeetingMinutes[]
   sessionReflections SessionReflection[]
 
@@ -200,7 +200,7 @@ model Attendance {
   verifiedAt   DateTime?
   createdAt    DateTime  @default(now())
   meeting      Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  user         User      @relation(fields: [userId], references: [id])
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([meetingId, userId])
   @@index([userId])
@@ -220,7 +220,7 @@ model MeetingMinutes {
   approvedAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  author      User      @relation("MinutesAuthor", fields: [authorId], references: [id])
+  author      User      @relation("MinutesAuthor", fields: [authorId], references: [id], onDelete: Cascade)
   meeting     Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
 
   @@index([meetingId])
@@ -243,8 +243,8 @@ model Goal {
   mentorConfirmed Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  creator         User           @relation("GoalCreator", fields: [creatorId], references: [id])
-  mentorship      Mentorship     @relation(fields: [mentorshipId], references: [id])
+  creator         User           @relation("GoalCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship      Mentorship     @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
   progressNotes   ProgressNote[]
   subGoals        SubGoal[]
 
@@ -291,9 +291,9 @@ model Feedback {
   isAnonymous   Boolean    @default(false)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
-  fromUser      User       @relation("FeedbackFrom", fields: [fromUserId], references: [id])
-  mentorship    Mentorship @relation(fields: [mentorshipId], references: [id])
-  toUser        User       @relation("FeedbackTo", fields: [toUserId], references: [id])
+  fromUser      User       @relation("FeedbackFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  mentorship    Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  toUser        User       @relation("FeedbackTo", fields: [toUserId], references: [id], onDelete: Cascade)
 
   @@index([mentorshipId])
   @@index([fromUserId])
@@ -316,7 +316,7 @@ model Resource {
   uploadedById String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
 
   @@index([category])
   @@index([uploadedById])
@@ -338,7 +338,7 @@ model Portfolio {
   startupIdeas       String?
   strengths          String?
   weaknesses         String?
-  mentee             User                @relation(fields: [menteeId], references: [id])
+  mentee             User                @relation(fields: [menteeId], references: [id], onDelete: Cascade)
   entries            PortfolioEntry[]
   snapshots          PortfolioSnapshot[]
 
@@ -468,8 +468,8 @@ model SupportTicket {
   assignedToId String?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
-  assignedTo   User?           @relation("TicketAssignee", fields: [assignedToId], references: [id])
-  user         User            @relation("TicketCreator", fields: [userId], references: [id])
+  assignedTo   User?           @relation("TicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  user         User            @relation("TicketCreator", fields: [userId], references: [id], onDelete: Cascade)
   comments     TicketComment[]
 
   @@index([userId])
@@ -483,7 +483,7 @@ model TicketComment {
   content   String
   createdAt DateTime      @default(now())
   ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  user      User          @relation(fields: [userId], references: [id])
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([ticketId])
 }
@@ -498,7 +498,7 @@ model WikiPage {
   authorId   String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  author     User     @relation(fields: [authorId], references: [id])
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([authorId])
   @@index([category])
