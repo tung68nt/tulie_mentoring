@@ -30,6 +30,7 @@ const ticketSchema = z.object({
     title: z.string().min(5, "Tiêu đề phải ít nhất 5 ký tự"),
     description: z.string().min(10, "Mô tả phải ít nhất 10 ký tự"),
     priority: z.enum(["low", "medium", "high"]),
+    category: z.enum(["system", "mentor"]),
 });
 
 export function CreateTicketModal() {
@@ -42,6 +43,7 @@ export function CreateTicketModal() {
             title: "",
             description: "",
             priority: "medium",
+            category: "system",
         },
     });
 
@@ -87,26 +89,39 @@ export function CreateTicketModal() {
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label className="text-xs font-semibold text-muted-foreground ml-0.5">Mức độ ưu tiên</Label>
-                            <Select
-                                onValueChange={(val) => form.setValue("priority", val as any)}
-                                defaultValue={form.getValues("priority")}
-                            >
-                                <SelectTrigger className="rounded-md border-border/40 h-10 shadow-none">
-                                    <SelectValue placeholder="Chọn mức độ ưu tiên" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-md border-border/40 shadow-none">
-                                    <SelectItem value="low">Thấp</SelectItem>
-                                    <SelectItem value="medium">Trung bình</SelectItem>
-                                    <SelectItem value="high">Cao</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            {form.formState.errors.priority && (
-                                <p className="text-[11px] font-medium text-destructive mt-1 italic ml-0.5">
-                                    {form.formState.errors.priority.message}
-                                </p>
-                            )}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-xs font-semibold text-muted-foreground ml-0.5">Loại hỗ trợ</Label>
+                                <Select
+                                    onValueChange={(val) => form.setValue("category", val as any)}
+                                    defaultValue={form.getValues("category")}
+                                >
+                                    <SelectTrigger className="rounded-md border-border/40 h-10 shadow-none">
+                                        <SelectValue placeholder="Chọn loại hỗ trợ" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-md border-border/40 shadow-none">
+                                        <SelectItem value="system">Hỗ trợ hệ thống (Kỹ thuật/Lỗi)</SelectItem>
+                                        <SelectItem value="mentor">Giao cho Admin (Mục khác)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label className="text-xs font-semibold text-muted-foreground ml-0.5">Mức độ ưu tiên</Label>
+                                <Select
+                                    onValueChange={(val) => form.setValue("priority", val as any)}
+                                    defaultValue={form.getValues("priority")}
+                                >
+                                    <SelectTrigger className="rounded-md border-border/40 h-10 shadow-none">
+                                        <SelectValue placeholder="Chọn mức độ ưu tiên" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-md border-border/40 shadow-none">
+                                        <SelectItem value="low">Thấp</SelectItem>
+                                        <SelectItem value="medium">Trung bình</SelectItem>
+                                        <SelectItem value="high">Cao</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
                         <div className="space-y-2">

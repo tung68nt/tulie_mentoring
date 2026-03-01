@@ -67,21 +67,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
             },
             {
                 items: [
-                    { id: "reports", label: "Báo cáo", icon: BarChart, href: "/admin/reports" },
-                    { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
-                ],
-            },
-            {
-                items: [
-                    { id: "mentor-view", label: "Giao diện Mentor", icon: Eye, href: "/mentor" },
-                    { id: "mentee-view", label: "Giao diện Mentee", icon: Eye, href: "/mentee" },
-                ],
-            },
-            {
-                items: [
-                    { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
-                    { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
-                    { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
                     { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
                 ],
             },

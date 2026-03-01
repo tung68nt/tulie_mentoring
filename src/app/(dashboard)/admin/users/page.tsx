@@ -17,6 +17,7 @@ import { Trash2, Shield, User } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { UserRoleSelector } from "@/components/features/admin/user-role-selector";
+import { DeleteUserButton } from "@/components/features/admin/delete-user-button";
 
 export default async function AdminUsersPage() {
     const session = await auth();
@@ -82,19 +83,10 @@ export default async function AdminUsersPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         {user.role !== "admin" && (
-                                            <form action={async () => {
-                                                "use server";
-                                                await deleteUser(user.id);
-                                            }}>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
-                                                    title="Xóa người dùng"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </form>
+                                            <DeleteUserButton
+                                                userId={user.id}
+                                                userName={`${user.firstName} ${user.lastName}`}
+                                            />
                                         )}
                                     </TableCell>
                                 </TableRow>

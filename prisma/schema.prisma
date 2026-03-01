@@ -463,6 +463,7 @@ model SupportTicket {
   description  String
   status       String          @default("open")
   priority     String          @default("medium")
+  category     String          @default("system")
   userId       String
   assignedToId String?
   createdAt    DateTime        @default(now())

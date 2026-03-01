@@ -9,6 +9,7 @@ export async function createTicket(data: {
     title: string;
     description: string;
     priority?: "low" | "medium" | "high";
+    category?: "system" | "mentor";
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
@@ -18,6 +19,7 @@ export async function createTicket(data: {
             title: data.title,
             description: data.description,
             priority: data.priority || "medium",
+            category: data.category || "system",
             userId: session.user.id!,
         }
     });
@@ -36,9 +38,24 @@ export async function getTickets() {
     const role = (session.user as any).role;
     const userId = session.user.id!;
 
-    // Admins and Mentors can see all tickets, Mentees only their own
+    // Base where clause
+    let where: any = {};
+
+    if (role === "mentee") {
+        // Mentees only their own
+        where = { userId };
+    } else if (role === "admin") {
+        // Admins only see system tickets (Technical/Functional) as requested
+        where = { category: "system" };
+    } else if (role === "mentor") {
+        // Mentors might see mentor tickets or all? 
+        // User said "admin chỉ cần hiện yêu cầu hỗ trợ hệ thống thôi, không cần hiện yêu cầu mentor hỗ trợ"
+        // This implies mentors handle "mentor" tickets.
+        where = { category: "mentor" };
+    }
+
     const tickets = await prisma.supportTicket.findMany({
-        where: role === "mentee" ? { userId } : {},
+        where,
         include: {
             user: {
                 select: {
