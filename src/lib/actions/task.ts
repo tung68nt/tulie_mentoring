@@ -61,13 +61,18 @@ export async function createTask(data: {
     }
 }
 
+import { todoSchema } from "@/lib/validators";
+
 export async function updateTask(id: string, data: any) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    // Whitelist with partial validation
+    const validatedData = todoSchema.partial().parse(data);
+
     const task = await prisma.todoItem.update({
         where: { id, menteeId: session.user.id! },
-        data
+        data: validatedData
     });
 
     revalidatePath("/tasks");

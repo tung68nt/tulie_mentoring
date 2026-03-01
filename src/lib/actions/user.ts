@@ -14,9 +14,18 @@ export async function updateProfile(data: {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    // Whitelist only allowed fields to prevent mass assignment
+    const { firstName, lastName, phone, bio, avatar } = data;
+
     const user = await prisma.user.update({
         where: { id: session.user.id },
-        data,
+        data: {
+            firstName,
+            lastName,
+            phone,
+            bio,
+            avatar,
+        },
     });
 
     revalidatePath("/profile");
@@ -24,6 +33,9 @@ export async function updateProfile(data: {
 }
 
 export async function getUserProfile(userId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
     try {
         const user = await prisma.user.findUnique({
             where: { id: userId },

@@ -33,6 +33,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import DOMPurify from 'isomorphic-dompurify';
 import {
     Dialog,
     DialogContent,
@@ -394,7 +395,7 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                                         >
                                             <div
                                                 dangerouslySetInnerHTML={{
-                                                    __html: (s.includes('<p>') || s.includes('<h1>') || s.includes('<ul>')) ? s
+                                                    __html: DOMPurify.sanitize((s.includes('<p>') || s.includes('<h1>') || s.includes('<ul>')) ? s
                                                         .replace(/<p>\s*\[cols(-3)?\]\s*<\/p>|\[cols(-3)?\]/gi, '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(0,1fr)); gap: 20px;">')
                                                         .replace(/<p>\s*\[col\]\s*<\/p>|\[col\]/gi, '<div>')
                                                         .replace(/<p>\s*\[\/col\]\s*<\/p>|\[\/col\]/gi, '</div>')
@@ -410,7 +411,9 @@ export default function SlideEditor({ id }: SlideEditorProps) {
                                                             .replace(/\\*\[col\]\\*/gi, '<div>')
                                                             .replace(/\\*\[\/col\]\\*/gi, '</div>')
                                                             .replace(/\\*\[\/cols\]\\*/gi, '</div>')
-                                                            .replace(/\n/g, '<br/>')
+                                                            .replace(/\n/g, '<br/>'),
+                                                        { ADD_TAGS: ['div', 'span'], ADD_ATTR: ['style', 'class'] }
+                                                    )
                                                 }}
                                             />
                                         </div>

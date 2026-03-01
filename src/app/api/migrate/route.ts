@@ -1,7 +1,15 @@
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
 export async function GET() {
+    const session = await auth();
+
+    // Security check: Only admin can trigger migration
+    if (!session?.user || (session.user as any).role !== "admin") {
+        return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
     const log: string[] = [];
     try {
         // 1. Add missing TodoItem columns

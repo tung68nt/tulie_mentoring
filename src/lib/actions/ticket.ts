@@ -69,11 +69,15 @@ export async function getTicketDetail(id: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    const role = (session.user as any).role;
+    const userId = session.user.id!;
+
     const ticket = await prisma.supportTicket.findUnique({
         where: { id },
         include: {
             user: {
                 select: {
+                    id: true,
                     firstName: true,
                     lastName: true,
                     avatar: true,
@@ -107,6 +111,11 @@ export async function getTicketDetail(id: string) {
 
     if (!ticket) throw new Error("Ticket not found");
 
+    // Security check: Admins/Mentors see all, Mentees only their own
+    if (role === "mentee" && ticket.userId !== userId) {
+        throw new Error("Unauthorized: You do not have permission to view this ticket");
+    }
+
     return JSON.parse(JSON.stringify(ticket));
 }
 
@@ -114,10 +123,25 @@ export async function addTicketComment(ticketId: string, content: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    const userId = session.user.id!;
+    const role = (session.user as any).role;
+
+    // Security check: Check if user has access to the ticket
+    const ticket = await prisma.supportTicket.findUnique({
+        where: { id: ticketId },
+        select: { userId: true }
+    });
+
+    if (!ticket) throw new Error("Ticket not found");
+
+    if (role === "mentee" && ticket.userId !== userId) {
+        throw new Error("Unauthorized: You do not have permission to comment on this ticket");
+    }
+
     const comment = await prisma.ticketComment.create({
         data: {
             ticketId,
-            userId: session.user.id!,
+            userId,
             content,
         }
     });

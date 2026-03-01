@@ -16,9 +16,18 @@ export async function createResource(data: {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    // Whitelist allowed fields to prevent mass assignment
+    const { title, description, type, fileUrl, linkUrl, category, visibility } = data;
+
     const resource = await prisma.resource.create({
         data: {
-            ...data,
+            title,
+            description,
+            type,
+            fileUrl,
+            linkUrl,
+            category,
+            visibility,
             uploadedById: session.user.id!,
         },
     });
@@ -31,8 +40,25 @@ export async function getResources(category?: string) {
     const session = await auth();
     if (!session?.user) return [];
 
+    const role = (session.user as any).role;
+    const userId = session.user.id!;
+
+    // Security check: visibility filtering
+    // Admin can see everything
+    // Members see public + resources they uploaded
+    // (Note: "group" visibility might need more complex logic with mentorships)
+    const where: any = {};
+    if (category) where.category = category;
+
+    if (role !== "admin") {
+        where.OR = [
+            { visibility: "public" },
+            { uploadedById: userId }
+        ];
+    }
+
     const resources = await prisma.resource.findMany({
-        where: category ? { category } : {},
+        where,
         include: {
             uploadedBy: { select: { firstName: true, lastName: true } },
         },

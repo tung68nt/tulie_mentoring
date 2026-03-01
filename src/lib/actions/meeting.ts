@@ -73,16 +73,25 @@ export async function getMeetings(filters?: {
     startDate?: Date;
     endDate?: Date;
 }) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const currentUserId = session.user.id;
+    const currentUserRole = (session.user as any).role;
+
     const where: any = {};
 
     if (filters?.mentorshipId) {
         where.mentorshipId = filters.mentorshipId;
     }
 
-    if (filters?.role === "mentor") {
-        where.mentorship = { mentorId: filters.userId };
-    } else if (filters?.role === "mentee") {
-        where.mentorship = { mentees: { some: { menteeId: filters.userId } } };
+    // Security: If not admin, ensure user only sees meetings they are part of
+    if (currentUserRole !== "admin") {
+        if (currentUserRole === "mentor") {
+            where.mentorship = { mentorId: currentUserId };
+        } else if (currentUserRole === "mentee") {
+            where.mentorship = { mentees: { some: { menteeId: currentUserId } } };
+        }
     }
 
     if (filters?.startDate || filters?.endDate) {
@@ -114,6 +123,9 @@ export async function getMeetings(filters?: {
 }
 
 export async function getMeetingDetail(id: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
     try {
         const meeting = await prisma.meeting.findUnique({
             where: { id },
@@ -132,7 +144,20 @@ export async function getMeetingDetail(id: string) {
                 minutes: true,
             },
         });
-        return meeting ? JSON.parse(JSON.stringify(meeting)) : null;
+
+        if (!meeting) return null;
+
+        // Security check: Only members or admin
+        const role = (session.user as any).role;
+        if (role !== "admin") {
+            const isMentor = meeting.mentorship.mentorId === session.user.id;
+            const isMentee = meeting.mentorship.mentees.some(m => m.menteeId === session.user.id);
+            if (!isMentor && !isMentee) {
+                throw new Error("Unauthorized: You do not have access to this meeting");
+            }
+        }
+
+        return JSON.parse(JSON.stringify(meeting));
     } catch (error) {
         console.error("Error in getMeetingDetail:", error);
         return null;
@@ -253,11 +278,27 @@ export async function checkOut(meetingId: string) {
 }
 
 export async function updateMeetingStatus(id: string, status: string) {
-    const meeting = await prisma.meeting.update({
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const role = (session.user as any).role;
+
+    // Security check: Only mentor of the mentorship or admin can update status
+    if (role !== "admin") {
+        const meeting = await prisma.meeting.findUnique({
+            where: { id },
+            include: { mentorship: true }
+        });
+        if (!meeting || meeting.mentorship.mentorId !== session.user.id) {
+            throw new Error("Unauthorized: Only mentors or admins can update meeting status");
+        }
+    }
+
+    const updatedMeeting = await prisma.meeting.update({
         where: { id },
         data: { status },
     });
     revalidatePath("/calendar");
     revalidatePath(`/meetings/${id}`);
-    return JSON.parse(JSON.stringify(meeting));
+    return JSON.parse(JSON.stringify(updatedMeeting));
 }

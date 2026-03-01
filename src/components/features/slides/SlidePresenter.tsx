@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface SlidePresenterProps {
     content: string;
@@ -67,7 +68,11 @@ export default function SlidePresenter({ content, theme = 'black', onClose }: Sl
                         // Final cleanup: if any standalone backslashes remain near our tag locations, remove them
                         processedContent = processedContent.replace(/\\+(?=\s*<div)/g, '');
 
-                        textarea.defaultValue = processedContent;
+                        // Sanitize content but allow our custom grid tags if needed
+                        textarea.defaultValue = DOMPurify.sanitize(processedContent, {
+                            ADD_TAGS: ['div', 'span'],
+                            ADD_ATTR: ['class', 'style']
+                        });
 
                         section.appendChild(textarea);
                         slidesContainer.appendChild(section);

@@ -98,6 +98,16 @@ export async function getWikiPageDetail(slug: string) {
 
     if (!page) throw new Error("Page not found");
 
+    const role = (session.user as any).role;
+    if (role !== "admin") {
+        if (page.visibility === "mentor_only" && role !== "mentor") {
+            throw new Error("Truy cập bị từ chối: Tài liệu dành riêng cho Mentor");
+        }
+        if (page.visibility === "mentee_only" && role !== "mentee") {
+            throw new Error("Truy cập bị từ chối: Tài liệu dành riêng cho Mentee");
+        }
+    }
+
     return JSON.parse(JSON.stringify(page));
 }
 
@@ -117,10 +127,16 @@ export async function updateWikiPage(id: string, data: any) {
         throw new Error("Permission denied");
     }
 
+    // Whitelist only allowed fields to prevent mass assignment
+    const { title, content, category, visibility } = data;
+
     const updatedPage = await prisma.wikiPage.update({
         where: { id },
         data: {
-            ...data,
+            title,
+            content,
+            category,
+            visibility,
             updatedAt: new Date()
         }
     });

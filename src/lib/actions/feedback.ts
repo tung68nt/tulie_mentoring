@@ -11,6 +11,21 @@ export async function submitFeedback(data: FeedbackInput) {
 
     const validatedData = feedbackSchema.parse(data);
 
+    // Security check: Verify the user is part of the mentorship
+    const mentorship = await prisma.mentorship.findUnique({
+        where: { id: validatedData.mentorshipId },
+        include: { mentees: true }
+    });
+
+    if (!mentorship) throw new Error("Mentorship not found");
+
+    const isMentor = mentorship.mentorId === session.user.id;
+    const isMentee = mentorship.mentees.some(m => m.menteeId === session.user.id);
+
+    if (!isMentor && !isMentee) {
+        throw new Error("Unauthorized: You are not a participant of this mentorship");
+    }
+
     const feedback = await prisma.feedback.create({
         data: {
             ...validatedData,
