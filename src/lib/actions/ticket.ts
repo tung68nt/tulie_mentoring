@@ -45,13 +45,11 @@ export async function getTickets() {
         // Mentees only their own
         where = { userId };
     } else if (role === "admin") {
-        // Admins only see system tickets (Technical/Functional) as requested
-        where = { category: "system" };
+        // Admins see system tickets + tickets from mentors requesting admin help
+        where = { OR: [{ category: "system" }, { category: "admin_help" }] };
     } else if (role === "mentor") {
-        // Mentors might see mentor tickets or all? 
-        // User said "admin chỉ cần hiện yêu cầu hỗ trợ hệ thống thôi, không cần hiện yêu cầu mentor hỗ trợ"
-        // This implies mentors handle "mentor" tickets.
-        where = { category: "mentor" };
+        // Mentors see: their own tickets (to admin) + mentor-category tickets (from mentees)
+        where = { OR: [{ userId }, { category: "mentor" }] };
     }
 
     const tickets = await prisma.supportTicket.findMany({

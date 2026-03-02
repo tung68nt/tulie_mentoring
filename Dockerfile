@@ -4,6 +4,8 @@ RUN apk add --no-cache libc6-compat openssl python3 make g++ pkgconfig pixman-de
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+COPY prisma/schema.prisma prisma/schema.prisma
+COPY prisma.config.ts ./
 RUN npm install --legacy-peer-deps
 
 # Stage 2: Builder
@@ -19,7 +21,7 @@ RUN npx prisma generate
 RUN ls -la prisma/generated/client || echo "Prisma client not found in prisma/generated/client"
 
 # Build Next.js
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/mentoring_db"
 ENV AUTH_SECRET="build_secret_for_build_step"
 RUN npm run build
@@ -29,8 +31,8 @@ FROM node:20-alpine AS runner
 RUN apk add --no-cache openssl pixman cairo pango libjpeg-turbo giflib
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -50,9 +52,9 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 # set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
+ENV HOSTNAME="0.0.0.0"
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output

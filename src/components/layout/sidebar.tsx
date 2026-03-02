@@ -89,6 +89,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                     { id: "whiteboard", label: "Whiteboard", icon: PenLine, href: "/whiteboard" },
                     { id: "slides", label: "Slides", icon: Presentation, href: "/slides" },
+                    { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
                 ],
             },
         ],
