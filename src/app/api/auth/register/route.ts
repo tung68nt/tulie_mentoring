@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { registerSchema } from "@/lib/validators";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { verifyCaptcha } from "@/lib/captcha";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,15 @@ export async function POST(req: Request) {
     try {
         const body = await req.json();
         const validatedData = registerSchema.parse(body);
+
+        // Verify Captcha
+        const captchaResult = await verifyCaptcha(validatedData.captchaToken);
+        if (!captchaResult.success) {
+            return NextResponse.json(
+                { message: "Xác minh Captcha không thành công" },
+                { status: 400 }
+            );
+        }
 
         const existingUser = await prisma.user.findUnique({
             where: { email: validatedData.email },

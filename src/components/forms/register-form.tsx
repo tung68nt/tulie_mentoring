@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
+import { Captcha } from "./captcha";
+import { useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function GoogleIcon() {
     return (
@@ -27,15 +30,18 @@ export function RegisterForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const captchaRef = useRef<ReCAPTCHA>(null);
 
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<RegisterInput>({
         resolver: zodResolver(registerSchema) as any,
         defaultValues: {
             role: "mentee",
+            captchaToken: "",
         },
     });
 
@@ -55,9 +61,13 @@ export function RegisterForm() {
             } else {
                 const result = await response.json();
                 setError(result.message || "Đã xảy ra lỗi khi đăng ký");
+                captchaRef.current?.reset();
+                setValue("captchaToken", "");
             }
         } catch (err) {
             setError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+            captchaRef.current?.reset();
+            setValue("captchaToken", "");
         } finally {
             setIsLoading(false);
         }
@@ -157,6 +167,12 @@ export function RegisterForm() {
                     placeholder="••••••••"
                     {...register("confirmPassword")}
                     error={errors.confirmPassword?.message}
+                />
+
+                <Captcha
+                    ref={captchaRef}
+                    onChange={(token) => setValue("captchaToken", token || "")}
+                    error={errors.captchaToken?.message}
                 />
 
                 <Button type="submit" className="w-full" isLoading={isLoading}>

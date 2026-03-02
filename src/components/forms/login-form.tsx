@@ -9,6 +9,9 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Captcha } from "./captcha";
+import { useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function GoogleIcon() {
     return (
@@ -28,12 +31,14 @@ export function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const captchaRef = useRef<ReCAPTCHA>(null);
 
     const [showPassword, setShowPassword] = useState(false);
 
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<LoginInput>({
         resolver: zodResolver(loginSchema) as any,
@@ -47,17 +52,26 @@ export function LoginForm() {
             const result = await signIn("credentials", {
                 email: data.email,
                 password: data.password,
+                captchaToken: data.captchaToken,
                 redirect: false,
             });
 
             if (result?.error) {
-                setError("Email hoặc mật khẩu không chính xác");
+                if (result.error === "Captcha verification failed") {
+                    setError("Xác minh Captcha không thành công");
+                } else {
+                    setError("Email hoặc mật khẩu không chính xác");
+                }
+                captchaRef.current?.reset();
+                setValue("captchaToken", "");
             } else {
                 router.push(callbackUrl);
                 router.refresh();
             }
         } catch (err) {
             setError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+            captchaRef.current?.reset();
+            setValue("captchaToken", "");
         } finally {
             setIsLoading(false);
         }
@@ -138,6 +152,12 @@ export function LoginForm() {
                             )}
                         </button>
                     }
+                />
+
+                <Captcha
+                    ref={captchaRef}
+                    onChange={(token) => setValue("captchaToken", token || "")}
+                    error={errors.captchaToken?.message}
                 />
 
                 <Button type="submit" className="w-full" isLoading={isLoading}>

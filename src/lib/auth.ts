@@ -5,6 +5,7 @@ import { authConfig } from "./auth.config";
 import { prisma } from "./db";
 import { loginSchema } from "./validators";
 import bcrypt from "bcryptjs";
+import { verifyCaptcha } from "./captcha";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -20,8 +21,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (!validatedData.success) return null;
 
-                const email = validatedData.data.email.trim();
-                const password = validatedData.data.password;
+                const { email: rawEmail, password, captchaToken } = validatedData.data;
+                const email = rawEmail.trim();
+
+                // Verify Captcha
+                const captchaResult = await verifyCaptcha(captchaToken);
+                if (!captchaResult.success) {
+                    console.log(`[AUTH] Captcha verification failed for: ${email}`);
+                    throw new Error("Captcha verification failed");
+                }
                 console.log(`[AUTH] Attempting login for: [${email}]`);
                 const user = await prisma.user.findUnique({
                     where: { email },
