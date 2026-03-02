@@ -109,7 +109,7 @@ export function QRManager({ meetingId, qrToken, checkInCode, expiresAt, attendan
                         Mentor Check-in
                     </Button>
                 ) : !isCheckedOut && (
-                    <div className="flex items-center gap-1 text-[10px] font-bold text-primary uppercase tracking-wider">
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-primary no-uppercase tracking-wider">
                         <CheckCircle2 className="w-3 h-3" />
                         Đã Check-in
                     </div>
@@ -148,7 +148,7 @@ export function QRManager({ meetingId, qrToken, checkInCode, expiresAt, attendan
                         <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
                             <Clock className="w-12 h-12" />
                         </div>
-                        <p className="text-[10px] text-primary font-bold tracking-wider mb-1 uppercase">Mã điểm danh thủ công</p>
+                        <p className="text-[10px] text-primary font-bold tracking-wider mb-1 no-uppercase">Mã điểm danh thủ công</p>
                         <p className="text-3xl font-mono font-black tracking-[0.2em] text-primary">{checkInCode}</p>
                     </div>
                 )}

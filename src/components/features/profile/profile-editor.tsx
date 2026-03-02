@@ -195,9 +195,25 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                 <div className="md:col-span-2 space-y-1.5">
                                     <label className="block text-[12px] font-medium text-muted-foreground px-4">Chuyên môn</label>
                                     <div className="flex flex-wrap gap-2">
-                                        {((user.mentorProfile.expertise as any) || ["Marketing", "Management"]).map((e: string) => (
-                                            <Badge key={e} variant="outline" className="bg-card">{e}</Badge>
-                                        ))}
+                                        {(() => {
+                                            let expertiseList: string[] = [];
+                                            try {
+                                                const raw = user.mentorProfile.expertise;
+                                                if (Array.isArray(raw)) {
+                                                    expertiseList = raw;
+                                                } else if (typeof raw === "string" && raw.trim()) {
+                                                    expertiseList = JSON.parse(raw);
+                                                }
+                                            } catch {
+                                                expertiseList = user.mentorProfile.expertise
+                                                    ? user.mentorProfile.expertise.split(",").map((s: string) => s.trim())
+                                                    : [];
+                                            }
+                                            if (!expertiseList.length) expertiseList = ["Marketing", "Management"];
+                                            return expertiseList.map((e: string) => (
+                                                <Badge key={e} variant="outline" className="bg-card">{e}</Badge>
+                                            ));
+                                        })()}
                                     </div>
                                 </div>
                             </div>

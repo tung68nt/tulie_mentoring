@@ -168,15 +168,15 @@ export default async function MentorshipDetailPage({ params }: { params: Promise
                             <h4 className="text-sm font-semibold mb-4">Thông tin chương trình</h4>
                             <div className="space-y-3">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground uppercase text-xs font-bold tracking-tight">Kỳ:</span>
+                                    <span className="text-muted-foreground no-uppercase text-xs font-bold tracking-tight">Kỳ:</span>
                                     <span className="font-semibold">{serializedMentorship.programCycle.name}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground uppercase text-xs font-bold tracking-tight">Trạng thái:</span>
+                                    <span className="text-muted-foreground no-uppercase text-xs font-bold tracking-tight">Trạng thái:</span>
                                     <Badge status={serializedMentorship.programCycle.status} size="sm" />
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground uppercase text-xs font-bold tracking-tight">Hình thức:</span>
+                                    <span className="text-muted-foreground no-uppercase text-xs font-bold tracking-tight">Hình thức:</span>
                                     <span className="font-semibold capitalize">{serializedMentorship.type.replace('_', ' ')}</span>
                                 </div>
                             </div>
@@ -188,15 +188,15 @@ export default async function MentorshipDetailPage({ params }: { params: Promise
                         {/* Summary Stats */}
                         <div className="grid grid-cols-3 gap-4">
                             <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
-                                <p className="text-xs font-bold text-primary mb-1 uppercase tracking-wider">Buổi họp</p>
+                                <p className="text-xs font-bold text-primary mb-1 no-uppercase tracking-wider">Buổi họp</p>
                                 <p className="text-2xl font-bold text-foreground leading-none">{serializedMentorship.meetings.length}</p>
                             </div>
                             <div className="bg-success/5 p-4 rounded-2xl border border-success/10">
-                                <p className="text-xs font-bold text-success mb-1 uppercase tracking-wider">Mục tiêu</p>
+                                <p className="text-xs font-bold text-success mb-1 no-uppercase tracking-wider">Mục tiêu</p>
                                 <p className="text-2xl font-bold text-foreground leading-none">{serializedMentorship.goals.length}</p>
                             </div>
                             <div className="bg-warning/5 p-4 rounded-2xl border border-warning/10">
-                                <p className="text-xs font-bold text-warning mb-1 uppercase tracking-wider">Phản hồi</p>
+                                <p className="text-xs font-bold text-warning mb-1 no-uppercase tracking-wider">Phản hồi</p>
                                 <p className="text-2xl font-bold text-foreground leading-none">{serializedMentorship.feedbacks.length}</p>
                             </div>
                         </div>
@@ -275,7 +275,7 @@ export default async function MentorshipDetailPage({ params }: { params: Promise
                                         <Card key={goal.id} padding="lg">
                                             <div className="flex items-start justify-between mb-3">
                                                 <Badge status={goal.status} size="sm" />
-                                                <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-80">
+                                                <span className="text-[10px] font-bold text-muted-foreground no-uppercase opacity-80">
                                                     {goal.category}
                                                 </span>
                                             </div>
@@ -340,7 +340,7 @@ export default async function MentorshipDetailPage({ params }: { params: Promise
                                             <p className="text-sm text-foreground italic leading-relaxed">
                                                 "{fb.content}"
                                             </p>
-                                            <p className="text-[10px] text-muted-foreground mt-3 font-bold uppercase tracking-tight">
+                                            <p className="text-[10px] text-muted-foreground mt-3 font-bold no-uppercase tracking-tight">
                                                 {formatDate(fb.createdAt, "PPP")}
                                             </p>
                                         </Card>

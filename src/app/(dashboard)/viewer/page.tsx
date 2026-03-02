@@ -117,8 +117,8 @@ export default async function ViewerDashboard() {
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-3">
                                             <Avatar
-                                                firstName={m.mentor.firstName}
-                                                lastName={m.mentor.lastName}
+                                                firstName={m.mentor.firstName ?? ""}
+                                                lastName={m.mentor.lastName ?? ""}
                                                 src={m.mentor.avatar || undefined}
                                                 size="sm"
                                             />
@@ -134,8 +134,8 @@ export default async function ViewerDashboard() {
                                         {m.mentees.map(mt => (
                                             <div key={mt.mentee.id} className="flex items-center gap-2 pr-3 py-1 bg-muted rounded-full">
                                                 <Avatar
-                                                    firstName={mt.mentee.firstName}
-                                                    lastName={mt.mentee.lastName}
+                                                    firstName={mt.mentee.firstName ?? ""}
+                                                    lastName={mt.mentee.lastName ?? ""}
                                                     src={mt.mentee.avatar || undefined}
                                                     size="xs"
                                                 />
@@ -145,7 +145,7 @@ export default async function ViewerDashboard() {
                                     </div>
 
                                     <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
-                                        <div className="text-[10px] font-bold text-muted-foreground uppercase opacity-80">
+                                        <div className="text-[10px] font-bold text-muted-foreground no-uppercase opacity-80">
                                             {m.programCycle.name}
                                         </div>
                                         <Button variant="ghost" size="sm" asChild className="h-7 text-xs px-2 shadow-none hover:bg-primary/5 hover:text-primary transition-colors">
@@ -169,7 +169,7 @@ export default async function ViewerDashboard() {
                             {recentMeetings.map((meeting) => (
                                 <div key={meeting.id} className="flex items-center gap-4 p-4 rounded-xl border border-border bg-muted/20 hover:bg-muted/40 transition-colors shadow-none">
                                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex flex-col items-center justify-center shrink-0">
-                                        <span className="text-[9px] font-bold text-primary leading-none uppercase">{formatDate(meeting.scheduledAt, "MMM")}</span>
+                                        <span className="text-[9px] font-bold text-primary leading-none no-uppercase">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                         <span className="text-base font-bold text-primary leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -185,7 +185,7 @@ export default async function ViewerDashboard() {
                     {/* Quick Info / Legend */}
                     <Card className="lg:col-span-4 bg-primary/5 border-primary/10" padding="lg">
                         <CardHeader className="mb-4">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2 uppercase tracking-wide">
+                            <CardTitle className="text-sm font-bold flex items-center gap-2 no-uppercase tracking-wide">
                                 <CheckCircle2 className="w-4 h-4 text-primary" />
                                 Ghi chú vai trò
                             </CardTitle>

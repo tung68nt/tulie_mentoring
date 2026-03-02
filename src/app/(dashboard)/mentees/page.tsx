@@ -81,7 +81,7 @@ export default async function MenteesPage() {
                             <Card key={mt.id} className="group overflow-hidden flex flex-col h-full border-border/80 shadow-none hover:border-primary/30 transition-all duration-300" hover padding="none">
                                 <div className="p-6 flex-1">
                                     <div className="flex items-center justify-between mb-6">
-                                        <Badge status={mt.status} size="sm" className="font-bold uppercase tracking-wider text-[9px]" />
+                                        <Badge status={mt.status} size="sm" className="font-bold text-[9px]" />
                                         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/50 rounded-full border border-border/40">
                                             <span className="text-[10px] font-bold text-muted-foreground truncate max-w-[120px]">{mt.programName || "General"}</span>
                                         </div>
@@ -121,7 +121,7 @@ export default async function MenteesPage() {
                                 </div>
 
                                 <div className="px-6 py-4 bg-muted/30 border-t border-border/40 mt-auto">
-                                    <Button variant="secondary" size="sm" asChild className="w-full font-bold text-xs uppercase tracking-tight shadow-none transition-all group-hover:bg-primary group-hover:text-primary-foreground">
+                                    <Button variant="secondary" size="sm" asChild className="w-full font-bold text-xs shadow-none transition-all group-hover:bg-primary group-hover:text-primary-foreground">
                                         <Link href={`/admin/mentorships/${mt.mentorshipId}`}>
                                             Xem hồ sơ & Tiến độ
                                         </Link>

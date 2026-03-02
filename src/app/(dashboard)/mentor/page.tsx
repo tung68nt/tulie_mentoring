@@ -21,10 +21,10 @@ export default async function MentorDashboard() {
     const isAdmin = role === "admin";
 
     // Admin sees all, mentor sees only theirs
-    const mentorFilter = isAdmin ? { status: "active" as const } : { mentorId: userId, status: "active" as const };
+    const mentorFilter = isAdmin ? {} : { mentorId: userId };
     const meetingFilter = isAdmin
-        ? { status: "scheduled" as const }
-        : { mentorship: { mentorId: userId }, status: "scheduled" as const };
+        ? { status: "scheduled" }
+        : { mentorship: { mentorId: userId }, status: "scheduled" };
 
     try {
         const [mentorships, upcomingMeetings] = await Promise.all([

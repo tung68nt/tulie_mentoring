@@ -80,7 +80,7 @@ export function ProgramGrid({
                                     <div
                                         onClick={() => onCellClick?.(day)}
                                         className={cn(
-                                            "relative w-3.5 h-3.5 rounded-[2px] transition-all duration-200 hover:scale-125 hover:z-30",
+                                            "relative w-5 h-5 rounded-[3px] transition-all duration-200 hover:scale-125 hover:z-30",
                                             onCellClick ? "cursor-pointer" : "cursor-help",
                                             getCellStyle(),
                                             isSelected && "ring-1.5 ring-primary ring-offset-1 ring-offset-background scale-[1.4] z-20",

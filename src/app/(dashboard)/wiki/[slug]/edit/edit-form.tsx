@@ -141,7 +141,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
                 <div className="space-y-6">
                     <div className="space-y-3">
-                        <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.1em] px-1">Tiêu đề tài liệu</label>
+                        <label className="text-[10px] font-bold text-muted-foreground/40 no-uppercase tracking-[0.1em] px-1">Tiêu đề tài liệu</label>
                         <Input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -151,7 +151,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.1em] px-1">Nội dung chi tiết</label>
+                        <label className="text-[10px] font-bold text-muted-foreground/40 no-uppercase tracking-[0.1em] px-1">Nội dung chi tiết</label>
                         <div className="rounded-xl border border-border/40 bg-background/50 backdrop-blur-sm shadow-none overflow-hidden ring-1 ring-border/5">
                             <BlockEditor
                                 initialContent={content}
