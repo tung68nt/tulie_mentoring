@@ -139,20 +139,6 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                        label="Ngày bắt đầu"
-                        type="date"
-                        {...register("startDate", { valueAsDate: true })}
-                        error={errors.startDate?.message}
-                    />
-                    <Input
-                        label="Ngày kết thúc"
-                        type="date"
-                        {...register("endDate", { valueAsDate: true })}
-                        error={errors.endDate?.message}
-                    />
-                </div>
 
                 <div className="flex items-center gap-4 pt-4">
                     <Button

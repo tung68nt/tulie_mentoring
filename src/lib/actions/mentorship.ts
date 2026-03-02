@@ -18,8 +18,6 @@ export async function createMentorship(data: MentorshipInput) {
             mentorId: validatedData.mentorId,
             programCycleId: validatedData.programCycleId,
             type: validatedData.type,
-            startDate: validatedData.startDate,
-            endDate: validatedData.endDate,
             status: "active",
             mentees: {
                 create: validatedData.menteeIds.map((id) => ({

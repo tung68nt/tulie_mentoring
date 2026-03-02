@@ -324,16 +324,30 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
                         <h4 className="text-sm font-semibold text-foreground mb-4">Thông tin chung</h4>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between text-sm">
+                                <span className="text-muted-foreground">Chương trình</span>
+                                <span className="font-medium text-foreground">{mentorship.programCycle.name}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">Ngày bắt đầu</span>
-                                <span className="font-medium text-foreground">{formatDate(mentorship.startDate)}</span>
+                                <span className="font-medium text-foreground">{formatDate(mentorship.programCycle.startDate)}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">Ngày kết thúc</span>
-                                <span className="font-medium text-foreground">{formatDate(mentorship.endDate)}</span>
+                                <span className="font-medium text-foreground">{formatDate(mentorship.programCycle.endDate)}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">Thời gian còn lại</span>
-                                <span className="font-medium text-primary">6 tháng</span>
+                                <span className="font-medium text-primary">
+                                    {(() => {
+                                        const now = new Date();
+                                        const end = new Date(mentorship.programCycle.endDate);
+                                        const diffMs = end.getTime() - now.getTime();
+                                        if (diffMs <= 0) return "Đã kết thúc";
+                                        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                                        if (diffDays > 30) return `${Math.floor(diffDays / 30)} tháng ${diffDays % 30} ngày`;
+                                        return `${diffDays} ngày`;
+                                    })()}
+                                </span>
                             </div>
                         </div>
                     </Card>

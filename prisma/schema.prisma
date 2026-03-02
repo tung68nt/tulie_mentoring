@@ -127,8 +127,6 @@ model Mentorship {
   type           String             @default("one_on_one")
   status         String             @default("pending")
   programCycleId String
-  startDate      DateTime
-  endDate        DateTime
   maxMentees     Int                @default(1)
   notes          String?
   createdAt      DateTime           @default(now())
