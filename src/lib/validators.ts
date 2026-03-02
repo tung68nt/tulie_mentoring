@@ -143,14 +143,24 @@ export const todoSchema = z.object({
     dueDate: z.preprocess((arg) => {
         if (!arg || arg === "") return null;
         const date = typeof arg === "string" ? new Date(arg) : arg;
-        return isNaN(date.getTime()) ? null : date;
+        return isNaN((date as Date).getTime()) ? null : date;
     }, z.date().optional().nullable()),
     startDate: z.preprocess((arg) => {
         if (!arg || arg === "") return null;
         const date = typeof arg === "string" ? new Date(arg) : arg;
-        return isNaN(date.getTime()) ? null : date;
+        return isNaN((date as Date).getTime()) ? null : date;
     }, z.date().optional().nullable()),
     reflectionId: z.string().optional().nullable(),
+});
+
+// ─── Program Cycle ──────────────────────────────────────────────
+export const programCycleSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(1, "Tên chương trình không được để trống"),
+    description: z.string().optional().nullable(),
+    startDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date({ message: "Vui lòng chọn ngày bắt đầu" })).transform(v => v as Date),
+    endDate: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date({ message: "Vui lòng chọn ngày kết thúc" })).transform(v => v as Date),
+    status: z.enum(["active", "inactive", "archived"]).default("active"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -165,3 +175,4 @@ export type MentorshipInput = z.infer<typeof mentorshipSchema>;
 export type AvailabilityInput = z.infer<typeof availabilitySchema>;
 export type MenteeOnboardingInput = z.infer<typeof menteeOnboardingSchema>;
 export type TaskInput = z.infer<typeof todoSchema>;
+export type ProgramCycleInput = z.infer<typeof programCycleSchema>;

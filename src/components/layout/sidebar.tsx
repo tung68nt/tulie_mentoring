@@ -62,7 +62,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/admin" },
                     { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
                     { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
-                    { id: "programs", label: "Chương trình", icon: Target, href: "/admin/mentorships/new" },
+                    { id: "programs", label: "Chương trình", icon: Calendar, href: "/admin/programs" },
                 ],
             },
             {
@@ -125,6 +125,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
         viewer: [
             {
                 items: [
+                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/viewer" },
                     { id: "reports", label: "Báo cáo & Tiến bộ", icon: BarChart, href: "/reports" },
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },

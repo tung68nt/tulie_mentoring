@@ -21,10 +21,17 @@ export default async function MenteesPage() {
     }
 
     try {
-        const mentorFilter = (role === "admin" || role === "viewer") ? { status: "active" } : { mentorId: userId, status: "active" };
+        const mentorFilter = (role === "admin" || role === "viewer") ? {} : { mentorId: userId };
         const mentorships = await prisma.mentorship.findMany({
             where: mentorFilter,
             include: {
+                mentor: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        avatar: true,
+                    }
+                },
                 mentees: {
                     include: {
                         mentee: {
@@ -41,6 +48,8 @@ export default async function MenteesPage() {
                 ...mt,
                 mentorshipId: m.id,
                 programName: m.programCycle?.name,
+                mentorName: `${m.mentor?.firstName} ${m.mentor?.lastName}`,
+                mentorAvatar: m.mentor?.avatar,
             }))
         );
 
@@ -48,51 +57,76 @@ export default async function MenteesPage() {
 
         return (
             <div className="space-y-8 pb-10 animate-fade-in">
-                <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">
-                        {role === "mentor" ? "Mentees của tôi" : "Danh sách Mentee"}
-                    </h1>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        {role === "mentor"
-                            ? "Theo dõi tiến bộ và quản lý mentees trong chương trình"
-                            : "Theo dõi toàn bộ sinh viên đang tham gia chương trình mentoring"}
-                    </p>
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                            {role === "mentor" ? "Mentees của tôi" : "Theo dõi Toàn bộ Mentees"}
+                        </h1>
+                        <p className="text-sm text-muted-foreground mt-1 max-w-lg">
+                            {role === "mentor"
+                                ? "Quản lý và theo dõi lộ trình phát triển của các sinh viên đang hướng dẫn."
+                                : "Bảng tổng hợp tất cả sinh viên tham gia chương trình mentoring của Khoa."}
+                        </p>
+                    </div>
                 </div>
 
                 {serialized.length === 0 ? (
-                    <div className="p-16 text-center bg-muted/30 rounded-xl border border-dashed border-border space-y-3">
-                        <Users className="w-10 h-10 text-muted-foreground/30 mx-auto" />
-                        <p className="text-sm text-muted-foreground font-medium">Chưa có mentee nào được phân công.</p>
+                    <div className="p-20 text-center bg-muted/20 rounded-2xl border border-dashed border-border/60">
+                        <Users className="w-12 h-12 text-muted-foreground/20 mx-auto mb-4" />
+                        <p className="text-sm font-semibold text-muted-foreground">Hiện chưa có dữ liệu sinh viên trong đợt này.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {serialized.map((mt: any) => (
-                            <Card key={mt.id} className="p-6 space-y-4 group" hover>
-                                <div className="flex items-center gap-4">
-                                    <Avatar
-                                        firstName={mt.mentee?.firstName}
-                                        lastName={mt.mentee?.lastName}
-                                        src={mt.mentee?.avatar}
-                                        size="lg"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-foreground truncate">
-                                            {mt.mentee?.firstName} {mt.mentee?.lastName}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground truncate">
-                                            {mt.mentee?.email}
-                                        </p>
+                            <Card key={mt.id} className="group overflow-hidden flex flex-col h-full border-border/80 shadow-none hover:border-primary/30 transition-all duration-300" hover padding="none">
+                                <div className="p-6 flex-1">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <Badge status={mt.status} size="sm" className="font-bold uppercase tracking-wider text-[9px]" />
+                                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/50 rounded-full border border-border/40">
+                                            <span className="text-[10px] font-bold text-muted-foreground truncate max-w-[120px]">{mt.programName || "General"}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <Badge status={mt.status} size="sm" />
-                                    {mt.programName && (
-                                        <span className="text-[11px] text-muted-foreground font-medium truncate">{mt.programName}</span>
+
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <Avatar
+                                            firstName={mt.mentee?.firstName}
+                                            lastName={mt.mentee?.lastName}
+                                            src={mt.mentee?.avatar}
+                                            size="lg"
+                                            className="ring-2 ring-muted ring-offset-2 ring-offset-background"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-base font-bold text-foreground leading-tight truncate mb-1">
+                                                {mt.mentee?.firstName} {mt.mentee?.lastName}
+                                            </h3>
+                                            <p className="text-xs text-muted-foreground font-medium truncate mb-2">
+                                                {mt.mentee?.menteeProfile?.studentId || "Student"} • {mt.mentee?.menteeProfile?.major || "No major"}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {(role === "admin" || role === "viewer") && (
+                                        <div className="mt-4 pt-4 border-t border-border/40 flex items-center gap-2">
+                                            <Avatar
+                                                firstName={mt.mentorName?.split(' ')[0]}
+                                                lastName={mt.mentorName?.split(' ').slice(1).join(' ')}
+                                                src={mt.mentorAvatar}
+                                                size="xs"
+                                            />
+                                            <p className="text-[11px] font-bold text-muted-foreground">
+                                                Mentor: <span className="text-foreground">{mt.mentorName}</span>
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
-                                <Button variant="outline" size="sm" asChild className="w-full opacity-80 group-hover:opacity-100 transition-opacity">
-                                    <Link href={`/admin/mentorships/${mt.mentorshipId}`}>Xem hồ sơ & tiến bộ</Link>
-                                </Button>
+
+                                <div className="px-6 py-4 bg-muted/30 border-t border-border/40 mt-auto">
+                                    <Button variant="secondary" size="sm" asChild className="w-full font-bold text-xs uppercase tracking-tight shadow-none transition-all group-hover:bg-primary group-hover:text-primary-foreground">
+                                        <Link href={`/admin/mentorships/${mt.mentorshipId}`}>
+                                            Xem hồ sơ & Tiến độ
+                                        </Link>
+                                    </Button>
+                                </div>
                             </Card>
                         ))}
                     </div>

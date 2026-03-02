@@ -29,12 +29,14 @@ export default async function CalendarPage() {
                         <h1 className="text-2xl font-semibold text-foreground no-uppercase">Lịch hoạt động</h1>
                         <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Quản lý và theo dõi các buổi họp sắp tới</p>
                     </div>
-                    <Button asChild className="rounded-xl shadow-none">
-                        <Link href="/meetings/new">
-                            <Plus className="w-4 h-4 mr-2" />
-                            <span className="no-uppercase">Lên lịch mới</span>
-                        </Link>
-                    </Button>
+                    {role !== "viewer" && (
+                        <Button asChild className="rounded-xl shadow-none">
+                            <Link href="/meetings/new">
+                                <Plus className="w-4 h-4 mr-2" />
+                                <span className="no-uppercase">Lên lịch mới</span>
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <CalendarView meetings={serializedMeetings} />
