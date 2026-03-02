@@ -22,13 +22,13 @@ import {
     Users2
 } from "lucide-react";
 
-export default async function MentorshipDetailPage({ params }: { params: { id: string } }) {
+export default async function MentorshipDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    if (!session?.user || !["admin", "viewer"].includes((session.user as any).role)) {
         redirect("/login");
     }
 
-    const mentorshipId = params.id;
+    const { id: mentorshipId } = await params;
 
     try {
         const mentorship = await prisma.mentorship.findUnique({

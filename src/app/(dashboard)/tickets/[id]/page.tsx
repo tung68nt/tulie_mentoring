@@ -12,13 +12,15 @@ import { formatDate } from "@/lib/utils";
 import { Clock, MessageSquare, Send, CheckCircle, Zap } from "lucide-react";
 import { revalidatePath } from "next/cache";
 
-export default async function TicketDetailPage({ params }: { params: { id: string } }) {
+export default async function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
+    const { id } = await params;
+
     let ticket;
     try {
-        ticket = await getTicketDetail(params.id);
+        ticket = await getTicketDetail(id);
     } catch (e) {
         return notFound();
     }
@@ -31,14 +33,14 @@ export default async function TicketDetailPage({ params }: { params: { id: strin
         const content = formData.get("content") as string;
         if (!content) return;
 
-        await addTicketComment(params.id, content);
-        revalidatePath(`/tickets/${params.id}`);
+        await addTicketComment(id, content);
+        revalidatePath(`/tickets/${id}`);
     }
 
     async function handleUpdateStatus(status: string) {
         "use server";
-        await updateTicketStatus(params.id, status);
-        revalidatePath(`/tickets/${params.id}`);
+        await updateTicketStatus(id, status);
+        revalidatePath(`/tickets/${id}`);
     }
 
     return (
