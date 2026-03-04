@@ -71,5 +71,6 @@ jobs:
             echo "$G_TOKEN" | docker login ghcr.io -u "$G_ACTOR" --password-stdin
             docker system prune -af
             docker compose -f docker-compose.prod.yml pull
+            docker run --rm -e DATABASE_URL=$DATABASE_URL $M_IMAGE npx prisma db push --accept-data-loss --schema=prisma/schema.prisma
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f

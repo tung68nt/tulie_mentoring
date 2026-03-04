@@ -38,6 +38,9 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
+# Copy prisma folder and install prisma CLI globally in the runner for migrations
+COPY --from=builder /app/prisma ./prisma
+RUN npm install -g prisma@7.4.2
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
