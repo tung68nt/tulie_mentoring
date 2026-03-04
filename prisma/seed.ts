@@ -161,8 +161,6 @@ async function main() {
             type: "one_on_one",
             status: "active",
             programCycleId: cycle.id,
-            startDate: new Date("2026-02-01"),
-            endDate: new Date("2026-05-01"),
             maxMentees: 1,
             mentees: {
                 create: { menteeId: mentees[0].id },
@@ -176,8 +174,6 @@ async function main() {
             type: "one_on_one",
             status: "active",
             programCycleId: cycle.id,
-            startDate: new Date("2026-02-01"),
-            endDate: new Date("2026-05-01"),
             maxMentees: 1,
             mentees: {
                 create: { menteeId: mentees[1].id },
@@ -192,8 +188,6 @@ async function main() {
             type: "group",
             status: "active",
             programCycleId: cycle.id,
-            startDate: new Date("2026-02-01"),
-            endDate: new Date("2026-05-01"),
             maxMentees: 6,
             mentees: {
                 create: [
@@ -423,7 +417,6 @@ async function main() {
                 "Trở thành Product Manager tại công ty công nghệ",
                 "Khởi nghiệp trong lĩnh vực EdTech",
             ]),
-            initialCompletedAt: new Date("2026-02-05"),
         },
     });
 

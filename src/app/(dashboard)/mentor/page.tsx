@@ -151,8 +151,11 @@ export default async function MentorDashboard() {
     } catch (error) {
         console.error("Failed to fetch mentor dashboard data:", error);
         return (
-            <div className="p-8 text-center">
-                <p className="text-muted-foreground">Không thể tải dữ liệu dashboard. Vui lòng thử lại sau.</p>
+            <div className="p-8 border border-destructive/20 rounded-xl bg-destructive/5">
+                <p className="text-destructive font-semibold mb-2">Đã có lỗi xảy ra khi tải dữ liệu:</p>
+                <code className="text-xs bg-background p-2 rounded block overflow-auto whitespace-pre-wrap">
+                    {error instanceof Error ? error.message : String(error)}
+                </code>
             </div>
         );
     }

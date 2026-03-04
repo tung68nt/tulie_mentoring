@@ -97,7 +97,7 @@ export default async function MentorshipDetailPage({ params }: { params: Promise
                                 <Badge status={serializedMentorship.status} />
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                {serializedMentorship.programCycle.name} • {formatDate(serializedMentorship.startDate)} - {formatDate(serializedMentorship.endDate)}
+                                {serializedMentorship.programCycle.name} • {formatDate(serializedMentorship.programCycle.startDate)} - {formatDate(serializedMentorship.programCycle.endDate)}
                             </p>
                         </div>
                     </div>

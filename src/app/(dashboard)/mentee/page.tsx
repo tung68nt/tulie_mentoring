@@ -235,8 +235,11 @@ export default async function MenteeDashboard() {
     } catch (error) {
         console.error("Failed to fetch mentee dashboard data:", error);
         return (
-            <div className="p-10 text-center bg-destructive/5 rounded-xl border border-destructive/20">
-                <p className="text-sm text-destructive font-medium">Không thể tải dữ liệu dashboard. Vui lòng kiểm tra kết nối và thử lại.</p>
+            <div className="p-8 border border-destructive/20 rounded-xl bg-destructive/5">
+                <p className="text-destructive font-semibold mb-2">Đã có lỗi xảy ra khi tải dữ liệu:</p>
+                <code className="text-xs bg-background p-2 rounded block overflow-auto whitespace-pre-wrap">
+                    {error instanceof Error ? error.message : String(error)}
+                </code>
             </div>
         );
     }

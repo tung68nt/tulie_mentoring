@@ -137,7 +137,7 @@ export default async function MentorshipsPage() {
                                 <div className="bg-muted px-6 py-4 border-t border-border flex items-center justify-between mt-auto">
                                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                         <Calendar className="w-3.5 h-3.5" />
-                                        <span>{formatDate(m.startDate)} - {formatDate(m.endDate)}</span>
+                                        <span>{formatDate(m.programCycle?.startDate)} - {formatDate(m.programCycle?.endDate)}</span>
                                     </div>
                                     <Button variant="ghost" size="sm" asChild>
                                         <Link href={`/admin/mentorships/${m.id}`}>Chi tiết</Link>

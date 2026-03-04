@@ -84,7 +84,7 @@ export default async function AdminDashboard() {
         // Calculate top performers
         const menteesWithProgress = serializedTopMentees.map((mentee: any) => {
             const allGoals = mentee.menteeships?.flatMap(
-                (ms: any) => ms.mentorship.goals
+                (ms: any) => ms.mentorship?.goals || []
             ) || [];
             const total = allGoals.length;
             const completed = allGoals.filter((g: any) => g.status === "completed").length;

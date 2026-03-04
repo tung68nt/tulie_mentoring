@@ -62,8 +62,8 @@ export async function getDiariesAndHabits(dateStr: string) {
 
     const activeMentorship = user?.menteeships?.[0]?.mentorship;
 
-    let programStartDate = activeMentorship?.startDate || activeMentorship?.programCycle?.startDate || user?.createdAt || new Date();
-    let programEndDate = activeMentorship?.endDate || activeMentorship?.programCycle?.endDate || new Date(programStartDate.getTime() + 61 * 24 * 60 * 60 * 1000);
+    let programStartDate = activeMentorship?.programCycle?.startDate || user?.createdAt || new Date();
+    let programEndDate = activeMentorship?.programCycle?.endDate || new Date(new Date(programStartDate).getTime() + 61 * 24 * 60 * 60 * 1000);
 
     // Ensure we have a valid Date object if they came from JSON
     programStartDate = new Date(programStartDate);
@@ -230,8 +230,8 @@ export async function getProgramGridData() {
     });
 
     const activeMentorship = user?.menteeships?.[0]?.mentorship;
-    let programStartDate = activeMentorship?.startDate || activeMentorship?.programCycle?.startDate || user?.createdAt || new Date();
-    let programEndDate = activeMentorship?.endDate || activeMentorship?.programCycle?.endDate || new Date(programStartDate.getTime() + 61 * 24 * 60 * 60 * 1000);
+    let programStartDate = activeMentorship?.programCycle?.startDate || user?.createdAt || new Date();
+    let programEndDate = activeMentorship?.programCycle?.endDate || new Date(new Date(programStartDate).getTime() + 61 * 24 * 60 * 60 * 1000);
 
     programStartDate = new Date(programStartDate);
     programEndDate = new Date(programEndDate);
