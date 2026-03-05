@@ -71,6 +71,11 @@ jobs:
             echo "$G_TOKEN" | docker login ghcr.io -u "$G_ACTOR" --password-stdin
             docker system prune -af
             docker compose -f docker-compose.prod.yml pull
+            docker run --rm -e DATABASE_URL=${DATABASE_URL/:5432\//:6543\/} $M_IMAGE npx prisma db push --accept-data-loss --schema=prisma/schema.prisma || \
             docker run --rm -e DATABASE_URL=$DATABASE_URL $M_IMAGE npx prisma db push --accept-data-loss --schema=prisma/schema.prisma
+            
+            # Seeding (Optional: only if you want fresh data on every deploy, or use separate manual trigger)
+            # docker run --rm -e DATABASE_URL=${DATABASE_URL/:5432\//:6543\/} $M_IMAGE npx prisma db seed || true
+            
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
