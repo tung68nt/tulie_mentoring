@@ -493,6 +493,7 @@ model WikiPage {
   content    String?
   category   String?
   visibility String   @default("public")
+  coverImage String?
   authorId   String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

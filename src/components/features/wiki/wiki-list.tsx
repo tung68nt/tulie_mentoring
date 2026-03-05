@@ -40,35 +40,47 @@ export function WikiList({ pages }: WikiListProps) {
                         <span className="text-xs text-muted-foreground ml-1">({catPages.length})</span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {catPages.map((page: any) => (
-                            <Link key={page.id} href={`/wiki/${page.slug}`} className="group h-full">
-                                <Card padding="none" className="h-full flex flex-col border-border/60 hover:border-primary/40 transition-all rounded-lg overflow-hidden bg-card">
-                                    <div className="p-5 flex-1 space-y-3">
-                                        <div className="flex items-start justify-between gap-3">
-                                            <h3 className="font-semibold text-[15px] text-foreground leading-snug group-hover:text-primary transition-colors">{page.title}</h3>
-                                            <ChevronRight className="w-4 h-4 text-muted-foreground/30 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {catPages.map((page: any) => {
+                            const defaultCover = "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2070";
+                            const hasCover = !!page.coverImage;
+
+                            return (
+                                <Link key={page.id} href={`/wiki/${page.slug}`} className="group h-full flex flex-col">
+                                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-xl border-x border-t border-border/40">
+                                        <img
+                                            src={page.coverImage || defaultCover}
+                                            alt={page.title}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                                    </div>
+                                    <Card padding="none" className="h-full flex flex-col border-border/40 hover:border-primary/40 rounded-t-none rounded-b-xl transition-all shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] bg-card flex-1">
+                                        <div className="p-6 space-y-3">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <h3 className="font-bold text-[16px] text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2">{page.title}</h3>
+                                            </div>
+
+                                            <p className="text-[13px] text-muted-foreground line-clamp-3 leading-relaxed opacity-80 min-h-[3.9rem]">
+                                                {page.content ? blocksToText(page.content) : "Bắt đầu khám phá tài liệu này..."}
+                                            </p>
                                         </div>
 
-                                        <p className="text-[13px] text-muted-foreground line-clamp-2 leading-relaxed opacity-80">
-                                            {page.content ? blocksToText(page.content) : "Không có nội dung mô tả."}
-                                        </p>
-                                    </div>
-
-                                    <div className="px-5 py-3 bg-muted/10 border-t border-border/40 flex items-center justify-between mt-auto">
-                                        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
-                                            <Clock className="w-3 h-3 opacity-60" />
-                                            <span>{new Date(page.updatedAt).toLocaleDateString("vi-VN")}</span>
+                                        <div className="px-6 py-4 bg-muted/5 border-t border-border/40 flex items-center justify-between mt-auto">
+                                            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-semibold">
+                                                <Clock className="w-3.5 h-3.5 opacity-60" />
+                                                <span>{new Date(page.updatedAt).toLocaleDateString("vi-VN")}</span>
+                                            </div>
+                                            {page.visibility !== 'public' && (
+                                                <Badge variant="secondary" className="text-[10px] font-bold px-2 py-0 h-5 rounded-md">
+                                                    {page.visibility === 'mentor_only' ? 'Mentor' : 'Mentee'}
+                                                </Badge>
+                                            )}
                                         </div>
-                                        {page.visibility !== 'public' && (
-                                            <Badge variant="outline" className="text-[9px] font-semibold py-0 h-4.5 rounded-md border-border/60">
-                                                {page.visibility === 'mentor_only' ? 'Mentor' : 'Mentee'}
-                                            </Badge>
-                                        )}
-                                    </div>
-                                </Card>
-                            </Link>
-                        ))}
+                                    </Card>
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
             ))}

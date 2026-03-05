@@ -11,6 +11,8 @@ import { Clock, Edit, ChevronLeft, Calendar, User } from "lucide-react";
 import Link from "next/link";
 import { DeleteWikiButton } from "@/components/features/wiki/delete-wiki-button";
 import { ShareWikiButton } from "@/components/features/wiki/share-wiki-button";
+import { TableOfContents } from "@/components/features/wiki/wiki-toc";
+import Image from "next/image";
 
 export default async function WikiDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const session = await auth();
@@ -27,72 +29,92 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
     const isAuthor = page.authorId === session.user.id;
     const canEdit = (session.user as any).role === "admin" || (session.user as any).role === "mentor" || isAuthor;
 
+    // Default cover image if none exists
+    const coverImage = page.coverImage || "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2070";
+
     return (
-        <div className="max-w-4xl mx-auto space-y-8 pb-10 animate-fade-in">
-            <Link
-                href="/wiki"
-                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors group"
-            >
-                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                Quay lại danh sách
-            </Link>
+        <div className="min-h-screen bg-background animate-in fade-in duration-500">
+            {/* Page Cover Banner */}
+            <div className="group relative w-full h-[240px] md:h-[300px] overflow-hidden">
+                <Image
+                    src={coverImage}
+                    alt="Cover"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+            </div>
 
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                <div className="space-y-4 flex-1">
-                    <h1 className="text-4xl font-bold text-foreground tracking-tight leading-tight">{page.title}</h1>
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-12 -mt-24 relative z-10 flex flex-col md:flex-row gap-12 justify-center">
+                {/* Main Content Column - Centered and focused */}
+                <div className="w-full max-w-[850px] bg-background rounded-t-3xl border-t border-x border-border/40 shadow-sm min-h-[800px]">
 
-                    <div className="flex flex-wrap items-center gap-6 text-[13px] font-medium text-muted-foreground/80 tracking-wide">
-                        <div className="flex items-center gap-2">
-                            <User className="w-3.5 h-3.5" />
-                            <span>Tác giả: {page.author.firstName} {page.author.lastName}</span>
+                    {/* Header Section */}
+                    <div className="px-8 md:px-20 pt-16 pb-12 space-y-8">
+                        <Link
+                            href="/wiki"
+                            className="inline-flex items-center gap-2 text-[12px] font-bold text-muted-foreground/60 hover:text-foreground transition-colors group mb-4 no-uppercase tracking-wider"
+                        >
+                            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            QUAY LẠI WIKI
+                        </Link>
+
+                        <div className="space-y-6">
+                            <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.15]">
+                                {page.title}
+                            </h1>
+
+                            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-b border-border/40 pb-8">
+                                <div className="flex items-center gap-4">
+                                    <Avatar className="w-10 h-10 ring-2 ring-background shadow-sm">
+                                        <AvatarImage src={page.author.avatar} />
+                                        <AvatarFallback className="text-[10px] font-bold">{page.author.firstName[0]}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="space-y-0.5">
+                                        <p className="text-[14px] font-semibold text-foreground leading-none">
+                                            {page.author.firstName} {page.author.lastName}
+                                        </p>
+                                        <p className="text-[12px] text-muted-foreground flex items-center gap-1.5 font-medium">
+                                            <Calendar className="w-3 h-3" />
+                                            Cập nhật {formatDate(page.updatedAt, "dd/MM/yyyy")}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    {page.visibility === 'public' && (
+                                        <ShareWikiButton slug={page.slug} />
+                                    )}
+                                    {canEdit && (
+                                        <>
+                                            <div className="h-8 w-px bg-border/40 mx-2 hidden sm:block" />
+                                            <Link href={`/wiki/${page.slug}/edit`}>
+                                                <Button variant="outline" className="rounded-xl gap-2 shadow-none border-border/60" size="sm">
+                                                    <Edit className="w-4 h-4" />
+                                                    Chỉnh sửa
+                                                </Button>
+                                            </Link>
+                                            <DeleteWikiButton id={page.id} title={page.title} />
+                                        </>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>Cập nhật: {formatDate(page.updatedAt, "dd/MM/yyyy")}</span>
-                        </div>
+                    </div>
+
+                    {/* Editor Content Area */}
+                    <div className="pb-24">
+                        <BlockEditor
+                            initialContent={page.content}
+                            editable={false}
+                            className="border-none shadow-none bg-transparent"
+                        />
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    {page.visibility === 'public' && (
-                        <ShareWikiButton slug={page.slug} />
-                    )}
-                    {canEdit && (
-                        <>
-                            <DeleteWikiButton id={page.id} title={page.title} />
-                            <Link href={`/wiki/${page.slug}/edit`}>
-                                <Button className="rounded-xl gap-2 shadow-sm" size="sm">
-                                    <Edit className="w-4 h-4" />
-                                    Chỉnh sửa
-                                </Button>
-                            </Link>
-                        </>
-                    )}
-                </div>
-            </div>
-
-            <div className="rounded-xl border border-border/40 bg-background overflow-hidden shadow-none">
-                <div className="p-1 px-2 pb-2">
-                    <BlockEditor
-                        initialContent={page.content}
-                        editable={false}
-                        className="border-none shadow-none"
-                    />
-                </div>
-            </div>
-
-            {/* Footer metadata */}
-            <div className="pt-8 border-t border-border/40 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <Avatar className="w-8 h-8 ring-2 ring-muted/50">
-                        <AvatarImage src={page.author.avatar} />
-                        <AvatarFallback className="text-[10px] font-bold">{page.author.firstName[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-0.5">
-                        <p className="text-[14px] font-medium">{page.author.firstName} {page.author.lastName}</p>
-                        <p className="text-[12px] text-muted-foreground/80 tracking-tight">Biên soạn tài liệu này</p>
-                    </div>
-                </div>
+                {/* Right Sidebar - TOC */}
+                <TableOfContents content={page.content} />
             </div>
         </div>
     );

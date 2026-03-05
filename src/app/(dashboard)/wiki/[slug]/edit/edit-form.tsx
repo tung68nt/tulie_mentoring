@@ -37,6 +37,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
     const [title, setTitle] = useState(page.title);
     const [category, setCategory] = useState(page.category || "");
     const [visibility, setVisibility] = useState<string>(page.visibility);
+    const [coverImage, setCoverImage] = useState(page.coverImage || "");
     const [content, setContent] = useState(page.content);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -53,7 +54,8 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                 title,
                 content,
                 category,
-                visibility
+                visibility,
+                coverImage
             });
             toast.success("Đã cập nhật trang Wiki");
             router.push(`/wiki/${page.slug}`);
@@ -175,6 +177,16 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                                     className="rounded-lg border-border/40 bg-background pl-10"
                                 />
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Ảnh bìa (URL)</label>
+                            <Input
+                                value={coverImage}
+                                onChange={(e) => setCoverImage(e.target.value)}
+                                placeholder="https://unsplash.com/..."
+                                className="rounded-lg border-border/40 bg-background"
+                            />
                         </div>
 
                         <div className="space-y-2">

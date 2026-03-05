@@ -69,24 +69,49 @@ export function BlockEditor({
             <style jsx global>{`
                 .block-editor-wrapper .bn-editor {
                     font-family: var(--font-sans), Inter, system-ui, sans-serif;
-                    padding: 1rem 1rem 1rem 3rem; /* Increased left padding for side handles */
+                    padding: 2rem 1rem 10rem 3.5rem; /* Large bottom padding for focus */
+                    max-width: 900px;
+                    margin: 0 auto;
                 }
                 .block-editor-wrapper .bn-editor [class*="blockContent"] {
-                    font-size: 14px;
-                    line-height: 1.7;
+                    font-size: 16px; /* Slightly larger like Notion */
+                    line-height: 1.65;
                     color: hsl(var(--foreground));
+                    margin-top: 2px;
+                    margin-bottom: 2px;
                 }
                 .block-editor-wrapper .bn-editor [class*="heading"] h1 {
-                    font-size: 1.5rem !important;
-                    font-weight: 600 !important;
+                    font-size: 1.875rem !important;
+                    font-weight: 700 !important;
+                    margin-top: 2rem !important;
+                    margin-bottom: 0.5rem !important;
+                    border: none !important;
+                    letter-spacing: -0.025em !important;
                 }
                 .block-editor-wrapper .bn-editor [class*="heading"] h2 {
-                    font-size: 1.25rem !important;
+                    font-size: 1.5rem !important;
                     font-weight: 600 !important;
+                    margin-top: 1.5rem !important;
+                    margin-bottom: 0.5rem !important;
+                    border: none !important;
+                    letter-spacing: -0.02em !important;
                 }
                 .block-editor-wrapper .bn-editor [class*="heading"] h3 {
-                    font-size: 1.1rem !important;
+                    font-size: 1.25rem !important;
                     font-weight: 600 !important;
+                    margin-top: 1.25rem !important;
+                    margin-bottom: 0.5rem !important;
+                    border: none !important;
+                }
+                /* Spacing between blocks */
+                .block-editor-wrapper .bn-editor .bn-block-outer {
+                    margin-top: 0.25rem;
+                }
+                /* List refinement */
+                .block-editor-wrapper .bn-editor [data-content-type="bulletListItem"],
+                .block-editor-wrapper .bn-editor [data-content-type="numberedListItem"] {
+                    margin-top: 1px;
+                    margin-bottom: 1px;
                 }
                 /* Remove any uppercase from blocknote */
                 .block-editor-wrapper * {
@@ -103,14 +128,16 @@ export function BlockEditor({
                 .block-editor-wrapper [class*="menu"] {
                     border-color: hsl(var(--border)) !important;
                     background: hsl(var(--background)) !important;
-                }
-                .block-editor-wrapper .bn-editor .bn-block-group > .bn-block-outer:first-child {
-                    margin-top: 0;
+                    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.05) !important;
                 }
                 /* Placeholder color */
                 .block-editor-wrapper .bn-editor [data-placeholder]::before {
                     color: hsl(var(--muted-foreground)) !important;
-                    opacity: 0.5;
+                    opacity: 0.4;
+                }
+                /* Selection color */
+                .block-editor-wrapper .bn-editor ::selection {
+                    background-color: hsl(var(--primary) / 0.15);
                 }
             `}</style>
         </div>

@@ -20,6 +20,7 @@ export async function createWikiPage(data: {
     content: string;
     category?: string;
     visibility?: "public" | "mentor_only" | "mentee_only";
+    coverImage?: string;
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
@@ -33,6 +34,7 @@ export async function createWikiPage(data: {
             content: data.content,
             category: data.category,
             visibility: data.visibility || "public",
+            coverImage: data.coverImage,
             authorId: session.user.id!,
         }
     });
@@ -131,7 +133,7 @@ export async function updateWikiPage(id: string, data: any) {
     }
 
     // Whitelist only allowed fields to prevent mass assignment
-    const { title, content, category, visibility } = data;
+    const { title, content, category, visibility, coverImage } = data;
 
     const updatedPage = await prisma.wikiPage.update({
         where: { id },
@@ -140,6 +142,7 @@ export async function updateWikiPage(id: string, data: any) {
             content,
             category,
             visibility,
+            coverImage,
             updatedAt: new Date()
         }
     });
