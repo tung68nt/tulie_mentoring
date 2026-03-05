@@ -1,10 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Leaf, Wind, Waves, Coffee, Brain, Timer, Settings2, Music, Home, Sparkles } from "lucide-react";
+import { Play, Pause, RotateCcw, Leaf, Wind, Waves, Coffee, Music, Sparkles, Settings2, Plus, Minus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const SOUNDS = [
     { id: "rain", label: "Mưa rơi", icon: Waves, url: "https://www.soundjay.com/nature/rain-07.mp3" },
@@ -19,6 +27,12 @@ const AMBIANCE_MUSICS = [
 ];
 
 export function PomodoroTimer() {
+    // Configurable state
+    const [focusMinutes, setFocusMinutes] = useState(25);
+    const [shortBreakMinutes, setShortBreakMinutes] = useState(5);
+    const [longBreakMinutes, setLongBreakMinutes] = useState(15);
+    const [targetCycles, setTargetCycles] = useState(4);
+
     // Timer state
     const [timeLeft, setTimeLeft] = useState(25 * 60);
     const [isActive, setIsActive] = useState(false);
@@ -26,7 +40,6 @@ export function PomodoroTimer() {
 
     // Session state
     const [cycleCount, setCycleCount] = useState(0);
-    const [targetCycles, setTargetCycles] = useState(4);
     const [autoStart, setAutoStart] = useState(true);
 
     // UI state
@@ -35,6 +48,15 @@ export function PomodoroTimer() {
     const [activeMusic, setActiveMusic] = useState<string | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const musicRef = useRef<HTMLAudioElement | null>(null);
+
+    // Sync timer with config when mode changes or config updates (if not active)
+    useEffect(() => {
+        if (!isActive) {
+            if (mode === "focus") setTimeLeft(focusMinutes * 60);
+            else if (mode === "short") setTimeLeft(shortBreakMinutes * 60);
+            else setTimeLeft(longBreakMinutes * 60);
+        }
+    }, [focusMinutes, shortBreakMinutes, longBreakMinutes, mode, isActive]);
 
     // Timer Logic
     useEffect(() => {
@@ -58,11 +80,11 @@ export function PomodoroTimer() {
             setCycleCount(nextCycles);
 
             if (nextCycles >= targetCycles) {
-                toast.success("Tuyệt vời! Bạn đã hoàn thành 2 tiếng tập trung.");
+                toast.success("Tuyệt vời! Bạn đã hoàn thành trọn bộ phiên làm việc.");
                 setCycleCount(0);
                 switchMode("focus");
             } else {
-                toast.info("Xong một hiệp! Nghỉ xả hơi chút nào.");
+                toast.info("Xong một hiệp! Hãy nghỉ ngơi chút.");
                 switchMode("short");
                 if (autoStart) setTimeout(() => setIsActive(true), 1500);
             }
@@ -76,15 +98,15 @@ export function PomodoroTimer() {
     const toggleTimer = () => setIsActive(!isActive);
     const resetTimer = () => {
         setIsActive(false);
-        setTimeLeft(mode === "focus" ? 25 * 60 : mode === "short" ? 5 * 60 : 15 * 60);
+        setTimeLeft(mode === "focus" ? focusMinutes * 60 : mode === "short" ? shortBreakMinutes * 60 : longBreakMinutes * 60);
     };
 
     const switchMode = (newMode: "focus" | "short" | "long") => {
         setMode(newMode);
         setIsActive(false);
-        if (newMode === "focus") setTimeLeft(25 * 60);
-        else if (newMode === "short") setTimeLeft(5 * 60);
-        else setTimeLeft(15 * 60);
+        if (newMode === "focus") setTimeLeft(focusMinutes * 60);
+        else if (newMode === "short") setTimeLeft(shortBreakMinutes * 60);
+        else setTimeLeft(longBreakMinutes * 60);
     };
 
     const formatTime = (seconds: number) => {
@@ -101,7 +123,7 @@ export function PomodoroTimer() {
             if (audioRef.current) audioRef.current.pause();
             audioRef.current = new Audio(url);
             audioRef.current.loop = true;
-            audioRef.current.volume = 0.4;
+            audioRef.current.volume = 0.35;
             audioRef.current.play().catch(console.error);
             setActiveSound(id);
         }
@@ -115,34 +137,34 @@ export function PomodoroTimer() {
             if (musicRef.current) musicRef.current.pause();
             musicRef.current = new Audio(url);
             musicRef.current.loop = true;
-            musicRef.current.volume = 0.5;
+            musicRef.current.volume = 0.45;
             musicRef.current.play().catch(console.error);
             setActiveMusic(id);
         }
     };
 
     return (
-        <div className="max-w-[1200px] mx-auto space-y-8 animate-in fade-in duration-1000">
+        <div className="max-w-[1200px] mx-auto space-y-10 animate-in fade-in duration-1000 pb-12">
             {/* Header Area */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
-                <div className="space-y-1">
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground/90">Không gian tập trung</h1>
-                    <p className="text-[13px] text-muted-foreground font-medium">Tìm lại nhịp điệu riêng của bạn trong sự tĩnh lặng.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
+                <div className="space-y-1 px-1">
+                    <h1 className="text-2xl font-bold text-foreground/90">Không gian tập trung</h1>
+                    <p className="text-[14px] text-muted-foreground/70 font-medium">Tìm lại nhịp điệu riêng của bạn trong sự tĩnh lặng.</p>
                 </div>
 
-                {/* Session Progress - Detailed for 4 cycles */}
-                <div className="flex items-center gap-4 bg-muted/10 px-6 py-3 rounded-2xl border border-border/40 backdrop-blur-sm">
+                {/* Session Progress - More elegant, no uppercase */}
+                <div className="flex items-center gap-5 bg-background border border-border/40 px-6 py-3 rounded-2xl shadow-sm backdrop-blur-md">
                     <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">TIẾN ĐỘ PHIÊN</span>
-                        <span className="text-[12px] font-bold text-foreground/70">{cycleCount}/{targetCycles} hiệp (≈ 2 giờ)</span>
+                        <span className="text-[11px] font-bold text-muted-foreground/40 no-uppercase tracking-normal">Tiến độ phiên</span>
+                        <span className="text-[14px] font-bold text-foreground/80">{cycleCount}/{targetCycles} hiệp</span>
                     </div>
-                    <div className="flex gap-2 h-2.5 items-center">
+                    <div className="flex gap-2">
                         {Array.from({ length: targetCycles }).map((_, i) => (
                             <div
                                 key={i}
                                 className={cn(
-                                    "w-2.5 h-2.5 rounded-full transition-all duration-700",
-                                    i < cycleCount ? "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.3)]" : "bg-muted-foreground/20"
+                                    "w-3 h-3 rounded-full transition-all duration-700",
+                                    i < cycleCount ? "bg-primary shadow-lg shadow-primary/20" : "bg-muted-foreground/10"
                                 )}
                             />
                         ))}
@@ -150,86 +172,15 @@ export function PomodoroTimer() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 
-                {/* Main Timer Section */}
-                <div className="md:col-span-8 group relative rounded-[32px] border border-border/40 bg-card overflow-hidden flex flex-col items-center justify-center p-8 py-20 min-h-[480px]">
-
-                    {/* Breathing Motion - Gentle and persistent */}
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        <div className={cn(
-                            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-primary/5 rounded-full transition-opacity duration-1000",
-                            isActive ? "animate-breathing" : "opacity-0"
-                        )} />
-                        <div className={cn(
-                            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] border border-primary/10 rounded-full transition-opacity duration-1000",
-                            isActive ? "animate-breathing-slow" : "opacity-0"
-                        )} />
-                    </div>
-
-                    {/* Mode Selectors - No Uppercase, No Spacing */}
-                    <div className="flex gap-3 mb-12 relative z-10 p-1.5 bg-muted/20 rounded-2xl border border-border/20">
-                        {(['focus', 'short', 'long'] as const).map((m) => (
-                            <button
-                                key={m}
-                                onClick={() => switchMode(m)}
-                                className={cn(
-                                    "px-6 py-2 rounded-xl text-[13px] font-bold transition-all",
-                                    mode === m
-                                        ? "bg-background text-foreground shadow-sm ring-1 ring-border/40"
-                                        : "text-muted-foreground/60 hover:text-foreground hover:bg-muted/30"
-                                )}
-                            >
-                                {m === "focus" ? "Tập trung" : m === "short" ? "Nghỉ ngắn" : "Nghỉ dài"}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Timer Display */}
-                    <div className="relative z-10 text-center space-y-12">
-                        <div className="text-[120px] font-bold tracking-tight tabular-nums text-foreground leading-none select-none">
-                            {formatTime(timeLeft)}
-                        </div>
-
-                        <div className="flex items-center justify-center gap-8">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="w-14 h-14 rounded-full text-muted-foreground/40 hover:text-foreground hover:bg-muted transition-all"
-                                onClick={resetTimer}
-                            >
-                                <RotateCcw className="w-6 h-6" />
-                            </Button>
-
-                            <button
-                                onClick={toggleTimer}
-                                className={cn(
-                                    "w-24 h-24 rounded-full flex items-center justify-center transition-all bg-foreground text-background hover:scale-105 active:scale-95 shadow-lg group-hover:shadow-foreground/10"
-                                )}
-                            >
-                                {isActive ? <Pause className="w-10 h-10 fill-current" /> : <Play className="w-10 h-10 ml-1.5 fill-current" />}
-                            </button>
-
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="w-14 h-14 rounded-full text-muted-foreground/40 hover:text-foreground hover:bg-muted transition-all"
-                                onClick={() => toast.info("Tính năng cài đặt đang được phát triển.")}
-                            >
-                                <Settings2 className="w-6 h-6" />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Sidebar Controls */}
-                <div className="md:col-span-4 flex flex-col gap-6">
-
-                    {/* Integrated Sound & Music Controls */}
-                    <div className="p-6 rounded-[28px] border border-border/40 bg-card space-y-6">
+                {/* Sidebar Left: Sounds (Compact) */}
+                <div className="md:col-span-3 flex flex-col gap-6">
+                    <div className="p-6 rounded-3xl border border-border/40 bg-card/60 space-y-8">
+                        {/* Nature Sounds */}
                         <div className="space-y-4">
-                            <p className="text-[11px] font-bold text-muted-foreground/50 tracking-[0.05em] uppercase px-1">Âm thanh thiên nhiên</p>
-                            <div className="grid grid-cols-3 gap-3">
+                            <p className="text-[12px] font-bold text-muted-foreground/40 no-uppercase tracking-normal px-1">Âm thanh tự nhiên</p>
+                            <div className="grid grid-cols-1 gap-2">
                                 {SOUNDS.map((sound) => {
                                     const Icon = sound.icon;
                                     const isSelected = activeSound === sound.id;
@@ -238,24 +189,23 @@ export function PomodoroTimer() {
                                             key={sound.id}
                                             onClick={() => toggleSound(sound.url, sound.id)}
                                             className={cn(
-                                                "flex flex-col items-center gap-2 p-3.5 rounded-2xl transition-all border",
+                                                "flex items-center gap-3 w-full p-3 px-4 rounded-xl transition-all border text-left",
                                                 isSelected
                                                     ? "bg-primary/5 border-primary/20 text-primary"
-                                                    : "bg-muted/5 border-transparent hover:bg-muted/20 text-muted-foreground/50 hover:text-muted-foreground"
+                                                    : "bg-muted/5 border-transparent hover:bg-muted/20 text-muted-foreground/60"
                                             )}
                                         >
-                                            <Icon className="w-5 h-5" />
-                                            <span className="text-[10px] font-bold">{sound.label}</span>
+                                            <Icon className="w-4 h-4 opacity-70" />
+                                            <span className="text-[13px] font-bold flex-1">{sound.label}</span>
                                         </button>
                                     );
                                 })}
                             </div>
                         </div>
 
-                        <div className="h-px bg-border/40 mx-2" />
-
+                        {/* Ambiance Music */}
                         <div className="space-y-4">
-                            <p className="text-[11px] font-bold text-muted-foreground/50 tracking-[0.05em] uppercase px-1">Nhạc nền không gian</p>
+                            <p className="text-[12px] font-bold text-muted-foreground/40 no-uppercase tracking-normal px-1">Nhạc nền không gian</p>
                             <div className="grid grid-cols-1 gap-2">
                                 {AMBIANCE_MUSICS.map((music) => {
                                     const Icon = music.icon;
@@ -268,56 +218,172 @@ export function PomodoroTimer() {
                                                 "flex items-center gap-3 w-full p-3 px-4 rounded-xl transition-all border text-left",
                                                 isSelected
                                                     ? "bg-primary/5 border-primary/20 text-primary"
-                                                    : "bg-muted/5 border-transparent hover:bg-muted/20 text-muted-foreground/60 hover:text-foreground"
+                                                    : "bg-muted/5 border-transparent hover:bg-muted/20 text-muted-foreground/60"
                                             )}
                                         >
-                                            <div className={cn(
-                                                "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-                                                isSelected ? "bg-primary/10" : "bg-muted/10"
-                                            )}>
-                                                <Icon className="w-4 h-4" />
-                                            </div>
+                                            <Icon className="w-4 h-4 opacity-70" />
                                             <span className="text-[13px] font-bold flex-1">{music.label}</span>
-                                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
                                         </button>
                                     );
                                 })}
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Focus Note Area */}
-                    <div className="flex-1 p-6 rounded-[28px] border border-border/40 bg-card flex flex-col space-y-4">
+                {/* Center: Main Timer */}
+                <div className="md:col-span-5 group relative rounded-[40px] border border-border/40 bg-card overflow-hidden flex flex-col items-center justify-center p-8 py-20 min-h-[500px] shadow-sm">
+
+                    {/* Breathing Motion Circles */}
+                    <div className="absolute inset-0 pointer-events-none">
+                        <div className={cn(
+                            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] border border-primary/5 rounded-full transition-opacity duration-1000",
+                            isActive ? "animate-breathing" : "opacity-0"
+                        )} />
+                        <div className={cn(
+                            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] border border-primary/10 rounded-full transition-opacity duration-1000",
+                            isActive ? "animate-breathing-slow" : "opacity-0"
+                        )} />
+                    </div>
+
+                    {/* Mode Tabs */}
+                    <div className="flex gap-2 mb-12 relative z-10 p-1.5 bg-muted/20 rounded-2xl border border-border/10">
+                        {(['focus', 'short', 'long'] as const).map((m) => (
+                            <button
+                                key={m}
+                                onClick={() => switchMode(m)}
+                                className={cn(
+                                    "px-6 py-2 rounded-xl text-[13px] font-bold transition-all",
+                                    mode === m
+                                        ? "bg-background text-foreground shadow-sm ring-1 ring-border/20"
+                                        : "text-muted-foreground/50 hover:text-foreground"
+                                )}
+                            >
+                                {m === "focus" ? "Tập trung" : m === "short" ? "Nghỉ ngắn" : "Nghỉ dài"}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Timer Display with Text Breathing */}
+                    <div className="relative z-10 text-center space-y-16">
+                        <div className={cn(
+                            "text-[120px] font-bold tracking-tight tabular-nums text-foreground leading-none select-none transition-all duration-1000",
+                            isActive ? "animate-text-pulse" : "scale-100"
+                        )}>
+                            {formatTime(timeLeft)}
+                        </div>
+
+                        <div className="flex items-center justify-center gap-8">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="w-14 h-14 rounded-full text-muted-foreground/30 hover:text-foreground hover:bg-muted transition-all"
+                                onClick={resetTimer}
+                            >
+                                <RotateCcw className="w-6 h-6" />
+                            </Button>
+
+                            <button
+                                onClick={toggleTimer}
+                                className={cn(
+                                    "w-24 h-24 rounded-full flex items-center justify-center transition-all bg-foreground text-background hover:scale-105 active:scale-95 shadow-lg"
+                                )}
+                            >
+                                {isActive ? <Pause className="w-10 h-10 fill-current" /> : <Play className="w-10 h-10 ml-1.5 fill-current" />}
+                            </button>
+
+                            {/* Settings Modal */}
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="w-14 h-14 rounded-full text-muted-foreground/30 hover:text-foreground hover:bg-muted transition-all"
+                                    >
+                                        <Settings2 className="w-6 h-6" />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-md rounded-[28px]">
+                                    <DialogHeader>
+                                        <DialogTitle className="no-uppercase font-bold">Cài đặt hiệp tập trung</DialogTitle>
+                                    </DialogHeader>
+                                    <div className="p-6 space-y-8">
+                                        <div className="space-y-4">
+                                            <p className="text-[12px] font-bold text-muted-foreground/60 no-uppercase px-1">Thời gian (phút)</p>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] text-muted-foreground/60 ml-2">Tập trung</label>
+                                                    <Input type="number" value={focusMinutes} onChange={(e) => setFocusMinutes(Number(e.target.value))} className="rounded-xl border-border/40" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] text-muted-foreground/60 ml-2">Nghỉ ngắn</label>
+                                                    <Input type="number" value={shortBreakMinutes} onChange={(e) => setShortBreakMinutes(Number(e.target.value))} className="rounded-xl border-border/40" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] text-muted-foreground/60 ml-2">Nghỉ dài</label>
+                                                    <Input type="number" value={longBreakMinutes} onChange={(e) => setLongBreakMinutes(Number(e.target.value))} className="rounded-xl border-border/40" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <p className="text-[12px] font-bold text-muted-foreground/60 no-uppercase px-1">Mục tiêu phiên</p>
+                                            <div className="flex items-center justify-between bg-muted/10 p-4 rounded-2xl border border-border/40">
+                                                <span className="text-[14px] font-medium text-foreground/70">Số hiệp mục tiêu</span>
+                                                <div className="flex items-center gap-3">
+                                                    <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg" onClick={() => setTargetCycles(Math.max(1, targetCycles - 1))}><Minus className="w-3 h-3" /></Button>
+                                                    <span className="font-bold text-[16px] w-6 text-center">{targetCycles}</span>
+                                                    <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg" onClick={() => setTargetCycles(targetCycles + 1)}><Plus className="w-3 h-3" /></Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right: Notes (Wider) */}
+                <div className="md:col-span-4 flex flex-col h-full">
+                    <div className="flex-1 p-8 rounded-[40px] border border-border/40 bg-card flex flex-col space-y-4 shadow-sm min-h-[500px]">
                         <div className="flex items-center justify-between px-1">
-                            <p className="text-[11px] font-bold text-muted-foreground/50 tracking-[0.05em] uppercase">Ghi chú nhanh</p>
-                            {notes.trim() && <span className="text-[9px] text-primary/60 font-bold uppercase tracking-widest">Đã lưu</span>}
+                            <p className="text-[12px] font-bold text-muted-foreground/40 no-uppercase tracking-normal">Ghi chú nhanh</p>
+                            {notes.length > 0 && <Check className="w-4 h-4 text-primary opacity-50" />}
                         </div>
                         <textarea
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Nhớ ra điều gì đó? Note ngay tại đây để không xao nhãng..."
-                            className="flex-1 w-full bg-muted/5 border-none rounded-2xl p-4 text-[13px] font-medium focus:ring-1 focus:ring-primary/10 transition-all resize-none placeholder:text-muted-foreground/30 custom-scrollbar leading-relaxed"
+                            placeholder="Điều gì lướt qua tâm trí bạn? Ghi lại đây để giải tỏa bộ não và tiếp tục dòng chảy công việc..."
+                            className="flex-1 w-full bg-muted/5 border-none rounded-2xl p-6 text-[14px] font-medium focus:ring-1 focus:ring-primary/10 transition-all resize-none placeholder:text-muted-foreground/20 leading-relaxed custom-scrollbar"
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Global Style overrides */}
+            {/* Global Styles with Animations */}
             <style jsx global>{`
                 @keyframes breathing {
-                    0%, 100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.1; }
-                    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
+                    0%, 100% { transform: translate(-50%, -50%) scale(0.96); opacity: 0.1; }
+                    50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.3; }
                 }
                 @keyframes breathing-slow {
                     0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.05; }
                     50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.2; }
                 }
+                @keyframes text-pulse {
+                    0%, 100% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.03); opacity: 0.85; }
+                }
                 .animate-breathing {
-                    animation: breathing 5s ease-in-out infinite;
+                    animation: breathing 4s ease-in-out infinite;
                 }
                 .animate-breathing-slow {
-                    animation: breathing-slow 8s ease-in-out infinite;
+                    animation: breathing-slow 6.5s ease-in-out infinite;
                 }
+                .animate-text-pulse {
+                    animation: text-pulse 4s ease-in-out infinite;
+                }
+                .no-uppercase { text-transform: none !important; }
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 4px;
                 }
@@ -325,9 +391,6 @@ export function PomodoroTimer() {
                     background: rgba(0,0,0,0.05);
                     border-radius: 10px;
                 }
-                /* Ensure no generic shadow/uppercase styles from global system bleed in unwantedly */
-                .no-uppercase { text-transform: none !important; }
-                .no-spacing { letter-spacing: normal !important; }
             `}</style>
         </div>
     );
