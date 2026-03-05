@@ -19,12 +19,12 @@ export default async function WikiPage() {
         <div className="space-y-8 pb-10 animate-fade-in">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground no-uppercase">Wiki & Tài liệu</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Wiki & Tài liệu</h1>
                     <p className="text-sm text-muted-foreground mt-1 max-w-lg">Kho lưu trữ kiến thức, tài liệu và quy trình quan trọng trong chương trình Mentoring.</p>
                 </div>
                 {canCreate && (
                     <Link href="/wiki/new">
-                        <Button className="rounded-xl no-uppercase h-11 px-6 font-medium gap-2">
+                        <Button className="rounded-xl h-11 px-6 font-medium gap-2">
                             <PlusCircle className="w-4 h-4" />
                             Tạo trang mới
                         </Button>

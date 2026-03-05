@@ -79,9 +79,10 @@ export async function getWikiPages(category?: string) {
     return JSON.parse(JSON.stringify(pages));
 }
 
-export async function getWikiPageDetail(slug: string) {
+export async function getWikiPageDetail(slug: string, isPublic: boolean = false) {
     const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    // Allow public access if isPublic is true, otherwise require auth
+    if (!isPublic && !session?.user) throw new Error("Unauthorized");
 
     const page = await prisma.wikiPage.findUnique({
         where: { slug },
@@ -98,13 +99,15 @@ export async function getWikiPageDetail(slug: string) {
 
     if (!page) throw new Error("Page not found");
 
-    const role = (session.user as any).role;
-    if (role !== "admin") {
-        if (page.visibility === "mentor_only" && role !== "mentor") {
-            throw new Error("Truy cập bị từ chối: Tài liệu dành riêng cho Mentor");
-        }
-        if (page.visibility === "mentee_only" && role !== "mentee") {
-            throw new Error("Truy cập bị từ chối: Tài liệu dành riêng cho Mentee");
+    if (!isPublic) {
+        const role = (session?.user as any)?.role;
+        if (role !== "admin") {
+            if (page.visibility === "mentor_only" && role !== "mentor") {
+                throw new Error("Truy cập bị từ chối: Tài liệu dành riêng cho Mentor");
+            }
+            if (page.visibility === "mentee_only" && role !== "mentee") {
+                throw new Error("Truy cập bị từ chối: Tài liệu dành riêng cho Mentee");
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/utils";
 import { Clock, Edit, ChevronLeft, Calendar, User } from "lucide-react";
 import Link from "next/link";
 import { DeleteWikiButton } from "@/components/features/wiki/delete-wiki-button";
+import { ShareWikiButton } from "@/components/features/wiki/share-wiki-button";
 
 export default async function WikiDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const session = await auth();
@@ -30,7 +31,7 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
         <div className="max-w-4xl mx-auto space-y-8 pb-10 animate-fade-in">
             <Link
                 href="/wiki"
-                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors no-uppercase group"
+                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors group"
             >
                 <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                 Quay lại danh sách
@@ -38,9 +39,9 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
 
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                 <div className="space-y-4 flex-1">
-                    <h1 className="text-4xl font-bold text-foreground no-uppercase tracking-tight leading-tight">{page.title}</h1>
+                    <h1 className="text-4xl font-bold text-foreground tracking-tight leading-tight">{page.title}</h1>
 
-                    <div className="flex flex-wrap items-center gap-6 text-[11px] font-bold text-muted-foreground/50 no-uppercase tracking-wider">
+                    <div className="flex flex-wrap items-center gap-6 text-[13px] font-medium text-muted-foreground/80 tracking-wide">
                         <div className="flex items-center gap-2">
                             <User className="w-3.5 h-3.5" />
                             <span>Tác giả: {page.author.firstName} {page.author.lastName}</span>
@@ -53,11 +54,14 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {page.visibility === 'public' && (
+                        <ShareWikiButton slug={page.slug} />
+                    )}
                     {canEdit && (
                         <>
                             <DeleteWikiButton id={page.id} title={page.title} />
                             <Link href={`/wiki/${page.slug}/edit`}>
-                                <Button className="rounded-xl no-uppercase gap-2 shadow-none" size="sm">
+                                <Button className="rounded-xl gap-2 shadow-sm" size="sm">
                                     <Edit className="w-4 h-4" />
                                     Chỉnh sửa
                                 </Button>
@@ -85,8 +89,8 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
                         <AvatarFallback className="text-[10px] font-bold">{page.author.firstName[0]}</AvatarFallback>
                     </Avatar>
                     <div className="space-y-0.5">
-                        <p className="text-[11px] font-bold no-uppercase">{page.author.firstName} {page.author.lastName}</p>
-                        <p className="text-[10px] text-muted-foreground/60 no-uppercase tracking-tight">Biên soạn tài liệu này</p>
+                        <p className="text-[14px] font-medium">{page.author.firstName} {page.author.lastName}</p>
+                        <p className="text-[12px] text-muted-foreground/80 tracking-tight">Biên soạn tài liệu này</p>
                     </div>
                 </div>
             </div>
