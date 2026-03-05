@@ -11,13 +11,14 @@ import { Clock, Edit, ChevronLeft, Calendar, User } from "lucide-react";
 import Link from "next/link";
 import { DeleteWikiButton } from "@/components/features/wiki/delete-wiki-button";
 
-export default async function WikiDetailPage({ params }: { params: { slug: string } }) {
+export default async function WikiDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
+    const { slug } = await params;
     let page;
     try {
-        page = await getWikiPageDetail(params.slug);
+        page = await getWikiPageDetail(slug);
     } catch (e) {
         return notFound();
     }
