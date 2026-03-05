@@ -60,52 +60,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Typography (Notion Style Guidelines) ───────────────── */
-h1 {
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  line-height: 1.4 !important;
-}
-
-h2 {
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-}
-
-h3 {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-}
-
-p,
-span,
-li,
-div {
-  font-size: 12px;
-  line-height: 1.5;
-  text-transform: none !important;
-  font-style: normal !important;
-  letter-spacing: 0 !important;
-}
-
-/* Global Reset for UI Guidelines */
+/* ─── Typography ─────────────────────────────────────────────── */
+/* Global text resets (no uppercase, no italic, no letter-spacing) */
 * {
   text-transform: none !important;
   font-style: normal !important;
   letter-spacing: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Specific Shadow Removal for components */
-.shadow-sm,
-.shadow,
-.shadow-md,
-.shadow-lg,
-.shadow-xl,
-.shadow-2xl {
-  box-shadow: none !important;
 }
 
 h1,
@@ -117,12 +77,42 @@ h6 {
   color: var(--foreground);
   font-weight: 600;
   line-height: 1.25;
-  text-transform: none !important;
 }
 
 p {
   color: var(--muted-foreground);
+}
+
+/* Notion-style font sizes — ONLY inside wiki/prose content areas */
+.wiki-content h1,
+.block-editor-wrapper h1 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+}
+
+.wiki-content h2,
+.block-editor-wrapper h2 {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+.wiki-content h3,
+.block-editor-wrapper h3 {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+.wiki-content p,
+.wiki-content span,
+.wiki-content li,
+.block-editor-wrapper p,
+.block-editor-wrapper span,
+.block-editor-wrapper li {
   font-size: 12px;
+  line-height: 1.5;
 }
 
 /* ─── Layout Utilities ───────────────────────────────────────── */
