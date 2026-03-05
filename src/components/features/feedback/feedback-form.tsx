@@ -21,6 +21,9 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
     const [rating, setRating] = useState(5);
     const [error, setError] = useState<string | null>(null);
 
+    const [communication, setCommunication] = useState(5);
+    const [engagement, setEngagement] = useState(5);
+
     const {
         register,
         handleSubmit,
@@ -43,7 +46,12 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
         setError(null);
 
         try {
-            await submitFeedback({ ...data, rating });
+            await submitFeedback({
+                ...data,
+                rating,
+                communication,
+                engagement
+            });
             if (onSuccess) onSuccess();
         } catch (err: any) {
             setError(err.message || "Đã xảy ra lỗi khi gửi đánh giá");
@@ -83,20 +91,62 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <Select
-                        label="Khả năng giao tiếp"
-                        options={[1, 2, 3, 4, 5].map(v => ({ value: v.toString(), label: `${v}/5 Sao` }))}
-                        {...register("communication", { valueAsNumber: true })}
-                    />
-                    <Select
-                        label="Mức độ tương tác"
-                        options={[1, 2, 3, 4, 5].map(v => ({ value: v.toString(), label: `${v}/5 Sao` }))}
-                        {...register("engagement", { valueAsNumber: true })}
-                    />
+
+                <div className="space-y-5 pt-2">
+                    <div className="space-y-2">
+                        <div className="flex justify-between">
+                            <label className="text-[13px] font-semibold text-foreground">Khả năng giao tiếp / Truyền đạt</label>
+                            <span className="text-xs font-bold text-primary">{communication}/5</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">Mức độ rõ ràng, dễ hiểu và cởi mở trong trao đổi.</p>
+                        <div className="flex gap-1.5 h-9">
+                            {[1, 2, 3, 4, 5].map((s) => (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => {
+                                        setCommunication(s);
+                                        setValue("communication", s);
+                                    }}
+                                    className={`flex-1 flex items-center justify-center rounded-md border text-xs font-semibold transition-all ${communication >= s
+                                        ? "bg-primary/10 border-primary/30 text-primary"
+                                        : "bg-muted/30 border-border text-muted-foreground hover:bg-muted"
+                                        }`}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <div className="flex justify-between">
+                            <label className="text-[13px] font-semibold text-foreground">Mức độ tương tác & Sẵn sàng</label>
+                            <span className="text-xs font-bold text-primary">{engagement}/5</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">Độ nhiệt tình, trả lời tin nhắn kịp thời và hỗ trợ.</p>
+                        <div className="flex gap-1.5 h-9">
+                            {[1, 2, 3, 4, 5].map((s) => (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => {
+                                        setEngagement(s);
+                                        setValue("engagement", s);
+                                    }}
+                                    className={`flex-1 flex items-center justify-center rounded-md border text-xs font-semibold transition-all ${engagement >= s
+                                        ? "bg-primary/10 border-primary/30 text-primary"
+                                        : "bg-muted/30 border-border text-muted-foreground hover:bg-muted"
+                                        }`}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 pt-2">
                     <label className="block text-[12px] font-medium text-muted-foreground">Nhận xét chi tiết</label>
                     <textarea
                         {...register("content")}
@@ -128,6 +178,6 @@ export function FeedbackForm({ mentorshipId, toUserId, onSuccess }: FeedbackForm
                     Gửi đánh giá
                 </Button>
             </form>
-        </Card>
+        </Card >
     );
 }
