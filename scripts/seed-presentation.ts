@@ -12,6 +12,29 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
     console.log("Seeding data for Tulie Mentoring Presentation...");
 
+    // Clear existing data for these specific presentation accounts to avoid duplicates
+    const existingMentor = await prisma.user.findUnique({ where: { email: "mentor@tulie.vn" } });
+    const existingMentee = await prisma.user.findUnique({ where: { email: "mentee@tulie.vn" } });
+
+    if (existingMentor || existingMentee) {
+        console.log("Cleaning up previous presentation data...");
+        const userIds = [existingMentor?.id, existingMentee?.id].filter(Boolean) as string[];
+
+        await prisma.feedback.deleteMany({ where: { OR: [{ fromUserId: { in: userIds } }, { toUserId: { in: userIds } }] } });
+        await prisma.todoItem.deleteMany({ where: { menteeId: { in: userIds } } });
+        await prisma.goal.deleteMany({ where: { creatorId: { in: userIds } } });
+        await prisma.wikiPage.deleteMany({ where: { authorId: { in: userIds } } });
+        await prisma.sessionReflection.deleteMany({ where: { menteeId: { in: userIds } } });
+        await prisma.meeting.deleteMany({ where: { creatorId: { in: userIds } } });
+        await prisma.whiteboard.deleteMany({ where: { creatorId: { in: userIds } } });
+        await prisma.mentorshipMentee.deleteMany({ where: { menteeId: { in: userIds } } });
+        await prisma.mentorship.deleteMany({ where: { mentorId: { in: userIds } } });
+        await prisma.portfolio.deleteMany({ where: { menteeId: { in: userIds } } });
+        await prisma.mentorProfile.deleteMany({ where: { userId: { in: userIds } } });
+        await prisma.menteeProfile.deleteMany({ where: { userId: { in: userIds } } });
+        // Don't delete users yet, we use upsert for them below
+    }
+
     const hash = await bcrypt.hash("password123", 12);
 
     // 1. Ensure Program Cycle exists

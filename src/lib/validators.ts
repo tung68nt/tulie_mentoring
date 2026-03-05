@@ -4,7 +4,7 @@ import { z } from "zod";
 export const loginSchema = z.object({
     email: z.string().email("Email không hợp lệ"),
     password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
-    captchaToken: z.string().min(1, "Vui lòng xác minh captcha"),
+    captchaToken: z.string().optional(),
 });
 
 export const registerSchema = z.object({
@@ -14,7 +14,7 @@ export const registerSchema = z.object({
     firstName: z.string().min(1, "Họ không được để trống"),
     lastName: z.string().min(1, "Tên không được để trống"),
     role: z.enum(["mentor", "mentee"]),
-    captchaToken: z.string().min(1, "Vui lòng xác minh captcha"),
+    captchaToken: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu xác nhận không khớp",
     path: ["confirmPassword"],

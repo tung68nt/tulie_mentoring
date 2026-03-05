@@ -1,17 +1,12 @@
-
-export async function verifyCaptcha(token: string | null) {
-    if (!token) {
-        return { success: false, error: "Captcha token is missing" };
-    }
-
+export async function verifyCaptcha(token: string | undefined | null) {
     const secretKey = process.env.RECAPTCHA_SECRET_KEY;
     if (!secretKey) {
-        console.warn("RECAPTCHA_SECRET_KEY is not defined in environment variables.");
-        // In development, we might want to skip verification if no key is provided
-        if (process.env.NODE_ENV === "development") {
-            return { success: true };
-        }
-        return { success: false, error: "Captcha configuration error" };
+        console.warn("RECAPTCHA_SECRET_KEY is not defined. Skipping captcha verification.");
+        return { success: true };
+    }
+
+    if (!token) {
+        return { success: false, error: "Captcha token is missing" };
     }
 
     try {
