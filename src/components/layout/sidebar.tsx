@@ -24,6 +24,7 @@ import {
     ListTodo,
     X,
     Timer,
+    Settings2,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -66,7 +67,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                     { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
                     { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
                     { id: "programs", label: "Chương trình", icon: Calendar, href: "/admin/programs" },
-                    { id: "settings", label: "Cấu hình", icon: Eye, href: "/admin/settings" },
+                    { id: "settings", label: "Cấu hình", icon: Settings2, href: "/admin/settings" },
                 ],
             },
             {
