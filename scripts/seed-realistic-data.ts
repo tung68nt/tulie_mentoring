@@ -37,10 +37,118 @@ async function main() {
         console.log("Updated Admin profile with premium avatar.");
     }
 
+    console.log("Seeding comprehensive mentee data...");
+
+    // 3. Mentee Profile & Portfolio Deep Seed
+    if (mentee) {
+        // Update Mentee Profile
+        await prisma.menteeProfile.upsert({
+            where: { userId: mentee.id },
+            update: {
+                studentId: "MT2024001",
+                major: "Marketing & Truyền thông Đa phương tiện",
+                careerGoals: "Trở thành Brand Manager tại tập đoàn đa quốc gia và xây dựng cộng đồng làm sáng tạo nội dung bền vững.",
+                skills: "Content Writing, CapCut, Photoshop cơ bản, Google Analytics 4",
+                strengths: "Tư duy sáng tạo, kỹ năng làm việc nhóm, nhạy bén với các xu hướng trên mạng xã hội.",
+                weaknesses: "Quản lý thời gian chưa tối ưu, kỹ năng thuyết trình trước đám đông cần cải thiện.",
+                background: "Sinh viên năm 3 chuyên ngành Marketing với niềm đam mê sâu sắc về Branding.",
+                currentChallenges: "Đang gặp khó khăn trong việc cân bằng giữa việc học trên trường và các dự án thực tế. Cần định hướng rõ ràng về lộ trình thăng tiến trong ngành Agency.",
+                isOnboardingComplete: true,
+                onboardingCompletedAt: new Date()
+            },
+            create: {
+                userId: mentee.id,
+                studentId: "MT2024001",
+                major: "Marketing & Truyền thông Đa phương tiện",
+                isOnboardingComplete: true
+            }
+        });
+
+        // Update/Create Portfolio
+        await prisma.portfolio.upsert({
+            where: { menteeId: mentee.id },
+            update: {
+                personalityMbti: "ENFJ-A",
+                personalityDisc: "D/I",
+                personalityHolland: "EAS",
+                competencies: "Lãnh đạo đội nhóm, Phân tích dữ liệu Marketing, Sáng tạo thông điệp thương hiệu.",
+                strengths: "Khả năng kết nối mọi người, truyền cảm hứng cho đồng đội và đưa ra các ý tưởng đột phá trong hoàn cảnh áp lực cao.",
+                weaknesses: "Đôi khi quá chú trọng vào tiểu tiết dẫn đến chậm tiến độ tổng thể. Cần học cách ủy quyền hiệu quả hơn.",
+                challenges: "Xây dựng mạng lưới quan hệ chất lượng trong ngành công nghiệp sáng tạo khi chưa có nhiều kinh nghiệm thực tế.",
+                shortTermGoals: "Hoàn thành khóa học Digital Marketing nâng cao, đạt chứng chỉ IELTS 7.5, thực tập tại Top 10 Agency trong nước.",
+                longTermGoals: "Sáng lập một Agency chuyên về định vị thương hiệu cho các Startup khởi nghiệp xanh trong vòng 5 năm tới.",
+                personalNotes: "Luôn tâm niệm: 'Stay hungry, stay foolish'. Mỗi ngày đều nỗ lực hơn chính mình của ngày hôm qua.",
+                startupIdeas: "Nền tảng kết nối các bạn trẻ làm Freelance Creative với các doanh nghiệp vừa và nhỏ đang cần xây dựng thương hiệu bài bản."
+            },
+            create: {
+                menteeId: mentee.id,
+                personalityMbti: "ENFJ-A",
+                personalityDisc: "D/I"
+            }
+        });
+
+        // Add 3-5 Goals
+        const goals = [
+            { title: "Nâng cao kỹ năng Strategic Content", description: "Xây dựng 3 kế hoạch truyền thông tích hợp cho dự án cá nhân.", category: "skill", priority: "high", targetValue: 3, currentValue: 1 },
+            { title: "Mở rộng mạng lưới quan hệ chuyên môn", description: "Kết nối và thảo luận với ít nhất 5 chuyên gia trong ngành qua LinkedIn.", category: "networking", priority: "medium", targetValue: 5, currentValue: 2 },
+            { title: "Cải thiện kỹ năng thuyết trình bằng tiếng Anh", description: "Thực hiện ít nhất 1 bài thuyết trình chuyên sâu mỗi tuần.", category: "skill", priority: "high", targetValue: 12, currentValue: 4 }
+        ];
+
+        // Add Goals for mentee (assuming a mentorship exists, skipping if not to avoid errors)
+        const mentorship = await prisma.mentorship.findFirst({
+            where: { mentees: { some: { menteeId: mentee.id } } }
+        });
+
+        if (mentorship) {
+            for (const g of goals) {
+                await prisma.goal.create({
+                    data: {
+                        ...g,
+                        mentorshipId: mentorship.id,
+                        creatorId: mentee.id,
+                        dueDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+                    }
+                });
+            }
+        }
+
+        // Add Habits
+        const habits = [
+            { title: "Đọc 10 trang sách chuyên ngành", frequency: "daily" },
+            { title: "Viết Journal tổng kết ngày", frequency: "daily" },
+            { title: "Học từ vựng tiếng Anh chuyên ngành Marketing", frequency: "daily" }
+        ];
+        for (const h of habits) {
+            await prisma.habit.create({ data: { ...h, userId: mentee.id } });
+        }
+
+        // Add Daily Diaries
+        const diaries = [
+            {
+                date: new Date(),
+                mood: "Inspired",
+                content: "Hôm nay tôi đã có một buổi thảo luận tuyệt vời với Mentor về định hướng nghề nghiệp. Tôi nhận ra rằng mình cần tập trung nhiều hơn vào tư duy chiến lược thay vì chỉ dừng lại ở việc thực thi content đơn thuần. Cảm thấy rất hào hứng cho lộ trình 3 tháng tới!"
+            },
+            {
+                date: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                mood: "Productive",
+                content: "Đã hoàn thành xong bản kế hoạch Content đầu tiên cho Tulie Mentoring. Mặc dù còn nhiều điểm cần cải thiện nhưng đây là bước tiến lớn của bản thân. Việc áp dụng các framework được Mentor chia sẻ giúp công việc trôi chảy hơn hẳn."
+            }
+        ];
+        for (const d of diaries) {
+            await prisma.dailyDiary.upsert({
+                where: { userId_date: { userId: mentee.id, date: d.date } },
+                update: d,
+                create: { ...d, userId: mentee.id }
+            });
+        }
+    }
+
     console.log("Found user for seeding:", authorId);
 
-    // 2. Realistic Wiki Pages
+    // 4. Realistic Wiki Pages (existing loop follows...)
     const wikiPages = [
+        // ... (previous pages content here)
         {
             title: "Danh sách tài nguyên cho Mentee",
             category: "Resources",

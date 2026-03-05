@@ -27,73 +27,98 @@ const AMBIANCE_MUSICS = [
     { id: "zen", label: "Zen Space", icon: Sparkles, url: "https://www.soundjay.com/misc/ambient-sleep-music-1.mp3" },
 ];
 
-/* ── Orbiting Dots Component (reference design) ── */
+/* ── Orbiting Dots Component (Improved Animations) ── */
 function OrbitingDots({ isActive }: { isActive: boolean }) {
-    // Generate stable dot positions
+    // Generate stable dot positions with varying speeds
     const dots = useMemo(() => [
-        { ring: 1, angle: 30, size: 6 },
-        { ring: 1, angle: 150, size: 5 },
-        { ring: 1, angle: 270, size: 7 },
-        { ring: 2, angle: 60, size: 5 },
-        { ring: 2, angle: 180, size: 6 },
-        { ring: 2, angle: 300, size: 4 },
-        { ring: 3, angle: 0, size: 5 },
-        { ring: 3, angle: 120, size: 7 },
-        { ring: 3, angle: 240, size: 5 },
-        { ring: 4, angle: 45, size: 4 },
-        { ring: 4, angle: 200, size: 6 },
+        { ring: 0, angle: 30, size: 6, duration: 25, clockwise: true },
+        { ring: 0, angle: 150, size: 5, duration: 30, clockwise: false },
+        { ring: 1, angle: 270, size: 7, duration: 35, clockwise: true },
+        { ring: 1, angle: 60, size: 5, duration: 28, clockwise: false },
+        { ring: 1, angle: 180, size: 6, duration: 40, clockwise: true },
+        { ring: 2, angle: 300, size: 4, duration: 32, clockwise: false },
+        { ring: 2, angle: 0, size: 5, duration: 45, clockwise: true },
+        { ring: 2, angle: 120, size: 7, duration: 38, clockwise: false },
+        { ring: 3, angle: 240, size: 5, duration: 50, clockwise: true },
+        { ring: 3, angle: 45, size: 4, duration: 22, clockwise: false },
+        { ring: 3, angle: 200, size: 6, duration: 55, clockwise: true },
     ], []);
 
     const ringRadii = [60, 100, 140, 180];
 
     return (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            {/* Concentric circles */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+            {/* Concentric circles with breathing effect */}
             {ringRadii.map((r, i) => (
-                <div
+                <motion.div
                     key={`ring-${i}`}
-                    className="absolute rounded-full border border-border/20"
+                    className="absolute rounded-full border border-emerald-500/[0.07]"
                     style={{ width: r * 2, height: r * 2 }}
+                    animate={isActive ? {
+                        scale: [1, 1.05, 1],
+                        opacity: [0.3, 0.6, 0.3],
+                    } : { scale: 1, opacity: 0.2 }}
+                    transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.4
+                    }}
                 />
             ))}
 
-            {/* Glowing center */}
-            <div className="absolute w-16 h-16 rounded-full bg-emerald-500/20 blur-xl" />
-            <div className="absolute w-10 h-10 rounded-full bg-emerald-500/30 blur-md" />
-            <div className="absolute w-5 h-5 rounded-full bg-emerald-500" />
+            {/* Glowing center - Intense breathing */}
+            <motion.div
+                className="absolute w-20 h-20 rounded-full bg-emerald-500/10 blur-2xl"
+                animate={isActive ? { scale: [1, 1.4, 1], opacity: [0.3, 0.7, 0.3] } : {}}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+                className="absolute w-12 h-12 rounded-full bg-emerald-500/20 blur-lg"
+                animate={isActive ? { scale: [1, 1.2, 1] } : {}}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="absolute w-5 h-5 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
 
             {/* Orbiting dots */}
-            {dots.map((dot, i) => {
-                const radius = ringRadii[dot.ring - 1];
-                return (
-                    <motion.div
-                        key={`dot-${i}`}
-                        className="absolute rounded-full bg-emerald-500"
-                        style={{
-                            width: dot.size,
-                            height: dot.size,
-                        }}
-                        animate={isActive ? {
-                            x: [
-                                Math.cos((dot.angle * Math.PI) / 180) * radius,
-                                Math.cos(((dot.angle + 360) * Math.PI) / 180) * radius,
-                            ],
-                            y: [
-                                Math.sin((dot.angle * Math.PI) / 180) * radius,
-                                Math.sin(((dot.angle + 360) * Math.PI) / 180) * radius,
-                            ],
-                        } : {
-                            x: Math.cos((dot.angle * Math.PI) / 180) * radius,
-                            y: Math.sin((dot.angle * Math.PI) / 180) * radius,
-                        }}
-                        transition={isActive ? {
-                            duration: 20 + dot.ring * 5,
-                            repeat: Infinity,
-                            ease: "linear",
-                        } : { duration: 0.5 }}
-                    />
-                );
-            })}
+            <div className="absolute inset-0">
+                {dots.map((dot, i) => {
+                    const radius = ringRadii[dot.ring];
+                    return (
+                        <div
+                            key={`dot-path-${i}`}
+                            className="absolute inset-0 flex items-center justify-center"
+                        >
+                            <motion.div
+                                className="absolute"
+                                style={{
+                                    width: radius * 2,
+                                    height: radius * 2,
+                                }}
+                                animate={isActive ? {
+                                    rotate: dot.clockwise ? [0, 360] : [360, 0]
+                                } : { rotate: dot.angle }}
+                                transition={isActive ? {
+                                    duration: dot.duration,
+                                    repeat: Infinity,
+                                    ease: "linear"
+                                } : { duration: 1 }}
+                            >
+                                <div
+                                    className="absolute bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+                                    style={{
+                                        width: dot.size,
+                                        height: dot.size,
+                                        top: '50%',
+                                        left: '100%',
+                                        transform: 'translate(-50%, -50%)',
+                                    }}
+                                />
+                            </motion.div>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }
