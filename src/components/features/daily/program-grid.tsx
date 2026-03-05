@@ -90,8 +90,8 @@ export function ProgramGrid({
                                         )}
                                     />
                                 </TooltipTrigger>
-                                <TooltipContent side="top" className="text-[10px] max-w-[200px] text-center">
-                                    <p>{tooltipText}</p>
+                                <TooltipContent side="top" className="text-[10px] max-w-[200px] text-center font-medium">
+                                    {tooltipText}
                                 </TooltipContent>
                             </Tooltip>
                         );

@@ -118,12 +118,16 @@ export default async function MenteeDashboard() {
                         />
                     )}
 
-                    {serializedGoals.find((g: any) => g.dueDate) && (
-                        <Countdown
-                            targetDate={serializedGoals.find((g: any) => g.dueDate).dueDate}
-                            label={serializedGoals.find((g: any) => g.dueDate).title}
-                        />
-                    )}
+                    {serializedGoals
+                        .filter((g: any) => g.dueDate && g.status !== "completed")
+                        .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+                        .map((goal: any) => (
+                            <Countdown
+                                key={goal.id}
+                                targetDate={goal.dueDate}
+                                label={goal.title}
+                            />
+                        ))}
 
                     {!isAdmin && !serializedMentorship && (
                         <div className="py-4 text-center text-xs text-muted-foreground">
