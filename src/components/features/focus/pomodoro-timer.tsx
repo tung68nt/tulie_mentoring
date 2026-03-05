@@ -29,19 +29,19 @@ const AMBIANCE_MUSICS = [
 
 /* ── Orbiting Dots Component (Improved Animations) ── */
 function OrbitingDots({ isActive }: { isActive: boolean }) {
-    // Generate stable dot positions with varying speeds
+    // Generate stable dot positions with varying speeds and mixed directions
     const dots = useMemo(() => [
-        { ring: 0, angle: 30, size: 6, duration: 25, clockwise: true },
-        { ring: 0, angle: 150, size: 5, duration: 30, clockwise: false },
-        { ring: 1, angle: 270, size: 7, duration: 35, clockwise: true },
-        { ring: 1, angle: 60, size: 5, duration: 28, clockwise: false },
-        { ring: 1, angle: 180, size: 6, duration: 40, clockwise: true },
-        { ring: 2, angle: 300, size: 4, duration: 32, clockwise: false },
-        { ring: 2, angle: 0, size: 5, duration: 45, clockwise: true },
-        { ring: 2, angle: 120, size: 7, duration: 38, clockwise: false },
-        { ring: 3, angle: 240, size: 5, duration: 50, clockwise: true },
-        { ring: 3, angle: 45, size: 4, duration: 22, clockwise: false },
-        { ring: 3, angle: 200, size: 6, duration: 55, clockwise: true },
+        { ring: 0, angle: 30, size: 5, duration: 45, clockwise: true },
+        { ring: 0, angle: 150, size: 4, duration: 60, clockwise: false },
+        { ring: 1, angle: 270, size: 6, duration: 35, clockwise: true },
+        { ring: 1, angle: 60, size: 4, duration: 55, clockwise: false },
+        { ring: 1, angle: 180, size: 5, duration: 40, clockwise: true },
+        { ring: 2, angle: 300, size: 3, duration: 70, clockwise: false },
+        { ring: 2, angle: 0, size: 4, duration: 50, clockwise: true },
+        { ring: 2, angle: 120, size: 6, duration: 48, clockwise: false },
+        { ring: 3, angle: 240, size: 4, duration: 65, clockwise: true },
+        { ring: 3, angle: 45, size: 3, duration: 25, clockwise: false },
+        { ring: 3, angle: 200, size: 5, duration: 58, clockwise: true },
     ], []);
 
     const ringRadii = [60, 100, 140, 180];
@@ -52,33 +52,41 @@ function OrbitingDots({ isActive }: { isActive: boolean }) {
             {ringRadii.map((r, i) => (
                 <motion.div
                     key={`ring-${i}`}
-                    className="absolute rounded-full border border-emerald-500/[0.07]"
+                    className="absolute rounded-full border border-emerald-500/[0.05]"
                     style={{ width: r * 2, height: r * 2 }}
                     animate={isActive ? {
-                        scale: [1, 1.05, 1],
-                        opacity: [0.3, 0.6, 0.3],
-                    } : { scale: 1, opacity: 0.2 }}
+                        scale: [1, 1.03, 1],
+                        opacity: [0.2, 0.4, 0.2],
+                    } : { scale: 1, opacity: 0.1 }}
                     transition={{
-                        duration: 4,
+                        duration: 6,
                         repeat: Infinity,
                         ease: "easeInOut",
-                        delay: i * 0.4
+                        delay: i * 0.5
                     }}
                 />
             ))}
 
-            {/* Glowing center - Intense breathing */}
+            {/* Glowing center - Subtle Gradient Breathing */}
             <motion.div
-                className="absolute w-20 h-20 rounded-full bg-emerald-500/10 blur-2xl"
-                animate={isActive ? { scale: [1, 1.4, 1], opacity: [0.3, 0.7, 0.3] } : {}}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute w-40 h-40 rounded-full bg-emerald-500/[0.03] blur-3xl translate-y-[-2px]"
+                animate={isActive ? {
+                    scale: [1, 1.2, 1],
+                    opacity: [0.4, 0.8, 0.4]
+                } : { opacity: 0.3 }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-                className="absolute w-12 h-12 rounded-full bg-emerald-500/20 blur-lg"
-                animate={isActive ? { scale: [1, 1.2, 1] } : {}}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute w-20 h-20 rounded-full bg-emerald-500/[0.08] blur-xl translate-y-[-2px]"
+                animate={isActive ? {
+                    scale: [1, 1.15, 1],
+                    opacity: [0.5, 0.9, 0.5]
+                } : { opacity: 0.4 }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
             />
-            <div className="absolute w-5 h-5 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+
+            {/* The "Anchor" Dot - Aligned with timer's colon */}
+            <div className="absolute w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)] z-[5] translate-y-[-2px]" />
 
             {/* Orbiting dots */}
             <div className="absolute inset-0">
@@ -105,7 +113,7 @@ function OrbitingDots({ isActive }: { isActive: boolean }) {
                                 } : { duration: 1 }}
                             >
                                 <div
-                                    className="absolute bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+                                    className="absolute bg-emerald-500/40 rounded-full"
                                     style={{
                                         width: dot.size,
                                         height: dot.size,
@@ -434,19 +442,14 @@ export function PomodoroTimer() {
 
                         {/* Timer Display */}
                         <div className="relative flex items-center justify-center">
-                            <motion.div
+                            <div
                                 className={cn(
                                     "text-[80px] md:text-[100px] font-bold tracking-tight tabular-nums leading-none select-none transition-colors duration-500",
                                     isActive ? "text-foreground" : "text-muted-foreground/25"
                                 )}
-                                animate={isActive ? {
-                                    scale: [1, 1.02, 1],
-                                    opacity: [1, 0.85, 1],
-                                } : {}}
-                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                             >
                                 {formatTime(timeLeft)}
-                            </motion.div>
+                            </div>
                         </div>
 
                         {/* Progress bar */}
