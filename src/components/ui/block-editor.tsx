@@ -74,34 +74,44 @@ export function BlockEditor({
                     margin: 0 auto;
                 }
                 .block-editor-wrapper .bn-editor [class*="blockContent"] {
-                    font-size: 16px; /* Slightly larger like Notion */
+                    font-size: 12px !important; /* Following Notion Guideline */
                     line-height: 1.65;
                     color: hsl(var(--foreground));
                     margin-top: 2px;
                     margin-bottom: 2px;
+                    text-transform: none !important;
+                    font-style: normal !important;
+                    letter-spacing: 0 !important;
                 }
                 .block-editor-wrapper .bn-editor [class*="heading"] h1 {
-                    font-size: 1.875rem !important;
+                    font-size: 16px !important; /* Notion Title H1 */
                     font-weight: 700 !important;
                     margin-top: 2rem !important;
                     margin-bottom: 0.5rem !important;
                     border: none !important;
-                    letter-spacing: -0.025em !important;
+                    letter-spacing: 0 !important;
+                    text-transform: none !important;
+                    font-style: normal !important;
                 }
                 .block-editor-wrapper .bn-editor [class*="heading"] h2 {
-                    font-size: 1.5rem !important;
+                    font-size: 14px !important; /* Notion Section H2 */
                     font-weight: 600 !important;
                     margin-top: 1.5rem !important;
                     margin-bottom: 0.5rem !important;
                     border: none !important;
-                    letter-spacing: -0.02em !important;
+                    letter-spacing: 0 !important;
+                    text-transform: none !important;
+                    font-style: normal !important;
                 }
                 .block-editor-wrapper .bn-editor [class*="heading"] h3 {
-                    font-size: 1.25rem !important;
+                    font-size: 13px !important; /* Notion Subsection H3 */
                     font-weight: 600 !important;
                     margin-top: 1.25rem !important;
                     margin-bottom: 0.5rem !important;
                     border: none !important;
+                    letter-spacing: 0 !important;
+                    text-transform: none !important;
+                    font-style: normal !important;
                 }
                 /* Spacing between blocks */
                 .block-editor-wrapper .bn-editor .bn-block-outer {
@@ -112,28 +122,13 @@ export function BlockEditor({
                 .block-editor-wrapper .bn-editor [data-content-type="numberedListItem"] {
                     margin-top: 1px;
                     margin-bottom: 1px;
+                    font-size: 12px !important;
                 }
                 /* Remove any uppercase from blocknote */
                 .block-editor-wrapper * {
                     text-transform: none !important;
                     letter-spacing: normal !important;
-                }
-                /* Match our monochrome theme */
-                .block-editor-wrapper .bn-editor [data-content-type="bulletListItem"]::before,
-                .block-editor-wrapper .bn-editor [data-content-type="numberedListItem"]::before {
-                    color: hsl(var(--muted-foreground));
-                }
-                /* Toolbar theme overrides */
-                .block-editor-wrapper [class*="toolbar"],
-                .block-editor-wrapper [class*="menu"] {
-                    border-color: hsl(var(--border)) !important;
-                    background: hsl(var(--background)) !important;
-                    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.05) !important;
-                }
-                /* Placeholder color */
-                .block-editor-wrapper .bn-editor [data-placeholder]::before {
-                    color: hsl(var(--muted-foreground)) !important;
-                    opacity: 0.4;
+                    box-shadow: none !important;
                 }
                 /* Selection color */
                 .block-editor-wrapper .bn-editor ::selection {

@@ -4,7 +4,7 @@ import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
 import "@blocknote/shadcn/style.css";
 import "@blocknote/core/fonts/inter.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 interface SlideBlockEditorProps {
     content: string;
@@ -15,6 +15,7 @@ interface SlideBlockEditorProps {
 export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 0 }: SlideBlockEditorProps) {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const editor = useCreateBlockNote();
+    const skipSyncRef = useRef(false);
 
     // Load initial content
     useEffect(() => {
@@ -42,9 +43,16 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
     useEffect(() => {
         if (!isInitialLoad && editor) {
             const updateExternal = async () => {
+                // If the change originated from this editor, skip syncing back to avoid cursor resets
+                if (skipSyncRef.current) {
+                    skipSyncRef.current = false;
+                    return;
+                }
+
                 const currentHtml = await editor.blocksToHTMLLossy(editor.document);
-                // Simple comparison (might not trigger perfectly if whitespaces differ, but enough for structural changes)
-                if (content !== currentHtml && !content.includes(currentHtml.substring(0, 10))) {
+
+                // Only sync if content differs significantly from current editor state
+                if (content !== currentHtml && (Math.abs(content.length - currentHtml.length) > 10 || content.includes("<hr"))) {
                     try {
                         let blocks;
                         const isHtml = content.includes('<p>') || content.includes('<h1>') || content.includes('<ul>');
@@ -53,6 +61,8 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
                         } else {
                             blocks = await editor.tryParseMarkdownToBlocks(content);
                         }
+
+                        // Structure or content changed externally (e.g. added a slide from sidebar)
                         editor.replaceBlocks(editor.document, blocks);
                     } catch (e) {
                         console.error("Failed to update content externally", e);
@@ -68,11 +78,11 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
         if (editor && !isInitialLoad) {
             const blocks = editor.document;
             let slideCount = 0;
-            let targetBlock = blocks[0];
+            let targetBlockId = blocks[0]?.id;
 
             for (const block of blocks) {
                 if (slideCount === currentSlideIdx) {
-                    targetBlock = block;
+                    targetBlockId = block.id;
                     break;
                 }
                 if (block.type === "divider") {
@@ -80,14 +90,13 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
                 }
             }
 
-            if (targetBlock) {
+            if (targetBlockId) {
                 // Focus and scroll to the block
                 editor.focus();
-                // We use a small timeout to ensure editor is ready
                 setTimeout(() => {
-                    const blockElement = document.querySelector(`[data-id="${targetBlock.id}"]`);
+                    const blockElement = document.querySelector(`[data-id="${targetBlockId}"]`);
                     if (blockElement) {
-                        blockElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        blockElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }, 50);
             }
@@ -102,6 +111,7 @@ export default function SlideBlockEditor({ content, onChange, currentSlideIdx = 
                 onChange={async () => {
                     if (isInitialLoad) return;
                     const html = await editor.blocksToHTMLLossy(editor.document);
+                    skipSyncRef.current = true;
                     onChange(html);
                 }}
                 className="min-h-full p-8"
