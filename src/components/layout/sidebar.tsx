@@ -23,6 +23,7 @@ import {
     Presentation,
     ListTodo,
     X,
+    Timer,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -82,6 +83,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
                 items: [
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
                     { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
+                    { id: "focus", label: "Không gian tập trung", icon: Timer, href: "/focus" },
                 ],
             },
             {
@@ -105,6 +107,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
                     { id: "checkin", label: "Check-in / Check-out", icon: QrCode, href: "/checkin" },
                     { id: "tasks", label: "Công việc", icon: CheckSquare, href: "/tasks" },
                     { id: "goals", label: "Mục tiêu", icon: Target, href: "/goals" },
+                    { id: "focus", label: "Không gian tập trung", icon: Timer, href: "/focus" },
                 ],
             },
             {
