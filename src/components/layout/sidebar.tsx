@@ -36,6 +36,8 @@ interface SidebarProps {
     role: "admin" | "mentor" | "mentee" | "viewer";
     isMobileOpen?: boolean;
     onMobileClose?: () => void;
+    logoUrl?: string;
+    siteName?: string;
 }
 
 interface MenuItem {
@@ -51,7 +53,7 @@ interface MenuSection {
     items: MenuItem[];
 }
 
-export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName = "Tulie Mentoring" }: SidebarProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -64,6 +66,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
                     { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
                     { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
                     { id: "programs", label: "Chương trình", icon: Calendar, href: "/admin/programs" },
+                    { id: "settings", label: "Cấu hình", icon: Eye, href: "/admin/settings" },
                 ],
             },
             {
@@ -160,14 +163,18 @@ export function Sidebar({ role, isMobileOpen, onMobileClose }: SidebarProps) {
         )} style={(!isCollapsed || isMobileOpen) ? { "--sidebar-width": "280px" } as React.CSSProperties : { "--sidebar-width": "80px" } as React.CSSProperties}>
             {/* Brand */}
             <div className="h-16 flex items-center justify-between px-6 shrink-0 relative">
-                <div className="flex items-center">
-                    <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center shrink-0">
-                        <span className="text-primary-foreground font-bold text-[11px]">T</span>
-                    </div>
-                    {(!isCollapsed || isMobileOpen) && (
-                        <span className="ml-3 font-semibold text-foreground text-[14px] tracking-normal whitespace-nowrap">Tulie Mentoring</span>
+                <Link href={`/${role}`} className="flex items-center">
+                    {logoUrl ? (
+                        <img src={logoUrl} alt={siteName} className="h-8 w-auto object-contain shrink-0" />
+                    ) : (
+                        <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center shrink-0">
+                            <span className="text-primary-foreground font-bold text-[11px]">{siteName.charAt(0)}</span>
+                        </div>
                     )}
-                </div>
+                    {(!isCollapsed || isMobileOpen) && (
+                        <span className="ml-3 font-semibold text-foreground text-[14px] tracking-normal whitespace-nowrap">{siteName}</span>
+                    )}
+                </Link>
 
                 {/* Mobile Close Button */}
                 {isMobileOpen && (

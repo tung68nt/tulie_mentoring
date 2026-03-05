@@ -15,13 +15,17 @@ interface DashboardContainerProps {
     };
     notifications: any[];
     unreadCount: number;
+    logoUrl?: string;
+    siteName?: string;
 }
 
 export function DashboardContainer({
     children,
     user,
     notifications,
-    unreadCount
+    unreadCount,
+    logoUrl,
+    siteName
 }: DashboardContainerProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const pathname = usePathname();
@@ -38,6 +42,8 @@ export function DashboardContainer({
                 role={user.role}
                 isMobileOpen={isSidebarOpen}
                 onMobileClose={() => setIsSidebarOpen(false)}
+                logoUrl={logoUrl}
+                siteName={siteName}
             />
 
             <div className="lg:ml-[var(--sidebar-width)] min-h-screen flex flex-col transition-all duration-300">
@@ -58,7 +64,7 @@ export function DashboardContainer({
 
                 <footer className="border-t border-border bg-background/50 backdrop-blur-sm">
                     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-[13px] text-muted-foreground/60 no-uppercase">
-                        © {new Date().getFullYear()} Tulie Mentoring. All rights reserved.
+                        © {new Date().getFullYear()} {siteName || "Tulie Mentoring"}. All rights reserved.
                     </div>
                 </footer>
             </div>

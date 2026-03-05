@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getNotifications, getUnreadCount } from "@/lib/actions/notification";
 import { DashboardContainer } from "@/components/layout/dashboard-container";
+import { getSystemSettings } from "@/lib/actions/settings";
 
 export default async function DashboardLayout({
     children,
@@ -25,14 +26,17 @@ export default async function DashboardLayout({
 
     let notifications: any[] = [];
     let unreadCount = 0;
+    let settings: any = {};
 
     try {
-        const [notifsResult, unreadResult] = await Promise.all([
+        const [notifsResult, unreadResult, settingsResult] = await Promise.all([
             getNotifications(15),
             getUnreadCount(),
+            getSystemSettings()
         ]);
         notifications = notifsResult;
         unreadCount = unreadResult;
+        settings = settingsResult;
     } catch (error) {
         console.error("Failed to fetch layout data:", error);
     }
@@ -42,6 +46,8 @@ export default async function DashboardLayout({
             user={user}
             notifications={JSON.parse(JSON.stringify(notifications))}
             unreadCount={unreadCount}
+            logoUrl={settings.sidebar_logo}
+            siteName={settings.site_name}
         >
             {children}
         </DashboardContainer>

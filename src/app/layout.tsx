@@ -12,12 +12,19 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Tulie TSS Mentoring",
-  description: "Tulie TSS Mentoring Management System",
-};
-
 import { Providers } from "@/components/providers/providers";
+import { getSystemSettings } from "@/lib/actions/settings";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSystemSettings();
+  return {
+    title: settings.site_name || "Tulie Mentoring",
+    description: "Tulie TSS Mentoring Management System",
+    icons: {
+      icon: settings.favicon || "/favicon.ico",
+    },
+  };
+}
 
 export default function RootLayout({
   children,

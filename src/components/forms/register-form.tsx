@@ -25,7 +25,7 @@ function GoogleIcon() {
     );
 }
 
-export function RegisterForm() {
+export function RegisterForm({ logoUrl, siteName = "Tulie Mentoring" }: { logoUrl?: string; siteName?: string }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -87,8 +87,15 @@ export function RegisterForm() {
     return (
         <Card className="w-full max-w-md p-8">
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-foreground">Tham gia chương trình</h1>
-                <p className="text-muted-foreground mt-2 text-sm">Dành cho cả Mentors và Mentees</p>
+                {logoUrl ? (
+                    <img src={logoUrl} alt={siteName} className="h-16 w-auto mx-auto mb-6 object-contain" />
+                ) : (
+                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span className="text-primary font-bold text-xl">{siteName.charAt(0)}</span>
+                    </div>
+                )}
+                <h1 className="text-2xl font-bold text-foreground no-uppercase">Tham gia chương trình</h1>
+                <p className="text-muted-foreground mt-2 text-sm">Trở thành một phần của {siteName}</p>
             </div>
 
             {/* Google Register */}

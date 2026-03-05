@@ -24,7 +24,7 @@ function GoogleIcon() {
     );
 }
 
-export function LoginForm() {
+export function LoginForm({ logoUrl, siteName = "Tulie Mentoring" }: { logoUrl?: string; siteName?: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -91,8 +91,15 @@ export function LoginForm() {
     return (
         <Card className="w-full max-w-md p-8">
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-foreground">Chào mừng trở lại</h1>
-                <p className="text-muted-foreground mt-2 text-sm">Đăng nhập vào hệ thống Tulie TSS Mentoring</p>
+                {logoUrl ? (
+                    <img src={logoUrl} alt={siteName} className="h-16 w-auto mx-auto mb-6 object-contain" />
+                ) : (
+                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span className="text-primary font-bold text-xl">{siteName.charAt(0)}</span>
+                    </div>
+                )}
+                <h1 className="text-2xl font-bold text-foreground no-uppercase">Chào mừng trở lại</h1>
+                <p className="text-muted-foreground mt-2 text-sm">Đăng nhập vào hệ thống {siteName}</p>
             </div>
 
             {/* Google Login */}
