@@ -15,9 +15,14 @@ interface ActivityLog {
 
 const ACTION_CONFIG: Record<string, { icon: any, label: string, color: string }> = {
     check_in: { icon: LogIn, label: "Đã điểm danh buổi học", color: "text-blue-500" },
+    login: { icon: LogIn, label: "Đã đăng nhập hệ thống", color: "text-blue-400" },
     create_task: { icon: PlusCircle, label: "Đã tạo công việc mới", color: "text-green-500" },
-    submit_reflection: { icon: MessageSquare, label: "Đã viết thu hoạch", color: "text-purple-500" },
+    submit_reflection: { icon: MessageSquare, label: "Đã viết thu hoạch buổi học", color: "text-purple-500" },
     complete_task: { icon: CheckCircle2, label: "Đã hoàn thành công việc", color: "text-orange-500" },
+    update_goal: { icon: Activity, label: "Đã cập nhật tiến độ mục tiêu", color: "text-primary" },
+    view_wiki: { icon: CheckCircle2, label: "Đã tham khảo tài liệu Wiki", color: "text-cyan-500" },
+    start_timer: { icon: Activity, label: "Đã bắt đầu phiên tập trung", color: "text-red-500" },
+    message_mentor: { icon: MessageSquare, label: "Đã gửi tin nhắn cho Mentor", color: "text-pink-500" },
 };
 
 export function ActivityFeed({ logs }: { logs: ActivityLog[] }) {

@@ -13,6 +13,7 @@ model User {
   firstName          String?
   lastName           String?
   avatar             String?
+  phone              String?
   bio                String?
   role               String              @default("mentee")
   isActive           Boolean             @default(true)
@@ -20,14 +21,15 @@ model User {
   updatedAt          DateTime            @updatedAt
   emailVerified      DateTime?
   image              String?
-  phone              String?
   accounts           Account[]
   activityLogs       ActivityLog[]
   attendances        Attendance[]
   availabilities     Availability[]
+  dailyDiaries       DailyDiary[]
   feedbackGiven      Feedback[]          @relation("FeedbackFrom")
   feedbackReceived   Feedback[]          @relation("FeedbackTo")
   goalsCreated       Goal[]              @relation("GoalCreator")
+  habits             Habit[]
   meetingsCreated    Meeting[]           @relation("MeetingCreator")
   minutesCreated     MeetingMinutes[]    @relation("MinutesAuthor")
   menteeProfile      MenteeProfile?
@@ -45,8 +47,6 @@ model User {
   todoItems          TodoItem[]
   whiteboards        Whiteboard[]        @relation("WhiteboardCreator")
   wikiPages          WikiPage[]
-  habits             Habit[]
-  dailyDiaries       DailyDiary[]
 
   @@index([role])
   @@index([email])
@@ -95,15 +95,15 @@ model MenteeProfile {
   skills                String?
   strengths             String?
   weaknesses            String?
-  currentChallenges     String?
-  expectations          String?
-  background            String?
-  experience            String?
-  endGoals              String?
-  isOnboardingComplete  Boolean   @default(false)
-  onboardingCompletedAt DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  background            String?
+  currentChallenges     String?
+  endGoals              String?
+  expectations          String?
+  experience            String?
+  isOnboardingComplete  Boolean   @default(false)
+  onboardingCompletedAt DateTime?
   personalNotes         String?
   startupIdeas          String?
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -190,13 +190,13 @@ model Attendance {
   meetingId    String
   userId       String
   checkInTime  DateTime?
-  checkOutTime DateTime?
   checkInLat   Float?
   checkInLng   Float?
   deviceHash   String?
   status       String    @default("absent")
   verifiedAt   DateTime?
   createdAt    DateTime  @default(now())
+  checkOutTime DateTime?
   meeting      Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -238,9 +238,9 @@ model Goal {
   priority        String         @default("medium")
   dueDate         DateTime?
   completedAt     DateTime?
-  mentorConfirmed Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+  mentorConfirmed Boolean        @default(false)
   creator         User           @relation("GoalCreator", fields: [creatorId], references: [id], onDelete: Cascade)
   mentorship      Mentorship     @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
   progressNotes   ProgressNote[]
@@ -403,9 +403,9 @@ model SessionReflection {
   meetingId       String
   menteeId        String
   content         String?
-  mentorConfirmed Boolean    @default(false)
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+  mentorConfirmed Boolean    @default(false)
   meeting         Meeting    @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   mentee          User       @relation(fields: [menteeId], references: [id], onDelete: Cascade)
   todoItems       TodoItem[]
@@ -461,12 +461,12 @@ model SupportTicket {
   description  String
   status       String          @default("open")
   priority     String          @default("medium")
-  category     String          @default("system")
   userId       String
   assignedToId String?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
-  assignedTo   User?           @relation("TicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  category     String          @default("system")
+  assignedTo   User?           @relation("TicketAssignee", fields: [assignedToId], references: [id])
   user         User            @relation("TicketCreator", fields: [userId], references: [id], onDelete: Cascade)
   comments     TicketComment[]
 
@@ -493,10 +493,10 @@ model WikiPage {
   content    String?
   category   String?
   visibility String   @default("public")
-  coverImage String?
   authorId   String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  coverImage String?
   author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([authorId])
