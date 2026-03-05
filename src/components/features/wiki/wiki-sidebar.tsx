@@ -122,19 +122,21 @@ export function WikiSidebar({ pages }: WikiSidebarProps) {
                                     key={page.id}
                                     href={`/wiki/${page.slug}`}
                                     className={cn(
-                                        "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-all group",
+                                        "flex items-start gap-2.5 px-3 py-2 rounded-md text-[12px] font-medium transition-all group",
                                         pathname.includes(page.slug)
                                             ? "bg-primary/5 text-primary"
                                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                     )}
                                 >
                                     <FileText className={cn(
-                                        "w-3.5 h-3.5 transition-colors",
+                                        "w-3.5 h-3.5 mt-0.5 flex-shrink-0 transition-colors",
                                         pathname.includes(page.slug) ? "text-primary" : "text-muted-foreground/50 group-hover:text-foreground/70"
                                     )} />
-                                    <span className="truncate">{page.title}</span>
+                                    <span className="flex-1 leading-snug break-words whitespace-normal">
+                                        {page.title}
+                                    </span>
                                     {pathname.includes(page.slug) && (
-                                        <div className="ml-auto w-1 h-3 bg-primary rounded-full" />
+                                        <div className="mt-1 w-1 h-3 bg-primary rounded-full flex-shrink-0" />
                                     )}
                                 </Link>
                             ))}
