@@ -10,7 +10,7 @@ interface DashboardContainerProps {
     user: {
         firstName: string;
         lastName: string;
-        role: "admin" | "mentor" | "mentee" | "viewer";
+        role: "admin" | "mentor" | "mentee" | "viewer" | "program_manager" | "facilitator";
         avatar: string | null;
     };
     notifications: any[];

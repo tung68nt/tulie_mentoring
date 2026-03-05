@@ -44,11 +44,13 @@ export function SystemClock() {
 interface CountdownProps {
     targetDate: Date | string;
     label: string;
+    subtitle?: string;
     className?: string;
     maxDays?: number;
+    size?: "sm" | "md" | "lg";
 }
 
-export function Countdown({ targetDate, label, className, maxDays = 90 }: CountdownProps) {
+export function Countdown({ targetDate, label, subtitle, className, maxDays = 90, size = "md" }: CountdownProps) {
     const [timeLeft, setTimeLeft] = useState<{ d: number } | null>(null);
 
     useEffect(() => {
@@ -95,19 +97,19 @@ export function Countdown({ targetDate, label, className, maxDays = 90 }: Countd
     }
 
     return (
-        <div className={cn("flex items-center gap-3 w-full py-1.5", className)}>
-            <div className="w-1/3 min-w-[120px] max-w-[200px] text-[11px] font-medium text-foreground truncate no-uppercase">
+        <div className={cn("flex items-center gap-4 w-full py-1.5 group min-h-[44px]", className)}>
+            <div className={cn("font-medium text-foreground no-uppercase shrink-0 leading-tight", size === "sm" ? "text-xs w-[140px]" : "text-[13px] w-[180px]")}>
                 {label}
             </div>
-            <div className="flex-1 h-2 bg-muted/40 rounded-full overflow-hidden">
+            <div className="flex-1 h-2.5 bg-muted/30 rounded-full overflow-hidden relative shadow-inner ring-1 ring-border/5">
                 <div
                     className={cn("h-full rounded-full transition-all duration-1000 ease-in-out", bgClass)}
                     style={{ width: `${percent}%` }}
                 />
             </div>
-            <div className={cn("w-10 flex items-center justify-end gap-1.5 font-mono text-xs font-bold", textClass)}>
+            <div className={cn("flex items-center justify-end gap-1.5 font-mono font-semibold shrink-0 min-w-[50px]", textClass, size === "sm" ? "text-xs" : "text-sm")}>
                 {timeLeft.d}d
-                {isUrgent && <AlertCircle className="w-3 h-3 shrink-0 animate-pulse text-rose-500" />}
+                {isUrgent && <AlertCircle className="w-3.5 h-3.5 shrink-0 animate-pulse text-rose-500" />}
             </div>
         </div>
     );

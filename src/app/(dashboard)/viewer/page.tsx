@@ -30,11 +30,20 @@ export default async function ViewerDashboard() {
             recentMeetings,
         ] = await Promise.all([
             prisma.programCycle.count({ where: { status: "active" } }),
-            prisma.meeting.count(),
+            prisma.meeting.count({ where: { status: "completed" } }),
             prisma.goal.count({ where: { status: "completed" } }),
             prisma.goal.count(),
-            prisma.attendance.count(),
-            prisma.attendance.count({ where: { status: "present" } }),
+            prisma.attendance.count({
+                where: {
+                    meeting: { status: "completed" }
+                }
+            }),
+            prisma.attendance.count({
+                where: {
+                    status: "present",
+                    meeting: { status: "completed" }
+                }
+            }),
             prisma.mentorship.findMany({
                 where: { status: "active" },
                 include: {
@@ -42,7 +51,7 @@ export default async function ViewerDashboard() {
                     mentees: { include: { mentee: true } },
                     programCycle: true,
                 },
-                take: 5,
+                take: 6,
                 orderBy: { createdAt: "desc" }
             }),
             prisma.meeting.findMany({
@@ -72,30 +81,42 @@ export default async function ViewerDashboard() {
 
                 {/* Performance Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard
-                        title="Tỉ lệ hiện diện"
-                        value={`${attendanceRate}%`}
-                        icon={<Users className="w-5 h-5" />}
-                        subtitle="Dựa trên điểm danh check-in"
-                    />
-                    <StatCard
-                        title="Mục tiêu đạt được"
-                        value={`${goalCompletionRate}%`}
-                        icon={<TrendingUp className="w-5 h-5" />}
-                        subtitle={`${completedGoals}/${totalGoals} mục tiêu đã xong`}
-                    />
-                    <StatCard
-                        title="Tổng buổi sinh hoạt"
-                        value={totalMeetings}
-                        icon={<Calendar className="w-5 h-5" />}
-                        subtitle="Đã được tổ chức"
-                    />
-                    <StatCard
-                        title="Chương trình đang chạy"
-                        value={activeCycles}
-                        icon={<BarChart3 className="w-5 h-5" />}
-                        subtitle="Đợt mentoring hiện tại"
-                    />
+                    <Link href="/reports" className="block transition-transform active:scale-95">
+                        <StatCard
+                            title="Tỉ lệ hiện diện"
+                            value={`${attendanceRate}%`}
+                            icon={<Users className="w-5 h-5 text-blue-500" />}
+                            subtitle="Trung bình các buổi sinh hoạt"
+                            className="bg-blue-50/10 border-blue-500/10 hover:border-blue-500/30 transition-all cursor-pointer"
+                        />
+                    </Link>
+                    <Link href="/reports" className="block transition-transform active:scale-95">
+                        <StatCard
+                            title="Mục tiêu hoàn thành"
+                            value={`${goalCompletionRate}%`}
+                            icon={<TrendingUp className="w-5 h-5 text-emerald-500" />}
+                            subtitle={`${completedGoals}/${totalGoals} mục tiêu đã xong`}
+                            className="bg-emerald-50/10 border-emerald-500/10 hover:border-emerald-500/30 transition-all cursor-pointer"
+                        />
+                    </Link>
+                    <Link href="/admin/mentorships" className="block transition-transform active:scale-95">
+                        <StatCard
+                            title="Tổng buổi sinh hoạt"
+                            value={totalMeetings}
+                            icon={<Calendar className="w-5 h-5 text-amber-500" />}
+                            subtitle="Buổi họp đã được tổ chức"
+                            className="bg-amber-50/10 border-amber-500/10 hover:border-amber-500/30 transition-all cursor-pointer"
+                        />
+                    </Link>
+                    <Link href="/reports" className="block transition-transform active:scale-95">
+                        <StatCard
+                            title="Đợt mentoring"
+                            value={activeCycles}
+                            icon={<BarChart3 className="w-5 h-5 text-purple-500" />}
+                            subtitle="Chương trình đang hoạt động"
+                            className="bg-purple-50/10 border-purple-500/10 hover:border-purple-500/30 transition-all cursor-pointer"
+                        />
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

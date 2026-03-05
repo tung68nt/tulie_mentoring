@@ -19,7 +19,10 @@ import {
     CheckCircle2,
     TrendingUp,
     ChevronRight,
-    Users2
+    Users2,
+    FileText,
+    Layout,
+    Presentation
 } from "lucide-react";
 
 export default async function MentorshipDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -71,6 +74,15 @@ export default async function MentorshipDetailPage({ params }: { params: Promise
                         fromUser: true,
                         toUser: true
                     }
+                },
+                wikiPages: {
+                    orderBy: { updatedAt: "desc" },
+                },
+                whiteboards: {
+                    orderBy: { updatedAt: "desc" },
+                },
+                slides: {
+                    orderBy: { updatedAt: "desc" },
                 }
             }
         });
@@ -199,6 +211,87 @@ export default async function MentorshipDetailPage({ params }: { params: Promise
                                 <p className="text-xs font-bold text-warning mb-1 no-uppercase tracking-wider">Phản hồi</p>
                                 <p className="text-2xl font-bold text-foreground leading-none">{serializedMentorship.feedbacks.length}</p>
                             </div>
+                        </div>
+
+                        {/* Resources: Wiki, Whiteboards, Slides */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Wiki Pages */}
+                            <Card padding="lg" className="border-none shadow-sm ring-1 ring-border">
+                                <CardHeader className="p-0 mb-4">
+                                    <CardTitle className="text-sm font-bold flex items-center gap-2 no-uppercase">
+                                        <FileText className="w-4 h-4 text-primary" /> Wiki ({serializedMentorship.wikiPages?.length || 0})
+                                    </CardTitle>
+                                </CardHeader>
+                                <div className="space-y-2">
+                                    {(serializedMentorship.wikiPages || []).slice(0, 3).map((page: any) => (
+                                        <Link
+                                            key={page.id}
+                                            href={`/wiki/${page.slug}`}
+                                            className="block p-3 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors border border-border/40"
+                                        >
+                                            <p className="text-[11px] font-bold text-foreground truncate no-uppercase">{page.title}</p>
+                                            <p className="text-[9px] text-muted-foreground mt-0.5 no-uppercase opacity-70">
+                                                {formatDate(page.updatedAt)}
+                                            </p>
+                                        </Link>
+                                    ))}
+                                    {(!serializedMentorship.wikiPages || serializedMentorship.wikiPages.length === 0) && (
+                                        <p className="text-[10px] text-muted-foreground italic text-center py-4 bg-muted/10 rounded-xl">Chưa có wiki</p>
+                                    )}
+                                </div>
+                            </Card>
+
+                            {/* Whiteboards */}
+                            <Card padding="lg" className="border-none shadow-sm ring-1 ring-border">
+                                <CardHeader className="p-0 mb-4">
+                                    <CardTitle className="text-sm font-bold flex items-center gap-2 no-uppercase">
+                                        <Layout className="w-4 h-4 text-emerald-500" /> Bản vẽ ({serializedMentorship.whiteboards?.length || 0})
+                                    </CardTitle>
+                                </CardHeader>
+                                <div className="space-y-2">
+                                    {(serializedMentorship.whiteboards || []).slice(0, 3).map((board: any) => (
+                                        <Link
+                                            key={board.id}
+                                            href={`/whiteboard/${board.id}`}
+                                            className="block p-3 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors border border-border/40"
+                                        >
+                                            <p className="text-[11px] font-bold text-foreground truncate no-uppercase">{board.title}</p>
+                                            <p className="text-[9px] text-muted-foreground mt-0.5 no-uppercase opacity-70">
+                                                {formatDate(board.updatedAt)}
+                                            </p>
+                                        </Link>
+                                    ))}
+                                    {(!serializedMentorship.whiteboards || serializedMentorship.whiteboards.length === 0) && (
+                                        <p className="text-[10px] text-muted-foreground italic text-center py-4 bg-muted/10 rounded-xl">Chưa có bản vẽ</p>
+                                    )}
+                                </div>
+                            </Card>
+
+                            {/* Slides */}
+                            <Card padding="lg" className="border-none shadow-sm ring-1 ring-border">
+                                <CardHeader className="p-0 mb-4">
+                                    <CardTitle className="text-sm font-bold flex items-center gap-2 no-uppercase">
+                                        <Presentation className="w-4 h-4 text-amber-500" /> Slides ({serializedMentorship.slides?.length || 0})
+                                    </CardTitle>
+                                </CardHeader>
+                                <div className="space-y-2">
+                                    {(serializedMentorship.slides || []).slice(0, 3).map((slide: any) => (
+                                        <Link
+                                            key={slide.id}
+                                            href={`/slides/${slide.id}`}
+                                            className="block p-3 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors border border-border/40"
+                                        >
+                                            <p className="text-[11px] font-bold text-foreground truncate no-uppercase">{slide.title}</p>
+                                            <p className="text-[9px] text-muted-foreground mt-0.5 no-uppercase opacity-70">
+                                                {formatDate(slide.updatedAt)}
+                                            </p>
+                                        </Link>
+                                    ))}
+                                    {(!serializedMentorship.slides || serializedMentorship.slides.length === 0) && (
+                                        <p className="text-[10px] text-muted-foreground italic text-center py-4 bg-muted/10 rounded-xl">Chưa có slide</p>
+                                    )}
+                                </div>
+                            </Card>
                         </div>
 
                         {/* Meetings */}

@@ -15,7 +15,7 @@ model User {
   avatar             String?
   phone              String?
   bio                String?
-  role               String              @default("mentee")
+  role               String              @default("mentee") // admin, program_manager, facilitator, mentor, mentee, viewer
   isActive           Boolean             @default(true)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
@@ -47,6 +47,12 @@ model User {
   todoItems          TodoItem[]
   whiteboards        Whiteboard[]        @relation("WhiteboardCreator")
   wikiPages          WikiPage[]
+
+  // New relations
+  facilitatorAssignments FacilitatorAssignment[] @relation("FacilitatorUser")
+  submittedEvaluations   EvaluationResponse[]    @relation("SubmittedEvaluations")
+  menteeEvaluations      EvaluationResponse[]    @relation("TargetMentee")
+  rankings               MenteeRanking[]
 
   @@index([role])
   @@index([email])
@@ -119,6 +125,8 @@ model ProgramCycle {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   mentorships Mentorship[]
+  facilitatorAssignments FacilitatorAssignment[]
+  menteeRankings         MenteeRanking[]
 }
 
 model Mentorship {
@@ -137,6 +145,12 @@ model Mentorship {
   mentor         User               @relation("MentorUser", fields: [mentorId], references: [id], onDelete: Cascade)
   programCycle   ProgramCycle       @relation(fields: [programCycleId], references: [id])
   mentees        MentorshipMentee[]
+
+  wikiPages      WikiPage[]
+  whiteboards    Whiteboard[]
+  slides         Slide[]
+  facilitatorAssignments FacilitatorAssignment[]
+
 
   @@index([mentorId])
   @@index([programCycleId])
@@ -490,7 +504,7 @@ model WikiPage {
   id         String   @id @default(cuid())
   title      String
   slug       String   @unique
-  content    String?
+  content    String?  @db.Text
   category   String?
   visibility String   @default("public")
   authorId   String
@@ -498,9 +512,12 @@ model WikiPage {
   updatedAt  DateTime @updatedAt
   coverImage String?
   author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id])
+  mentorshipId String?
 
   @@index([authorId])
   @@index([category])
+  @@index([mentorshipId])
 }
 
 model Whiteboard {
@@ -514,9 +531,12 @@ model Whiteboard {
   updatedAt   DateTime   @updatedAt
   artboards   Artboard[]
   creator     User       @relation("WhiteboardCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id])
+  mentorshipId String?
 
   @@index([creatorId])
   @@index([status])
+  @@index([mentorshipId])
 }
 
 model Artboard {
@@ -545,8 +565,11 @@ model Slide {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   creator     User     @relation("SlideCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id])
+  mentorshipId String?
 
   @@index([creatorId])
+  @@index([mentorshipId])
 }
 
 model Habit {
@@ -589,6 +612,92 @@ model DailyDiary {
 
   @@unique([userId, date])
   @@index([userId])
+}
+
+model FacilitatorAssignment {
+  id               String       @id @default(cuid())
+  facilitatorId    String
+  programCycleId   String?
+  mentorshipId     String?
+  assignedAt       DateTime     @default(now())
+  facilitator      User         @relation("FacilitatorUser", fields: [facilitatorId], references: [id], onDelete: Cascade)
+  programCycle     ProgramCycle? @relation(fields: [programCycleId], references: [id], onDelete: Cascade)
+  mentorship       Mentorship?  @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+
+  @@unique([facilitatorId, programCycleId, mentorshipId])
+  @@index([facilitatorId])
+  @@index([programCycleId])
+  @@index([mentorshipId])
+}
+
+model EvaluationForm {
+  id          String               @id @default(cuid())
+  title       String
+  description String?
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  questions   EvaluationQuestion[]
+  responses   EvaluationResponse[]
+}
+
+model EvaluationQuestion {
+  id          String   @id @default(cuid())
+  formId      String
+  type        String   // TEXT, RATING, MULTIPLE_CHOICE
+  label       String
+  options     String?  // JSON string for choices
+  order       Int      @default(0)
+  weight      Float    @default(1.0)
+  form        EvaluationForm @relation(fields: [formId], references: [id], onDelete: Cascade)
+  answers     QuestionAnswer[]
+
+  @@index([formId])
+}
+
+model EvaluationResponse {
+  id          String             @id @default(cuid())
+  formId      String
+  submitterId String
+  targetMenteeId String?         // Mentee being evaluated
+  createdAt   DateTime           @default(now())
+  form        EvaluationForm     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  submitter   User               @relation("SubmittedEvaluations", fields: [submitterId], references: [id], onDelete: Cascade)
+  targetMentee User?             @relation("TargetMentee", fields: [targetMenteeId], references: [id], onDelete: SetNull)
+  answers     QuestionAnswer[]
+
+  @@index([formId])
+  @@index([submitterId])
+  @@index([targetMenteeId])
+}
+
+model QuestionAnswer {
+  id          String             @id @default(cuid())
+  responseId  String
+  questionId  String
+  value       String             // The answer content
+  score       Float?             // Calculated score for this answer
+  response    EvaluationResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question    EvaluationQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([responseId])
+  @@index([questionId])
+}
+
+model MenteeRanking {
+  id             String       @id @default(cuid())
+  menteeId       String
+  programCycleId String
+  totalScore     Float
+  rank           Int
+  metrics        Json         // Breakdown: {attendance: 0.9, goals: 0.8, etc}
+  updatedAt      DateTime     @updatedAt
+  mentee         User         @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  programCycle   ProgramCycle @relation(fields: [programCycleId], references: [id], onDelete: Cascade)
+
+  @@unique([menteeId, programCycleId])
+  @@index([menteeId])
+  @@index([programCycleId])
 }
 
 model SystemSetting {

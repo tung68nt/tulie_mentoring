@@ -47,10 +47,17 @@ export async function getMenteeStats(specificUserId?: string) {
 
     // 1. Attendance Rate
     const totalMeetings = await prisma.attendance.count({
-        where: userFilter
+        where: {
+            ...userFilter,
+            meeting: { status: "completed" }
+        }
     });
     const presentMeetings = await prisma.attendance.count({
-        where: { ...userFilter, status: "present" }
+        where: {
+            ...userFilter,
+            status: "present",
+            meeting: { status: "completed" }
+        }
     });
     const attendanceRate = totalMeetings > 0 ? Math.round((presentMeetings / totalMeetings) * 100) : 0;
 
@@ -100,32 +107,48 @@ export async function getProgramProgress(specificUserId?: string) {
 
     const userId = session.user.id!;
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "viewer" || role === "program_manager";
     const targetUserId = specificUserId || userId;
 
-    // Find the current active mentorship for the user (or any active mentorship for admin)
-    let mentorship = await prisma.mentorship.findFirst({
-        where: {
-            mentees: { some: { menteeId: targetUserId } },
-            status: "active"
-        },
-        include: {
-            programCycle: true
-        }
-    });
+    let mentorship = null;
+    let cycle = null;
 
-    // If admin has no mentorship as mentee, find any active mentorship
-    if (!mentorship && isAdmin) {
+    if (specificUserId) {
+        // Find specific mentorship for the target mentee
         mentorship = await prisma.mentorship.findFirst({
-            where: { status: "active" },
-            include: { programCycle: true }
+            where: {
+                mentees: { some: { menteeId: specificUserId } },
+                status: "active"
+            },
+            include: {
+                programCycle: true
+            }
         });
+        if (mentorship) cycle = mentorship.programCycle;
+    } else if (isAdmin) {
+        // For admin global view, find the first active cycle
+        cycle = await prisma.programCycle.findFirst({
+            where: { status: "active" },
+            orderBy: { startDate: "desc" }
+        });
+    } else {
+        // For mentee view of themselves
+        mentorship = await prisma.mentorship.findFirst({
+            where: {
+                mentees: { some: { menteeId: userId } },
+                status: "active"
+            },
+            include: {
+                programCycle: true
+            }
+        });
+        if (mentorship) cycle = mentorship.programCycle;
     }
 
-    if (!mentorship) return null;
+    if (!cycle) return null;
 
-    const startDate = mentorship.programCycle.startDate;
-    const endDate = mentorship.programCycle.endDate;
+    const startDate = cycle.startDate;
+    const endDate = cycle.endDate;
 
     // Fetch activity logs for the program period
     const activityFilter = (isAdmin && !specificUserId) ? {} : { userId: targetUserId };

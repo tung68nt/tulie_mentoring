@@ -27,15 +27,27 @@ export async function createWikiPage(data: {
 
     const slug = `${slugify(data.title)}-${Math.random().toString(36).substring(2, 7)}`;
 
+    // Auto-link to mentorship if user is part of one
+    let mentorshipId = null;
+    if (session.user) {
+        const role = (session.user as any).role;
+        const mentorship = await prisma.mentorship.findFirst({
+            where: role === "mentee" ? { mentees: { some: { menteeId: session.user.id } } } : { mentorId: session.user.id },
+            select: { id: true }
+        });
+        if (mentorship) mentorshipId = mentorship.id;
+    }
+
     const page = await prisma.wikiPage.create({
         data: {
             title: data.title,
             slug,
             content: data.content,
             category: data.category,
-            visibility: data.visibility || "public",
+            visibility: data.visibility || (mentorshipId ? "private" : "public"),
             coverImage: data.coverImage,
             authorId: session.user.id!,
+            mentorshipId,
         }
     });
 
@@ -56,10 +68,24 @@ export async function getWikiPages(category?: string) {
     const where: any = {};
     if (category) where.category = category;
 
+    const mentorships = await prisma.mentorship.findMany({
+        where: role === "mentee" ? { mentees: { some: { menteeId: session.user.id } } } : { mentorId: session.user.id },
+        select: { id: true }
+    });
+    const mentorshipIds = mentorships.map(m => m.id);
+
     if (role === "mentee") {
-        where.visibility = { in: ["public", "mentee_only"] };
+        where.OR = [
+            { authorId: session.user.id },
+            { visibility: "public" },
+            { mentorshipId: { in: mentorshipIds } }
+        ];
     } else if (role === "mentor") {
-        where.visibility = { in: ["public", "mentor_only"] };
+        where.OR = [
+            { authorId: session.user.id },
+            { visibility: "public" },
+            { mentorshipId: { in: mentorshipIds } }
+        ];
     }
     // Admins see all
 
@@ -103,7 +129,25 @@ export async function getWikiPageDetail(slug: string, isPublic: boolean = false)
 
     if (!isPublic) {
         const role = (session?.user as any)?.role;
-        if (role !== "admin") {
+        const isAdmin = role === "admin" || role === "viewer";
+
+        if (!isAdmin) {
+            // If it belongs to a mentorship, check if user is part of it
+            if (page.mentorshipId) {
+                const mentorship = await prisma.mentorship.findFirst({
+                    where: {
+                        id: page.mentorshipId,
+                        OR: [
+                            { mentorId: session?.user?.id },
+                            { mentees: { some: { menteeId: session?.user?.id } } }
+                        ]
+                    }
+                });
+                if (!mentorship && page.authorId !== session?.user?.id) {
+                    throw new Error("Truy cập bị từ chối: Tài liệu thuộc về một Mentorship khác");
+                }
+            }
+
             if (page.visibility === "mentor_only" && role !== "mentor") {
                 throw new Error("Truy cập bị từ chối: Tài liệu dành riêng cho Mentor");
             }

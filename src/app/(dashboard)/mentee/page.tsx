@@ -177,7 +177,7 @@ export default async function MenteeDashboard() {
                                     serializedGoals.map((goal: any) => (
                                         <Card key={goal.id} className="p-5 space-y-4 border-border/50 hover:border-primary/30 transition-colors rounded-xl shadow-none">
                                             <div className="flex items-center justify-between">
-                                                <p className="text-sm font-semibold text-foreground truncate flex-1 pr-4 no-uppercase">{goal.title}</p>
+                                                <p className="text-sm font-semibold text-foreground flex-1 pr-4 no-uppercase">{goal.title}</p>
                                                 <span className="text-[10px] font-bold text-muted-foreground/60 tabular-nums">{goal.currentValue}%</span>
                                             </div>
                                             <Progress value={goal.currentValue} size="sm" />

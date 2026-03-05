@@ -34,7 +34,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
-    role: "admin" | "mentor" | "mentee" | "viewer";
+    role: "admin" | "mentor" | "mentee" | "viewer" | "program_manager" | "facilitator";
     isMobileOpen?: boolean;
     onMobileClose?: () => void;
     logoUrl?: string;
@@ -76,6 +76,45 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                 ],
             },
         ],
+        program_manager: [
+            {
+                items: [
+                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/program-manager" },
+                    { id: "programs", label: "Chương trình", icon: Calendar, href: "/admin/programs" },
+                    { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
+                ],
+            },
+            {
+                items: [
+                    { id: "ranking", label: "Bảng xếp hạng", icon: BarChart, href: "/ranking" },
+                    { id: "reports", label: "Báo cáo tổng hợp", icon: FileText, href: "/reports" },
+                ],
+            },
+            {
+                items: [
+                    { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
+                ],
+            },
+        ],
+        facilitator: [
+            {
+                items: [
+                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/facilitator" },
+                    { id: "mentorships", label: "Mentorship được giao", icon: Users, href: "/facilitator/mentorships" },
+                ],
+            },
+            {
+                items: [
+                    { id: "forms", label: "Forms đánh giá", icon: PenLine, href: "/facilitator/forms" },
+                    { id: "ranking", label: "Bảng xếp hạng", icon: BarChart, href: "/ranking" },
+                ],
+            },
+            {
+                items: [
+                    { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
+                ],
+            },
+        ],
         mentor: [
             {
                 items: [
@@ -86,6 +125,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             {
                 items: [
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
+                    { id: "ranking", label: "Bảng xếp hạng", icon: BarChart, href: "/ranking" },
                     { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
                     { id: "focus", label: "Không gian tập trung", icon: Timer, href: "/focus" },
                 ],
@@ -147,7 +187,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
 
     const isActive = (href: string) => {
         if (pathname === href) return true;
-        if (href === "/admin" || href === "/mentor" || href === "/mentee") {
+        if (href === "/admin" || href === "/mentor" || href === "/mentee" || href === "/program-manager" || href === "/facilitator") {
             return pathname === href;
         }
         if (href === "/admin/mentorships" && pathname.startsWith("/admin/mentorships/new")) {

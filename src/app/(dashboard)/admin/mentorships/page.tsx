@@ -11,7 +11,8 @@ import Link from "next/link";
 
 export default async function MentorshipsPage() {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = (session?.user as any)?.role;
+    if (!session?.user || !["admin", "viewer"].includes(role)) {
         redirect("/login");
     }
     try {

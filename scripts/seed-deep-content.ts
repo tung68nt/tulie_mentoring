@@ -18,8 +18,8 @@ async function main() {
     const mentor = await prisma.user.findFirst({ where: { role: "mentor" } });
     const mentee = await prisma.user.findFirst({ where: { role: "mentee" } });
 
-    if (!mentee) {
-        console.error("❌ No mentee found. Please run baseline seed first.");
+    if (!mentee || !mentor) {
+        console.error("❌ No mentee or mentor found. Please run baseline seed first.");
         return;
     }
 
@@ -33,10 +33,10 @@ async function main() {
         if (mentor) {
             await prisma.mentorship.create({
                 data: {
-                    title: "Program: Strategic Marketing Excellence 2024",
-                    description: "Chương trình định hướng và phát triển kỹ năng Marketing thực chiến dành cho sinh viên tiềm năng.",
+                    notes: "Chương trình định hướng và phát triển kỹ năng Marketing thực chiến dành cho sinh viên tiềm năng.",
                     status: "active",
                     mentorId: mentor.id,
+                    programCycleId: (await prisma.programCycle.findFirst({ where: { status: "active" } }))?.id || "",
                     mentees: {
                         create: { menteeId: mentee.id }
                     }
@@ -93,7 +93,11 @@ async function main() {
             { title: "Hoàn thành Portfolio Design cơ bản", description: "Học cách sử dụng Figma để thiết kế các mock-up cơ bản cho chiến dịch truyền thông.", category: "skill", priority: "medium", targetValue: 100, currentValue: 30 },
             { title: "Phân tích 5 Case Study quốc tế", description: "Viết báo cáo phân tích sâu về các chiến dịch marketing đạt giải Cannes Lions.", category: "skill", priority: "high", targetValue: 5, currentValue: 1 },
             { title: "Cải thiện chỉ số EQ & Lắng nghe", description: "Thực hành lắng nghe tích cực trong các buổi gặp gỡ và ghi chép lại những phản hồi của người xung quanh.", category: "soft_skill", priority: "low", targetValue: 100, currentValue: 50 },
-            { title: "Tổ chức 1 Workshop nhỏ", description: "Cùng nhóm bạn tổ chức buổi chia sẻ kỹ năng Canva cho các bạn sinh viên năm nhất.", category: "leadership", priority: "high", targetValue: 1, currentValue: 0 }
+            { title: "Tổ chức 1 Workshop nhỏ", description: "Cùng nhóm bạn tổ chức buổi chia sẻ kỹ năng Canva cho các bạn sinh viên năm nhất.", category: "leadership", priority: "high", targetValue: 1, currentValue: 0 },
+            { title: "Ứng dụng AI vào quy trình Content Marketing", description: "Nghiên cứu và áp dụng ChatGPT/Claude để tối ưu hóa việc lên outline và viết nháp cho 10 bài blog.", category: "ai_marketing", priority: "high", targetValue: 10, currentValue: 2 },
+            { title: "Thành thạo công cụ Design AI (Midjourney/DALL-E)", description: "Tạo ra bộ nhận diện hình ảnh cho 3 chiến dịch truyền thông hoàn toàn bằng Prompt Engineering.", category: "ai_marketing", priority: "medium", targetValue: 3, currentValue: 1 },
+            { title: "Nghiên cứu AI Automation trong Email Marketing", description: "Tìm hiểu các công cụ như Jasper hoặc Copy.ai để tự động hóa viết tiêu đề và email nuôi dưỡng khách hàng.", category: "ai_marketing", priority: "medium", targetValue: 100, currentValue: 15 },
+            { title: "Phân tích Big Data bằng AI Tool", description: "Sử dụng các tính năng Advanced Data Analysis của ChatGPT để phân tích tệp khách hàng 1000 người.", category: "ai_marketing", priority: "high", targetValue: 1, currentValue: 0 }
         ];
 
         for (const g of goalsData) {
@@ -138,6 +142,67 @@ async function main() {
             where: { userId_date: { userId: mentee.id, date: d.date } },
             update: d,
             create: { ...d, userId: mentee.id }
+        });
+    }
+
+    // 6. ADD WIKI, WHITEBOARD, SLIDES
+    if (activeMentorship) {
+        console.log("📄 Seeding Wiki pages, Whiteboards and Slides for Mentorship...");
+
+        // Wiki Pages
+        await prisma.wikiPage.createMany({
+            data: [
+                {
+                    title: "Bộ quy tắc ứng xử trong Mentoring",
+                    slug: `quy-tac-ung-xu-${Math.random().toString(36).substring(7)}`,
+                    content: "Hợp đồng cam kết giữa Mentor và Mentee. Bao gồm: Đúng giờ, Tuyệt đối bảo mật thông tin, Phản hồi tích cực, và Tinh thần chủ động.",
+                    visibility: "private",
+                    authorId: mentor.id!,
+                    mentorshipId: activeMentorship.id
+                },
+                {
+                    title: "Tài liệu Phân tích Thị trường 2024",
+                    slug: `market-analysis-${Math.random().toString(36).substring(7)}`,
+                    content: "Tổng hợp các báo cáo về xu hướng tiêu dùng của thế hệ Z tại Việt Nam. Tập trung vào mảng thương mại điện tử và KOL Marketing.",
+                    visibility: "private",
+                    authorId: mentee.id!,
+                    mentorshipId: activeMentorship.id
+                },
+                {
+                    title: "Draft Chiến dịch Marketing 'Vibe Khác Biệt'",
+                    slug: `draft-campaign-${Math.random().toString(36).substring(7)}`,
+                    content: "Bản nháp ý tưởng cho chiến dịch truyền thông của nhãn hàng ABC. Target khách hàng là sinh viên và người trẻ yêu công nghệ.",
+                    visibility: "private",
+                    authorId: mentee.id!,
+                    mentorshipId: activeMentorship.id
+                }
+            ]
+        });
+
+        // Whiteboards
+        const whiteboard = await prisma.whiteboard.create({
+            data: {
+                title: "Brainstorming: Campaign Concept",
+                description: "Sơ đồ tư duy cho việc định vị thương hiệu mới.",
+                creatorId: mentor.id!,
+                mentorshipId: activeMentorship.id,
+                artboards: {
+                    create: { name: "Moodboard", order: 0 }
+                }
+            }
+        });
+
+        // Slides
+        await prisma.slide.create({
+            data: {
+                title: "Báo cáo Tiến độ Tháng 1",
+                description: "Slide trình bày các công việc đã làm và kế hoạch cho tháng tiếp theo.",
+                content: "# Month 1 Review\n---\n## Key Wins\n- Finished GA4 Certification\n- Drafted Market Analysis\n---\n## Challenges\n- Time management between school & intern",
+                creatorId: mentee.id,
+                mentorshipId: activeMentorship.id,
+                status: "private",
+                theme: "modern"
+            }
         });
     }
 

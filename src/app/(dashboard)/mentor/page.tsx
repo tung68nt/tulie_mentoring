@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Users, Calendar, CheckCircle, Clock } from "lucide-react";
+import { Users, Calendar, CheckCircle, Clock, Target } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
@@ -34,6 +34,12 @@ export default async function MentorDashboard() {
                     mentees: { include: { mentee: true } },
                     programCycle: true,
                     mentor: true,
+                    goals: {
+                        where: {
+                            status: { not: "completed" },
+                            dueDate: { not: null }
+                        }
+                    }
                 }
             }),
             prisma.meeting.findMany({
@@ -86,32 +92,69 @@ export default async function MentorDashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-foreground">Danh sách Mentees</h3>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {serializedMentorships.flatMap((m: any) => m.mentees).map((mt: any) => (
-                                <Card key={mt.id} className="p-6 flex items-center justify-between group" hover>
-                                    <div className="flex items-center gap-4">
-                                        <Avatar
-                                            firstName={mt.mentee?.firstName}
-                                            lastName={mt.mentee?.lastName}
-                                            src={mt.mentee?.avatar}
-                                            size="md"
-                                        />
-                                        <div className="min-w-0">
-                                            <p className="text-sm font-semibold text-foreground truncate leading-tight mb-1">
-                                                {mt.mentee?.firstName} {mt.mentee?.lastName}
-                                            </p>
-                                            <p className="text-[11px] font-medium text-muted-foreground">{mt.status}</p>
-                                        </div>
+                    <div className="lg:col-span-2 space-y-10">
+                        {/* Goals Countdown Section */}
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                                <Target className="w-5 h-5 text-primary" />
+                                Theo dõi Deadline Mục tiêu
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {serializedMentorships.flatMap((m: any) =>
+                                    m.goals.map((g: any) => ({ ...g, mentorshipId: m.id, menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName }))
+                                ).length === 0 ? (
+                                    <div className="md:col-span-2 py-8 border border-dashed rounded-xl bg-muted/20 text-center">
+                                        <p className="text-xs text-muted-foreground">Chưa có mục tiêu nào có hạn định gần đây.</p>
                                     </div>
-                                    <Button variant="outline" size="sm" asChild className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Link href={`/admin/mentorships/${mt.mentorshipId}`}>Hồ sơ</Link>
-                                    </Button>
-                                </Card>
-                            ))}
+                                ) : (
+                                    serializedMentorships.flatMap((m: any) =>
+                                        m.goals.map((g: any) => ({
+                                            ...g,
+                                            mentorshipId: m.id,
+                                            menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName
+                                        }))
+                                    )
+                                        .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+                                        .slice(0, 4)
+                                        .map((goal: any) => (
+                                            <Countdown
+                                                key={goal.id}
+                                                targetDate={goal.dueDate}
+                                                label={goal.title}
+                                                subtitle={`Mentee: ${goal.menteeName}`}
+                                                className="bg-background border-border"
+                                                size="sm"
+                                            />
+                                        ))
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 pt-4">
+                            <h3 className="text-lg font-semibold text-foreground">Danh sách Mentees</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {serializedMentorships.flatMap((m: any) => m.mentees).map((mt: any) => (
+                                    <Card key={mt.id} className="p-6 flex items-center justify-between group" hover>
+                                        <div className="flex items-center gap-4">
+                                            <Avatar
+                                                firstName={mt.mentee?.firstName}
+                                                lastName={mt.mentee?.lastName}
+                                                src={mt.mentee?.avatar}
+                                                size="md"
+                                            />
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-semibold text-foreground truncate leading-tight mb-1">
+                                                    {mt.mentee?.firstName} {mt.mentee?.lastName}
+                                                </p>
+                                                <p className="text-[11px] font-medium text-muted-foreground capitalize">{mt.status || "active"}</p>
+                                            </div>
+                                        </div>
+                                        <Button variant="outline" size="sm" asChild className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Link href={`/admin/mentorships/${mt.mentorshipId}`}>Hồ sơ</Link>
+                                        </Button>
+                                    </Card>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -119,7 +162,7 @@ export default async function MentorDashboard() {
                         <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
                         <div className="space-y-4">
                             {serializedUpcomingMeetings.length === 0 ? (
-                                <p className="text-sm text-muted-foreground">Chưa có lịch họp nào.</p>
+                                <p className="text-sm text-muted-foreground py-10 text-center border border-dashed rounded-xl bg-muted/20">Chưa có lịch họp nào.</p>
                             ) : (
                                 serializedUpcomingMeetings.map((meeting: any) => (
                                     <div key={meeting.id} className="flex gap-5 p-5 rounded-xl border border-border bg-background group hover:border-foreground/20 transition-all shadow-none">

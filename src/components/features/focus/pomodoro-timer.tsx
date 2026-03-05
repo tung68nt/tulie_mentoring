@@ -31,17 +31,20 @@ const AMBIANCE_MUSICS = [
 function OrbitingDots({ isActive }: { isActive: boolean }) {
     // Generate stable dot positions with varying speeds and mixed directions
     const dots = useMemo(() => [
-        { ring: 0, angle: 30, size: 5, duration: 45, clockwise: true },
-        { ring: 0, angle: 150, size: 4, duration: 60, clockwise: false },
-        { ring: 1, angle: 270, size: 6, duration: 35, clockwise: true },
-        { ring: 1, angle: 60, size: 4, duration: 55, clockwise: false },
-        { ring: 1, angle: 180, size: 5, duration: 40, clockwise: true },
-        { ring: 2, angle: 300, size: 3, duration: 70, clockwise: false },
-        { ring: 2, angle: 0, size: 4, duration: 50, clockwise: true },
-        { ring: 2, angle: 120, size: 6, duration: 48, clockwise: false },
-        { ring: 3, angle: 240, size: 4, duration: 65, clockwise: true },
-        { ring: 3, angle: 45, size: 3, duration: 25, clockwise: false },
-        { ring: 3, angle: 200, size: 5, duration: 58, clockwise: true },
+        { ring: 0, angle: 30, size: 5, duration: 25, clockwise: true },
+        { ring: 0, angle: 150, size: 4, duration: 40, clockwise: false },
+        { ring: 1, angle: 270, size: 7, duration: 55, clockwise: true },
+        { ring: 1, angle: 60, size: 4, duration: 45, clockwise: false },
+        { ring: 1, angle: 180, size: 5, duration: 30, clockwise: true },
+        { ring: 2, angle: 300, size: 3, duration: 80, clockwise: false },
+        { ring: 2, angle: 10, size: 4, duration: 65, clockwise: true },
+        { ring: 2, angle: 120, size: 6, duration: 50, clockwise: false },
+        { ring: 3, angle: 240, size: 4, duration: 95, clockwise: true },
+        { ring: 3, angle: 45, size: 4, duration: 35, clockwise: false },
+        { ring: 3, angle: 200, size: 5, duration: 75, clockwise: true },
+        { ring: 0, angle: 280, size: 3, duration: 18, clockwise: false }, // Fast inner one
+        { ring: 1, angle: 110, size: 2, duration: 42, clockwise: true },
+        { ring: 2, angle: 210, size: 5, duration: 88, clockwise: false },
     ], []);
 
     const ringRadii = [60, 100, 140, 180];
@@ -55,38 +58,38 @@ function OrbitingDots({ isActive }: { isActive: boolean }) {
                     className="absolute rounded-full border border-emerald-500/[0.05]"
                     style={{ width: r * 2, height: r * 2 }}
                     animate={isActive ? {
-                        scale: [1, 1.03, 1],
-                        opacity: [0.2, 0.4, 0.2],
+                        scale: [1, 1.04, 1],
+                        opacity: [0.15, 0.45, 0.15],
                     } : { scale: 1, opacity: 0.1 }}
                     transition={{
-                        duration: 6,
+                        duration: 8,
                         repeat: Infinity,
                         ease: "easeInOut",
-                        delay: i * 0.5
+                        delay: i * 0.8
                     }}
                 />
             ))}
 
             {/* Glowing center - Subtle Gradient Breathing */}
             <motion.div
-                className="absolute w-40 h-40 rounded-full bg-emerald-500/[0.03] blur-3xl translate-y-[-2px]"
+                className="absolute w-40 h-40 rounded-full bg-emerald-500/[0.03] blur-3xl"
                 animate={isActive ? {
-                    scale: [1, 1.2, 1],
-                    opacity: [0.4, 0.8, 0.4]
-                } : { opacity: 0.3 }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    scale: [1, 1.25, 1],
+                    opacity: [0.3, 0.7, 0.3]
+                } : { opacity: 0.2 }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-                className="absolute w-20 h-20 rounded-full bg-emerald-500/[0.08] blur-xl translate-y-[-2px]"
+                className="absolute w-20 h-20 rounded-full bg-emerald-500/[0.06] blur-xl"
                 animate={isActive ? {
                     scale: [1, 1.15, 1],
-                    opacity: [0.5, 0.9, 0.5]
-                } : { opacity: 0.4 }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    opacity: [0.4, 0.8, 0.4]
+                } : { opacity: 0.3 }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
             />
 
-            {/* The "Anchor" Dot - Aligned with timer's colon */}
-            <div className="absolute w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)] z-[5] translate-y-[-2px]" />
+            {/* The "Anchor" Dot - Aligned with timer's top colon dot for font size 100px */}
+            <div className="absolute w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)] z-[5] -translate-y-[18px]" />
 
             {/* Orbiting dots */}
             <div className="absolute inset-0">
@@ -104,13 +107,13 @@ function OrbitingDots({ isActive }: { isActive: boolean }) {
                                     height: radius * 2,
                                 }}
                                 animate={isActive ? {
-                                    rotate: dot.clockwise ? [0, 360] : [360, 0]
+                                    rotate: dot.clockwise ? [dot.angle, dot.angle + 360] : [dot.angle, dot.angle - 360]
                                 } : { rotate: dot.angle }}
                                 transition={isActive ? {
                                     duration: dot.duration,
                                     repeat: Infinity,
                                     ease: "linear"
-                                } : { duration: 1 }}
+                                } : { duration: 1.5, ease: "easeOut" }}
                             >
                                 <div
                                     className="absolute bg-emerald-500/40 rounded-full"

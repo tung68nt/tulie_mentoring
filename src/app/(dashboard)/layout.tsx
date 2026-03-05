@@ -20,7 +20,7 @@ export default async function DashboardLayout({
         id: session.user.id!,
         firstName: (session.user as any).firstName,
         lastName: (session.user as any).lastName,
-        role: role as "admin" | "mentor" | "mentee" | "viewer",
+        role: role as "admin" | "mentor" | "mentee" | "viewer" | "program_manager" | "facilitator",
         avatar: session.user.image || null,
     };
 
