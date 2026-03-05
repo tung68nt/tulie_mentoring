@@ -14,7 +14,7 @@ import {
 interface ProgramGridProps {
     startDate: string | Date;
     endDate: string | Date;
-    submittedDates: string[];
+    submittedDates: { date: string; level: number }[];
     deadlines?: { date: string; title: string; type: "goal" | "program_end" }[];
     selectedDate?: Date;
     onCellClick?: (date: Date) => void;
@@ -42,7 +42,7 @@ export function ProgramGrid({
     today.setHours(0, 0, 0, 0);
 
     // Calculate stats
-    const completedDays = submittedDates.length;
+    const completedDays = submittedDates.filter(s => s.level > 0).length;
     const totalDays = days.length;
     const daysPassed = days.filter(d => d <= today).length;
     const completionRate = daysPassed > 0 ? Math.round((completedDays / daysPassed) * 100) : 0;
@@ -54,7 +54,9 @@ export function ProgramGrid({
                 <TooltipProvider delayDuration={100}>
                     {days.map((day, idx) => {
                         const dateStr = format(day, "yyyy-MM-dd");
-                        const isSubmitted = submittedDates.includes(dateStr);
+                        const submission = submittedDates.find(s => s.date === dateStr);
+                        const isSubmitted = !!submission && submission.level > 0;
+                        const level = submission?.level || 0;
                         const isToday = isSameDay(day, today);
                         const isSelected = selectedDate ? isSameDay(day, selectedDate) : false;
                         const isPast = day < today;
@@ -64,11 +66,16 @@ export function ProgramGrid({
                         const hasGoal = dayDeadlines.find(d => d.type === "goal");
                         const hasEnd = dayDeadlines.find(d => d.type === "program_end");
 
-                        const tooltipText = `${format(day, "EEEE, dd/MM/yyyy", { locale: vi })}${isSubmitted ? " · Đã hoàn thành" : isPast ? " · Bỏ lỡ" : ""}${dayDeadlines.length > 0 ? ` · ${dayDeadlines.map(d => d.title).join(", ")}` : ""}`;
+                        const tooltipText = `${format(day, "EEEE, dd/MM/yyyy", { locale: vi })}${isSubmitted ? ` · Đã hoàn thành (${Math.round(level * 100)}%)` : isPast ? " · Bỏ lỡ" : ""}${dayDeadlines.length > 0 ? ` · ${dayDeadlines.map(d => d.title).join(", ")}` : ""}`;
 
                         // Determine cell color similar to heatmap style
                         const getCellStyle = () => {
-                            if (isSubmitted) return "bg-emerald-400 dark:bg-emerald-500/80";
+                            if (isSubmitted) {
+                                if (level >= 0.9) return "bg-emerald-600 dark:bg-emerald-400"; // Full discipline
+                                if (level >= 0.6) return "bg-emerald-500 dark:bg-emerald-500"; // Good
+                                if (level >= 0.3) return "bg-emerald-400 dark:bg-emerald-600/80"; // Medium
+                                return "bg-emerald-300 dark:bg-emerald-700/60"; // Low/Diary only
+                            }
                             if (isToday) return "bg-muted ring-1 ring-ring ring-offset-1 ring-offset-background";
                             if (isPast) return "bg-muted/50";
                             return "bg-muted/30"; // future
@@ -103,7 +110,11 @@ export function ProgramGrid({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-border/40">
                 <div className="flex flex-wrap gap-x-5 gap-y-2 text-[10px] text-muted-foreground">
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-[2px] bg-emerald-400 dark:bg-emerald-500/80" />
+                        <div className="flex gap-[2px]">
+                            <div className="w-2.5 h-2.5 rounded-[2px] bg-emerald-200 dark:bg-emerald-800" />
+                            <div className="w-2.5 h-2.5 rounded-[2px] bg-emerald-400 dark:bg-emerald-600" />
+                            <div className="w-2.5 h-2.5 rounded-[2px] bg-emerald-600 dark:bg-emerald-400" />
+                        </div>
                         <span>Đã hoàn thành</span>
                     </div>
                     <div className="flex items-center gap-1.5">

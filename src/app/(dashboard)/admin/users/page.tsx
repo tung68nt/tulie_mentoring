@@ -18,10 +18,13 @@ import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { UserRoleSelector } from "@/components/features/admin/user-role-selector";
 import { DeleteUserButton } from "@/components/features/admin/delete-user-button";
+import { ImportUsersModal } from "@/components/features/admin/import-users-modal";
+import { Upload } from "lucide-react";
 
 export default async function AdminUsersPage() {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         redirect("/login");
     }
 
@@ -31,9 +34,17 @@ export default async function AdminUsersPage() {
 
         return (
             <div className="space-y-8">
-                <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Quản lý Người dùng</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Danh sách tất cả tài khoản trong hệ thống ({serializedUsers.length})</p>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-semibold text-foreground">Quản lý Người dùng</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Danh sách tất cả tài khoản trong hệ thống ({serializedUsers.length})</p>
+                    </div>
+                    <ImportUsersModal>
+                        <Button className="shrink-0 gap-2">
+                            <Upload className="w-4 h-4" />
+                            Nhập từ Excel
+                        </Button>
+                    </ImportUsersModal>
                 </div>
 
                 <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -82,7 +93,7 @@ export default async function AdminUsersPage() {
                                         {formatDate(user.createdAt)}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {user.role !== "admin" && (
+                                        {user.role !== "admin" && user.id !== session?.user?.id && (
                                             <DeleteUserButton
                                                 userId={user.id}
                                                 userName={`${user.firstName} ${user.lastName}`}

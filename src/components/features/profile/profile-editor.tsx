@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
+import { ChangePasswordModal } from "./change-password-modal";
 
 interface ProfileEditorProps {
     user: any;
@@ -134,10 +135,13 @@ export function ProfileEditor({ user, meetingCount }: ProfileEditorProps) {
                                     </Button>
                                 </div>
                             ) : (
-                                <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
-                                    <Edit3 className="w-4 h-4 mr-1" />
-                                    Chỉnh sửa
-                                </Button>
+                                <div className="flex items-center gap-3">
+                                    <ChangePasswordModal />
+                                    <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                                        <Edit3 className="w-4 h-4 mr-1" />
+                                        Chỉnh sửa
+                                    </Button>
+                                </div>
                             )}
                         </div>
 

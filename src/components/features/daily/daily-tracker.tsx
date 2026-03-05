@@ -56,7 +56,7 @@ export function DailyTracker() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [habits, setHabits] = useState<Habit[]>([]);
     const [diary, setDiary] = useState<DailyDiary | null>(null);
-    const [submittedDates, setSubmittedDates] = useState<string[]>([]);
+    const [submittedDates, setSubmittedDates] = useState<{ date: string; level: number }[]>([]);
     const [deadlines, setDeadlines] = useState<any[]>([]);
     const [programInfo, setProgramInfo] = useState<ProgramInfo | null>(null);
     const [isLoading, setIsLoading] = useState(true);

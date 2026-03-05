@@ -80,6 +80,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             {
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/program-manager" },
+                    { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
                     { id: "programs", label: "Chương trình", icon: Calendar, href: "/admin/programs" },
                     { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
                 ],

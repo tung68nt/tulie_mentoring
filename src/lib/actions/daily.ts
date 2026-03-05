@@ -29,11 +29,46 @@ export async function getDiariesAndHabits(dateStr: string) {
         where: { userId, date }
     });
 
-    const allDiaries = await prisma.dailyDiary.findMany({
-        where: { userId },
-        select: { date: true }
+    // Fetch all logs and diaries to calculate completion levels for the heatmap
+    const [allDiaries, allHabitLogs] = await Promise.all([
+        prisma.dailyDiary.findMany({
+            where: { userId },
+            select: { date: true, content: true }
+        }),
+        prisma.habitLog.findMany({
+            where: { habit: { userId }, completed: true },
+            select: { date: true, habitId: true }
+        })
+    ]);
+
+    // Group logs by date
+    const dailyCompletion: Record<string, { diary: boolean, habits: number }> = {};
+
+    allDiaries.forEach(d => {
+        const dStr = format(new Date(d.date), "yyyy-MM-dd");
+        dailyCompletion[dStr] = { diary: true, habits: 0 };
     });
-    const submittedDates = allDiaries.map(d => format(new Date(d.date), "yyyy-MM-dd"));
+
+    allHabitLogs.forEach(log => {
+        const dStr = format(new Date(log.date), "yyyy-MM-dd");
+        if (!dailyCompletion[dStr]) dailyCompletion[dStr] = { diary: false, habits: 0 };
+        dailyCompletion[dStr].habits++;
+    });
+
+    // We need total active habits count to calculate ratio
+    const totalHabitsCount = await prisma.habit.count({
+        where: { userId, isActive: true }
+    });
+
+    const submittedDates = Object.entries(dailyCompletion).map(([date, data]) => {
+        // Level calculation: 0.3 for diary, 0.7 for habits
+        let level = 0;
+        if (data.diary) level += 0.3;
+        if (totalHabitsCount > 0) {
+            level += (data.habits / totalHabitsCount) * 0.7;
+        }
+        return { date, level: Math.min(level, 1) };
+    });
 
     const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -236,12 +271,41 @@ export async function getProgramGridData() {
     programStartDate = new Date(programStartDate);
     programEndDate = new Date(programEndDate);
 
-    // Fetch all diaries to mark submitted days
-    const allDiaries = await prisma.dailyDiary.findMany({
-        where: { userId },
-        select: { date: true }
+    // Fetch all logs and diaries to calculate completion levels
+    const [allDiaries, allHabitLogs] = await Promise.all([
+        prisma.dailyDiary.findMany({
+            where: { userId },
+            select: { date: true }
+        }),
+        prisma.habitLog.findMany({
+            where: { habit: { userId }, completed: true },
+            select: { date: true }
+        })
+    ]);
+
+    const totalHabitsCount = await prisma.habit.count({
+        where: { userId, isActive: true }
     });
-    const submittedDates = allDiaries.map(d => format(new Date(d.date), "yyyy-MM-dd"));
+
+    const dailyCompletion: Record<string, { diary: boolean, habits: number }> = {};
+    allDiaries.forEach(d => {
+        const dStr = format(new Date(d.date), "yyyy-MM-dd");
+        dailyCompletion[dStr] = { diary: true, habits: 0 };
+    });
+    allHabitLogs.forEach(log => {
+        const dStr = format(new Date(log.date), "yyyy-MM-dd");
+        if (!dailyCompletion[dStr]) dailyCompletion[dStr] = { diary: false, habits: 0 };
+        dailyCompletion[dStr].habits++;
+    });
+
+    const submittedDates = Object.entries(dailyCompletion).map(([date, data]) => {
+        let level = 0;
+        if (data.diary) level += 0.3;
+        if (totalHabitsCount > 0) {
+            level += (data.habits / totalHabitsCount) * 0.7;
+        }
+        return { date, level: Math.min(level, 1) };
+    });
 
     // Collect deadlines
     const deadlines: any[] = [];
