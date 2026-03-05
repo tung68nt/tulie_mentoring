@@ -95,8 +95,6 @@ async function main() {
                 type: "one_on_one",
                 status: "active",
                 programCycleId: cycle.id,
-                startDate: new Date(),
-                endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
                 mentees: {
                     create: { menteeId: mentee.id }
                 }
