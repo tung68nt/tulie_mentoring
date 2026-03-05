@@ -46,16 +46,18 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
 
                     <div className="flex flex-wrap items-center justify-between gap-4 pt-1 pb-4 border-b border-border/40">
                         <div className="flex items-center gap-3">
-                            <Avatar className="w-7 h-7 rounded-md border border-border shadow-none">
-                                <AvatarImage src={page.author.avatar} />
-                                <AvatarFallback className="text-[10px] font-bold">{page.author.firstName[0]}</AvatarFallback>
+                            <Avatar className="w-8 h-8 rounded-full border-none shadow-none ring-1 ring-border/40">
+                                <AvatarImage src={page.author.avatar || page.author.image} />
+                                <AvatarFallback className="text-[10px] font-bold bg-muted/40">
+                                    {page.author.firstName?.[0] || page.author.email?.[0]}
+                                </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
-                                <span className="text-[11px] font-bold text-foreground leading-none">
+                                <span className="text-[12px] font-bold text-foreground leading-none">
                                     {page.author.firstName} {page.author.lastName}
                                 </span>
-                                <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 mt-0.5">
-                                    <Clock className="w-3 h-3 opacity-50" />
+                                <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 mt-1">
+                                    <Clock className="w-3 h-3 opacity-40" />
                                     Cập nhật {formatDate(new Date(page.updatedAt), "dd/MM/yyyy")}
                                 </span>
                             </div>

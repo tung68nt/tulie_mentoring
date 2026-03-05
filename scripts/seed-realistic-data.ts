@@ -24,6 +24,19 @@ async function main() {
         return;
     }
 
+    // Update Admin avatar
+    if (admin) {
+        await prisma.user.update({
+            where: { id: admin.id },
+            data: {
+                avatar: "/images/wiki/admin_avatar.png",
+                firstName: "Quản trị",
+                lastName: "Hệ thống"
+            }
+        });
+        console.log("Updated Admin profile with premium avatar.");
+    }
+
     console.log("Found user for seeding:", authorId);
 
     // 2. Realistic Wiki Pages
@@ -33,14 +46,27 @@ async function main() {
             category: "Resources",
             visibility: "public",
             content: JSON.stringify([
-                { type: "heading", props: { textColor: "default", backgroundColor: "default", textAlignment: "left", level: 1 }, content: [{ type: "text", text: "Chào mừng bạn đến với Mentoring", styles: {} }] },
+                { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Chào mừng bạn đến với Mentoring", styles: {} }] },
                 { type: "paragraph", content: [{ type: "text", text: "Dưới đây là các tài liệu quan trọng để bạn bắt đầu hành trình của mình.", styles: {} }] },
                 { type: "bulletListItem", content: [{ type: "text", text: "Sổ tay Mentee (PDF)", styles: { bold: true } }] },
                 { type: "bulletListItem", content: [{ type: "text", text: "Quy tắc ứng xử trong chương trình", styles: {} }] },
                 { type: "bulletListItem", content: [{ type: "text", text: "Hướng dẫn sử dụng hệ thống Tulie Mentoring", styles: {} }] },
                 { type: "paragraph", content: [{ type: "text", text: "Hãy đảm bảo bạn đã đọc kỹ các tài liệu này trước buổi gặp đầu tiên.", styles: {} }] }
             ]),
-            coverImage: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=2000"
+            coverImage: "/images/wiki/resources.png"
+        },
+        {
+            title: "Tulie Brand Guidelines 2026",
+            category: "Branding",
+            visibility: "public",
+            content: JSON.stringify([
+                { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Brand Guideline & Visual Identity", styles: {} }] },
+                { type: "paragraph", content: [{ type: "text", text: "Bộ quy chuẩn thương hiệu Tulie Mentoring giúp duy trì sự thống nhất trong giao tiếp và hình ảnh.", styles: {} }] },
+                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Core Colors", styles: {} }] },
+                { type: "bulletListItem", content: [{ type: "text", text: "Emerald Green: #10b981 - Tượng trưng cho sự tăng trưởng", styles: {} }] },
+                { type: "bulletListItem", content: [{ type: "text", text: "Soft Navy: #1e1b4b - Tượng trưng cho sự chuyên nghiệp", styles: {} }] }
+            ]),
+            coverImage: "/images/wiki/branding.png"
         },
         {
             title: "Marketing Knowledge Hub",
@@ -50,62 +76,31 @@ async function main() {
                 { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Lộ trình tự học Marketing cơ bản", styles: {} }] },
                 { type: "paragraph", content: [{ type: "text", text: "Tổng hợp các nguồn tài liệu uy tín về Marketing.", styles: {} }] },
                 { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "1. Brand Positioning", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Hiểu về định vị thương hiệu và cách tạo sự khác biệt trên thị trường. Bao gồm các mô hình STP (Segmentation, Targeting, Positioning), Brand Archetype, và Value Proposition Canvas.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "2. Digital Performance", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Tối ưu hóa chuyển đổi và các chỉ số đo lường. Google Analytics 4, Facebook Ads Manager, và A/B Testing methodology.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "3. Content Marketing", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Xây dựng chiến lược nội dung dài hạn: SEO Content, Social Media Calendar, Email Marketing funnel.", styles: {} }] }
+                { type: "paragraph", content: [{ type: "text", text: "Hiểu về định vị thương hiệu và cách tạo sự khác biệt trên thị trường.", styles: {} }] }
             ]),
-            coverImage: "https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&q=80&w=2000"
+            coverImage: "/images/wiki/marketing.png"
         },
         {
-            title: "Quy trình đánh giá kết quả Mentoring",
-            category: "Operations",
+            title: "Quy trình Onboarding cho Intern",
+            category: "Tài liệu công ty",
             visibility: "mentor_only",
             content: JSON.stringify([
-                { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Quy trình đánh giá kết quả Mentoring", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Tài liệu dành riêng cho Mentor để theo dõi tiến độ của Mentee theo từng giai đoạn.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Giai đoạn 1: Onboarding (Tuần 1-2)", styles: {} }] },
-                { type: "bulletListItem", content: [{ type: "text", text: "Mentee hoàn thành hồ sơ cá nhân đầy đủ", styles: {} }] },
-                { type: "bulletListItem", content: [{ type: "text", text: "Xác định mục tiêu SMART cho 3 tháng đầu", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Giai đoạn 2: Development (Tuần 3-8)", styles: {} }] },
-                { type: "bulletListItem", content: [{ type: "text", text: "Check-in hàng tuần với Mentor", styles: {} }] },
-                { type: "bulletListItem", content: [{ type: "text", text: "Hoàn thành ít nhất 80% task được giao", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Giai đoạn 3: Review (Tuần 9-12)", styles: {} }] },
-                { type: "bulletListItem", content: [{ type: "text", text: "Đánh giá theo quý (Quarterly Review)", styles: {} }] },
-                { type: "bulletListItem", content: [{ type: "text", text: "Feedback 360 từ Mentor và Mentee", styles: {} }] }
+                { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Quy trình Onboarding Intern", styles: {} }] },
+                { type: "paragraph", content: [{ type: "text", text: "Tài liệu hướng dẫn giúp các bạn Intern nhanh chóng làm quen với văn hóa công ty.", styles: {} }] },
+                { type: "bulletListItem", content: [{ type: "text", text: "Ngày 1: Giới thiệu team và công cụ", styles: {} }] },
+                { type: "bulletListItem", content: [{ type: "text", text: "Ngày 2-3: Training chuyên môn", styles: {} }] }
             ]),
-            coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=2000"
-        },
-        {
-            title: "Hướng dẫn sử dụng Notion cho Mentee",
-            category: "Resources",
-            visibility: "public",
-            content: JSON.stringify([
-                { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Hướng dẫn sử dụng Notion", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Notion là công cụ quản lý dự án và ghi chú mạnh mẽ. Dưới đây là cách sử dụng hiệu quả cho quá trình mentoring.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Tạo Workspace", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Tạo workspace riêng cho mentoring, phân chia theo: Goals, Meeting Notes, Resources, và Personal Journal.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Template gợi ý", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Sử dụng template Weekly Review để tổng kết tuần: What went well, What needs improvement, Action items.", styles: {} }] }
-            ]),
-            coverImage: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&q=80&w=2000"
+            coverImage: "/images/wiki/operations.png"
         },
         {
             title: "Kỹ năng thuyết trình hiệu quả",
             category: "Soft Skills",
             visibility: "public",
             content: JSON.stringify([
-                { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Kỹ năng thuyết trình hiệu quả", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Thuyết trình là kỹ năng quan trọng trong mọi ngành nghề. Dưới đây là các nguyên tắc cốt lõi.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Cấu trúc bài thuyết trình", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Áp dụng nguyên tắc 10-20-30: Tối đa 10 slides, thời lượng 20 phút, font chữ tối thiểu 30pt.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Storytelling", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Sử dụng cấu trúc Hero's Journey: Giới thiệu vấn đề, Xung đột, Giải pháp, Kết quả.", styles: {} }] },
-                { type: "heading", props: { level: 2 }, content: [{ type: "text", text: "Xử lý câu hỏi", styles: {} }] },
-                { type: "paragraph", content: [{ type: "text", text: "Luôn lắng nghe hết câu hỏi trước khi trả lời. Nếu không biết, hãy thành thật và hẹn trả lời sau.", styles: {} }] }
+                { type: "heading", props: { level: 1 }, content: [{ type: "text", text: "Kỹ năng thuyết trình chuyên dụng", styles: {} }] },
+                { type: "paragraph", content: [{ type: "text", text: "Áp dụng nguyên tắc 10-20-30: Tối đa 10 slides, thời lượng 20 phút, font chữ tối thiểu 30pt.", styles: {} }] }
             ]),
-            coverImage: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=2000"
+            coverImage: "/images/wiki/soft_skills.png"
         }
     ];
 
