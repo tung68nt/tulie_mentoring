@@ -222,7 +222,7 @@ export default async function ViewerDashboard() {
                                 <li>Xem báo cáo thống kê định kỳ</li>
                                 <li>Kiểm tra tình hình điểm danh (attendance)</li>
                                 <li>Theo dõi lộ trình mục tiêu (milestones)</li>
-                                <li>Đọc các bài thu hoạch, nhật ký sinh viên</li>
+                                <li>Đọc các bài thu hoạch, sổ tay sinh viên</li>
                             </ul>
                         </div>
                     </Card>

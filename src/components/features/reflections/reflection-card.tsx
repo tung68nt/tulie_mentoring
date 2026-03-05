@@ -25,7 +25,7 @@ export function ReflectionCard({ reflection, userRole }: ReflectionCardProps) {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleDelete = async () => {
-        if (!confirm("Bạn có chắc chắn muốn xóa nhật ký này?")) return;
+        if (!confirm("Bạn có chắc chắn muốn xóa bài thu hoạch này?")) return;
         setIsLoading(true);
         try {
             await deleteReflection(reflection.id);

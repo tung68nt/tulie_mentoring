@@ -61,7 +61,7 @@ export default async function PortfolioPage() {
         <div className="space-y-8 pb-10">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b pb-6">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-foreground">Nhật ký hành trình</h1>
+                    <h1 className="text-2xl font-semibold text-foreground">Hồ sơ phát triển</h1>
                     <p className="text-sm text-muted-foreground max-w-2xl">
                         Nơi ghi lại những bước tiến trong tư duy và sự trưởng thành qua từng mục tiêu.
                     </p>
@@ -72,7 +72,7 @@ export default async function PortfolioPage() {
                 <div className="lg:col-span-8 space-y-8">
                     <Tabs defaultValue="diary" className="w-full">
                         <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 h-11 border-none">
-                            <TabsTrigger value="diary" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary transition-all">Nhật ký tiến bộ</TabsTrigger>
+                            <TabsTrigger value="diary" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary transition-all">Trật tự thời gian</TabsTrigger>
                             <TabsTrigger value="assessment" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary transition-all">Đánh giá hiện tại</TabsTrigger>
                             <TabsTrigger value="history" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary transition-all">Lịch sử thay đổi</TabsTrigger>
                         </TabsList>

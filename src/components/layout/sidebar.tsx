@@ -156,9 +156,9 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             },
             {
                 items: [
-                    { id: "daily", label: "Nhật ký hằng ngày", icon: ListTodo, href: "/daily" },
-                    { id: "reflections", label: "Thu hoạch & Nhật ký", icon: PenLine, href: "/reflections" },
-                    { id: "portfolio", label: "Nhật ký hành trình", icon: FolderOpen, href: "/portfolio" },
+                    { id: "daily", label: "Sổ tay hằng ngày", icon: ListTodo, href: "/daily" },
+                    { id: "reflections", label: "Thu hoạch Mentoring", icon: PenLine, href: "/reflections" },
+                    { id: "portfolio", label: "Hồ sơ phát triển", icon: FolderOpen, href: "/portfolio" },
                 ],
             },
             {

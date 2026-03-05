@@ -36,7 +36,7 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
         { id: "overview", label: "Tổng quan", icon: <UserIcon className="w-4 h-4" /> },
         { id: "meetings", label: "Cuộc họp", icon: <Calendar className="w-4 h-4" /> },
         { id: "goals", label: "Mục tiêu", icon: <Target className="w-4 h-4" /> },
-        { id: "reflections", label: "Nhật ký thu hoạch", icon: <History className="w-4 h-4" /> },
+        { id: "reflections", label: "Bài thu hoạch", icon: <History className="w-4 h-4" /> },
     ];
 
     const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -268,10 +268,10 @@ export function MentorshipDetailView({ mentorship, userRole }: MentorshipDetailP
 
                     {activeTab === "reflections" && (
                         <Card>
-                            <h3 className="text-lg font-semibold text-foreground mb-6">Nhật ký thu hoạch từ Mentee</h3>
+                            <h3 className="text-lg font-semibold text-foreground mb-6">Bài thu hoạch từ Mentee</h3>
                             <div className="space-y-4">
                                 {mentorship.sessionReflections.length === 0 ? (
-                                    <p className="text-sm text-muted-foreground text-center py-8">Chưa có nhật ký thu hoạch nào.</p>
+                                    <p className="text-sm text-muted-foreground text-center py-8">Chưa có bài thu hoạch nào.</p>
                                 ) : (
                                     mentorship.sessionReflections.map((ref: any) => (
                                         <div key={ref.id} className="p-4 rounded-xl border border-border/50 space-y-3">

@@ -20,7 +20,7 @@ const sections = [
             },
             {
                 term: "Tiến độ rèn luyện",
-                desc: "Lưới 10 ngày (hoặc hơn) thể hiện sự kỷ luật của bạn. Các ô xanh đậm là những ngày bạn đã ghi nhật ký đầy đủ."
+                desc: "Lưới 10 ngày (hoặc hơn) thể hiện sự kỷ luật của bạn. Các ô xanh đậm là những ngày bạn đã cập nhật sổ tay đầy đủ."
             },
             {
                 term: "Widget Mục tiêu",
@@ -28,7 +28,7 @@ const sections = [
             },
             {
                 term: "Thành phần thanh Menu",
-                desc: "Từ trên xuống: Dashboard, Wiki kiến thức, Lịch hoạt động, Danh sách công việc, Nhật ký hành trình, và Hỗ trợ."
+                desc: "Từ trên xuống: Dashboard, Wiki kiến thức, Lịch hoạt động, Danh sách công việc, Hồ sơ phát triển, và Hỗ trợ."
             }
         ]
     },
@@ -77,7 +77,7 @@ const sections = [
         ]
     },
     {
-        title: "Nhật ký & Thu hoạch",
+        title: "Sổ tay & Thu hoạch",
         icon: PenLine,
         content: [
             {
@@ -89,7 +89,7 @@ const sections = [
                 desc: "Xác định việc quan trọng nhất cần làm và đúc kết lại ít nhất một kinh nghiệm mới sau mỗi ngày làm việc."
             },
             {
-                term: "Nhật ký tự do",
+                term: "Ghi chú tự do",
                 desc: "Viết thoải mái suy nghĩ của bạn (Free-writing) để giải tỏa căng thẳng và khơi nguồn sáng tạo."
             },
             {

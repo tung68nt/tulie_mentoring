@@ -108,7 +108,7 @@ export function DailyTracker() {
             }
         } catch (error) {
             console.error(error);
-            toast.error("Không thể tải dữ liệu nhật ký.");
+            toast.error("Không thể tải dữ liệu sổ tay.");
         } finally {
             setIsLoading(false);
         }
@@ -184,9 +184,9 @@ export function DailyTracker() {
         try {
             await updateDailyDiary(dateStr, payloadStringified, diaryMood);
             await loadData();
-            toast.success("Đã lưu nhật ký.");
+            toast.success("Đã lưu ghi chép.");
         } catch (error) {
-            toast.error("Lỗi khi lưu nhật ký.");
+            toast.error("Lỗi khi lưu ghi chép.");
         } finally {
             setIsSavingDiary(false);
         }
@@ -309,7 +309,7 @@ export function DailyTracker() {
                         <CardHeader className="pb-3 border-b border-border/50 bg-muted/10">
                             <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
                                 <div>
-                                    <CardTitle className="text-lg">Nhật ký & Bài học</CardTitle>
+                                    <CardTitle className="text-lg">Ghi chép & Bài học</CardTitle>
                                     <CardDescription>Viết daily routine theo chuẩn lý thuyết giúp bạn phát triển bản thân</CardDescription>
                                 </div>
 
@@ -381,7 +381,7 @@ export function DailyTracker() {
 
                                     <div className="space-y-2.5 flex-1 flex flex-col min-h-[120px]">
                                         <div className="flex justify-between items-center text-sm font-medium">
-                                            <span>📝 Nhật ký tự do (Free-writing)</span>
+                                            <span>📝 Ghi chú tự do (Free-writing)</span>
                                             <span className="text-xs text-muted-foreground font-normal">Tâm tư, kế hoạch, ý tưởng sáng tạo...</span>
                                         </div>
                                         <Textarea
@@ -407,7 +407,7 @@ export function DailyTracker() {
                                             ) : (
                                                 <span className="flex items-center gap-2">
                                                     <Save className="w-5 h-5" />
-                                                    Lưu nhật ký
+                                                    Lưu ghi chép
                                                 </span>
                                             )}
                                         </Button>

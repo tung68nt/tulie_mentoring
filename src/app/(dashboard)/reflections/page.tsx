@@ -51,7 +51,7 @@ export default async function ReflectionsPage() {
                                 </TabsTrigger>
                                 <TabsTrigger value="history" className="rounded-md px-6 py-2.5 data-[state=active]:bg-background shadow-none transition-all">
                                     <History className="w-4 h-4 mr-2" />
-                                    <span className="font-medium">Lịch sử nhật ký</span>
+                                    <span className="font-medium">Lịch sử thu hoạch</span>
                                 </TabsTrigger>
                             </TabsList>
 
@@ -75,7 +75,7 @@ export default async function ReflectionsPage() {
                                         </div>
                                         <div className="space-y-1">
                                             <p className="text-sm font-semibold text-foreground">Không có buổi học mới nào cần viết thu hoạch</p>
-                                            <p className="text-[13px] text-muted-foreground">Hãy tham gia các buổi mentoring và điểm danh để viết nhật ký tại đây.</p>
+                                            <p className="text-[13px] text-muted-foreground">Hãy tham gia các buổi mentoring và điểm danh để viết bài thu hoạch tại đây.</p>
                                         </div>
                                     </Card>
                                 )}
@@ -89,7 +89,7 @@ export default async function ReflectionsPage() {
                                         ))
                                     ) : (
                                         <div className="col-span-full py-20 text-center">
-                                            <p className="text-sm text-muted-foreground">Bạn chưa có nhật ký thu hoạch nào.</p>
+                                            <p className="text-sm text-muted-foreground">Bạn chưa có bài thu hoạch nào.</p>
                                         </div>
                                     )}
                                 </div>

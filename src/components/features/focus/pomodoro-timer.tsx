@@ -557,7 +557,7 @@ export function PomodoroTimer() {
                 <div className="md:col-span-4 h-full flex flex-col">
                     <div className="flex-1 p-5 rounded-2xl border border-border/40 bg-card flex flex-col space-y-4 min-h-[480px]">
                         <div className="flex items-center justify-between">
-                            <p className="text-[10px] font-bold text-muted-foreground/40">Nhật ký tập trung</p>
+                            <p className="text-[10px] font-bold text-muted-foreground/40">Ghi chú tập trung</p>
                             {notes.trim().length > 0 && (
                                 <span className="text-[9px] font-bold text-emerald-500 px-2 py-0.5 bg-emerald-500/10 rounded-full">Synced</span>
                             )}

@@ -36,11 +36,11 @@ export function DailyDiary({ startDate, endDate, diaryMap }: DailyDiaryProps) {
         setIsSaving(true);
         try {
             await saveDailyLog(editingDate, content);
-            toast.success("Nhật ký đã được lưu");
+            toast.success("Ghi chép đã được lưu");
             setEditingDate(null);
             setContent("");
         } catch (error) {
-            toast.error("Không thể lưu nhật ký");
+            toast.error("Không thể lưu ghi chép");
         } finally {
             setIsSaving(false);
         }
@@ -51,7 +51,7 @@ export function DailyDiary({ startDate, endDate, diaryMap }: DailyDiaryProps) {
             <div className="p-6 border-b border-border/40 bg-muted/20">
                 <div className="flex items-center gap-2">
                     <BookText className="w-4 h-4 text-purple-500" />
-                    <h3 className="text-sm font-semibold text-foreground">Nhật ký hành trình</h3>
+                    <h3 className="text-sm font-semibold text-foreground">Sổ tay hằng ngày</h3>
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-1">
                     Ghi lại những cập nhật và bài học của bạn mỗi ngày trong chương trình.
@@ -121,7 +121,7 @@ export function DailyDiary({ startDate, endDate, diaryMap }: DailyDiaryProps) {
                                             className="h-8 text-xs bg-purple-600 hover:bg-purple-700 text-white"
                                         >
                                             <Save className="w-3.5 h-3.5 mr-1.5" />
-                                            {isSaving ? "Đang lưu..." : "Lưu nhật ký"}
+                                            {isSaving ? "Đang lưu..." : "Lưu ghi chép"}
                                         </Button>
                                     </div>
                                 </div>

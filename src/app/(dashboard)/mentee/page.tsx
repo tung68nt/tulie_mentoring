@@ -151,7 +151,7 @@ export default async function MenteeDashboard() {
                                     </p>
                                 </div>
                                 <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground no-uppercase h-8 text-xs">
-                                    <Link href="/daily">Nhật ký hằng ngày</Link>
+                                    <Link href="/daily">Sổ tay hằng ngày</Link>
                                 </Button>
                             </div>
                             <ProgramGrid

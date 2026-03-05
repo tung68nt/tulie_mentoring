@@ -253,7 +253,7 @@ export async function saveDailyLog(dateStr: string, content: string) {
             await prisma.portfolioEntry.create({
                 data: {
                     portfolioId: portfolio.id,
-                    title: `Nhật ký ngày ${format(date, "dd/MM/yyyy")}`,
+                    title: `Sổ tay ngày ${format(date, "dd/MM/yyyy")}`,
                     content,
                     type: "daily_log",
                     createdAt: date // Set the date manually for the entry

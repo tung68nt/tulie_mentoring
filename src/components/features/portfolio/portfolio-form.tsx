@@ -57,7 +57,7 @@ function EntryForm({ isPending, startTransition }: any) {
             </div>
             <div className="space-y-2">
                 <Textarea
-                    placeholder="Nội dung nhật ký tiến bộ..."
+                    placeholder="Nội dung ghi chú mới..."
                     value={content}
                     onChange={e => setContent(e.target.value)}
                     rows={4}
@@ -66,7 +66,7 @@ function EntryForm({ isPending, startTransition }: any) {
             </div>
             <div className="flex justify-end">
                 <Button type="submit" disabled={isPending || !title.trim()} size="sm" className="rounded-lg px-6">
-                    {isPending ? "Đang lưu..." : "Lưu vào nhật ký"}
+                    {isPending ? "Đang lưu..." : "Lưu ghi chú"}
                 </Button>
             </div>
         </form>
