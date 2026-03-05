@@ -16,7 +16,7 @@ export function ShareWikiButton({ slug }: ShareWikiButtonProps) {
         try {
             // Check if origin is available (it always is in modern browsers except some SSG edge cases)
             const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-            const url = `${origin}/wiki/${slug}`;
+            const url = `${origin}/share/wiki/${slug}`;
 
             await navigator.clipboard.writeText(url);
             setCopied(true);
