@@ -1,0 +1,710 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  email              String?             @unique
+  passwordHash       String?
+  firstName          String?
+  lastName           String?
+  avatar             String?
+  phone              String?
+  bio                String?
+  role               String              @default("mentee") // admin, program_manager, facilitator, mentor, mentee, viewer
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  emailVerified      DateTime?
+  image              String?
+  accounts           Account[]
+  activityLogs       ActivityLog[]
+  attendances        Attendance[]
+  availabilities     Availability[]
+  dailyDiaries       DailyDiary[]
+  feedbackGiven      Feedback[]          @relation("FeedbackFrom")
+  feedbackReceived   Feedback[]          @relation("FeedbackTo")
+  goalsCreated       Goal[]              @relation("GoalCreator")
+  habits             Habit[]
+  meetingsCreated    Meeting[]           @relation("MeetingCreator")
+  minutesCreated     MeetingMinutes[]    @relation("MinutesAuthor")
+  menteeProfile      MenteeProfile?
+  mentorProfile      MentorProfile?
+  mentorships        Mentorship[]        @relation("MentorUser")
+  menteeships        MentorshipMentee[]
+  notifications      Notification[]
+  portfolios         Portfolio?
+  resourcesUploaded  Resource[]
+  sessionReflections SessionReflection[]
+  slides             Slide[]             @relation("SlideCreator")
+  assignedTickets    SupportTicket[]     @relation("TicketAssignee")
+  ticketsCreated     SupportTicket[]     @relation("TicketCreator")
+  ticketComments     TicketComment[]
+  todoItems          TodoItem[]
+  whiteboards        Whiteboard[]        @relation("WhiteboardCreator")
+  wikiPages          WikiPage[]
+
+  // New relations
+  facilitatorAssignments FacilitatorAssignment[] @relation("FacilitatorUser")
+  submittedEvaluations   EvaluationResponse[]    @relation("SubmittedEvaluations")
+  menteeEvaluations      EvaluationResponse[]    @relation("TargetMentee")
+  rankings               MenteeRanking[]
+
+  @@index([role])
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model MentorProfile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  company    String?
+  jobTitle   String?
+  expertise  String?
+  experience String?
+  linkedIn   String?
+  maxMentees Int      @default(6)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MenteeProfile {
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  studentId             String?
+  major                 String?
+  year                  Int?
+  careerGoals           String?
+  skills                String?
+  strengths             String?
+  weaknesses            String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  background            String?
+  currentChallenges     String?
+  endGoals              String?
+  expectations          String?
+  experience            String?
+  isOnboardingComplete  Boolean   @default(false)
+  onboardingCompletedAt DateTime?
+  personalNotes         String?
+  startupIdeas          String?
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProgramCycle {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  status      String       @default("active")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  mentorships Mentorship[]
+  facilitatorAssignments FacilitatorAssignment[]
+  menteeRankings         MenteeRanking[]
+}
+
+model Mentorship {
+  id             String             @id @default(cuid())
+  mentorId       String
+  type           String             @default("one_on_one")
+  status         String             @default("pending")
+  programCycleId String
+  maxMentees     Int                @default(1)
+  notes          String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  feedbacks      Feedback[]
+  goals          Goal[]
+  meetings       Meeting[]
+  mentor         User               @relation("MentorUser", fields: [mentorId], references: [id], onDelete: Cascade)
+  programCycle   ProgramCycle       @relation(fields: [programCycleId], references: [id])
+  mentees        MentorshipMentee[]
+
+  wikiPages      WikiPage[]
+  whiteboards    Whiteboard[]
+  slides         Slide[]
+  facilitatorAssignments FacilitatorAssignment[]
+
+
+  @@index([mentorId])
+  @@index([programCycleId])
+  @@index([status])
+}
+
+model MentorshipMentee {
+  id           String     @id @default(cuid())
+  mentorshipId String
+  menteeId     String
+  joinedAt     DateTime   @default(now())
+  status       String     @default("active")
+  mentee       User       @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+
+  @@unique([mentorshipId, menteeId])
+  @@index([menteeId])
+}
+
+model Meeting {
+  id                 String              @id @default(cuid())
+  mentorshipId       String
+  creatorId          String
+  title              String
+  description        String?
+  type               String              @default("offline")
+  meetingType        String              @default("session")
+  scheduledAt        DateTime
+  duration           Int                 @default(60)
+  location           String?
+  meetingUrl         String?
+  status             String              @default("scheduled")
+  qrToken            String?             @unique
+  qrExpiresAt        DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  checkInCode        String?             @unique
+  attendances        Attendance[]
+  creator            User                @relation("MeetingCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship         Mentorship          @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  minutes            MeetingMinutes[]
+  sessionReflections SessionReflection[]
+
+  @@index([mentorshipId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model Attendance {
+  id           String    @id @default(cuid())
+  meetingId    String
+  userId       String
+  checkInTime  DateTime?
+  checkInLat   Float?
+  checkInLng   Float?
+  deviceHash   String?
+  status       String    @default("absent")
+  verifiedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  checkOutTime DateTime?
+  meeting      Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, userId])
+  @@index([userId])
+}
+
+model MeetingMinutes {
+  id          String    @id @default(cuid())
+  meetingId   String
+  authorId    String
+  agenda      String?
+  keyPoints   String?
+  actionItems String?
+  outcome     String?
+  attachments String?
+  status      String    @default("draft")
+  submittedAt DateTime?
+  approvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  author      User      @relation("MinutesAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  meeting     Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@index([meetingId])
+}
+
+model Goal {
+  id              String         @id @default(cuid())
+  mentorshipId    String
+  creatorId       String
+  title           String
+  description     String?
+  category        String         @default("skill")
+  targetValue     Int?
+  currentValue    Int            @default(0)
+  unit            String?
+  status          String         @default("in_progress")
+  priority        String         @default("medium")
+  dueDate         DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  mentorConfirmed Boolean        @default(false)
+  creator         User           @relation("GoalCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship      Mentorship     @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  progressNotes   ProgressNote[]
+  subGoals        SubGoal[]
+
+  @@index([mentorshipId])
+  @@index([status])
+}
+
+model SubGoal {
+  id           String   @id @default(cuid())
+  goalId       String
+  title        String
+  weight       Int      @default(1)
+  currentValue Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  goal         Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+}
+
+model ProgressNote {
+  id        String   @id @default(cuid())
+  goalId    String
+  note      String
+  value     Int?
+  createdAt DateTime @default(now())
+  goal      Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+}
+
+model Feedback {
+  id            String     @id @default(cuid())
+  mentorshipId  String
+  fromUserId    String
+  toUserId      String
+  type          String     @default("session")
+  rating        Int?
+  communication Int?
+  engagement    Int?
+  content       String?
+  strengths     String?
+  improvements  String?
+  isAnonymous   Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  fromUser      User       @relation("FeedbackFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  mentorship    Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  toUser        User       @relation("FeedbackTo", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([mentorshipId])
+  @@index([fromUserId])
+  @@index([toUserId])
+}
+
+model Resource {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  type         String   @default("file")
+  fileUrl      String?
+  linkUrl      String?
+  fileName     String?
+  fileSize     Int?
+  mimeType     String?
+  category     String?
+  tags         String?
+  visibility   String   @default("public")
+  uploadedById String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@index([category])
+  @@index([uploadedById])
+}
+
+model Portfolio {
+  id                 String              @id @default(cuid())
+  menteeId           String              @unique
+  personalityMbti    String?
+  personalityDisc    String?
+  personalityHolland String?
+  competencies       String?
+  shortTermGoals     String?
+  longTermGoals      String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  challenges         String?
+  personalNotes      String?
+  startupIdeas       String?
+  strengths          String?
+  weaknesses         String?
+  mentee             User                @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  entries            PortfolioEntry[]
+  snapshots          PortfolioSnapshot[]
+
+  @@index([menteeId])
+}
+
+model PortfolioEntry {
+  id          String    @id @default(cuid())
+  portfolioId String
+  title       String
+  content     String
+  type        String    @default("reflection")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+model PortfolioSnapshot {
+  id          String    @id @default(cuid())
+  portfolioId String
+  title       String
+  data        String
+  createdAt   DateTime  @default(now())
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+model Availability {
+  id        String   @id @default(cuid())
+  userId    String
+  dayOfWeek Int
+  startTime String
+  endTime   String
+  duration  Int      @default(60)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String    @default("info")
+  link      String?
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+model SessionReflection {
+  id              String     @id @default(cuid())
+  meetingId       String
+  menteeId        String
+  content         String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  mentorConfirmed Boolean    @default(false)
+  meeting         Meeting    @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  mentee          User       @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  todoItems       TodoItem[]
+
+  @@unique([meetingId, menteeId])
+  @@index([menteeId])
+}
+
+model TodoItem {
+  id                  String             @id @default(cuid())
+  reflectionId        String?
+  menteeId            String
+  title               String
+  status              String             @default("todo")
+  priority            String             @default("medium")
+  dueDate             DateTime?
+  startDate           DateTime?
+  column              String             @default("todo")
+  labels              String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  attachments         String?
+  comments            String?
+  description         String?
+  checklist           String?
+  completedPercentage Int                @default(0)
+  actualCompletedAt   DateTime?
+  actualStartDate     DateTime?
+  mentee              User               @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  reflection          SessionReflection? @relation(fields: [reflectionId], references: [id])
+
+  @@index([menteeId])
+  @@index([reflectionId])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityId   String?
+  entityType String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model SupportTicket {
+  id           String          @id @default(cuid())
+  title        String
+  description  String
+  status       String          @default("open")
+  priority     String          @default("medium")
+  userId       String
+  assignedToId String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  category     String          @default("system")
+  assignedTo   User?           @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  user         User            @relation("TicketCreator", fields: [userId], references: [id], onDelete: Cascade)
+  comments     TicketComment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model TicketComment {
+  id        String        @id @default(cuid())
+  ticketId  String
+  userId    String
+  content   String
+  createdAt DateTime      @default(now())
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+}
+
+model WikiPage {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  content    String?  @db.Text
+  category   String?
+  visibility String   @default("public")
+  authorId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  coverImage String?
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id])
+  mentorshipId String?
+
+  @@index([authorId])
+  @@index([category])
+  @@index([mentorshipId])
+}
+
+model Whiteboard {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  thumbnail   String?
+  status      String     @default("private")
+  creatorId   String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  artboards   Artboard[]
+  creator     User       @relation("WhiteboardCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id])
+  mentorshipId String?
+
+  @@index([creatorId])
+  @@index([status])
+  @@index([mentorshipId])
+}
+
+model Artboard {
+  id           String     @id @default(cuid())
+  whiteboardId String
+  order        Int        @default(0)
+  name         String?
+  elements     Json?
+  appState     Json?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  whiteboard   Whiteboard @relation(fields: [whiteboardId], references: [id], onDelete: Cascade)
+
+  @@index([whiteboardId])
+  @@index([order])
+}
+
+model Slide {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  content     String?
+  theme       String   @default("black")
+  status      String   @default("private")
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  creator     User     @relation("SlideCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id])
+  mentorshipId String?
+
+  @@index([creatorId])
+  @@index([mentorshipId])
+}
+
+model Habit {
+  id          String     @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  frequency   String     @default("daily")
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs        HabitLog[]
+
+  @@index([userId])
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  date      DateTime @db.Date
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+  @@index([habitId])
+}
+
+model DailyDiary {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date
+  content   String
+  mood      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model FacilitatorAssignment {
+  id               String       @id @default(cuid())
+  facilitatorId    String
+  programCycleId   String?
+  mentorshipId     String?
+  assignedAt       DateTime     @default(now())
+  facilitator      User         @relation("FacilitatorUser", fields: [facilitatorId], references: [id], onDelete: Cascade)
+  programCycle     ProgramCycle? @relation(fields: [programCycleId], references: [id], onDelete: Cascade)
+  mentorship       Mentorship?  @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+
+  @@unique([facilitatorId, programCycleId, mentorshipId])
+  @@index([facilitatorId])
+  @@index([programCycleId])
+  @@index([mentorshipId])
+}
+
+model EvaluationForm {
+  id          String               @id @default(cuid())
+  title       String
+  description String?
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  questions   EvaluationQuestion[]
+  responses   EvaluationResponse[]
+}
+
+model EvaluationQuestion {
+  id          String   @id @default(cuid())
+  formId      String
+  type        String   // TEXT, RATING, MULTIPLE_CHOICE
+  label       String
+  options     String?  // JSON string for choices
+  order       Int      @default(0)
+  weight      Float    @default(1.0)
+  form        EvaluationForm @relation(fields: [formId], references: [id], onDelete: Cascade)
+  answers     QuestionAnswer[]
+
+  @@index([formId])
+}
+
+model EvaluationResponse {
+  id          String             @id @default(cuid())
+  formId      String
+  submitterId String
+  targetMenteeId String?         // Mentee being evaluated
+  createdAt   DateTime           @default(now())
+  form        EvaluationForm     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  submitter   User               @relation("SubmittedEvaluations", fields: [submitterId], references: [id], onDelete: Cascade)
+  targetMentee User?             @relation("TargetMentee", fields: [targetMenteeId], references: [id], onDelete: SetNull)
+  answers     QuestionAnswer[]
+
+  @@index([formId])
+  @@index([submitterId])
+  @@index([targetMenteeId])
+}
+
+model QuestionAnswer {
+  id          String             @id @default(cuid())
+  responseId  String
+  questionId  String
+  value       String             // The answer content
+  score       Float?             // Calculated score for this answer
+  response    EvaluationResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question    EvaluationQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([responseId])
+  @@index([questionId])
+}
+
+model MenteeRanking {
+  id             String       @id @default(cuid())
+  menteeId       String
+  programCycleId String
+  totalScore     Float
+  rank           Int
+  metrics        Json         // Breakdown: {attendance: 0.9, goals: 0.8, etc}
+  updatedAt      DateTime     @updatedAt
+  mentee         User         @relation(fields: [menteeId], references: [id], onDelete: Cascade)
+  programCycle   ProgramCycle @relation(fields: [programCycleId], references: [id], onDelete: Cascade)
+
+  @@unique([menteeId, programCycleId])
+  @@index([menteeId])
+  @@index([programCycleId])
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
