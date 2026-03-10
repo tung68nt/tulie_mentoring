@@ -1,0 +1,273 @@
+"use server";
+
+import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
+import { format } from "date-fns";
+import { revalidatePath } from "next/cache";
+
+export async function getMenteeStats(specificUserId?: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const role = (session.user as any).role;
+    const isAdmin = role === "admin" || role === "viewer";
+
+    // If specificUserId is provided, use it (only if authorized or if it's the current user)
+    // If not, use session.user.id for mentees, or global stats for admin/viewer
+    const targetUserId = specificUserId || session.user.id;
+
+    if (!targetUserId && !isAdmin) {
+        return {
+            attendanceRate: 0,
+            avgGoalProgress: 0,
+            taskCompletionRate: 0,
+            totalTasks: 0,
+            completedTasks: 0,
+            presentMeetings: 0,
+            totalMeetings: 0,
+            recentActivitiesCount: 0
+        };
+    }
+
+    // Authorization check: only admin/viewer or the owner can see specific stats
+    if (specificUserId && !isAdmin && specificUserId !== session.user.id) {
+        throw new Error("Unauthorized access to specific user stats");
+    }
+
+    // Determine filter based on whether we want global stats or specific user stats
+    const userFilter = (isAdmin && !specificUserId) ? {} : { userId: targetUserId! };
+    const menteeFilter = (isAdmin && !specificUserId) ? {} : { menteeId: targetUserId! };
+    const goalFilter = (isAdmin && !specificUserId) ? {} : {
+        mentorship: {
+            mentees: {
+                some: { menteeId: targetUserId! }
+            }
+        }
+    };
+
+    // 1. Attendance Rate
+    const totalMeetings = await prisma.attendance.count({
+        where: {
+            ...userFilter,
+            meeting: { status: "completed" }
+        }
+    });
+    const presentMeetings = await prisma.attendance.count({
+        where: {
+            ...userFilter,
+            status: "present",
+            meeting: { status: "completed" }
+        }
+    });
+    const attendanceRate = totalMeetings > 0 ? Math.round((presentMeetings / totalMeetings) * 100) : 0;
+
+    // 2. Goal Progress
+    const goals = await prisma.goal.findMany({
+        where: goalFilter
+    });
+    const avgGoalProgress = goals.length > 0
+        ? Math.round(goals.reduce((acc, goal) => acc + (goal.currentValue || 0), 0) / goals.length)
+        : 0;
+
+    // 3. Tasks Completion
+    const totalTasks = await prisma.todoItem.count({
+        where: menteeFilter
+    });
+    const completedTasks = await prisma.todoItem.count({
+        where: { ...menteeFilter, status: "done" }
+    });
+    const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+    // 4. Activity Trends (count activities in last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const recentActivitiesCount = await prisma.activityLog.count({
+        where: {
+            ...userFilter,
+            createdAt: { gte: sevenDaysAgo }
+        }
+    });
+
+    return {
+        attendanceRate,
+        avgGoalProgress,
+        taskCompletionRate,
+        totalTasks,
+        completedTasks,
+        presentMeetings,
+        totalMeetings,
+        recentActivitiesCount
+    };
+}
+
+export async function getProgramProgress(specificUserId?: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const userId = session.user.id!;
+    const role = (session.user as any).role;
+    const isAdmin = role === "admin" || role === "viewer" || role === "program_manager";
+    const targetUserId = specificUserId || userId;
+
+    let mentorship = null;
+    let cycle = null;
+
+    if (specificUserId) {
+        // Find specific mentorship for the target mentee
+        mentorship = await prisma.mentorship.findFirst({
+            where: {
+                mentees: { some: { menteeId: specificUserId } },
+                status: "active"
+            },
+            include: {
+                programCycle: true
+            }
+        });
+        if (mentorship) cycle = mentorship.programCycle;
+    } else if (isAdmin) {
+        // For admin global view, find the first active cycle
+        cycle = await prisma.programCycle.findFirst({
+            where: { status: "active" },
+            orderBy: { startDate: "desc" }
+        });
+    } else {
+        // For mentee view of themselves
+        mentorship = await prisma.mentorship.findFirst({
+            where: {
+                mentees: { some: { menteeId: userId } },
+                status: "active"
+            },
+            include: {
+                programCycle: true
+            }
+        });
+        if (mentorship) cycle = mentorship.programCycle;
+    }
+
+    if (!cycle) return null;
+
+    const startDate = cycle.startDate;
+    const endDate = cycle.endDate;
+
+    // Fetch activity logs for the program period
+    const activityFilter = (isAdmin && !specificUserId) ? {} : { userId: targetUserId };
+    const activities = await prisma.activityLog.findMany({
+        where: {
+            ...activityFilter,
+            createdAt: {
+                gte: startDate,
+                lte: endDate
+            }
+        },
+        select: {
+            createdAt: true
+        }
+    });
+
+    // Fetch daily diary entries from portfolio (may not exist for admin)
+    let portfolio = null;
+    try {
+        portfolio = await prisma.portfolio.findUnique({
+            where: { menteeId: targetUserId },
+            include: {
+                entries: {
+                    where: { type: "daily_log" },
+                    orderBy: { createdAt: "asc" }
+                }
+            }
+        });
+    } catch (e) {
+        // Portfolio may not exist for this user, that's fine
+    }
+
+    // Group activities by day
+    const activityMap: Record<string, number> = {};
+    activities.forEach(log => {
+        const dateStr = log.createdAt.toISOString().split("T")[0];
+        activityMap[dateStr] = (activityMap[dateStr] || 0) + 1;
+    });
+
+    // Group diary entries by day
+    const diaryMap: Record<string, any> = {};
+    portfolio?.entries?.forEach((entry: any) => {
+        const dateStr = entry.createdAt.toISOString().split("T")[0];
+        diaryMap[dateStr] = {
+            id: entry.id,
+            content: entry.content,
+            title: entry.title
+        };
+    });
+
+    return {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        activityMap,
+        diaryMap
+    };
+}
+
+export async function saveDailyLog(dateStr: string, content: string) {
+    try {
+        const session = await auth();
+        if (!session?.user) throw new Error("Unauthorized");
+
+        const userId = session.user.id!;
+
+        // Use UTC date properly to avoid local timezone offset shifts
+        const [year, month, day] = dateStr.split("-").map(Number);
+        const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+
+        // Find or create portfolio for user safely
+        let portfolio = await prisma.portfolio.findUnique({
+            where: { menteeId: userId }
+        });
+
+        if (!portfolio) {
+            portfolio = await prisma.portfolio.create({
+                data: { menteeId: userId }
+            });
+        }
+
+        // Find if there's already an entry for this exact day 
+        const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+        const endDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+
+        const existingEntry = await prisma.portfolioEntry.findFirst({
+            where: {
+                portfolioId: portfolio.id,
+                type: "daily_log",
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                }
+            }
+        });
+
+        if (existingEntry) {
+            await prisma.portfolioEntry.update({
+                where: { id: existingEntry.id },
+                data: { content }
+            });
+        } else {
+            await prisma.portfolioEntry.create({
+                data: {
+                    portfolioId: portfolio.id,
+                    title: `Sổ tay ngày ${format(date, "dd/MM/yyyy")}`,
+                    content,
+                    type: "daily_log",
+                    createdAt: date // Set the date manually for the entry
+                }
+            });
+        }
+
+        revalidatePath("/reports");
+        revalidatePath("/portfolio");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Failed to save daily log:", error);
+        throw new Error(error.message || "Failed to save daily log");
+    }
+}
+
+
