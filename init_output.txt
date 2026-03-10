@@ -1,0 +1,6 @@
+- Preflight checks.
+✖ Preflight checks.
+
+A components.json file already exists at /Users/tungnguyen/Documents/code/mentoring/webapp.
+To start over, remove the components.json file and run init again.
+
