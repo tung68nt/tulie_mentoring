@@ -732,6 +732,7 @@ model Post {
   visibility     String           @default("program") // public, program, pair
   programCycleId String?
   mentorshipId   String?
+  views          Int              @default(0)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   
