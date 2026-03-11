@@ -30,10 +30,16 @@ const ticketSchema = z.object({
     title: z.string().min(5, "Tiêu đề phải ít nhất 5 ký tự"),
     description: z.string().min(10, "Mô tả phải ít nhất 10 ký tự"),
     priority: z.enum(["low", "medium", "high"]),
-    category: z.enum(["system", "mentor"]),
+    category: z.enum(["system", "mentor", "admin_help"]),
 });
 
-export function CreateTicketModal() {
+const categoryLabels: Record<string, string> = {
+    system: "Hỗ trợ hệ thống (Kỹ thuật/Lỗi)",
+    mentor: "Gửi cho Mentor (Hỗ trợ học tập)",
+    admin_help: "Gửi cho Admin/Manager",
+};
+
+export function CreateTicketModal({ userRole }: { userRole?: string }) {
     const [open, setOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,9 +49,10 @@ export function CreateTicketModal() {
             title: "",
             description: "",
             priority: "medium",
-            category: "system",
+            category: userRole === "mentee" ? "system" : "admin_help",
         },
     });
+
 
     async function onSubmit(values: z.infer<typeof ticketSchema>) {
         setIsSubmitting(true);
@@ -94,14 +101,20 @@ export function CreateTicketModal() {
                                 <Label className="text-xs font-semibold text-muted-foreground ml-0.5">Loại hỗ trợ</Label>
                                 <Select
                                     onValueChange={(val) => form.setValue("category", val as any)}
-                                    defaultValue={form.getValues("category")}
+                                    value={form.watch("category")}
                                 >
                                     <SelectTrigger className="rounded-md border-border/40 h-10 shadow-none">
                                         <SelectValue placeholder="Chọn loại hỗ trợ" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-md border-border/40 shadow-none">
-                                        <SelectItem value="system">Hỗ trợ hệ thống (Kỹ thuật/Lỗi)</SelectItem>
-                                        <SelectItem value="mentor">Giao cho Admin (Mục khác)</SelectItem>
+                                        {userRole === "mentee" ? (
+                                            <>
+                                                <SelectItem value="system">{categoryLabels.system}</SelectItem>
+                                                <SelectItem value="mentor">{categoryLabels.mentor}</SelectItem>
+                                            </>
+                                        ) : (
+                                            <SelectItem value="admin_help">{categoryLabels.admin_help}</SelectItem>
+                                        )}
                                     </SelectContent>
                                 </Select>
                             </div>

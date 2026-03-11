@@ -32,7 +32,7 @@ export default async function TicketsPage() {
                     <h1 className="text-2xl font-bold tracking-tight text-foreground">Yêu cầu hỗ trợ</h1>
                     <p className="text-sm text-muted-foreground mt-1 max-w-lg">Tạo và theo dõi các yêu cầu hỗ trợ kỹ thuật hoặc chương trình để được giải đáp nhanh chóng.</p>
                 </div>
-                <CreateTicketModal />
+                <CreateTicketModal userRole={(session.user as any).role} />
             </div>
 
             <TicketList tickets={tickets} />

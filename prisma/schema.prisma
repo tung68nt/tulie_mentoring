@@ -48,6 +48,13 @@ model User {
   whiteboards        Whiteboard[]        @relation("WhiteboardCreator")
   wikiPages          WikiPage[]
 
+  // Social & Chat relations
+  posts              Post[]
+  comments           Comment[]
+  postReactions      PostReaction[]
+  chatMessages       ChatMessage[]
+  chatParticipants    ChatParticipant[]
+
   // New relations
   facilitatorAssignments FacilitatorAssignment[] @relation("FacilitatorUser")
   submittedEvaluations   EvaluationResponse[]    @relation("SubmittedEvaluations")
@@ -127,6 +134,8 @@ model ProgramCycle {
   mentorships Mentorship[]
   facilitatorAssignments FacilitatorAssignment[]
   menteeRankings         MenteeRanking[]
+  posts                  Post[]
+  chatRooms              ChatRoom[]
 }
 
 model Mentorship {
@@ -150,6 +159,10 @@ model Mentorship {
   whiteboards    Whiteboard[]
   slides         Slide[]
   facilitatorAssignments FacilitatorAssignment[]
+
+  // Social & Chat relations
+  chatRooms      ChatRoom[]
+  posts          Post[]
 
 
   @@index([mentorId])
@@ -707,4 +720,122 @@ model SystemSetting {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ─── Social Hub Models ───────────────────────────────────────────
+
+model Post {
+  id             String           @id @default(cuid())
+  authorId       String
+  content        String           @db.Text
+  type           String           @default("general") // announcement, milestone, question, general
+  visibility     String           @default("program") // public, program, pair
+  programCycleId String?
+  mentorshipId   String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  
+  author         User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  programCycle   ProgramCycle?    @relation(fields: [programCycleId], references: [id], onDelete: SetNull)
+  mentorship     Mentorship?      @relation(fields: [mentorshipId], references: [id], onDelete: SetNull)
+  comments       Comment[]
+  reactions      PostReaction[]
+  attachments    PostAttachment[]
+
+  @@index([authorId])
+  @@index([programCycleId])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  postId    String
+  authorId  String
+  parentId  String?   // For nested comments
+  content   String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentToComment")
+  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: SetNull)
+
+  @@index([postId])
+  @@index([authorId])
+}
+
+model PostReaction {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  type      String   // like, love, insightful, etc.
+  createdAt DateTime @default(now())
+  
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId, type])
+  @@index([postId])
+}
+
+model PostAttachment {
+  id        String   @id @default(cuid())
+  postId    String
+  type      String   // image, document, link
+  url       String
+  name      String?
+  size      Int?
+  createdAt DateTime @default(now())
+  
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+// ─── Communication Hub Models ───────────────────────────────────
+
+model ChatRoom {
+  id             String    @id @default(cuid())
+  name           String?
+  type           String    @default("direct") // direct, mentorship_group, program_group
+  mentorshipId   String?   // Link to Mentorship group
+  programCycleId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  mentorship     Mentorship? @relation(fields: [mentorshipId], references: [id], onDelete: SetNull)
+  programCycle   ProgramCycle? @relation(fields: [programCycleId], references: [id], onDelete: SetNull)
+  participants   ChatParticipant[]
+  messages       ChatMessage[]
+
+  @@index([mentorshipId])
+  @@index([programCycleId])
+}
+
+model ChatParticipant {
+  roomId     String
+  userId     String
+  joinedAt   DateTime @default(now())
+  lastReadAt DateTime @default(now())
+  
+  room       ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@id([roomId, userId])
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomId    String
+  senderId  String
+  content   String   @db.Text
+  type      String   @default("text") // text, file, image, system
+  createdAt DateTime @default(now())
+  
+  room      ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([senderId])
 }

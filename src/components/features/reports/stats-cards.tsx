@@ -55,7 +55,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {items.map((item, i) => (
                 <Link key={i} href="/reports" className="group">
-                    <Card className="p-5 rounded-xl border border-border/60 bg-background shadow-none h-full relative overflow-hidden transition-all hover:border-primary/30 hover:shadow-sm active:scale-[0.98]">
+                    <Card className="p-5 rounded-lg border border-border/60 bg-card shadow-none h-full relative overflow-hidden transition-all hover:border-primary/30 hover:shadow-sm active:scale-[0.98]">
                         <div className="flex flex-col h-full">
                             <div className="space-y-1">
                                 <h4 className="text-[13px] font-medium text-muted-foreground/80">{item.title}</h4>

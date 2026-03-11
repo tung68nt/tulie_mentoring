@@ -28,7 +28,24 @@
   - Ensure distinct separation between "Box Information" (cards/containers) and their internal content.
   - Add `gap-4` or `gap-6` in flex/grid layouts for clear component separation.
 
-## 3. Data & Content
+## 4. shadcn/ui Standardization
 
-- **Real Data Priority**: All layouts must be designed to handle real data lengths. Avoid hardcoded short strings that break when real data is injected.
-- **Mock Data**: When active, mock data should be realistic (full names, paragraphs) to test layout robustness.
+### ✅ REQUIRED:
+- **Component Source**: ONLY use components from `@/components/ui`. Custom components representing similar UI (e.g., a custom Button) must be refactored to use the shadcn primitive.
+- **Color Tokens**: Use semantic Tailwinds classes based on [shadcn tokens](https://ui.shadcn.com/docs/theming):
+  - Backgrounds: `bg-background`, `bg-muted`, `bg-card`, `bg-secondary`.
+  - Foregrounds: `text-foreground`, `text-muted-foreground`, `text-primary-foreground`.
+  - Borders: `border-border`, `border-input`.
+  - Primary Action: `bg-primary`, `text-primary-foreground`.
+- **Border Radius**: Use standard `rounded-lg` (default) for cards and main containers. Use `rounded-md` for inputs and small buttons. Do NOT use `rounded-2xl` or `rounded-3xl` unless part of a specific branding element (e.g., avatars).
+- **Shadows**: Use `shadow-sm` or `shadow-none` for a clean, flat look. Avoid `shadow-lg` or `shadow-xl`.
+
+## 5. Implementation Workflow for New Features
+
+1. **Schema First**: Update `prisma/schema.prisma` before building UI.
+2. **shadcn/ui First**: Check if a component exists in shadcn before building from scratch.
+3. **Responsive Design**: All new features MUST be mobile-first and responsive.
+4. **Dark Mode**: Always test with the `.dark` class to ensure visibility.
+
+---
+*Last Updated: March 2026*

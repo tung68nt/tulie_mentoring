@@ -90,7 +90,7 @@ export function RegisterForm({ logoUrl, siteName = "Tulie Mentoring" }: { logoUr
                 {logoUrl ? (
                     <img src={logoUrl} alt={siteName} className="h-16 w-auto mx-auto mb-6 object-contain" />
                 ) : (
-                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
                         <span className="text-primary font-bold text-xl">{siteName.charAt(0)}</span>
                     </div>
                 )}

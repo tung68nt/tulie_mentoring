@@ -47,7 +47,7 @@ export function TicketList({ tickets }: TicketListProps) {
                                     <p className="font-semibold text-sm text-foreground group-hover/row:text-primary transition-colors">{ticket.title}</p>
                                     <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60 font-medium">
                                         <Badge variant="outline" className="text-[9px] px-1.5 py-0 no-uppercase bg-muted/50">
-                                            {ticket.category === 'system' ? 'Hệ thống' : 'Admin'}
+                                            {ticket.category === 'system' ? 'Hệ thống' : ticket.category === 'mentor' ? 'Mentor' : 'Admin'}
                                         </Badge>
                                         <span className="w-1 h-1 rounded-full bg-border" />
                                         <User className="w-3 h-3" />
