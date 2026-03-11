@@ -48,13 +48,14 @@ export default async function AdminUsersPage() {
                 </div>
 
                 <div className="rounded-xl border border-border bg-card overflow-hidden">
+                    <div className="overflow-x-auto">
                     <Table>
                         <TableHeader className="bg-muted/50">
                             <TableRow>
                                 <TableHead>Người dùng</TableHead>
                                 <TableHead>Vai trò</TableHead>
-                                <TableHead>Trạng thái</TableHead>
-                                <TableHead>Tham gia</TableHead>
+                                <TableHead className="hidden sm:table-cell">Trạng thái</TableHead>
+                                <TableHead className="hidden md:table-cell">Tham gia</TableHead>
                                 <TableHead className="text-right">Thao tác</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -86,10 +87,10 @@ export default async function AdminUsersPage() {
                                             />
                                         </div>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="hidden sm:table-cell">
                                         <Badge status={user.isActive ? "active" : "inactive"} size="sm" />
                                     </TableCell>
-                                    <TableCell className="text-muted-foreground">
+                                    <TableCell className="text-muted-foreground hidden md:table-cell">
                                         {formatDate(user.createdAt)}
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -104,6 +105,7 @@ export default async function AdminUsersPage() {
                             ))}
                         </TableBody>
                     </Table>
+                    </div>
                 </div>
             </div>
         );

@@ -4,14 +4,21 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 
-export async function createEvaluationForm(data: {
-    title: string;
-    description?: string;
-}) {
+// ─── Helpers ──────────────────────────────────────────
+async function requireFormAccess() {
     const session = await auth();
     if (!session || !["admin", "facilitator", "program_manager"].includes((session.user as any).role)) {
         throw new Error("Unauthorized");
     }
+    return session;
+}
+
+// ─── Form CRUD ────────────────────────────────────────
+export async function createEvaluationForm(data: {
+    title: string;
+    description?: string;
+}) {
+    await requireFormAccess();
 
     const form = await prisma.evaluationForm.create({
         data: {
@@ -25,14 +32,11 @@ export async function createEvaluationForm(data: {
 }
 
 export async function updateEvaluationForm(id: string, data: {
-    title: string;
+    title?: string;
     description?: string;
     isActive?: boolean;
 }) {
-    const session = await auth();
-    if (!session || !["admin", "facilitator", "program_manager"].includes((session.user as any).role)) {
-        throw new Error("Unauthorized");
-    }
+    await requireFormAccess();
 
     const form = await prisma.evaluationForm.update({
         where: { id },
@@ -40,25 +44,56 @@ export async function updateEvaluationForm(id: string, data: {
     });
 
     revalidatePath("/facilitator/forms");
+    revalidatePath(`/facilitator/forms/${id}`);
     return form;
 }
 
+export async function deleteEvaluationForm(id: string) {
+    await requireFormAccess();
+
+    await prisma.evaluationForm.delete({
+        where: { id },
+    });
+
+    revalidatePath("/facilitator/forms");
+}
+
+export async function toggleFormActive(id: string) {
+    await requireFormAccess();
+
+    const form = await prisma.evaluationForm.findUnique({ where: { id } });
+    if (!form) throw new Error("Form not found");
+
+    const updated = await prisma.evaluationForm.update({
+        where: { id },
+        data: { isActive: !form.isActive },
+    });
+
+    revalidatePath("/facilitator/forms");
+    revalidatePath(`/facilitator/forms/${id}`);
+    return updated;
+}
+
+// ─── Question CRUD ────────────────────────────────────
 export async function addQuestion(formId: string, data: {
     type: string;
     label: string;
     options?: string;
     order: number;
     weight?: number;
+    required?: boolean;
+    description?: string;
 }) {
-    const session = await auth();
-    if (!session || !["admin", "facilitator", "program_manager"].includes((session.user as any).role)) {
-        throw new Error("Unauthorized");
-    }
+    await requireFormAccess();
 
     const question = await prisma.evaluationQuestion.create({
         data: {
             formId,
-            ...data,
+            type: data.type,
+            label: data.label,
+            options: data.options,
+            order: data.order,
+            weight: data.weight ?? 1.0,
         },
     });
 
@@ -66,11 +101,25 @@ export async function addQuestion(formId: string, data: {
     return question;
 }
 
+export async function updateQuestion(id: string, formId: string, data: {
+    label?: string;
+    type?: string;
+    options?: string;
+    weight?: number;
+}) {
+    await requireFormAccess();
+
+    const question = await prisma.evaluationQuestion.update({
+        where: { id },
+        data,
+    });
+
+    revalidatePath(`/facilitator/forms/${formId}`);
+    return question;
+}
+
 export async function deleteQuestion(id: string, formId: string) {
-    const session = await auth();
-    if (!session || !["admin", "facilitator", "program_manager"].includes((session.user as any).role)) {
-        throw new Error("Unauthorized");
-    }
+    await requireFormAccess();
 
     await prisma.evaluationQuestion.delete({
         where: { id },
@@ -79,6 +128,22 @@ export async function deleteQuestion(id: string, formId: string) {
     revalidatePath(`/facilitator/forms/${formId}`);
 }
 
+export async function reorderQuestions(formId: string, orderedIds: string[]) {
+    await requireFormAccess();
+
+    await prisma.$transaction(
+        orderedIds.map((id, index) =>
+            prisma.evaluationQuestion.update({
+                where: { id },
+                data: { order: index + 1 },
+            })
+        )
+    );
+
+    revalidatePath(`/facilitator/forms/${formId}`);
+}
+
+// ─── Form Data Fetching ───────────────────────────────
 export async function getEvaluationForms() {
     return await prisma.evaluationForm.findMany({
         orderBy: { createdAt: "desc" },
@@ -93,6 +158,128 @@ export async function getFormWithQuestions(id: string) {
             questions: {
                 orderBy: { order: "asc" },
             },
+            _count: { select: { responses: true } },
         },
+    });
+}
+
+// ─── Response Submission ──────────────────────────────
+export async function submitFormResponse(formId: string, answers: {
+    questionId: string;
+    value: string;
+    score?: number;
+}[], targetMenteeId?: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const response = await prisma.evaluationResponse.create({
+        data: {
+            formId,
+            submitterId: session.user.id!,
+            targetMenteeId: targetMenteeId || null,
+            answers: {
+                create: answers.map(a => ({
+                    questionId: a.questionId,
+                    value: a.value,
+                    score: a.score,
+                })),
+            },
+        },
+        include: { answers: true },
+    });
+
+    revalidatePath(`/facilitator/forms/${formId}`);
+    revalidatePath(`/facilitator/forms/${formId}/responses`);
+    return response;
+}
+
+// ─── Response Fetching ────────────────────────────────
+export async function getFormResponses(formId: string) {
+    await requireFormAccess();
+
+    return await prisma.evaluationResponse.findMany({
+        where: { formId },
+        include: {
+            submitter: { select: { id: true, firstName: true, lastName: true, email: true, image: true } },
+            targetMentee: { select: { id: true, firstName: true, lastName: true, email: true, image: true } },
+            answers: {
+                include: {
+                    question: { select: { id: true, label: true, type: true } },
+                },
+            },
+        },
+        orderBy: { createdAt: "desc" },
+    });
+}
+
+export async function getFormAnalytics(formId: string) {
+    await requireFormAccess();
+
+    const form = await prisma.evaluationForm.findUnique({
+        where: { id: formId },
+        include: {
+            questions: { orderBy: { order: "asc" } },
+            responses: {
+                include: {
+                    answers: true,
+                    submitter: { select: { firstName: true, lastName: true } },
+                    targetMentee: { select: { firstName: true, lastName: true } },
+                },
+            },
+        },
+    });
+
+    if (!form) throw new Error("Form not found");
+
+    const totalResponses = form.responses.length;
+    const questionStats = form.questions.map(q => {
+        const answers = form.responses.flatMap(r => r.answers.filter(a => a.questionId === q.id));
+        const values = answers.map(a => a.value);
+
+        if (q.type === "RATING" || q.type === "SCALE") {
+            const nums = values.map(Number).filter(n => !isNaN(n));
+            const avg = nums.length > 0 ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
+            const min = nums.length > 0 ? Math.min(...nums) : 0;
+            const max = nums.length > 0 ? Math.max(...nums) : 0;
+            return { questionId: q.id, label: q.label, type: q.type, count: nums.length, avg: Math.round(avg * 100) / 100, min, max };
+        }
+
+        if (q.type === "MULTIPLE_CHOICE" || q.type === "CHECKBOX" || q.type === "DROPDOWN") {
+            const distribution: Record<string, number> = {};
+            values.forEach(v => {
+                // CHECKBOX may have comma-separated values
+                const choices = v.split(",").map(c => c.trim());
+                choices.forEach(c => { distribution[c] = (distribution[c] || 0) + 1; });
+            });
+            return { questionId: q.id, label: q.label, type: q.type, count: values.length, distribution };
+        }
+
+        // TEXT, PARAGRAPH, DATE
+        return { questionId: q.id, label: q.label, type: q.type, count: values.length, sampleAnswers: values.slice(0, 5) };
+    });
+
+    return { formId, totalResponses, questionStats };
+}
+
+// ─── Delete Response ──────────────────────────────────
+export async function deleteFormResponse(responseId: string, formId: string) {
+    await requireFormAccess();
+
+    await prisma.evaluationResponse.delete({
+        where: { id: responseId },
+    });
+
+    revalidatePath(`/facilitator/forms/${formId}/responses`);
+}
+
+// ─── Get mentees for evaluation target selection ──────
+export async function getMenteesForEvaluation() {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    return await prisma.user.findMany({
+        where: { role: "mentee" },
+        select: { id: true, firstName: true, lastName: true, email: true, image: true },
+        orderBy: { firstName: "asc" },
     });
 }

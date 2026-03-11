@@ -40,27 +40,27 @@ export function Header({ userName, userRole, avatar, onMenuClick, notifications 
     return (
         <>
             <header className="fixed top-0 right-0 left-0 lg:left-[var(--sidebar-width)] h-16 bg-background/80 backdrop-blur-md border-b border-border z-40 transition-all">
-                <div className="h-16 px-6 flex items-center justify-between max-w-[1400px] mx-auto">
+                <div className="h-16 px-3 sm:px-6 flex items-center justify-between max-w-[1400px] mx-auto">
                     {/* Left: Menu + Search */}
-                    <div className="flex items-center gap-4 flex-1">
+                    <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                         <button
                             onClick={onMenuClick}
-                            className="lg:hidden p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                            className="lg:hidden p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
                         >
                             <Menu className="w-5 h-5" />
                         </button>
 
-                        <div className="hidden md:block">
+                        <div className="flex-1 min-w-0">
                             <GlobalSearch />
                         </div>
                     </div>
 
                     {/* Right: Actions + User */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                         {/* Help */}
                         <button
                             onClick={() => setShowManual(true)}
-                            className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors mr-1"
+                            className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                             title="Hướng dẫn sử dụng"
                         >
                             <HelpCircle className="w-[18px] h-[18px]" />
@@ -72,10 +72,10 @@ export function Header({ userName, userRole, avatar, onMenuClick, notifications 
                             unreadCount={unreadCount}
                         />
 
-                        <div className="h-6 w-px bg-border mx-2" />
+                        <div className="h-6 w-px bg-border mx-1 sm:mx-2 hidden sm:block" />
 
                         {/* User profile */}
-                        <Link href="/profile" className="flex items-center gap-2.5 pl-1 group cursor-pointer rounded-lg hover:bg-muted pr-2 py-1 transition-colors">
+                        <Link href="/profile" className="flex items-center gap-2 pl-1 group cursor-pointer rounded-lg hover:bg-muted pr-1 sm:pr-2 py-1 transition-colors">
                             <Avatar
                                 firstName={userName?.split(" ")[0] || "U"}
                                 lastName={userName?.split(" ").slice(1).join(" ") || ""}

@@ -108,10 +108,10 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4 pointer-events-none">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end gap-3 sm:gap-4 pointer-events-none">
             {/* Chat Window */}
             {isOpen && (
-                <Card className="w-[360px] h-[500px] shadow-2xl overflow-hidden flex flex-col border-border/40 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto bg-card">
+                <Card className="w-[calc(100vw-2rem)] sm:w-[360px] h-[calc(100dvh-8rem)] sm:h-[500px] max-h-[500px] shadow-2xl overflow-hidden flex flex-col border-border/40 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto bg-card">
                     {/* Header */}
                     <div className="p-3 border-b border-border/40 flex items-center justify-between bg-background/80 backdrop-blur-md shrink-0">
                         <div className="flex items-center gap-2">
@@ -262,7 +262,7 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                 <button
                     onClick={() => setIsOpen(!isOpen)}
                     className={cn(
-                        "w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform active:scale-95 group relative",
+                        "w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform active:scale-95 group relative",
                         isOpen ? "bg-background text-foreground border border-border shadow-xl rotate-90" : "bg-primary text-primary-foreground hover:scale-105"
                     )}
                     title="Trò chuyện"

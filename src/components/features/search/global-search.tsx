@@ -113,7 +113,7 @@ export function GlobalSearch() {
     return (
         <div ref={containerRef} className="relative">
             {/* Inline search input - always visible */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/60 border border-border rounded-lg focus-within:border-primary focus-within:bg-background transition-all w-[220px] sm:w-[260px]">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/60 border border-border rounded-lg focus-within:border-primary focus-within:bg-background transition-all w-full sm:w-[260px]">
                 <Search className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
                 <input
                     ref={inputRef}
@@ -138,7 +138,7 @@ export function GlobalSearch() {
 
             {/* Dropdown results */}
             {showResults && query && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-card rounded-lg border border-border shadow-none overflow-hidden z-50 w-[360px]">
+                <div className="absolute top-full left-0 mt-1.5 bg-card rounded-lg border border-border shadow-none overflow-hidden z-50 w-[calc(100vw-2rem)] sm:w-[360px] max-w-[360px]">
                     <div className="max-h-[320px] overflow-y-auto py-1">
                         {isLoading ? (
                             <div className="px-4 py-6 text-center">

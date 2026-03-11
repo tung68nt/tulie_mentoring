@@ -149,7 +149,7 @@ export default async function MentorDashboard() {
                                                 <p className="text-[11px] font-medium text-muted-foreground capitalize">{mt.status || "active"}</p>
                                             </div>
                                         </div>
-                                        <Button variant="outline" size="sm" asChild className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Button variant="outline" size="sm" asChild className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                             <Link href={`/admin/mentorships/${mt.mentorshipId}`}>Hồ sơ</Link>
                                         </Button>
                                     </Card>

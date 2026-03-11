@@ -48,12 +48,12 @@ export default async function MentorshipsPage() {
 
         return (
             <div className="space-y-8">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
                         <h1 className="text-2xl font-semibold text-foreground">Quản lý Mentorship</h1>
                         <p className="text-sm text-muted-foreground mt-1">Danh sách các cặp mentor và mentee trong chương trình</p>
                     </div>
-                    <Button asChild>
+                    <Button asChild className="w-full sm:w-auto">
                         <Link href="/admin/mentorships/new">
                             <Plus className="w-4 h-4 mr-2" />
                             Tạo Mentorship mới

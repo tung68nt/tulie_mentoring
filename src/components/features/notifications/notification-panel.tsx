@@ -97,7 +97,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
 
             {/* Dropdown Panel */}
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 w-[380px] bg-card border border-border rounded-lg shadow-none overflow-hidden z-[100] animate-scale-in">
+                <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[380px] max-w-[380px] bg-card border border-border rounded-lg shadow-none overflow-hidden z-[100] animate-scale-in">
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                         <h3 className="text-sm font-semibold text-foreground">Thông báo</h3>
@@ -155,7 +155,7 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                    <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                                         {!notif.isRead && (
                                             <button
                                                 onClick={(e) => {
