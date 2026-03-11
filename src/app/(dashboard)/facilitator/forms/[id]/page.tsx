@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
-export default async function FormEditorPage({ params }: { params: { id: string } }) {
+export default async function FormEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const form = await getFormWithQuestions(params.id);
+    const { id } = await params;
+    const form = await getFormWithQuestions(id);
     if (!form) notFound();
 
     return (

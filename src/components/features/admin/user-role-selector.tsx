@@ -74,6 +74,8 @@ export function UserRoleSelector({ userId, currentRole, isCurrentUser }: UserRol
                 <SelectContent>
                     <SelectItem value="mentee">Mentee</SelectItem>
                     <SelectItem value="mentor">Mentor</SelectItem>
+                    <SelectItem value="program_manager">User Manager</SelectItem>
+                    <SelectItem value="facilitator">Facilitator</SelectItem>
                     <SelectItem value="viewer">Người xem</SelectItem>
                     <SelectItem value="admin">
                         <div className="flex items-center gap-2 text-primary font-semibold">

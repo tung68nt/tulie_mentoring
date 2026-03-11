@@ -7,7 +7,8 @@ import { auth } from "@/lib/auth";
 
 export async function createProgramCycle(data: ProgramCycleInput) {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         throw new Error("Unauthorized");
     }
 
@@ -29,7 +30,8 @@ export async function createProgramCycle(data: ProgramCycleInput) {
 
 export async function updateProgramCycle(id: string, data: ProgramCycleInput) {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         throw new Error("Unauthorized");
     }
 
@@ -52,7 +54,8 @@ export async function updateProgramCycle(id: string, data: ProgramCycleInput) {
 
 export async function deleteProgramCycle(id: string) {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         throw new Error("Unauthorized");
     }
 
@@ -75,7 +78,8 @@ export async function deleteProgramCycle(id: string) {
 
 export async function getAllProgramCycles() {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         throw new Error("Unauthorized");
     }
 

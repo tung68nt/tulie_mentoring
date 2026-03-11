@@ -49,6 +49,8 @@ export function getRoleLabel(role: string): string {
     mentor: "Mentor",
     mentee: "Mentee",
     viewer: "Người xem",
+    program_manager: "User Manager",
+    facilitator: "Facilitator",
   };
   return labels[role] || role;
 }

@@ -27,7 +27,8 @@ import {
 
 export default async function MentorshipDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await auth();
-    if (!session?.user || !["admin", "viewer"].includes((session.user as any).role)) {
+    const role = (session?.user as any)?.role;
+    if (!session?.user || !["admin", "program_manager", "viewer"].includes(role)) {
         redirect("/login");
     }
 

@@ -12,7 +12,7 @@ import Link from "next/link";
 export default async function MentorshipsPage() {
     const session = await auth();
     const role = (session?.user as any)?.role;
-    if (!session?.user || !["admin", "viewer"].includes(role)) {
+    if (!session?.user || !["admin", "program_manager", "viewer"].includes(role)) {
         redirect("/login");
     }
     try {

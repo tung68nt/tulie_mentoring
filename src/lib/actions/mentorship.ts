@@ -7,7 +7,8 @@ import { auth } from "@/lib/auth";
 
 export async function createMentorship(data: MentorshipInput) {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         throw new Error("Unauthorized");
     }
 
@@ -191,7 +192,8 @@ export async function getProgramCycles() {
 
 export async function getEligibleMentors() {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         throw new Error("Unauthorized");
     }
     const mentors = await prisma.user.findMany({
@@ -203,7 +205,8 @@ export async function getEligibleMentors() {
 
 export async function getEligibleMentees() {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = session?.user && (session.user as any).role;
+    if (!role || (role !== "admin" && role !== "program_manager")) {
         throw new Error("Unauthorized");
     }
     const mentees = await prisma.user.findMany({

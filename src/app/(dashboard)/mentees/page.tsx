@@ -16,12 +16,13 @@ export default async function MenteesPage() {
     const userId = session.user.id;
     const role = (session.user as any).role;
 
-    if (role !== "mentor" && role !== "admin" && role !== "viewer") {
+    if (role !== "mentor" && role !== "admin" && role !== "viewer" && role !== "program_manager") {
         redirect("/");
     }
 
     try {
-        const mentorFilter = (role === "admin" || role === "viewer") ? {} : { mentorId: userId };
+        const isAdmin = role === "admin" || role === "viewer" || role === "program_manager";
+        const mentorFilter = isAdmin ? {} : { mentorId: userId };
         const mentorships = await prisma.mentorship.findMany({
             where: mentorFilter,
             include: {
@@ -105,7 +106,7 @@ export default async function MenteesPage() {
                                         </div>
                                     </div>
 
-                                    {(role === "admin" || role === "viewer") && (
+                                    {(role === "admin" || role === "viewer" || role === "program_manager") && (
                                         <div className="mt-4 pt-4 border-t border-border/40 flex items-center gap-2">
                                             <Avatar
                                                 firstName={mt.mentorName?.split(' ')[0]}

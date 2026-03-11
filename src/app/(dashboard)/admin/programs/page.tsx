@@ -20,7 +20,8 @@ import { DeleteProgramButton } from "@/components/features/admin/delete-program-
 
 export default async function AdminProgramsPage() {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== "admin") {
+    const role = (session?.user as any)?.role;
+    if (!session?.user || !["admin", "program_manager"].includes(role)) {
         redirect("/login");
     }
 
