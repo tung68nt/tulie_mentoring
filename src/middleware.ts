@@ -40,21 +40,28 @@ export default auth((req) => {
     if (isLoggedIn) {
         const role = req.auth?.user?.role;
 
-        // Admin can access all routes
-        if (role === "admin") {
-            return NextResponse.next();
-        }
-
-        if (nextUrl.pathname.startsWith("/admin") && role !== "admin") {
+        // Admin and Program Manager can access admin routes
+        const isAdminOrPM = role === "admin" || role === "program_manager";
+        
+        if (nextUrl.pathname.startsWith("/admin") && !isAdminOrPM) {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
+
+        if (nextUrl.pathname.startsWith("/program-manager") && !isAdminOrPM) {
+            return NextResponse.redirect(new URL("/", nextUrl));
+        }
+
+        if (nextUrl.pathname.startsWith("/facilitator") && role !== "facilitator" && role !== "admin") {
+            return NextResponse.redirect(new URL("/", nextUrl));
+        }
+        
         // Use exact prefix check with trailing slash or end-of-string
         // to avoid /mentees being blocked for mentors
         if (nextUrl.pathname.startsWith("/mentor") && !nextUrl.pathname.startsWith("/mentees") && role !== "mentor" && role !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
 
-        if ((nextUrl.pathname === "/mentee" || nextUrl.pathname.startsWith("/mentee/")) && role !== "mentee") {
+        if ((nextUrl.pathname === "/mentee" || nextUrl.pathname.startsWith("/mentee/")) && role !== "mentee" && role !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
 
