@@ -11,7 +11,7 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
 
     return (
-        <Card className="flex h-[calc(100vh-140px)] min-h-[500px] overflow-hidden rounded-xl border border-border/40 shadow-xl bg-card transition-all duration-300">
+        <Card className="flex h-full min-h-[500px] overflow-hidden rounded-xl border border-border/40 shadow-xl bg-card transition-all duration-300">
             <div className="flex w-full h-full relative">
                 {/* Sidebar */}
                 <ChatSidebar 
