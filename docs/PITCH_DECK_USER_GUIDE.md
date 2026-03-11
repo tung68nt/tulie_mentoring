@@ -12,9 +12,38 @@
 
 ## 1. GIỚI THIỆU TỔNG QUAN
 
-Hệ thống **Mentoring IMP** là một nền tảng quản trị thông minh được thiết kế chuyên biệt cho mô hình cố vấn (mentorship) tại **Viện Đào tạo Quốc tế (ISME) - ĐH Kinh tế Quốc dân**. 
+Hệ sinh thái **Mentoring IMP** là một nền tảng quản trị thông minh được thiết kế chuyên biệt cho mô hình cố vấn (mentorship) tại **Viện Đào tạo Quốc tế (ISME) - ĐH Kinh tế Quốc dân**. 
 
 Mục tiêu cốt lõi của hệ thống không chỉ dừng lại ở việc quản lý thông tin, mà còn hướng tới việc xây dựng **kỷ luật tự giác**, **tối ưu hóa hiệu suất** và **gắn kết cộng đồng** giữa Mentor và Mentee thông qua công nghệ.
+
+### 📊 bối cảnh và Lý do ra đời
+
+Trong quá trình nghiên cứu, chúng tôi nhận thấy các công cụ hiện tại đang bị phân mảnh và gây khó khăn cho việc quản lý tập trung:
+
+**Bảng 1.1: Tổng hợp các công cụ đang sử dụng và hạn chế trong chương trình IMP**
+
+| <div style="text-align: center;">STT</div> | Công cụ | Vai trò trong IMP | Hạn chế |
+|:---:|---|---|---|
+| 1 | Notion | Ghi chú, Kanban board | Quá linh hoạt, mỗi Mentee setup khác nhau, Mentor phải “học lại” giao diện |
+| 2 | Trello | Quản lý task tuần | Không có nhật ký habit / thu hoạch, thiếu chiều sâu cảm xúc |
+| 3 | Google Sheets | Bảng theo dõi tiến độ | Cập nhật thủ công, dễ quên/sai, không real-time |
+| 4 | Zalo / Messenger | Trao đổi nhanh | Thông tin trôi nhanh, không lưu trữ, khó tìm lại |
+| 5 | Google Calendar | Lịch họp | Không liên kết với mục tiêu, task, hay report |
+| 6 | Google Drive | Lưu trữ tài liệu | Cô lập, không gắn với context Mentoring |
+
+*(Nguồn: Tulie Tech Research, 2026)*
+
+**Bảng 1.2: Bảng tổng hợp các vấn đề (Pain Points) của Mentor**
+
+| <div style="text-align: center;">STT</div> | Pain Point của Mentor | Tần suất |
+|:---:|---|:---:|
+| 1 | Mất 30–50% thời gian buổi họp chỉ để “hỏi bài” | Rất cao |
+| 2 | Không biết Mentee có đang rèn luyện hằng ngày hay không | Cao |
+| 3 | Khó so sánh tiến độ giữa các Mentee | Trung bình |
+| 4 | Sau buổi họp, kiến thức “bay màu” vì Mentee không ghi chép | Cao |
+| 5 | Mentor cao tuổi gặp khó khăn với các công cụ công nghệ phức tạp | Cao |
+
+*(Nguồn: Tulie Tech Research, 2026)*
 
 ---
 
