@@ -172,7 +172,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
-                <div className="space-y-6">
+                <div className="space-y-6 min-w-0 overflow-hidden">
                     <div className="space-y-3">
                         <label className="text-[10px] font-bold text-muted-foreground/40 no-uppercase tracking-[0.1em] px-1">Tiêu đề tài liệu</label>
                         <Input

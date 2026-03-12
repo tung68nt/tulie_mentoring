@@ -119,7 +119,7 @@ export default function NewWikiPage() {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
-                <div className="space-y-6">
+                <div className="space-y-6 min-w-0 overflow-hidden">
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-muted-foreground/60 no-uppercase px-1">Tiêu đề tài liệu</label>
                         <Input

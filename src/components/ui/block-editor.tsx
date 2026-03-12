@@ -58,7 +58,7 @@ export function BlockEditor({
     }, []);
 
     return (
-        <div className={`block-editor-wrapper rounded-lg border border-border overflow-hidden bg-background ${className}`}>
+        <div className={`block-editor-wrapper rounded-lg border border-border overflow-hidden bg-background min-w-0 ${className}`}>
             <BlockNoteView
                 editor={editor}
                 editable={editable}
@@ -72,6 +72,9 @@ export function BlockEditor({
                     padding: 2rem 1rem 10rem 3.5rem; /* Large bottom padding for focus */
                     max-width: 900px;
                     margin: 0 auto;
+                    overflow-x: hidden;
+                    word-break: break-word;
+                    overflow-wrap: anywhere;
                 }
                 .block-editor-wrapper .bn-editor [class*="blockContent"] {
                     font-size: 12px !important; /* Following Notion Guideline */
