@@ -16,15 +16,15 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 
 const SOUNDS = [
-    { id: "rain", label: "Mưa rơi", icon: Waves, url: "https://www.soundjay.com/nature/rain-07.mp3" },
-    { id: "wind", label: "Gió thổi", icon: Wind, url: "https://www.soundjay.com/nature/wind-01.mp3" },
-    { id: "forest", label: "Rừng xanh", icon: Leaf, url: "https://www.soundjay.com/nature/forest-01.mp3" },
+    { id: "rain", label: "Mưa rơi", icon: Waves, url: "https://cdn.pixabay.com/audio/2022/05/13/audio_257112847b.mp3" },
+    { id: "wind", label: "Gió thổi", icon: Wind, url: "https://cdn.pixabay.com/audio/2022/03/09/audio_c610232c26.mp3" },
+    { id: "forest", label: "Rừng xanh", icon: Leaf, url: "https://cdn.pixabay.com/audio/2022/08/31/audio_419263c02e.mp3" },
 ];
 
 const AMBIANCE_MUSICS = [
-    { id: "lofi", label: "Lofi Study", icon: Music, url: "https://www.soundjay.com/music/lofi-hip-hop-beat-01.mp3" },
-    { id: "coffee", label: "Coffee Shop", icon: Coffee, url: "https://www.soundjay.com/misc/coffee-shop-ambience-1.mp3" },
-    { id: "zen", label: "Zen Space", icon: Sparkles, url: "https://www.soundjay.com/misc/ambient-sleep-music-1.mp3" },
+    { id: "lofi", label: "Lofi Study", icon: Music, url: "https://cdn.pixabay.com/audio/2024/11/29/audio_7e655cf571.mp3" },
+    { id: "coffee", label: "Coffee Shop", icon: Coffee, url: "https://cdn.pixabay.com/audio/2023/10/30/audio_ccaf508e50.mp3" },
+    { id: "zen", label: "Zen Space", icon: Sparkles, url: "https://cdn.pixabay.com/audio/2022/05/27/audio_d33765c66e.mp3" },
 ];
 
 /* ── Breathing Gradient Component ── */

@@ -275,8 +275,6 @@ export default async function MentorDashboard() {
                                         href={`/admin/mentorships/${mt.mentorshipId}`}
                                         className="group relative flex flex-col items-center p-5 rounded-xl border border-border/40 bg-card hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                     >
-                                        {/* Top accent */}
-                                        <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full bg-gradient-to-r from-primary/40 via-primary to-primary/40 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         
                                         <div className="relative mb-3">
                                             <Avatar
