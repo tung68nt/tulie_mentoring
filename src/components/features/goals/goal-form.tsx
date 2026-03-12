@@ -103,20 +103,12 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input
-                            label="Giá trị mục tiêu (%)"
-                            type="number"
-                            {...register("targetValue", { valueAsNumber: true })}
-                            error={errors.targetValue?.message}
-                        />
-                        <Input
-                            label="Hạn chót"
-                            type="date"
-                            {...register("dueDate", { valueAsDate: true })}
-                            error={errors.dueDate?.message}
-                        />
-                    </div>
+                    <Input
+                        label="Hạn chót"
+                        type="date"
+                        {...register("dueDate", { valueAsDate: true })}
+                        error={errors.dueDate?.message}
+                    />
 
                     <div className="space-y-1.5">
                         <label className="block text-[12px] font-medium text-muted-foreground px-4">Mô tả chi tiết</label>
