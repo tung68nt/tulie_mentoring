@@ -16,16 +16,16 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 
 const SOUNDS = [
-    { id: "rain", label: "Mưa rơi", icon: Waves, url: "https://cdn.pixabay.com/audio/2022/05/13/audio_257112847b.mp3" },
-    { id: "wind", label: "Gió thổi", icon: Wind, url: "https://cdn.pixabay.com/audio/2022/03/09/audio_c610232c26.mp3" },
-    { id: "forest", label: "Rừng xanh", icon: Leaf, url: "https://cdn.pixabay.com/audio/2022/08/31/audio_419263c02e.mp3" },
-    { id: "clock", label: "Kim đồng hồ", icon: Timer, url: "https://cdn.pixabay.com/audio/2022/10/21/audio_a29c2e5c3e.mp3" },
+    { id: "rain", label: "Mưa rơi", icon: Waves, url: "/sounds/rain.mp3" },
+    { id: "wind", label: "Gió thổi", icon: Wind, url: "/sounds/wind.mp3" },
+    { id: "forest", label: "Rừng xanh", icon: Leaf, url: "/sounds/forest.mp3" },
+    { id: "clock", label: "Kim đồng hồ", icon: Timer, url: "/sounds/clock.mp3" },
 ];
 
 const AMBIANCE_MUSICS = [
-    { id: "lofi", label: "Lofi Study", icon: Music, url: "https://cdn.pixabay.com/audio/2024/11/29/audio_7e655cf571.mp3" },
-    { id: "coffee", label: "Coffee Shop", icon: Coffee, url: "https://cdn.pixabay.com/audio/2023/10/30/audio_ccaf508e50.mp3" },
-    { id: "zen", label: "Zen Space", icon: Sparkles, url: "https://cdn.pixabay.com/audio/2022/05/27/audio_d33765c66e.mp3" },
+    { id: "lofi", label: "Lofi Study", icon: Music, url: "/sounds/lofi.mp3" },
+    { id: "coffee", label: "Coffee Shop", icon: Coffee, url: "/sounds/coffee.mp3" },
+    { id: "zen", label: "Zen Space", icon: Sparkles, url: "/sounds/zen.mp3" },
 ];
 
 /* ── Breathing Gradient Component ── */
