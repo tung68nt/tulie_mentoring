@@ -29,7 +29,7 @@ export function QRManager({ meetingId, qrToken, checkInCode, expiresAt, attendan
     if (qrToken) {
         // Encode as URL for native camera scanning
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        const qrValue = `${origin}/checkin?m=${meetingId}&t=${qrToken}`;
+        const qrValue = `${origin}/quick-checkin?m=${meetingId}&t=${qrToken}`;
 
         QRCode.toDataURL(qrValue, {
             width: 300,

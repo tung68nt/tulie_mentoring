@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getSystemSettings, updateSystemSettings } from "@/lib/actions/settings";
 import { toast } from "sonner";
-import { Image as ImageIcon, Globe, Sidebar as SidebarIcon, Lock, Save, Loader2 } from "lucide-react";
+import { Image as ImageIcon, Globe, Sidebar as SidebarIcon, Lock, Save, Loader2, Mail, Send } from "lucide-react";
 
 export default function AdminSettingsPage() {
     const [settings, setSettings] = useState<Record<string, string>>({
@@ -14,9 +14,16 @@ export default function AdminSettingsPage() {
         favicon: "",
         sidebar_logo: "",
         auth_logo: "",
+        smtp_host: "",
+        smtp_port: "587",
+        smtp_user: "",
+        smtp_password: "",
+        smtp_from: "",
     });
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isSendingTest, setIsSendingTest] = useState(false);
+    const [testEmail, setTestEmail] = useState("");
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -39,6 +46,27 @@ export default function AdminSettingsPage() {
         }
     };
 
+    const handleSendTestEmail = async () => {
+        setIsSendingTest(true);
+        try {
+            const res = await fetch("/api/email/test", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ to: testEmail || undefined }),
+            });
+            const data = await res.json();
+            if (data.ok) {
+                toast.success(data.message || "Gửi email test thành công!");
+            } else {
+                toast.error(data.message || "Gửi email test thất bại");
+            }
+        } catch (error) {
+            toast.error("Lỗi khi gửi email test");
+        } finally {
+            setIsSendingTest(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
@@ -51,7 +79,7 @@ export default function AdminSettingsPage() {
         <div className="max-w-4xl mx-auto space-y-8 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div>
                 <h1 className="text-2xl font-bold text-foreground no-uppercase">Cấu hình hệ thống</h1>
-                <p className="text-muted-foreground text-sm mt-1">Thay đổi nhận diện thương hiệu, logo và favicon của ứng dụng.</p>
+                <p className="text-muted-foreground text-sm mt-1">Thay đổi nhận diện thương hiệu, logo, favicon và cấu hình email.</p>
             </div>
 
             <div className="grid gap-6">
@@ -147,6 +175,88 @@ export default function AdminSettingsPage() {
                                     <span className="text-xs text-muted-foreground italic">Chưa có logo</span>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                </Card>
+
+                {/* SMTP Email Configuration */}
+                <Card className="p-6 border border-border/60 shadow-none rounded-2xl">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                            <Mail className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h2 className="font-bold text-foreground no-uppercase">Cấu hình Email (SMTP)</h2>
+                            <p className="text-[12px] text-muted-foreground">Cấu hình gửi email thông báo, reminder qua SMTP</p>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <Input
+                                label="SMTP Host"
+                                value={settings.smtp_host}
+                                onChange={(e) => setSettings({ ...settings, smtp_host: e.target.value })}
+                                placeholder="smtp.gmail.com"
+                            />
+                            <Input
+                                label="SMTP Port"
+                                value={settings.smtp_port}
+                                onChange={(e) => setSettings({ ...settings, smtp_port: e.target.value })}
+                                placeholder="587"
+                            />
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <Input
+                                label="SMTP User (Email)"
+                                value={settings.smtp_user}
+                                onChange={(e) => setSettings({ ...settings, smtp_user: e.target.value })}
+                                placeholder="your-email@gmail.com"
+                            />
+                            <Input
+                                label="SMTP Password"
+                                type="password"
+                                value={settings.smtp_password}
+                                onChange={(e) => setSettings({ ...settings, smtp_password: e.target.value })}
+                                placeholder="••••••••"
+                            />
+                        </div>
+                        <Input
+                            label="Tên hiển thị gửi (From)"
+                            value={settings.smtp_from}
+                            onChange={(e) => setSettings({ ...settings, smtp_from: e.target.value })}
+                            placeholder='Tulie Mentoring <noreply@tulie.vn>'
+                        />
+                        <p className="text-[11px] text-muted-foreground italic">
+                            * Nếu dùng Gmail, cần tạo App Password trong Google Account → Security → 2-Step Verification → App Passwords.
+                            Nếu không cấu hình, hệ thống vẫn hoạt động bình thường nhưng không gửi email.
+                        </p>
+
+                        {/* Test Email Section */}
+                        <div className="mt-4 pt-4 border-t border-border/40">
+                            <p className="text-[12px] font-semibold text-foreground mb-3 no-uppercase">Gửi email test</p>
+                            <div className="flex gap-3">
+                                <Input
+                                    value={testEmail}
+                                    onChange={(e) => setTestEmail(e.target.value)}
+                                    placeholder="Nhập email nhận test (mặc định: email của bạn)"
+                                    className="flex-1"
+                                />
+                                <Button
+                                    variant="outline"
+                                    className="rounded-xl shrink-0"
+                                    onClick={handleSendTestEmail}
+                                    disabled={isSendingTest}
+                                >
+                                    {isSendingTest ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <>
+                                            <Send className="w-4 h-4 mr-2" />
+                                            Gửi test
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </Card>

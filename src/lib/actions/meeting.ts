@@ -8,6 +8,11 @@ import { v4 as uuidv4 } from "uuid";
 import { addMinutes } from "date-fns";
 import { logActivity } from "./activity";
 
+import { sendNotificationToUsers } from "@/lib/notifications/service";
+import { meetingCreatedTemplate } from "@/lib/email/templates";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
+
 function generateCheckInCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
@@ -59,6 +64,43 @@ export async function createMeeting(data: MeetingInput) {
                 status: "absent",
             })),
         });
+    }
+
+    // Notify all participants (mentor + mentees)
+    try {
+        const mentorship = await prisma.mentorship.findUnique({
+            where: { id: validatedData.mentorshipId },
+            select: { mentorId: true, mentees: { select: { menteeId: true } } },
+        });
+
+        if (mentorship) {
+            const creatorName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim() || "Ai đó";
+            const participantIds = [
+                mentorship.mentorId,
+                ...mentorship.mentees.map(m => m.menteeId),
+            ].filter(id => id !== session.user.id); // Exclude creator
+
+            const meetingLink = `/meetings/${meeting.id}`;
+            const scheduledAtStr = format(new Date(validatedData.scheduledAt), "HH:mm - EEEE, dd/MM/yyyy", { locale: vi });
+
+            await sendNotificationToUsers({
+                userIds: participantIds,
+                title: `Cuộc họp mới: ${meeting.title}`,
+                message: `${creatorName} đã tạo cuộc họp "${meeting.title}" vào ${scheduledAtStr}`,
+                type: "meeting",
+                link: meetingLink,
+                sendEmailToo: true,
+                emailSubject: `[Tulie] Cuộc họp mới: ${meeting.title}`,
+                emailHtml: meetingCreatedTemplate({
+                    meetingTitle: meeting.title,
+                    scheduledAt: scheduledAtStr,
+                    creatorName,
+                    link: `${process.env.NEXTAUTH_URL || "https://mentoring.tulie.vn"}${meetingLink}`,
+                }),
+            });
+        }
+    } catch (notifError) {
+        console.error("Failed to send meeting creation notifications:", notifError);
     }
 
     revalidatePath("/calendar");
@@ -298,7 +340,124 @@ export async function updateMeetingStatus(id: string, status: string) {
         where: { id },
         data: { status },
     });
+
+    // Notify participants about status change
+    try {
+        const meeting = await prisma.meeting.findUnique({
+            where: { id },
+            include: {
+                mentorship: {
+                    select: { mentorId: true, mentees: { select: { menteeId: true } } },
+                },
+            },
+        });
+
+        if (meeting) {
+            const statusLabels: Record<string, string> = {
+                scheduled: "đã lên lịch",
+                ongoing: "đang diễn ra",
+                completed: "đã hoàn thành",
+                cancelled: "đã bị hủy",
+            };
+            const participantIds = [
+                meeting.mentorship.mentorId,
+                ...meeting.mentorship.mentees.map(m => m.menteeId),
+            ].filter(uid => uid !== session.user.id);
+
+            if (participantIds.length > 0) {
+                await sendNotificationToUsers({
+                    userIds: participantIds,
+                    title: `Cuộc họp ${statusLabels[status] || status}`,
+                    message: `Cuộc họp "${meeting.title}" ${statusLabels[status] || "đã cập nhật trạng thái"}`,
+                    type: "meeting",
+                    link: `/meetings/${id}`,
+                });
+            }
+        }
+    } catch (notifError) {
+        console.error("Failed to send meeting status notifications:", notifError);
+    }
+
     revalidatePath("/calendar");
     revalidatePath(`/meetings/${id}`);
     return JSON.parse(JSON.stringify(updatedMeeting));
+}
+
+/**
+ * Quick Check-in via QR code URL (phone camera scan)
+ * Validates: token → participant membership → check-in
+ */
+export async function quickCheckIn(meetingId: string, token: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    // 1. Find the meeting
+    const meeting = await prisma.meeting.findUnique({
+        where: { id: meetingId },
+        include: {
+            mentorship: {
+                include: {
+                    mentees: { select: { menteeId: true } },
+                },
+            },
+        },
+    });
+
+    if (!meeting) {
+        throw new Error("Cuộc họp không tồn tại hoặc đã bị xóa.");
+    }
+
+    // 2. Validate QR token
+    if (meeting.qrToken !== token) {
+        throw new Error("Mã QR không hợp lệ. Vui lòng quét lại.");
+    }
+
+    // 3. Check QR expiry
+    if (meeting.qrExpiresAt && new Date() > new Date(meeting.qrExpiresAt)) {
+        throw new Error("Mã QR đã hết hạn. Vui lòng liên hệ Mentor để làm mới mã.");
+    }
+
+    // 4. Check participant membership
+    const userId = session.user.id!;
+    const isMentor = meeting.mentorship.mentorId === userId;
+    const isMentee = meeting.mentorship.mentees.some(m => m.menteeId === userId);
+
+    if (!isMentor && !isMentee) {
+        throw new Error("Bạn không thuộc cuộc họp này. Vui lòng kiểm tra lại mã QR — có thể bạn đã quét nhầm mã.");
+    }
+
+    // 5. Check if already checked in
+    const existingAttendance = await prisma.attendance.findFirst({
+        where: { meetingId, userId },
+    });
+
+    if (existingAttendance?.checkInTime) {
+        // Already checked in — return success
+        return { meetingTitle: meeting.title, alreadyCheckedIn: true };
+    }
+
+    // 6. Perform check-in
+    if (existingAttendance) {
+        await prisma.attendance.update({
+            where: { id: existingAttendance.id },
+            data: {
+                status: "present",
+                checkInTime: new Date(),
+            },
+        });
+    } else {
+        await prisma.attendance.create({
+            data: {
+                meetingId,
+                userId,
+                status: "present",
+                checkInTime: new Date(),
+            },
+        });
+    }
+
+    revalidatePath("/calendar");
+    revalidatePath(`/meetings/${meetingId}`);
+
+    return { meetingTitle: meeting.title, alreadyCheckedIn: false };
 }

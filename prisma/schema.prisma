@@ -413,16 +413,17 @@ model Availability {
 }
 
 model Notification {
-  id        String    @id @default(cuid())
-  userId    String
-  title     String
-  message   String
-  type      String    @default("info")
-  link      String?
-  isRead    Boolean   @default(false)
-  readAt    DateTime?
-  createdAt DateTime  @default(now())
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  message     String
+  type        String    @default("info")
+  link        String?
+  isRead      Boolean   @default(false)
+  readAt      DateTime?
+  emailSentAt DateTime?
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead])
   @@index([createdAt])

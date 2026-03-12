@@ -123,9 +123,22 @@ export async function updateTaskStatus(id: string, status: string, column?: stri
 
     revalidatePath("/tasks");
 
-    // Log activity if completed
+    // Log activity and notify if completed
     if (status === "done" && existingTask.status !== "done") {
         await logActivity("complete_task", id, "task", { title: task.title });
+
+        try {
+            const { sendNotification } = await import("@/lib/notifications/service");
+            await sendNotification({
+                userId: session.user.id!,
+                title: "Đã hoàn thành công việc",
+                message: `Bạn đã hoàn thành "${task.title}" 🎉`,
+                type: "system",
+                link: "/tasks",
+            });
+        } catch (e) {
+            console.error("Failed to send task completion notification:", e);
+        }
     }
 
     return JSON.parse(JSON.stringify(task));
