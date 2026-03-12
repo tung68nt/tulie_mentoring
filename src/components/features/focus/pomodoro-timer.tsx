@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, RotateCcw, Leaf, Wind, Waves, Coffee, Music, Sparkles, Settings2, Plus, Minus, Check, Youtube } from "lucide-react";
+import { Play, Pause, RotateCcw, Leaf, Wind, Waves, Coffee, Music, Sparkles, Settings2, Plus, Minus, Check, Youtube, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ const SOUNDS = [
     { id: "rain", label: "Mưa rơi", icon: Waves, url: "https://cdn.pixabay.com/audio/2022/05/13/audio_257112847b.mp3" },
     { id: "wind", label: "Gió thổi", icon: Wind, url: "https://cdn.pixabay.com/audio/2022/03/09/audio_c610232c26.mp3" },
     { id: "forest", label: "Rừng xanh", icon: Leaf, url: "https://cdn.pixabay.com/audio/2022/08/31/audio_419263c02e.mp3" },
+    { id: "clock", label: "Kim đồng hồ", icon: Timer, url: "https://cdn.pixabay.com/audio/2022/10/21/audio_a29c2e5c3e.mp3" },
 ];
 
 const AMBIANCE_MUSICS = [
@@ -243,11 +244,11 @@ export function PomodoroTimer() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
 
                 {/* Left: Control Panel */}
                 <div className="md:col-span-3 flex flex-col gap-5">
-                    <div className="p-5 rounded-2xl border border-border/40 bg-card space-y-6">
+                    <div className="p-5 rounded-2xl border border-border/40 bg-card space-y-6 flex-1">
 
                         {/* Nature Sounds */}
                         <div className="space-y-3">
