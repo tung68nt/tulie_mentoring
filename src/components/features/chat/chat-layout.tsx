@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatWindow } from "./chat-window";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MessageCircle, Search, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { searchUsersForSharing } from "@/lib/actions/wiki";
-import { getOrCreateDirectChat, getChatRooms } from "@/lib/actions/chat";
+import { getOrCreateDirectChat } from "@/lib/actions/chat";
 
 export function ChatLayout({ currentUser }: { currentUser: any }) {
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
@@ -55,7 +54,7 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
     }
 
     return (
-        <Card className="flex h-full min-h-[500px] overflow-hidden rounded-xl border border-border/40 shadow-xl bg-card transition-all duration-300">
+        <div className="flex h-full min-h-[500px] overflow-hidden rounded-xl bg-background transition-all duration-300">
             <div className="flex w-full h-full relative">
                 {/* Sidebar */}
                 <ChatSidebar 
@@ -135,6 +134,6 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
                     )}
                 </div>
             </div>
-        </Card>
+        </div>
     );
 }

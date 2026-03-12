@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { MessageCircle, X, Maximize2, Send, Minimize2, Search, ArrowLeft } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { MessageCircle, X, Maximize2, Send, Minimize2, ArrowLeft, Check, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,6 +22,7 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Fetch rooms when opened
@@ -35,7 +36,7 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
     useEffect(() => {
         if (selectedRoomId) {
             loadMessages();
-            const interval = setInterval(loadMessages, 5000); // Poll every 5s for mini chat
+            const interval = setInterval(loadMessages, 5000);
             return () => clearInterval(interval);
         }
     }, [selectedRoomId]);
@@ -49,29 +50,37 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
         }
     };
 
-    const loadMessages = async () => {
+    const loadMessages = useCallback(async () => {
         if (!selectedRoomId) return;
         try {
             const data = await getMessages(selectedRoomId, 30);
-            setMessages(data);
+            // Merge: keep pending messages, replace confirmed ones
+            setMessages(prev => {
+                const pendingMsgs = prev.filter(m => m._pending);
+                // Deduplicate: only keep pending if not yet in server data
+                const serverIds = new Set(data.map((m: any) => m.id));
+                const stillPending = pendingMsgs.filter(m => !serverIds.has(m.id));
+                return [...data, ...stillPending];
+            });
             setTimeout(() => {
                 scrollRef.current?.scrollIntoView({ behavior: "smooth" });
             }, 100);
         } catch (err) {
             console.error(err);
         }
-    };
+    }, [selectedRoomId]);
 
     const handleSend = async (e?: React.FormEvent) => {
         e?.preventDefault();
         if (!input.trim() || !selectedRoomId) return;
 
         const content = input;
+        const tempId = `pending-${Date.now()}`;
         setInput("");
 
         // Optimistic UI
         const optimistic = {
-            id: Math.random().toString(),
+            id: tempId,
             content,
             senderId: currentUser.id,
             createdAt: new Date().toISOString(),
@@ -79,15 +88,21 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                 firstName: currentUser.firstName,
                 lastName: currentUser.lastName,
                 avatar: currentUser.avatar,
-            }
+            },
+            _pending: true,
         };
+        setPendingIds(prev => new Set(prev).add(tempId));
         setMessages(prev => [...prev, optimistic]);
 
         try {
-            await sendMessage({ roomId: selectedRoomId, content });
-            loadMessages();
+            const result = await sendMessage({ roomId: selectedRoomId, content });
+            // Replace optimistic with real
+            setMessages(prev => prev.map(m => m.id === tempId ? { ...result, sender: optimistic.sender, _sent: true } : m));
+            setPendingIds(prev => { const s = new Set(prev); s.delete(tempId); return s; });
         } catch (err) {
             console.error(err);
+            setMessages(prev => prev.map(m => m.id === tempId ? { ...m, _failed: true, _pending: false } : m));
+            setPendingIds(prev => { const s = new Set(prev); s.delete(tempId); return s; });
         }
     };
 
@@ -113,7 +128,7 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
             {isOpen && (
                 <Card className="w-[calc(100vw-2rem)] sm:w-[360px] h-[calc(100dvh-8rem)] sm:h-[500px] max-h-[500px] shadow-2xl overflow-hidden flex flex-col border-border/40 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto bg-card">
                     {/* Header */}
-                    <div className="p-3 border-b border-border/40 flex items-center justify-between bg-background/80 backdrop-blur-md shrink-0">
+                    <div className="px-3 py-2 border-b border-border/40 flex items-center justify-between bg-background/80 backdrop-blur-md shrink-0">
                         <div className="flex items-center gap-2">
                             {selectedRoomId ? (
                                 <>
@@ -163,8 +178,8 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                     <div className="flex-1 overflow-hidden relative">
                         {!selectedRoomId ? (
                             /* Rooms List */
-                            <ScrollArea className="h-full px-2">
-                                <div className="py-2 space-y-1">
+                            <ScrollArea className="h-full px-1">
+                                <div className="py-1 space-y-0.5">
                                     {rooms.length === 0 ? (
                                         <div className="text-center py-20 text-muted-foreground text-[12px]">
                                             Chưa có cuộc trò chuyện nào.
@@ -174,18 +189,18 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                                             <button
                                                 key={room.id}
                                                 onClick={() => setSelectedRoomId(room.id)}
-                                                className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors text-left group"
+                                                className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-muted/50 transition-colors text-left group"
                                             >
                                                 <div className="relative">
-                                                    <Avatar className="h-10 w-10">
+                                                    <Avatar className="h-9 w-9">
                                                         <AvatarImage src={getRoomAvatar(room)!} />
                                                         <AvatarFallback>{getRoomName(room)[0]}</AvatarFallback>
                                                     </Avatar>
-                                                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-background" />
+                                                    <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border-2 border-background" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex justify-between items-center mb-0.5">
-                                                        <span className="text-[13px] font-bold truncate text-foreground">{getRoomName(room)}</span>
+                                                        <span className="text-[12px] font-bold truncate text-foreground">{getRoomName(room)}</span>
                                                         <span className="text-[10px] text-muted-foreground/60">
                                                             {room.messages[0] ? format(new Date(room.messages[0].createdAt), "HH:mm") : ""}
                                                         </span>
@@ -202,26 +217,48 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                         ) : (
                             /* Messages Window */
                             <div className="flex flex-col h-full bg-background">
-                                <ScrollArea className="flex-1 p-3">
-                                    <div className="space-y-4 pb-2">
+                                <ScrollArea className="flex-1 px-2 py-2">
+                                    <div className="space-y-3 pb-1">
                                         {messages.map((msg, i) => {
                                             const isOwn = msg.senderId === currentUser.id;
+                                            const isPending = msg._pending;
+                                            const isSent = msg._sent || (!isPending && isOwn);
+
                                             return (
                                                 <div key={msg.id} className={cn(
-                                                    "flex items-end gap-2",
+                                                    "flex items-end gap-1.5",
                                                     isOwn ? "flex-row-reverse" : "flex-row"
                                                 )}>
                                                     {!isOwn && (
-                                                        <Avatar className="h-6 w-6 shrink-0">
+                                                        <Avatar className="h-5 w-5 shrink-0">
                                                             <AvatarImage src={msg.sender.avatar} />
-                                                            <AvatarFallback>{msg.sender.firstName[0]}</AvatarFallback>
+                                                            <AvatarFallback className="text-[8px]">{msg.sender.firstName[0]}</AvatarFallback>
                                                         </Avatar>
                                                     )}
                                                     <div className={cn(
-                                                        "max-w-[80%] rounded-2xl px-3 py-1.5 text-[12px] shadow-sm",
-                                                        isOwn ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
+                                                        "flex flex-col",
+                                                        isOwn ? "items-end" : "items-start"
                                                     )}>
-                                                        {msg.content}
+                                                        <div className={cn( 
+                                                            "max-w-[85%] rounded-2xl px-2.5 py-1.5 text-[12px] shadow-sm",
+                                                            isOwn ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none",
+                                                            isPending && "opacity-70"
+                                                        )}>
+                                                            {msg.content}
+                                                        </div>
+                                                        {/* Status */}
+                                                        {isOwn && (
+                                                            <div className="flex items-center gap-0.5 mt-0.5 pr-0.5">
+                                                                <span className="text-[8px] text-muted-foreground/40">
+                                                                    {format(new Date(msg.createdAt), "HH:mm")}
+                                                                </span>
+                                                                {isPending ? (
+                                                                    <Check className="w-2.5 h-2.5 text-muted-foreground/30" />
+                                                                ) : (
+                                                                    <CheckCheck className="w-2.5 h-2.5 text-primary/60" />
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             );
@@ -230,10 +267,10 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                                     </div>
                                 </ScrollArea>
                                 {/* Input */}
-                                <div className="p-3 border-t border-border/40 shrink-0 bg-background">
+                                <div className="px-2 py-1.5 border-t border-border/40 shrink-0 bg-background">
                                     <form 
                                         onSubmit={handleSend}
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-1.5"
                                     >
                                         <input 
                                             className="flex-1 bg-muted/50 border-none text-[12px] px-3 py-1.5 rounded-full outline-none placeholder:text-muted-foreground/60 focus:bg-background transition-all ring-inset focus:ring-1 ring-border"
@@ -245,9 +282,9 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                                             type="submit" 
                                             size="icon-sm" 
                                             disabled={!input.trim()}
-                                            className="h-8 w-8 rounded-full bg-primary shrink-0"
+                                            className="h-7 w-7 rounded-full bg-primary shrink-0"
                                         >
-                                            <Send className="w-3.5 h-3.5" />
+                                            <Send className="w-3 h-3" />
                                         </Button>
                                     </form>
                                 </div>
