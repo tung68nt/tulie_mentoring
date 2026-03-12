@@ -5,14 +5,16 @@ import { redirect, notFound } from "next/navigation";
 import { getWikiPageDetail } from "@/lib/actions/wiki";
 import { BlockEditor } from "@/components/ui/block-editor";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
-import { Clock, Edit, ChevronRight, Calendar } from "lucide-react";
+import { Clock, Edit, ChevronRight, Globe, Lock, Users, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { DeleteWikiButton } from "@/components/features/wiki/delete-wiki-button";
 import { ShareWikiButton } from "@/components/features/wiki/share-wiki-button";
-import { TableOfContents } from "@/components/features/wiki/wiki-toc";
 import Image from "next/image";
+
+const visIcons: Record<string, any> = { private: Lock, mentorship: Users, public: Globe, selected: UserCheck };
+const visLabels: Record<string, string> = { private: "Riêng tư", mentorship: "Nhóm", public: "Cộng đồng", selected: "Chọn người" };
 
 export default async function WikiDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const session = await auth();
@@ -28,65 +30,28 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
 
     const isAuthor = page.authorId === session.user.id;
     const canEdit = (session.user as any).role === "admin" || (session.user as any).role === "mentor" || isAuthor;
+    const VisIcon = visIcons[page.visibility] || Lock;
 
     return (
-        <div className="flex flex-col gap-6 max-w-[900px] animate-in fade-in duration-500">
-            {/* Header Section */}
-            <div className="space-y-4">
-                <nav className="flex items-center gap-2 text-muted-foreground/50">
-                    <Link href="/wiki" className="hover:text-foreground transition-colors font-medium text-[11px]">Wiki</Link>
-                    <ChevronRight className="w-3 h-3" />
-                    <span className="text-foreground/40 truncate max-w-[200px] text-[11px] font-medium">{page.title}</span>
-                </nav>
+        <div className="flex flex-col gap-0 max-w-[780px] animate-in fade-in duration-500">
+            {/* Breadcrumb */}
+            <nav className="flex items-center gap-1.5 text-muted-foreground/40 mb-5">
+                <Link href="/wiki" className="hover:text-primary transition-colors text-[12px] font-medium">
+                    📖 Wiki
+                </Link>
+                {page.category && (
+                    <>
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="text-[12px] font-medium">{page.category}</span>
+                    </>
+                )}
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-foreground/50 truncate max-w-[250px] text-[12px] font-medium">{page.title}</span>
+            </nav>
 
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-bold text-foreground tracking-tight leading-tight">
-                        {page.title}
-                    </h1>
-
-                    <div className="flex flex-wrap items-center justify-between gap-4 pt-1 pb-4 border-b border-border/40">
-                        <div className="flex items-center gap-3">
-                            <Avatar className="w-8 h-8 rounded-full border-none shadow-none ring-1 ring-border/40">
-                                <AvatarImage src={page.author.avatar || page.author.image} />
-                                <AvatarFallback className="text-[10px] font-bold bg-muted/40">
-                                    {page.author.firstName?.[0] || page.author.email?.[0]}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                                <span className="text-[12px] font-bold text-foreground leading-none">
-                                    {page.author.firstName} {page.author.lastName}
-                                </span>
-                                <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 mt-1">
-                                    <Clock className="w-3 h-3 opacity-40" />
-                                    Cập nhật {formatDate(new Date(page.updatedAt), "dd/MM/yyyy")}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            {page.visibility === 'public' && (
-                                <ShareWikiButton slug={page.slug} />
-                            )}
-                            {canEdit && (
-                                <>
-                                    <div className="h-5 w-px bg-border/40 mx-1 hidden sm:block" />
-                                    <Link href={`/wiki/${page.slug}/edit`}>
-                                        <Button variant="outline" className="h-7 rounded-md gap-1.5 shadow-none border-border/60 text-[10px] font-bold" size="sm">
-                                            <Edit className="w-3 h-3" />
-                                            Chỉnh sửa
-                                        </Button>
-                                    </Link>
-                                    <DeleteWikiButton id={page.id} title={page.title} />
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Page Cover Image if exists */}
+            {/* Cover Image */}
             {page.coverImage && (
-                <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden border border-border/40 shadow-none">
+                <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-6">
                     <Image
                         src={page.coverImage}
                         alt="Cover"
@@ -97,8 +62,58 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
                 </div>
             )}
 
-            {/* Editor Content Area */}
-            <div className="relative pt-4">
+            {/* Title */}
+            <h1 className="text-[28px] font-bold text-foreground tracking-tight leading-tight mb-4">
+                {page.title}
+            </h1>
+
+            {/* Meta bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 mb-2 border-b border-border/30">
+                <div className="flex items-center gap-3">
+                    <Avatar
+                        firstName={page.author?.firstName}
+                        lastName={page.author?.lastName}
+                        src={page.author?.avatar}
+                        size="sm"
+                    />
+                    <div className="flex flex-col">
+                        <span className="text-[13px] font-semibold text-foreground leading-none">
+                            {page.author.firstName} {page.author.lastName}
+                        </span>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[11px] text-muted-foreground/50 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {formatDate(new Date(page.updatedAt), "dd/MM/yyyy")}
+                            </span>
+                            <span className="text-muted-foreground/20">·</span>
+                            <span className="text-[11px] text-muted-foreground/40 flex items-center gap-1">
+                                <VisIcon className="w-3 h-3" />
+                                {visLabels[page.visibility]}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                    {page.visibility === 'public' && (
+                        <ShareWikiButton slug={page.slug} />
+                    )}
+                    {canEdit && (
+                        <>
+                            <Link href={`/wiki/${page.slug}/edit`}>
+                                <Button variant="ghost" className="h-7 rounded-md gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground" size="sm">
+                                    <Edit className="w-3 h-3" />
+                                    Sửa
+                                </Button>
+                            </Link>
+                            <DeleteWikiButton id={page.id} title={page.title} />
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="wiki-content">
                 <BlockEditor
                     initialContent={page.content}
                     editable={false}

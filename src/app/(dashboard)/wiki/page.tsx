@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getWikiPages } from "@/lib/actions/wiki";
 import { WikiList } from "@/components/features/wiki/wiki-list";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Plus, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export default async function WikiPage() {
@@ -26,17 +26,27 @@ export default async function WikiPage() {
         console.error("Failed to fetch wiki pages:", error);
     }
 
+    const totalPages = myPages.length + sharedPages.length + communityPages.length;
+
     return (
         <div className="space-y-8 pb-10 animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Wiki & Tài liệu</h1>
-                    <p className="text-sm text-muted-foreground mt-1 max-w-lg">Kho lưu trữ kiến thức, tài liệu và quy trình quan trọng trong chương trình Mentoring.</p>
+            {/* Lark-style clean header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <BookOpen className="w-4.5 h-4.5 text-primary" />
+                    </div>
+                    <div>
+                        <h1 className="text-xl font-bold text-foreground tracking-tight leading-none">Wiki</h1>
+                        <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+                            {totalPages} tài liệu
+                        </p>
+                    </div>
                 </div>
                 <Link href="/wiki/new">
-                    <Button className="rounded-xl h-11 px-6 font-medium gap-2">
-                        <PlusCircle className="w-4 h-4" />
-                        Tạo trang mới
+                    <Button className="rounded-lg h-9 px-4 font-semibold gap-1.5 text-[12px] shadow-none">
+                        <Plus className="w-3.5 h-3.5" />
+                        Tạo mới
                     </Button>
                 </Link>
             </div>

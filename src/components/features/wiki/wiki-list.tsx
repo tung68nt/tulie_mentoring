@@ -2,12 +2,15 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
-import { BookOpen, Globe, Lock, Users, UserCheck, Search, Filter } from "lucide-react";
+import {
+    BookOpen, Globe, Lock, Users, UserCheck,
+    Search, FileText, ChevronRight, Clock
+} from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface WikiListProps {
     myPages: any[];
@@ -16,45 +19,76 @@ interface WikiListProps {
     role: string;
 }
 
-const visibilityConfig: Record<string, { label: string; icon: any; color: string }> = {
-    private: { label: "Riêng tư", icon: Lock, color: "text-gray-400" },
-    mentorship: { label: "Nhóm", icon: Users, color: "text-blue-400" },
-    public: { label: "Cộng đồng", icon: Globe, color: "text-emerald-400" },
-    selected: { label: "Chọn người", icon: UserCheck, color: "text-purple-400" },
+const visibilityConfig: Record<string, { label: string; icon: any; bg: string; text: string }> = {
+    private: { label: "Riêng tư", icon: Lock, bg: "bg-gray-100", text: "text-gray-500" },
+    mentorship: { label: "Nhóm", icon: Users, bg: "bg-blue-50", text: "text-blue-500" },
+    public: { label: "Cộng đồng", icon: Globe, bg: "bg-emerald-50", text: "text-emerald-500" },
+    selected: { label: "Chọn người", icon: UserCheck, bg: "bg-purple-50", text: "text-purple-500" },
 };
 
 const tabs = [
-    { id: "my", label: "Của tôi", icon: BookOpen },
-    { id: "shared", label: "Được chia sẻ", icon: Users },
-    { id: "community", label: "Cộng đồng", icon: Globe },
+    { id: "all", label: "Tất cả" },
+    { id: "my", label: "Của tôi" },
+    { id: "shared", label: "Được chia sẻ" },
+    { id: "community", label: "Cộng đồng" },
 ];
 
+/* ── Emoji Mapper for Categories ── */
+const categoryEmoji: Record<string, string> = {
+    "Chung": "📋",
+    "Test": "🧪",
+    "Soft Skills": "💡",
+    "Marketing": "📢",
+    "Branding": "🎨",
+    "Resources": "📚",
+    "Kỹ năng": "⚡",
+    "Định hướng": "🧭",
+    "Onboarding": "🚀",
+    "Quy trình": "📝",
+};
+
+function getCategoryEmoji(cat: string): string {
+    return categoryEmoji[cat] || "📄";
+}
+
+/* ── Wiki Card (Lark-style) ── */
 function WikiCard({ page }: { page: any }) {
     const vis = visibilityConfig[page.visibility] || visibilityConfig.private;
     const VisIcon = vis.icon;
 
     return (
         <Link href={`/wiki/${page.slug}`} className="block group">
-            <div className="p-4 rounded-xl border border-border/40 bg-card hover:border-primary/20 hover:bg-accent/30 transition-all duration-200">
-                {page.coverImage && (
-                    <div className="w-full h-28 rounded-lg mb-3 overflow-hidden bg-muted">
-                        <img src={page.coverImage} alt="" className="w-full h-full object-cover" />
+            <div className="relative rounded-xl border border-border/50 bg-card hover:shadow-md hover:border-primary/20 transition-all duration-200 overflow-hidden">
+                {/* Cover Image or Gradient Header */}
+                {page.coverImage ? (
+                    <div className="h-32 overflow-hidden">
+                        <img src={page.coverImage} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
+                ) : (
+                    <div className="h-2 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent" />
                 )}
-                <div className="space-y-2.5">
-                    <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-[13px] font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug flex-1">
-                            {page.title}
-                        </h3>
-                        <VisIcon className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${vis.color}`} />
+
+                <div className="p-4 space-y-3">
+                    {/* Category + Visibility */}
+                    <div className="flex items-center justify-between gap-2">
+                        {page.category && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                                <span>{getCategoryEmoji(page.category)}</span>
+                                {page.category}
+                            </span>
+                        )}
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md", vis.bg, vis.text)}>
+                            <VisIcon className="w-3 h-3" />
+                            {vis.label}
+                        </span>
                     </div>
 
-                    {page.category && (
-                        <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground">
-                            {page.category}
-                        </span>
-                    )}
+                    {/* Title */}
+                    <h3 className="text-[14px] font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                        {page.title}
+                    </h3>
 
+                    {/* Author + Date */}
                     <div className="flex items-center gap-2 pt-2 border-t border-border/30">
                         <Avatar
                             firstName={page.author?.firstName || ""}
@@ -62,10 +96,11 @@ function WikiCard({ page }: { page: any }) {
                             src={page.author?.avatar}
                             size="xs"
                         />
-                        <span className="text-[11px] font-medium text-muted-foreground truncate flex-1">
+                        <span className="text-[11px] text-muted-foreground/70 truncate flex-1">
                             {page.author?.firstName} {page.author?.lastName}
                         </span>
-                        <span className="text-[10px] text-muted-foreground/50 font-medium shrink-0">
+                        <span className="text-[10px] text-muted-foreground/40 shrink-0 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
                             {formatDate(page.updatedAt)}
                         </span>
                     </div>
@@ -75,135 +110,131 @@ function WikiCard({ page }: { page: any }) {
     );
 }
 
-export function WikiList({ myPages, sharedPages, communityPages, role }: WikiListProps) {
-    const [activeTab, setActiveTab] = useState("my");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+/* ── Category Group ── */
+function CategoryGroup({ category, pages }: { category: string; pages: any[] }) {
+    return (
+        <div className="space-y-3">
+            <div className="flex items-center gap-2 px-1">
+                <span className="text-base">{getCategoryEmoji(category)}</span>
+                <h2 className="text-[13px] font-bold text-foreground">{category}</h2>
+                <span className="text-[11px] text-muted-foreground/40 font-medium">{pages.length}</span>
+                <div className="flex-1 h-px bg-border/30 ml-2" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {pages.map((page: any) => (
+                    <WikiCard key={page.id} page={page} />
+                ))}
+            </div>
+        </div>
+    );
+}
 
-    const tabData = {
-        my: { pages: myPages, empty: "Bạn chưa tạo trang nào. Nhấn \"Tạo trang mới\" để bắt đầu." },
+/* ── Main List Component ── */
+export function WikiList({ myPages, sharedPages, communityPages, role }: WikiListProps) {
+    const [activeTab, setActiveTab] = useState("all");
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // Combine all pages for "all" tab
+    const allPages = useMemo(() => [...myPages, ...sharedPages, ...communityPages], [myPages, sharedPages, communityPages]);
+
+    const tabData: Record<string, { pages: any[]; empty: string }> = {
+        all: { pages: allPages, empty: "Chưa có tài liệu nào trong hệ thống." },
+        my: { pages: myPages, empty: "Bạn chưa tạo trang nào. Hãy bắt đầu chia sẻ kiến thức! ✨" },
         shared: { pages: sharedPages, empty: role === "mentee" ? "Mentor chưa chia sẻ tài liệu nào cho bạn." : "Chưa có tài liệu nào được chia sẻ." },
-        community: { pages: communityPages, empty: "Chưa có tài liệu công khai nào." },
+        community: { pages: communityPages, empty: "Chưa có tài liệu công khai nào trong cộng đồng." },
     };
 
-    const current = tabData[activeTab as keyof typeof tabData];
+    const current = tabData[activeTab];
 
-    // Extract unique categories from current tab
-    const categories = useMemo(() => {
-        const cats = new Set<string>();
-        current.pages.forEach((p: any) => {
-            if (p.category) cats.add(p.category);
-        });
-        return Array.from(cats).sort();
-    }, [current.pages]);
-
-    // Filter pages
+    // Filter by search
     const filteredPages = useMemo(() => {
-        let filtered = current.pages;
+        if (!searchQuery.trim()) return current.pages;
+        const q = searchQuery.toLowerCase();
+        return current.pages.filter((p: any) =>
+            p.title.toLowerCase().includes(q) ||
+            (p.category && p.category.toLowerCase().includes(q)) ||
+            (p.author?.firstName && p.author.firstName.toLowerCase().includes(q))
+        );
+    }, [current.pages, searchQuery]);
 
-        if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase();
-            filtered = filtered.filter((p: any) =>
-                p.title.toLowerCase().includes(q) ||
-                (p.category && p.category.toLowerCase().includes(q)) ||
-                (p.author?.firstName && p.author.firstName.toLowerCase().includes(q)) ||
-                (p.author?.lastName && p.author.lastName.toLowerCase().includes(q))
-            );
-        }
-
-        if (selectedCategory) {
-            filtered = filtered.filter((p: any) => p.category === selectedCategory);
-        }
-
-        return filtered;
-    }, [current.pages, searchQuery, selectedCategory]);
+    // Group by category
+    const grouped = useMemo(() => {
+        const groups: Record<string, any[]> = {};
+        filteredPages.forEach((p: any) => {
+            const cat = p.category || "Chung";
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(p);
+        });
+        return groups;
+    }, [filteredPages]);
 
     return (
         <div className="space-y-6">
-            {/* Tab bar + Search */}
+            {/* Controls bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-muted/40 border border-border/40 w-fit">
+                {/* Tabs - Lark underline style */}
+                <div className="flex items-center gap-0">
                     {tabs.map((tab) => {
-                        const count = tabData[tab.id as keyof typeof tabData].pages.length;
+                        const count = tabData[tab.id].pages.length;
                         const isActive = activeTab === tab.id;
-                        const TabIcon = tab.icon;
 
                         return (
                             <button
                                 key={tab.id}
-                                onClick={() => { setActiveTab(tab.id); setSelectedCategory(null); }}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-bold transition-all ${
+                                onClick={() => setActiveTab(tab.id)}
+                                className={cn(
+                                    "relative px-4 py-2 text-[13px] font-medium transition-colors whitespace-nowrap",
                                     isActive
-                                        ? "bg-background text-foreground shadow-sm"
+                                        ? "text-primary font-semibold"
                                         : "text-muted-foreground/60 hover:text-foreground"
-                                }`}
+                                )}
                             >
-                                <TabIcon className="w-3.5 h-3.5" />
-                                <span>{tab.label}</span>
-                                {count > 0 && (
-                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                                        isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/50"
-                                    }`}>
+                                {tab.label}
+                                {tab.id !== "all" && count > 0 && (
+                                    <span className={cn(
+                                        "ml-1.5 text-[10px] font-bold",
+                                        isActive ? "text-primary" : "text-muted-foreground/30"
+                                    )}>
                                         {count}
                                     </span>
+                                )}
+                                {/* Active underline */}
+                                {isActive && (
+                                    <div className="absolute bottom-0 left-3 right-3 h-[2px] bg-primary rounded-full" />
                                 )}
                             </button>
                         );
                     })}
                 </div>
 
-                <div className="relative w-full sm:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
+                {/* Search */}
+                <div className="relative w-full sm:w-56">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/30" />
                     <Input
-                        placeholder="Tìm kiếm tài liệu..."
+                        placeholder="Tìm kiếm..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="h-8 pl-9 text-[12px] bg-background border-border/40 shadow-none rounded-lg"
+                        className="h-8 pl-9 text-[12px] bg-muted/30 border-transparent focus:border-primary/20 focus:bg-background shadow-none rounded-lg"
                     />
                 </div>
             </div>
 
-            {/* Category filter pills */}
-            {categories.length > 0 && (
-                <div className="flex items-center gap-2 flex-wrap">
-                    <Filter className="w-3 h-3 text-muted-foreground/40 shrink-0" />
-                    <button
-                        onClick={() => setSelectedCategory(null)}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
-                            !selectedCategory
-                                ? "bg-primary/10 text-primary"
-                                : "text-muted-foreground/60 hover:text-foreground hover:bg-muted/40"
-                        }`}
-                    >
-                        Tất cả
-                    </button>
-                    {categories.map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
-                            className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
-                                selectedCategory === cat
-                                    ? "bg-primary/10 text-primary"
-                                    : "text-muted-foreground/60 hover:text-foreground hover:bg-muted/40"
-                            }`}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-            )}
+            {/* Divider */}
+            <div className="h-px bg-border/40" />
 
-            {/* Content Grid */}
+            {/* Content */}
             {filteredPages.length === 0 ? (
-                <EmptyState
-                    icon={<BookOpen className="w-5 h-5" />}
-                    title="Chưa có trang nào"
-                    description={searchQuery ? "Không tìm thấy kết quả phù hợp." : current.empty}
-                />
+                <div className="py-20">
+                    <EmptyState
+                        icon={<FileText className="w-6 h-6" />}
+                        title="Chưa có tài liệu"
+                        description={searchQuery ? "Không tìm thấy kết quả phù hợp." : current.empty}
+                    />
+                </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredPages.map((page: any) => (
-                        <WikiCard key={page.id} page={page} />
+                <div className="space-y-8">
+                    {Object.entries(grouped).map(([category, pages]) => (
+                        <CategoryGroup key={category} category={category} pages={pages} />
                     ))}
                 </div>
             )}
