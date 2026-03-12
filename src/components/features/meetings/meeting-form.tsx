@@ -96,9 +96,8 @@ export function MeetingForm({ mentorships, defaultMentorshipId }: MeetingFormPro
                     <Select
                         label="Loại"
                         options={[
-                            { value: "session", label: "Buổi học (Session)" },
-                            { value: "workshop", label: "Workshop" },
-                            { value: "checkin", label: "Kiểm tra (Check-in)" },
+                            { value: "session", label: "Trao đổi định kỳ" },
+                            { value: "checkin", label: "Review / Đánh giá" },
                         ]}
                         {...register("meetingType")}
                         error={errors.meetingType?.message}

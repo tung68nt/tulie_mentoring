@@ -4,7 +4,7 @@ export type MentorshipType = "one_on_one" | "group";
 export type MentorshipStatus = "pending" | "active" | "completed" | "cancelled";
 
 export type MeetingMode = "offline" | "online";
-export type MeetingCategory = "session" | "workshop" | "checkin";
+export type MeetingCategory = "session" | "checkin";
 export type MeetingStatus = "scheduled" | "in_progress" | "completed" | "cancelled";
 
 export type AttendanceStatus = "present" | "absent" | "late" | "excused";

@@ -75,13 +75,11 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
             ) : (
                 <div className="space-y-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        Buổi họp này chưa có biên bản. {isMentor ? "Bạn có thể tạo biên bản ngay bây giờ." : "Đang chờ Mentor cập nhật biên bản."}
+                        Buổi họp này chưa có biên bản. Bạn có thể tạo biên bản ngay bây giờ.
                     </p>
-                    {isMentor && (
-                        <Button className="w-full" variant="outline" size="sm" onClick={() => setShowForm(true)}>
-                            Tạo biên bản
-                        </Button>
-                    )}
+                    <Button className="w-full" variant="outline" size="sm" onClick={() => setShowForm(true)}>
+                        Tạo biên bản
+                    </Button>
                 </div>
             )}
         </Card>

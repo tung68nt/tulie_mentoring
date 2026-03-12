@@ -32,7 +32,7 @@ export const meetingSchema = z.object({
     title: z.string().min(1, "Tiêu đề không được để trống"),
     description: z.string().optional(),
     type: z.enum(["offline", "online"]),
-    meetingType: z.enum(["session", "workshop", "checkin"]),
+    meetingType: z.enum(["session", "checkin"]),
     scheduledAt: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date({ message: "Vui lòng chọn thời gian" })),
     duration: z.coerce.number().min(15).max(180),
     location: z.string().optional(),
