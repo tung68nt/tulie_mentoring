@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ results: [] });
     }
 
+    const userId = session.user.id!;
     const role = (session.user as any).role;
 
     // Parallel searches
@@ -34,10 +35,18 @@ export async function GET(request: NextRequest) {
             })
             : [],
 
-        // Search meetings
+        // Search meetings — SECURITY: filter by user's mentorship membership
         prisma.meeting.findMany({
             where: {
                 title: { contains: q, mode: "insensitive" },
+                ...(role !== "admin" ? {
+                    mentorship: {
+                        OR: [
+                            { mentorId: userId },
+                            { mentees: { some: { menteeId: userId } } },
+                        ],
+                    },
+                } : {}),
             },
             select: { id: true, title: true, scheduledAt: true },
             take: 5,

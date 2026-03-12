@@ -42,7 +42,7 @@ export async function getMentorships() {
     const role = (session.user as any).role;
 
     const where: any = {};
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "manager";
     if (!isAdmin) {
         if (role === "mentor") {
             where.mentorId = userId;
@@ -153,7 +153,7 @@ export async function getMentorshipDetail(id: string) {
         if (!mentorship) return null;
 
         // Security check: Only admin, viewer or members of the mentorship can view details
-        const isAdmin = role === "admin" || role === "viewer";
+        const isAdmin = role === "admin" || role === "manager";
         if (!isAdmin) {
             const isMentor = mentorship.mentorId === userId;
             const isMentee = mentorship.mentees.some(m => m.menteeId === userId);

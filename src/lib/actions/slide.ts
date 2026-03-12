@@ -38,7 +38,7 @@ export async function getSlides() {
     if (!session?.user) throw new Error("Unauthorized");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "manager";
 
     const where: any = {};
     if (!isAdmin) {
@@ -84,7 +84,7 @@ export async function getSlideDetail(id: string) {
     if (!slide) throw new Error("Slide not found");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "manager";
 
     if (!isAdmin) {
         // If it belongs to a mentorship, check if user is part of it
@@ -120,9 +120,18 @@ export async function updateSlide(id: string, data: any) {
     if (!slide) throw new Error("Slide not found");
     if (slide.creatorId !== session.user.id) throw new Error("Access denied");
 
+    // SECURITY: Whitelist only allowed fields to prevent mass assignment
+    const { title, description, content, theme, status } = data;
     const updated = await prisma.slide.update({
         where: { id },
-        data,
+        data: {
+            ...(title !== undefined && { title }),
+            ...(description !== undefined && { description }),
+            ...(content !== undefined && { content }),
+            ...(theme !== undefined && { theme }),
+            ...(status !== undefined && { status }),
+            updatedAt: new Date(),
+        },
     });
 
     revalidatePath(`/slides/${id}`);

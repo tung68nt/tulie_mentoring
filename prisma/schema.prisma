@@ -15,7 +15,7 @@ model User {
   avatar             String?
   phone              String?
   bio                String?
-  role               String              @default("mentee") // admin, program_manager, facilitator, mentor, mentee, viewer
+  role               String              @default("mentee") // admin, program_manager, facilitator, mentor, mentee, manager
   isActive           Boolean             @default(true)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
@@ -60,6 +60,7 @@ model User {
   submittedEvaluations   EvaluationResponse[]    @relation("SubmittedEvaluations")
   menteeEvaluations      EvaluationResponse[]    @relation("TargetMentee")
   rankings               MenteeRanking[]
+  wikiPageShares         WikiPageShare[]
 
   @@index([role])
   @@index([email])
@@ -136,6 +137,8 @@ model ProgramCycle {
   menteeRankings         MenteeRanking[]
   posts                  Post[]
   chatRooms              ChatRoom[]
+  procedures             Procedure[]
+  milestones             ProgramMilestone[]
 }
 
 model Mentorship {
@@ -514,23 +517,37 @@ model TicketComment {
 }
 
 model WikiPage {
-  id         String   @id @default(cuid())
+  id         String          @id @default(cuid())
   title      String
-  slug       String   @unique
-  content    String?  @db.Text
+  slug       String          @unique
+  content    String?         @db.Text
   category   String?
-  visibility String   @default("public")
+  visibility String          @default("private") // private, mentorship, public, selected
   authorId   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
   coverImage String?
-  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id])
+  author     User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  mentorship   Mentorship?   @relation(fields: [mentorshipId], references: [id])
   mentorshipId String?
+  shares     WikiPageShare[]
 
   @@index([authorId])
   @@index([category])
   @@index([mentorshipId])
+  @@index([visibility])
+}
+
+model WikiPageShare {
+  id         String   @id @default(cuid())
+  wikiPageId String
+  userId     String
+  createdAt  DateTime @default(now())
+  wikiPage   WikiPage @relation(fields: [wikiPageId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([wikiPageId, userId])
+  @@index([userId])
 }
 
 model Whiteboard {
@@ -839,4 +856,68 @@ model ChatMessage {
 
   @@index([roomId])
   @@index([senderId])
+  @@index([roomId, createdAt])
+}
+
+// Procedures (school requirements for mentees/mentors)
+model Procedure {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?   @db.Text
+  type           String    @default("file") // file, form, link
+  fileUrl        String?   // for file/link type
+  formFields     String?   @db.Text // JSON array for form type
+  targetRole     String    @default("mentee") // mentee, mentor, both
+  isRequired     Boolean   @default(true)
+  deadline       DateTime?
+  createdById    String
+  programCycleId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  programCycle   ProgramCycle? @relation(fields: [programCycleId], references: [id])
+  submissions    ProcedureSubmission[]
+
+  @@index([targetRole])
+  @@index([programCycleId])
+}
+
+model ProcedureSubmission {
+  id           String   @id @default(cuid())
+  procedureId  String
+  userId       String
+  status       String   @default("pending") // pending, submitted, approved, rejected
+  fileUrl      String?
+  formData     String?  @db.Text // JSON for form submissions
+  note         String?  @db.Text
+  reviewNote   String?  @db.Text
+  reviewedById String?
+  submittedAt  DateTime?
+  reviewedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  procedure    Procedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+
+  @@unique([procedureId, userId])
+  @@index([userId])
+  @@index([status])
+}
+
+// Program Timeline Milestones
+model ProgramMilestone {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?
+  date           DateTime
+  icon           String    @default("calendar") // calendar, flag, star, check, users, award
+  color          String    @default("blue") // blue, green, amber, purple, rose
+  programCycleId String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  programCycle   ProgramCycle @relation(fields: [programCycleId], references: [id], onDelete: Cascade)
+
+  @@index([programCycleId])
+  @@index([date])
 }

@@ -7,9 +7,10 @@ export default async function WikiLayout({
 }: {
     children: React.ReactNode;
 }) {
-    let pages = [];
+    let pages: any[] = [];
     try {
-        pages = await getWikiPages();
+        const result = await getWikiPages();
+        pages = [...result.myPages, ...result.sharedPages, ...result.communityPages];
     } catch (error) {
         console.error("Failed to fetch wiki pages for sidebar:", error);
     }

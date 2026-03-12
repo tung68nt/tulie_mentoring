@@ -12,8 +12,8 @@ export default async function WikiPage() {
         redirect("/login");
     }
 
-    const pages = await getWikiPages();
-    const canCreate = true; // All roles can now create wiki pages
+    const role = (session.user as any).role;
+    const { myPages, sharedPages, communityPages } = await getWikiPages();
 
     return (
         <div className="space-y-8 pb-10 animate-fade-in">
@@ -22,17 +22,20 @@ export default async function WikiPage() {
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Wiki & Tài liệu</h1>
                     <p className="text-sm text-muted-foreground mt-1 max-w-lg">Kho lưu trữ kiến thức, tài liệu và quy trình quan trọng trong chương trình Mentoring.</p>
                 </div>
-                {canCreate && (
-                    <Link href="/wiki/new">
-                        <Button className="rounded-xl h-11 px-6 font-medium gap-2">
-                            <PlusCircle className="w-4 h-4" />
-                            Tạo trang mới
-                        </Button>
-                    </Link>
-                )}
+                <Link href="/wiki/new">
+                    <Button className="rounded-xl h-11 px-6 font-medium gap-2">
+                        <PlusCircle className="w-4 h-4" />
+                        Tạo trang mới
+                    </Button>
+                </Link>
             </div>
 
-            <WikiList pages={pages} />
+            <WikiList
+                myPages={myPages}
+                sharedPages={sharedPages}
+                communityPages={communityPages}
+                role={role}
+            />
         </div>
     );
 }

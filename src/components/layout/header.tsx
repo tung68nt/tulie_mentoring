@@ -31,7 +31,7 @@ const roleLabels: Record<string, string> = {
     admin: "Quản trị Hệ thống",
     mentor: "Mentor",
     mentee: "Mentee",
-    viewer: "Người xem",
+    manager: "Manager",
 };
 
 export function Header({ userName, userRole, avatar, onMenuClick, notifications = [], unreadCount = 0 }: HeaderProps) {

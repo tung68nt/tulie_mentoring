@@ -22,7 +22,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
     const userId = session.user.id!;
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer" || role === "program_manager";
+    const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
 
     // If admin selects a mentee, targetUserId is that mentee. Otherwise its the current user.
     const targetUserId = (isAdmin && menteeId) ? menteeId : (role === "mentee" ? userId : null);

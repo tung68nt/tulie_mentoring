@@ -26,9 +26,10 @@ interface UserRoleSelectorProps {
     userId: string;
     currentRole: string;
     isCurrentUser: boolean;
+    currentUserRole?: string;
 }
 
-export function UserRoleSelector({ userId, currentRole, isCurrentUser }: UserRoleSelectorProps) {
+export function UserRoleSelector({ userId, currentRole, isCurrentUser, currentUserRole }: UserRoleSelectorProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [pendingRole, setPendingRole] = useState<string | null>(null);
 
@@ -76,12 +77,14 @@ export function UserRoleSelector({ userId, currentRole, isCurrentUser }: UserRol
                     <SelectItem value="mentor">Mentor</SelectItem>
                     <SelectItem value="program_manager">User Manager</SelectItem>
                     <SelectItem value="facilitator">Facilitator</SelectItem>
-                    <SelectItem value="viewer">Người xem</SelectItem>
-                    <SelectItem value="admin">
-                        <div className="flex items-center gap-2 text-primary font-semibold">
-                            <Shield className="w-3 h-3" /> Admin
-                        </div>
-                    </SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    {currentUserRole === "admin" && (
+                        <SelectItem value="admin">
+                            <div className="flex items-center gap-2 text-primary font-semibold">
+                                <Shield className="w-3 h-3" /> Admin
+                            </div>
+                        </SelectItem>
+                    )}
                 </SelectContent>
             </Select>
 

@@ -15,6 +15,12 @@ export async function sendMessage(data: {
 
     const userId = session.user.id!;
 
+    // SECURITY: Verify user is a participant of this room
+    const isParticipant = await prisma.chatParticipant.findFirst({
+        where: { roomId: data.roomId, userId }
+    });
+    if (!isParticipant) throw new Error("Access denied: Not a participant of this chat room");
+
     const message = await prisma.chatMessage.create({
         data: {
             roomId: data.roomId,
@@ -83,6 +89,14 @@ export async function getChatRooms() {
 export async function getMessages(roomId: string, limit = 50, cursor?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+
+    const userId = session.user.id!;
+
+    // SECURITY: Verify user is a participant of this room
+    const isParticipant = await prisma.chatParticipant.findFirst({
+        where: { roomId, userId }
+    });
+    if (!isParticipant) throw new Error("Access denied: Not a participant of this chat room");
 
     const messages = await prisma.chatMessage.findMany({
         where: { roomId },

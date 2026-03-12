@@ -40,14 +40,14 @@ export default auth((req) => {
     if (isLoggedIn) {
         const role = req.auth?.user?.role;
 
-        // Admin and Program Manager can access admin routes
-        const isAdminOrPM = role === "admin" || role === "program_manager";
+        // Admin, Program Manager, and Manager can access admin routes
+        const isAdminOrPMOrManager = role === "admin" || role === "program_manager" || role === "manager";
         
-        if (nextUrl.pathname.startsWith("/admin") && !isAdminOrPM) {
+        if (nextUrl.pathname.startsWith("/admin") && !isAdminOrPMOrManager) {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
 
-        if (nextUrl.pathname.startsWith("/program-manager") && !isAdminOrPM) {
+        if (nextUrl.pathname.startsWith("/program-manager") && !isAdminOrPMOrManager) {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
 
@@ -55,9 +55,8 @@ export default auth((req) => {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
         
-        // Use exact prefix check with trailing slash or end-of-string
-        // to avoid /mentees being blocked for mentors
-        if (nextUrl.pathname.startsWith("/mentor") && !nextUrl.pathname.startsWith("/mentees") && role !== "mentor" && role !== "admin") {
+        // SECURITY: Use exact prefix check to avoid /mentoring or /mentor-guide being caught
+        if ((nextUrl.pathname === "/mentor" || nextUrl.pathname.startsWith("/mentor/")) && !nextUrl.pathname.startsWith("/mentees") && role !== "mentor" && role !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
 
@@ -65,13 +64,13 @@ export default auth((req) => {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
 
-        // Viewer access control
-        const viewerAllowedRoutes = ["/reports", "/mentees", "/calendar", "/wiki", "/whiteboard", "/slides", "/tickets", "/portfolio"];
-        const isViewerTargetRoute = viewerAllowedRoutes.some(route => nextUrl.pathname === route || nextUrl.pathname.startsWith(route + "/"));
+        // Manager access control
+        const managerAllowedRoutes = ["/reports", "/mentees", "/calendar", "/wiki", "/whiteboard", "/slides", "/tickets", "/portfolio", "/admin", "/manager"];
+        const isManagerTargetRoute = managerAllowedRoutes.some(route => nextUrl.pathname === route || nextUrl.pathname.startsWith(route + "/"));
 
-        if (role === "viewer") {
-            if (!isViewerTargetRoute && nextUrl.pathname !== "/" && nextUrl.pathname !== "/profile") {
-                return NextResponse.redirect(new URL("/reports", nextUrl));
+        if (role === "manager") {
+            if (!isManagerTargetRoute && nextUrl.pathname !== "/" && nextUrl.pathname !== "/profile") {
+                return NextResponse.redirect(new URL("/manager", nextUrl));
             }
         }
     }

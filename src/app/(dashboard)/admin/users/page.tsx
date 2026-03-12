@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getAllUsers, deleteUser } from "@/lib/actions/user";
+import { getAllUsers } from "@/lib/actions/user";
 import { Card } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,18 +13,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Trash2, Shield, User } from "lucide-react";
+import { Upload, UserPlus } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { UserRoleSelector } from "@/components/features/admin/user-role-selector";
-import { DeleteUserButton } from "@/components/features/admin/delete-user-button";
+import { UserActionsDropdown } from "@/components/features/admin/user-actions-dropdown";
 import { ImportUsersModal } from "@/components/features/admin/import-users-modal";
-import { Upload } from "lucide-react";
+import { AddUserModal } from "@/components/features/admin/add-user-modal";
 
 export default async function AdminUsersPage() {
     const session = await auth();
     const role = session?.user && (session.user as any).role;
-    if (!role || (role !== "admin" && role !== "program_manager")) {
+    if (!role || (role !== "admin" && role !== "program_manager" && role !== "manager")) {
         redirect("/login");
     }
 
@@ -39,12 +39,20 @@ export default async function AdminUsersPage() {
                         <h1 className="text-2xl font-semibold text-foreground">Quản lý Người dùng</h1>
                         <p className="text-sm text-muted-foreground mt-1">Danh sách tất cả tài khoản trong hệ thống ({serializedUsers.length})</p>
                     </div>
-                    <ImportUsersModal>
-                        <Button className="shrink-0 gap-2">
-                            <Upload className="w-4 h-4" />
-                            Nhập từ Excel
-                        </Button>
-                    </ImportUsersModal>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <ImportUsersModal>
+                            <Button variant="outline" className="shrink-0 gap-2">
+                                <Upload className="w-4 h-4" />
+                                Nhập từ Excel
+                            </Button>
+                        </ImportUsersModal>
+                        <AddUserModal>
+                            <Button className="shrink-0 gap-2">
+                                <UserPlus className="w-4 h-4" />
+                                Thêm người dùng
+                            </Button>
+                        </AddUserModal>
+                    </div>
                 </div>
 
                 <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -61,7 +69,7 @@ export default async function AdminUsersPage() {
                         </TableHeader>
                         <TableBody>
                             {serializedUsers.map((user: any) => (
-                                <TableRow key={user.id}>
+                                <TableRow key={user.id} className={!user.isActive ? "opacity-50" : ""}>
                                     <TableCell>
                                         <div className="flex items-center gap-3">
                                             <Avatar
@@ -84,6 +92,7 @@ export default async function AdminUsersPage() {
                                                 userId={user.id}
                                                 currentRole={user.role}
                                                 isCurrentUser={user.id === session.user.id}
+                                                currentUserRole={role}
                                             />
                                         </div>
                                     </TableCell>
@@ -95,9 +104,10 @@ export default async function AdminUsersPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         {user.role !== "admin" && user.id !== session?.user?.id && (
-                                            <DeleteUserButton
+                                            <UserActionsDropdown
                                                 userId={user.id}
                                                 userName={`${user.firstName} ${user.lastName}`}
+                                                isActive={user.isActive}
                                             />
                                         )}
                                     </TableCell>

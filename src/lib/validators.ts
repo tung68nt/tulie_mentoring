@@ -7,9 +7,16 @@ export const loginSchema = z.object({
     captchaToken: z.string().optional(),
 });
 
+// SECURITY: Strong password policy for registration
+const strongPasswordSchema = z.string()
+    .min(8, "Mật khẩu tối thiểu 8 ký tự")
+    .regex(/[A-Z]/, "Cần ít nhất 1 chữ hoa")
+    .regex(/[0-9]/, "Cần ít nhất 1 số")
+    .regex(/[^A-Za-z0-9]/, "Cần ít nhất 1 ký tự đặc biệt");
+
 export const registerSchema = z.object({
     email: z.string().email("Email không hợp lệ"),
-    password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
+    password: strongPasswordSchema,
     confirmPassword: z.string(),
     firstName: z.string().min(1, "Họ không được để trống"),
     lastName: z.string().min(1, "Tên không được để trống"),

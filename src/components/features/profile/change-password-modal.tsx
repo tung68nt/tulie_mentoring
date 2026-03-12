@@ -11,12 +11,17 @@ import { changePassword } from "@/lib/actions/user";
 export function ChangePasswordModal() {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const handleSave = async () => {
-        if (!newPassword || newPassword.length < 6) {
-            toast.error("Mật khẩu phải có ít nhất 6 ký tự");
+        if (!currentPassword) {
+            toast.error("Vui lòng nhập mật khẩu hiện tại");
+            return;
+        }
+        if (!newPassword || newPassword.length < 8) {
+            toast.error("Mật khẩu mới phải có ít nhất 8 ký tự");
             return;
         }
         if (newPassword !== confirmPassword) {
@@ -26,10 +31,11 @@ export function ChangePasswordModal() {
 
         setIsLoading(true);
         try {
-            const res = await changePassword(newPassword);
+            const res = await changePassword(currentPassword, newPassword);
             if (res.success) {
                 toast.success("Đổi mật khẩu thành công!");
                 setIsOpen(false);
+                setCurrentPassword("");
                 setNewPassword("");
                 setConfirmPassword("");
             } else {
@@ -59,10 +65,17 @@ export function ChangePasswordModal() {
                     <div className="space-y-4">
                         <Input
                             type="password"
+                            label="Mật khẩu hiện tại"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            placeholder="Nhập mật khẩu hiện tại..."
+                        />
+                        <Input
+                            type="password"
                             label="Mật khẩu mới"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
-                            placeholder="Ít nhất 6 ký tự..."
+                            placeholder="Ít nhất 8 ký tự, 1 chữ hoa, 1 số, 1 ký tự đặc biệt..."
                         />
                         <Input
                             type="password"

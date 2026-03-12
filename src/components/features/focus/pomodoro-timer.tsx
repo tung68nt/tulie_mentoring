@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, Pause, RotateCcw, Leaf, Wind, Waves, Coffee, Music, Sparkles, Settings2, Plus, Minus, Check, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const SOUNDS = [
     { id: "rain", label: "Mưa rơi", icon: Waves, url: "https://www.soundjay.com/nature/rain-07.mp3" },
@@ -27,109 +27,47 @@ const AMBIANCE_MUSICS = [
     { id: "zen", label: "Zen Space", icon: Sparkles, url: "https://www.soundjay.com/misc/ambient-sleep-music-1.mp3" },
 ];
 
-/* ── Orbiting Dots Component (Improved Animations) ── */
-function OrbitingDots({ isActive }: { isActive: boolean }) {
-    // Generate stable dot positions with varying speeds and mixed directions
-    const dots = useMemo(() => [
-        { ring: 0, angle: 30, size: 5, duration: 25, clockwise: true },
-        { ring: 0, angle: 150, size: 4, duration: 40, clockwise: false },
-        { ring: 1, angle: 270, size: 7, duration: 55, clockwise: true },
-        { ring: 1, angle: 60, size: 4, duration: 45, clockwise: false },
-        { ring: 1, angle: 180, size: 5, duration: 30, clockwise: true },
-        { ring: 2, angle: 300, size: 3, duration: 80, clockwise: false },
-        { ring: 2, angle: 10, size: 4, duration: 65, clockwise: true },
-        { ring: 2, angle: 120, size: 6, duration: 50, clockwise: false },
-        { ring: 3, angle: 240, size: 4, duration: 95, clockwise: true },
-        { ring: 3, angle: 45, size: 4, duration: 35, clockwise: false },
-        { ring: 3, angle: 200, size: 5, duration: 75, clockwise: true },
-        { ring: 0, angle: 280, size: 3, duration: 18, clockwise: false }, // Fast inner one
-        { ring: 1, angle: 110, size: 2, duration: 42, clockwise: true },
-        { ring: 2, angle: 210, size: 5, duration: 88, clockwise: false },
-    ], []);
-
-    const ringRadii = [60, 100, 140, 180];
-
+/* ── Breathing Gradient Component ── */
+function BreathingGradient({ isActive }: { isActive: boolean }) {
     return (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-            {/* Concentric circles with breathing effect */}
-            {ringRadii.map((r, i) => (
-                <motion.div
-                    key={`ring-${i}`}
-                    className="absolute rounded-full border border-emerald-500/[0.05]"
-                    style={{ width: r * 2, height: r * 2 }}
-                    animate={isActive ? {
-                        scale: [1, 1.04, 1],
-                        opacity: [0.15, 0.45, 0.15],
-                    } : { scale: 1, opacity: 0.1 }}
-                    transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: i * 0.8
-                    }}
-                />
-            ))}
-
-            {/* Glowing center - Subtle Gradient Breathing */}
+            {/* Outer soft glow */}
             <motion.div
-                className="absolute w-40 h-40 rounded-full bg-emerald-500/[0.03] blur-3xl"
-                animate={isActive ? {
-                    scale: [1, 1.25, 1],
-                    opacity: [0.3, 0.7, 0.3]
-                } : { opacity: 0.2 }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-                className="absolute w-20 h-20 rounded-full bg-emerald-500/[0.06] blur-xl"
+                className="absolute rounded-full"
+                style={{
+                    width: 340,
+                    height: 340,
+                    background: "radial-gradient(circle, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.02) 50%, transparent 70%)",
+                }}
                 animate={isActive ? {
                     scale: [1, 1.15, 1],
-                    opacity: [0.4, 0.8, 0.4]
-                } : { opacity: 0.3 }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    opacity: [0.5, 1, 0.5],
+                } : { scale: 1, opacity: 0.3 }}
+                transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                }}
             />
-
-            {/* The "Anchor" Dot - Aligned with timer's top colon dot for font size 100px */}
-            <div className="absolute w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)] z-[5] -translate-y-[18px]" />
-
-            {/* Orbiting dots */}
-            <div className="absolute inset-0">
-                {dots.map((dot, i) => {
-                    const radius = ringRadii[dot.ring];
-                    return (
-                        <div
-                            key={`dot-path-${i}`}
-                            className="absolute inset-0 flex items-center justify-center"
-                        >
-                            <motion.div
-                                className="absolute"
-                                style={{
-                                    width: radius * 2,
-                                    height: radius * 2,
-                                }}
-                                animate={isActive ? {
-                                    rotate: dot.clockwise ? [dot.angle, dot.angle + 360] : [dot.angle, dot.angle - 360]
-                                } : { rotate: dot.angle }}
-                                transition={isActive ? {
-                                    duration: dot.duration,
-                                    repeat: Infinity,
-                                    ease: "linear"
-                                } : { duration: 1.5, ease: "easeOut" }}
-                            >
-                                <div
-                                    className="absolute bg-emerald-500/40 rounded-full"
-                                    style={{
-                                        width: dot.size,
-                                        height: dot.size,
-                                        top: '50%',
-                                        left: '100%',
-                                        transform: 'translate(-50%, -50%)',
-                                    }}
-                                />
-                            </motion.div>
-                        </div>
-                    );
-                })}
-            </div>
+            {/* Inner concentrated glow */}
+            <motion.div
+                className="absolute rounded-full"
+                style={{
+                    width: 180,
+                    height: 180,
+                    background: "radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.04) 50%, transparent 70%)",
+                }}
+                animate={isActive ? {
+                    scale: [1, 1.2, 1],
+                    opacity: [0.6, 1, 0.6],
+                } : { scale: 1, opacity: 0.25 }}
+                transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.3,
+                }}
+            />
         </div>
     );
 }
@@ -393,35 +331,8 @@ export function PomodoroTimer() {
                 {/* Center: Timer with Orbiting Elements */}
                 <div className="md:col-span-5 relative rounded-2xl border border-border/40 bg-card overflow-hidden flex flex-col items-center justify-center p-6 min-h-[480px]">
 
-                    {/* Decorative: Orbiting Dots (like reference) */}
-                    <OrbitingDots isActive={isActive} />
-
-                    {/* Breathing pulse when active */}
-                    <AnimatePresence>
-                        {isActive && (
-                            <motion.div
-                                className="absolute inset-0 pointer-events-none flex items-center justify-center"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
-                                {[...Array(3)].map((_, i) => (
-                                    <motion.div
-                                        key={`pulse-${i}`}
-                                        className="absolute rounded-full bg-emerald-500/5"
-                                        style={{ width: 120, height: 120 }}
-                                        animate={{ scale: [1, 3 + i], opacity: [0.15, 0] }}
-                                        transition={{
-                                            duration: 4,
-                                            repeat: Infinity,
-                                            delay: i * 1.3,
-                                            ease: "easeOut",
-                                        }}
-                                    />
-                                ))}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {/* Breathing gradient effect */}
+                    <BreathingGradient isActive={isActive} />
 
                     {/* Timer Content */}
                     <div className="relative z-10 flex flex-col items-center w-full gap-8">

@@ -32,7 +32,7 @@ export async function getActivityLogs(limit = 10, targetUserId?: string) {
     if (!session?.user) throw new Error("Unauthorized");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "manager";
 
     if (targetUserId && !isAdmin && targetUserId !== session.user.id) {
         throw new Error("Unauthorized");

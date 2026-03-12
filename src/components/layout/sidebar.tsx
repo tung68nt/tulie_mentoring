@@ -26,6 +26,8 @@ import {
     Timer,
     Settings2,
     Bell,
+    ClipboardList,
+    Milestone,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,7 +37,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
-    role: "admin" | "mentor" | "mentee" | "viewer" | "program_manager" | "facilitator";
+    role: "admin" | "mentor" | "mentee" | "manager" | "program_manager" | "facilitator";
     isMobileOpen?: boolean;
     onMobileClose?: () => void;
     logoUrl?: string;
@@ -145,6 +147,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             {
                 items: [
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
+                    { id: "procedures", label: "Thủ tục & Biểu mẫu", icon: ClipboardList, href: "/procedures" },
                     { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
                 ],
             },
@@ -176,18 +179,28 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             {
                 items: [
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
+                    { id: "procedures", label: "Thủ tục & Biểu mẫu", icon: ClipboardList, href: "/procedures" },
+                    { id: "timeline", label: "Lộ trình chương trình", icon: Milestone, href: "/timeline" },
                     { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
                 ],
             },
         ],
-        viewer: [
+        manager: [
             {
                 items: [
-                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/viewer" },
+                    { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/manager" },
                     { id: "reports", label: "Báo cáo & Tiến bộ", icon: BarChart, href: "/reports" },
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
+                ],
+            },
+            {
+                items: [
+                    { id: "users", label: "Quản lý người dùng", icon: Users, href: "/admin/users" },
+                    { id: "mentorships", label: "Quản lý Mentorship", icon: Users, href: "/admin/mentorships" },
+                    { id: "procedures", label: "Thủ tục & Biểu mẫu", icon: ClipboardList, href: "/procedures" },
+                    { id: "timeline", label: "Lộ trình chương trình", icon: Milestone, href: "/timeline" },
                 ],
             },
         ],

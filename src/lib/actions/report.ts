@@ -10,7 +10,7 @@ export async function getMenteeStats(specificUserId?: string) {
     if (!session?.user) throw new Error("Unauthorized");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "manager";
 
     // If specificUserId is provided, use it (only if authorized or if it's the current user)
     // If not, use session.user.id for mentees, or global stats for admin/viewer

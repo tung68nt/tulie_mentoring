@@ -45,7 +45,7 @@ export async function getWhiteboards() {
     if (!session?.user) throw new Error("Unauthorized");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "manager";
 
     const where: any = {};
     if (!isAdmin) {
@@ -94,7 +94,7 @@ export async function getWhiteboardDetail(id: string) {
     if (!whiteboard) throw new Error("Whiteboard not found");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer";
+    const isAdmin = role === "admin" || role === "manager";
 
     if (!isAdmin) {
         // If it belongs to a mentorship, check if user is part of it
@@ -130,9 +130,17 @@ export async function updateWhiteboard(id: string, data: any) {
     if (!whiteboard) throw new Error("Whiteboard not found");
     if (whiteboard.creatorId !== session.user.id) throw new Error("Access denied");
 
+    // SECURITY: Whitelist only allowed fields to prevent mass assignment
+    const { title, description, thumbnail, status } = data;
     const updated = await prisma.whiteboard.update({
         where: { id },
-        data,
+        data: {
+            ...(title !== undefined && { title }),
+            ...(description !== undefined && { description }),
+            ...(thumbnail !== undefined && { thumbnail }),
+            ...(status !== undefined && { status }),
+            updatedAt: new Date(),
+        },
     });
 
     revalidatePath(`/whiteboard/${id}`);

@@ -17,8 +17,12 @@ export default async function RootPage() {
       redirect("/mentor");
     case "mentee":
       redirect("/mentee");
-    case "viewer":
-      redirect("/reports");
+    case "manager":
+      redirect("/manager");
+    case "program_manager":
+      redirect("/program-manager");
+    case "facilitator":
+      redirect("/facilitator");
     default:
       redirect("/login");
   }

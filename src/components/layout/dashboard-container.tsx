@@ -11,7 +11,7 @@ interface DashboardContainerProps {
         id: string; // Added ID for chat identification
         firstName: string;
         lastName: string;
-        role: "admin" | "mentor" | "mentee" | "viewer" | "program_manager" | "facilitator";
+        role: "admin" | "mentor" | "mentee" | "manager" | "program_manager" | "facilitator";
         avatar: string | null;
     };
     notifications: any[];
