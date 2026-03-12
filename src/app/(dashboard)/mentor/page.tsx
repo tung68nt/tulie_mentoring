@@ -81,35 +81,61 @@ export default async function MentorDashboard() {
                         Theo dõi thời gian &amp; Deadline
                     </h3>
 
-                    {/* Program cycle countdowns — all mentorships */}
-                    {serializedMentorships
-                        .filter((m: any) => m.programCycle?.endDate)
-                        .map((m: any, i: number) => (
-                            <Countdown
-                                key={`cycle-${m.id}`}
-                                targetDate={m.programCycle.endDate}
-                                label={`Thời gian còn lại: ${m.programCycle.name}`}
-                            />
-                        ))}
+                    {(() => {
+                        // Deduplicate program cycles
+                        const seenCycles = new Set<string>();
+                        const uniqueCycles = serializedMentorships
+                            .filter((m: any) => m.programCycle?.endDate)
+                            .filter((m: any) => {
+                                if (seenCycles.has(m.programCycle.id)) return false;
+                                seenCycles.add(m.programCycle.id);
+                                return true;
+                            });
 
-                    {/* Per-mentee goal deadlines */}
-                    {serializedMentorships.flatMap((m: any) =>
-                        m.goals.map((g: any) => ({
-                            ...g,
-                            menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName
-                        }))
-                    )
-                        .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-                        .slice(0, 6)
-                        .map((goal: any) => (
-                            <Countdown
-                                key={goal.id}
-                                targetDate={goal.dueDate}
-                                label={goal.title}
-                                subtitle={`Mentee: ${goal.menteeName}`}
-                                size="sm"
-                            />
-                        ))}
+                        // Collect all goal deadlines
+                        const goalDeadlines = serializedMentorships.flatMap((m: any) =>
+                            m.goals.map((g: any) => ({
+                                ...g,
+                                menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName
+                            }))
+                        )
+                            .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+                            .slice(0, 6);
+
+                        // Calculate maxDays from the longest countdown for consistent bar scale
+                        const now = new Date();
+                        const allDates = [
+                            ...uniqueCycles.map((m: any) => new Date(m.programCycle.endDate)),
+                            ...goalDeadlines.map((g: any) => new Date(g.dueDate)),
+                        ];
+                        const globalMaxDays = Math.max(
+                            30,
+                            ...allDates.map(d => Math.max(0, Math.ceil((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))))
+                        );
+
+                        return (
+                            <>
+                                {uniqueCycles.map((m: any) => (
+                                    <Countdown
+                                        key={`cycle-${m.programCycle.id}`}
+                                        targetDate={m.programCycle.endDate}
+                                        label={`Thời gian còn lại: ${m.programCycle.name}`}
+                                        maxDays={globalMaxDays}
+                                    />
+                                ))}
+                                {goalDeadlines.map((goal: any) => (
+                                    <Countdown
+                                        key={goal.id}
+                                        targetDate={goal.dueDate}
+                                        label={goal.title}
+                                        subtitle={`Mentee: ${goal.menteeName}`}
+                                        size="sm"
+                                        maxDays={globalMaxDays}
+                                    />
+                                ))}
+                            </>
+                        );
+                    })()}
 
                     {serializedMentorships.length === 0 && (
                         <div className="py-4 text-center text-xs text-muted-foreground">
