@@ -37,7 +37,7 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
             {/* Breadcrumb */}
             <nav className="flex items-center gap-1.5 text-muted-foreground/40 mb-5">
                 <Link href="/wiki" className="hover:text-primary transition-colors text-[12px] font-medium">
-                    📖 Wiki
+                    Wiki
                 </Link>
                 {page.category && (
                     <>

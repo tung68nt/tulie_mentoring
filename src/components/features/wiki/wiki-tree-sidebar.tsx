@@ -5,21 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     ChevronRight, ChevronDown, FileText,
-    Search, Plus, PanelLeftClose, PanelLeft
+    Search, Plus, PanelLeftClose, PanelLeft, FolderOpen, Folder
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-
-/* ── Emoji Mapper ── */
-const categoryEmoji: Record<string, string> = {
-    "Chung": "📋", "Test": "🧪", "Soft Skills": "💡",
-    "Marketing": "📢", "Branding": "🎨", "Resources": "📚",
-    "Kỹ năng": "⚡", "Định hướng": "🧭", "Onboarding": "🚀", "Quy trình": "📝",
-};
-
-function getEmoji(cat: string): string {
-    return categoryEmoji[cat] || "📄";
-}
 
 interface WikiTreeSidebarProps {
     pages: any[];
@@ -51,7 +40,6 @@ export function WikiTreeSidebar({ pages }: WikiTreeSidebarProps) {
         return acc;
     }, {});
 
-    // Auto-expand categories that contain current page
     const currentSlug = pathname.split("/wiki/")[1]?.split("/")[0] || "";
 
     const toggleCat = (cat: string) => {
@@ -64,9 +52,8 @@ export function WikiTreeSidebar({ pages }: WikiTreeSidebarProps) {
     };
 
     const isCatExpanded = (cat: string) => {
-        if (search.trim()) return true; // Always expanded in search
+        if (search.trim()) return true;
         if (expandedCats.has(cat)) return true;
-        // Auto-expand if current page is in this category
         return (categories[cat] as any[] || []).some((p: any) => p.slug === currentSlug);
     };
 
@@ -86,7 +73,7 @@ export function WikiTreeSidebar({ pages }: WikiTreeSidebarProps) {
                         href={`/wiki/${p.slug}`}
                         title={p.title}
                         className={cn(
-                            "h-7 w-7 rounded-md flex items-center justify-center transition-colors text-[11px] font-bold",
+                            "h-7 w-7 rounded-md flex items-center justify-center transition-colors",
                             pathname.includes(p.slug)
                                 ? "bg-primary/10 text-primary"
                                 : "text-muted-foreground/40 hover:bg-muted hover:text-foreground"
@@ -103,8 +90,8 @@ export function WikiTreeSidebar({ pages }: WikiTreeSidebarProps) {
         <div className="w-60 flex-shrink-0 border-r border-border/40 bg-muted/5 flex flex-col transition-all duration-200 h-full overflow-hidden">
             {/* Header */}
             <div className="px-4 py-3 flex items-center justify-between">
-                <Link href="/wiki" className="flex items-center gap-2 hover:text-primary transition-colors">
-                    <span className="text-[13px] font-bold text-foreground tracking-tight">📖 Wiki</span>
+                <Link href="/wiki" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <span className="text-[13px] font-bold text-foreground tracking-tight">Wiki</span>
                 </Link>
                 <button
                     className="h-6 w-6 rounded flex items-center justify-center text-muted-foreground/40 hover:text-foreground hover:bg-muted transition-colors"
@@ -131,10 +118,10 @@ export function WikiTreeSidebar({ pages }: WikiTreeSidebarProps) {
             <div className="flex-1 overflow-y-auto custom-scrollbar px-2 pb-4 space-y-0.5">
                 {Object.entries(filteredCategories).map(([cat, catPages]) => {
                     const isExpanded = isCatExpanded(cat);
+                    const FolderIcon = isExpanded ? FolderOpen : Folder;
 
                     return (
                         <div key={cat}>
-                            {/* Category header */}
                             <button
                                 onClick={() => toggleCat(cat)}
                                 className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-md text-left hover:bg-muted/50 transition-colors group"
@@ -143,12 +130,11 @@ export function WikiTreeSidebar({ pages }: WikiTreeSidebarProps) {
                                     ? <ChevronDown className="w-3 h-3 text-muted-foreground/40 shrink-0" />
                                     : <ChevronRight className="w-3 h-3 text-muted-foreground/40 shrink-0" />
                                 }
-                                <span className="text-[12px]">{getEmoji(cat)}</span>
-                                <span className="text-[11px] font-bold text-foreground/70 truncate flex-1">{cat}</span>
+                                <FolderIcon className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" />
+                                <span className="text-[11px] font-semibold text-foreground/70 truncate flex-1">{cat}</span>
                                 <span className="text-[10px] text-muted-foreground/30 font-medium">{(catPages as any[]).length}</span>
                             </button>
 
-                            {/* Pages */}
                             {isExpanded && (
                                 <div className="ml-3 pl-2.5 border-l border-border/30 space-y-0.5 my-0.5">
                                     {(catPages as any[]).map((page: any) => {

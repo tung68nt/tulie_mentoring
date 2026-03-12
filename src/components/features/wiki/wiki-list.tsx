@@ -6,7 +6,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
     BookOpen, Globe, Lock, Users, UserCheck,
-    Search, FileText, ChevronRight, Clock
+    Search, FileText, Clock, Hash
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -33,25 +33,7 @@ const tabs = [
     { id: "community", label: "Cộng đồng" },
 ];
 
-/* ── Emoji Mapper for Categories ── */
-const categoryEmoji: Record<string, string> = {
-    "Chung": "📋",
-    "Test": "🧪",
-    "Soft Skills": "💡",
-    "Marketing": "📢",
-    "Branding": "🎨",
-    "Resources": "📚",
-    "Kỹ năng": "⚡",
-    "Định hướng": "🧭",
-    "Onboarding": "🚀",
-    "Quy trình": "📝",
-};
-
-function getCategoryEmoji(cat: string): string {
-    return categoryEmoji[cat] || "📄";
-}
-
-/* ── Wiki Card (Lark-style) ── */
+/* ── Wiki Card ── */
 function WikiCard({ page }: { page: any }) {
     const vis = visibilityConfig[page.visibility] || visibilityConfig.private;
     const VisIcon = vis.icon;
@@ -59,21 +41,20 @@ function WikiCard({ page }: { page: any }) {
     return (
         <Link href={`/wiki/${page.slug}`} className="block group">
             <div className="relative rounded-xl border border-border/50 bg-card hover:shadow-md hover:border-primary/20 transition-all duration-200 overflow-hidden">
-                {/* Cover Image or Gradient Header */}
+                {/* Cover Image or subtle top accent */}
                 {page.coverImage ? (
                     <div className="h-32 overflow-hidden">
                         <img src={page.coverImage} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                 ) : (
-                    <div className="h-2 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent" />
+                    <div className="h-1.5 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent" />
                 )}
 
                 <div className="p-4 space-y-3">
-                    {/* Category + Visibility */}
+                    {/* Visibility badge */}
                     <div className="flex items-center justify-between gap-2">
                         {page.category && (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                                <span>{getCategoryEmoji(page.category)}</span>
+                            <span className="text-[11px] font-medium text-muted-foreground/60">
                                 {page.category}
                             </span>
                         )}
@@ -115,9 +96,9 @@ function CategoryGroup({ category, pages }: { category: string; pages: any[] }) 
     return (
         <div className="space-y-3">
             <div className="flex items-center gap-2 px-1">
-                <span className="text-base">{getCategoryEmoji(category)}</span>
+                <Hash className="w-3.5 h-3.5 text-muted-foreground/30" />
                 <h2 className="text-[13px] font-bold text-foreground">{category}</h2>
-                <span className="text-[11px] text-muted-foreground/40 font-medium">{pages.length}</span>
+                <span className="text-[11px] text-muted-foreground/30 font-medium">{pages.length}</span>
                 <div className="flex-1 h-px bg-border/30 ml-2" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -134,19 +115,18 @@ export function WikiList({ myPages, sharedPages, communityPages, role }: WikiLis
     const [activeTab, setActiveTab] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Combine all pages for "all" tab
     const allPages = useMemo(() => [...myPages, ...sharedPages, ...communityPages], [myPages, sharedPages, communityPages]);
 
     const tabData: Record<string, { pages: any[]; empty: string }> = {
         all: { pages: allPages, empty: "Chưa có tài liệu nào trong hệ thống." },
-        my: { pages: myPages, empty: "Bạn chưa tạo trang nào. Hãy bắt đầu chia sẻ kiến thức! ✨" },
-        shared: { pages: sharedPages, empty: role === "mentee" ? "Mentor chưa chia sẻ tài liệu nào cho bạn." : "Chưa có tài liệu nào được chia sẻ." },
-        community: { pages: communityPages, empty: "Chưa có tài liệu công khai nào trong cộng đồng." },
+        my: { pages: myPages, empty: "Bạn chưa tạo trang nào." },
+        shared: { pages: sharedPages, empty: "Chưa có tài liệu nào được chia sẻ." },
+        community: { pages: communityPages, empty: "Chưa có tài liệu công khai nào." },
     };
 
     const current = tabData[activeTab];
 
-    // Filter by search
+    // Filter
     const filteredPages = useMemo(() => {
         if (!searchQuery.trim()) return current.pages;
         const q = searchQuery.toLowerCase();
@@ -172,8 +152,8 @@ export function WikiList({ myPages, sharedPages, communityPages, role }: WikiLis
         <div className="space-y-6">
             {/* Controls bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Tabs - Lark underline style */}
-                <div className="flex items-center gap-0">
+                {/* Tabs - underline style */}
+                <div className="flex items-center gap-0 border-b border-border/40">
                     {tabs.map((tab) => {
                         const count = tabData[tab.id].pages.length;
                         const isActive = activeTab === tab.id;
@@ -183,24 +163,23 @@ export function WikiList({ myPages, sharedPages, communityPages, role }: WikiLis
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={cn(
-                                    "relative px-4 py-2 text-[13px] font-medium transition-colors whitespace-nowrap",
+                                    "relative px-4 py-2.5 text-[13px] font-medium transition-colors whitespace-nowrap",
                                     isActive
-                                        ? "text-primary font-semibold"
-                                        : "text-muted-foreground/60 hover:text-foreground"
+                                        ? "text-foreground"
+                                        : "text-muted-foreground/50 hover:text-foreground"
                                 )}
                             >
                                 {tab.label}
                                 {tab.id !== "all" && count > 0 && (
                                     <span className={cn(
-                                        "ml-1.5 text-[10px] font-bold",
-                                        isActive ? "text-primary" : "text-muted-foreground/30"
+                                        "ml-1.5 text-[10px]",
+                                        isActive ? "text-primary font-bold" : "text-muted-foreground/30"
                                     )}>
                                         {count}
                                     </span>
                                 )}
-                                {/* Active underline */}
                                 {isActive && (
-                                    <div className="absolute bottom-0 left-3 right-3 h-[2px] bg-primary rounded-full" />
+                                    <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full" />
                                 )}
                             </button>
                         );
@@ -214,13 +193,10 @@ export function WikiList({ myPages, sharedPages, communityPages, role }: WikiLis
                         placeholder="Tìm kiếm..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="h-8 pl-9 text-[12px] bg-muted/30 border-transparent focus:border-primary/20 focus:bg-background shadow-none rounded-lg"
+                        className="h-8 pl-9 text-[12px] bg-muted/30 border-transparent focus:border-border/40 focus:bg-background shadow-none rounded-lg"
                     />
                 </div>
             </div>
-
-            {/* Divider */}
-            <div className="h-px bg-border/40" />
 
             {/* Content */}
             {filteredPages.length === 0 ? (
