@@ -103,21 +103,16 @@ export function Countdown({ targetDate, label, subtitle, className, maxDays = 90
 
     return (
         <div className={cn(
-            "flex flex-col gap-2 p-4 rounded-xl border border-border/40 bg-card hover:border-border/60 transition-all group",
+            "flex flex-col gap-1.5 px-4 py-3 rounded-xl border border-border/40 bg-card hover:border-border/60 transition-all group",
             className
         )}>
-            {/* Top row: label + days */}
-            <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-foreground truncate leading-tight no-uppercase">
-                        {label}
-                    </p>
-                    {subtitle && (
-                        <p className="text-[11px] text-muted-foreground/60 font-normal mt-0.5 truncate">{subtitle}</p>
-                    )}
-                </div>
+            {/* Label row */}
+            <div className="flex items-center justify-between gap-3 min-h-[20px]">
+                <p className="text-[13px] font-semibold text-foreground truncate leading-tight no-uppercase flex-1 min-w-0">
+                    {label}
+                </p>
                 <div className={cn(
-                    "flex items-center gap-1.5 font-mono font-bold shrink-0 text-sm tabular-nums",
+                    "flex items-center gap-1 font-mono font-bold shrink-0 text-sm tabular-nums",
                     textClass
                 )}>
                     {timeLeft.d}
@@ -126,8 +121,16 @@ export function Countdown({ targetDate, label, subtitle, className, maxDays = 90
                 </div>
             </div>
 
-            {/* Progress bar — always full width */}
-            <div className="w-full h-2 bg-muted/40 rounded-full overflow-hidden relative">
+            {/* Subtitle — always takes space to ensure equal height */}
+            <p className={cn(
+                "text-[11px] font-normal truncate h-[16px] leading-[16px]",
+                subtitle ? "text-muted-foreground/60" : "text-transparent select-none"
+            )}>
+                {subtitle || "\u00A0"}
+            </p>
+
+            {/* Progress bar */}
+            <div className="w-full h-2 bg-muted/40 rounded-full overflow-hidden">
                 <div
                     className={cn(
                         "h-full rounded-full transition-all duration-1000 ease-out",

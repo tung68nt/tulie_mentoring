@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Users, Calendar, CheckCircle, Clock, Target } from "lucide-react";
+import { Users, Calendar, CheckCircle, Clock, Target, ArrowRight } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
@@ -153,27 +153,38 @@ export default async function MentorDashboard() {
                     <div className="lg:col-span-2 space-y-10">
                         <div className="space-y-4 pt-4">
                             <h3 className="text-lg font-semibold text-foreground">Danh sách Mentees</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {serializedMentorships.flatMap((m: any) => m.mentees).map((mt: any) => (
-                                    <Card key={mt.id} className="p-6 flex items-center justify-between group" hover>
-                                        <div className="flex items-center gap-4">
+                                    <Link 
+                                        key={mt.id}
+                                        href={`/admin/mentorships/${mt.mentorshipId}`}
+                                        className="group relative flex flex-col items-center p-5 rounded-xl border border-border/40 bg-card hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                    >
+                                        {/* Top accent */}
+                                        <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full bg-gradient-to-r from-primary/40 via-primary to-primary/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        
+                                        <div className="relative mb-3">
                                             <Avatar
                                                 firstName={mt.mentee?.firstName}
                                                 lastName={mt.mentee?.lastName}
                                                 src={mt.mentee?.avatar}
-                                                size="md"
+                                                size="lg"
                                             />
-                                            <div className="min-w-0">
-                                                <p className="text-sm font-semibold text-foreground truncate leading-tight mb-1">
-                                                    {mt.mentee?.firstName} {mt.mentee?.lastName}
-                                                </p>
-                                                <p className="text-[11px] font-medium text-muted-foreground capitalize">{mt.status || "active"}</p>
-                                            </div>
+                                            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-card ring-1 ring-black/5" />
                                         </div>
-                                        <Button variant="outline" size="sm" asChild className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                                            <Link href={`/admin/mentorships/${mt.mentorshipId}`}>Hồ sơ</Link>
-                                        </Button>
-                                    </Card>
+                                        <p className="text-sm font-bold text-foreground text-center truncate w-full">
+                                            {mt.mentee?.firstName} {mt.mentee?.lastName}
+                                        </p>
+                                        <Badge 
+                                            status={mt.status || "active"} 
+                                            size="sm"
+                                            className="mt-1.5"
+                                        />
+                                        <span className="text-[11px] text-primary font-medium mt-3 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                                            Xem hồ sơ
+                                            <ArrowRight className="w-3 h-3" />
+                                        </span>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
