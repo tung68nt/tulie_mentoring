@@ -52,7 +52,10 @@ export function NotificationPanel({ notifications, unreadCount }: NotificationPa
 
     useEffect(() => {
         setLocalNotifs(notifications);
-        setLocalUnread(unreadCount);
+        // Sync badge with actual data: use the real unread count from the notifications list
+        // to avoid phantom badges when count and list are out of sync
+        const actualUnread = notifications.filter(n => !n.isRead).length;
+        setLocalUnread(actualUnread);
     }, [notifications, unreadCount]);
 
     useEffect(() => {
