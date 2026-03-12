@@ -16,7 +16,7 @@ export default async function WikiLayout({
     }
 
     return (
-        <div className="flex h-[calc(100vh-var(--header-height))] -mx-6 -mt-8 overflow-hidden bg-background">
+        <div className="flex h-[calc(100vh-var(--header-height))] -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 overflow-hidden bg-background">
             <WikiSidebar pages={pages} />
             <main className="flex-1 overflow-y-auto custom-scrollbar relative">
                 <div className="px-6 py-8 md:px-12 max-w-[1200px] mx-auto min-h-full">

@@ -77,7 +77,7 @@ export default async function MenteesPage() {
                         <p className="text-sm font-semibold text-muted-foreground">Hiện chưa có dữ liệu sinh viên trong đợt này.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {serialized.map((mt: any) => (
                             <Card key={mt.id} className="group overflow-hidden flex flex-col h-full border-border/80 shadow-none hover:border-primary/30 transition-all duration-300" hover padding="none">
                                 <div className="p-6 flex-1">

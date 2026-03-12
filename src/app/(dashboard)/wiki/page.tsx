@@ -13,7 +13,18 @@ export default async function WikiPage() {
     }
 
     const role = (session.user as any).role;
-    const { myPages, sharedPages, communityPages } = await getWikiPages();
+    let myPages: any[] = [];
+    let sharedPages: any[] = [];
+    let communityPages: any[] = [];
+
+    try {
+        const result = await getWikiPages();
+        myPages = result.myPages;
+        sharedPages = result.sharedPages;
+        communityPages = result.communityPages;
+    } catch (error) {
+        console.error("Failed to fetch wiki pages:", error);
+    }
 
     return (
         <div className="space-y-8 pb-10 animate-fade-in">
