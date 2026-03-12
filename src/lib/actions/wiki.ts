@@ -95,7 +95,7 @@ export async function getWikiPages(category?: string) {
     const myPages = await prisma.wikiPage.findMany({
         where: { authorId: userId, ...categoryFilter },
         include: {
-            author: { select: { firstName: true, lastName: true } },
+            author: { select: { firstName: true, lastName: true, avatar: true } },
             shares: { select: { userId: true } },
         },
         orderBy: { updatedAt: "desc" },
@@ -130,7 +130,7 @@ export async function getWikiPages(category?: string) {
                 ],
             },
             include: {
-                author: { select: { firstName: true, lastName: true } },
+                author: { select: { firstName: true, lastName: true, avatar: true } },
             },
             orderBy: { updatedAt: "desc" },
         });
@@ -143,7 +143,7 @@ export async function getWikiPages(category?: string) {
                 ...categoryFilter,
             },
             include: {
-                author: { select: { firstName: true, lastName: true } },
+                author: { select: { firstName: true, lastName: true, avatar: true } },
             },
             orderBy: { updatedAt: "desc" },
         });
@@ -157,7 +157,7 @@ export async function getWikiPages(category?: string) {
             ...categoryFilter,
         },
         include: {
-            author: { select: { firstName: true, lastName: true } },
+            author: { select: { firstName: true, lastName: true, avatar: true } },
         },
         orderBy: { updatedAt: "desc" },
     });
