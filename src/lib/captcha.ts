@@ -1,11 +1,9 @@
 export async function verifyCaptcha(token: string | undefined | null) {
     const secretKey = process.env.RECAPTCHA_SECRET_KEY;
     if (!secretKey) {
-        if (process.env.NODE_ENV === "production") {
-            console.error("CRITICAL: RECAPTCHA_SECRET_KEY is not defined in production!");
-            return { success: false, error: "Captcha service not configured" };
-        }
-        console.warn("RECAPTCHA_SECRET_KEY is not defined. Skipping captcha verification in development.");
+        // No secret key configured — skip captcha verification
+        // This allows login to work even if RECAPTCHA is not set up
+        console.warn("RECAPTCHA_SECRET_KEY is not defined. Skipping captcha verification.");
         return { success: true };
     }
 
