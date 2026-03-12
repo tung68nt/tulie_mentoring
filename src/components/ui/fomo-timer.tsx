@@ -50,7 +50,7 @@ interface CountdownProps {
     size?: "sm" | "md" | "lg";
 }
 
-export function Countdown({ targetDate, label, subtitle, className, maxDays = 90, size = "md" }: CountdownProps) {
+export function Countdown({ targetDate, label, subtitle, className, maxDays = 90 }: CountdownProps) {
     const [timeLeft, setTimeLeft] = useState<{ d: number } | null>(null);
 
     useEffect(() => {
@@ -75,44 +75,67 @@ export function Countdown({ targetDate, label, subtitle, className, maxDays = 90
 
     if (!timeLeft) return null;
 
-    const percent = Math.min(100, Math.max(0, (timeLeft.d / maxDays) * 100));
+    const percent = Math.min(100, Math.max(2, (timeLeft.d / maxDays) * 100));
     const isUrgent = timeLeft.d < 3;
 
     // Color logic: Danger -> Warning -> Safe
     let bgClass = "bg-cyan-500";
     let textClass = "text-cyan-600 dark:text-cyan-400";
+    let ringClass = "ring-cyan-500/20";
 
     if (timeLeft.d <= 3) {
         bgClass = "bg-rose-500";
         textClass = "text-rose-600 dark:text-rose-400";
+        ringClass = "ring-rose-500/20";
     } else if (timeLeft.d <= 7) {
         bgClass = "bg-orange-500";
         textClass = "text-orange-600 dark:text-orange-400";
+        ringClass = "ring-orange-500/20";
     } else if (timeLeft.d <= 14) {
         bgClass = "bg-amber-400";
         textClass = "text-amber-600 dark:text-amber-400";
+        ringClass = "ring-amber-400/20";
     } else if (timeLeft.d <= 30) {
         bgClass = "bg-emerald-500";
         textClass = "text-emerald-600 dark:text-emerald-400";
+        ringClass = "ring-emerald-500/20";
     }
 
     return (
-        <div className={cn("flex items-center gap-4 w-full py-1.5 group min-h-[44px]", className)}>
-            <div className={cn("font-medium text-foreground no-uppercase shrink-0 leading-tight", size === "sm" ? "text-xs w-[140px]" : "text-[13px] w-[180px]")}>
-                {label}
-                {subtitle && <span className="block text-[10px] text-muted-foreground/60 font-normal mt-0.5">{subtitle}</span>}
+        <div className={cn(
+            "flex flex-col gap-2 p-4 rounded-xl border border-border/40 bg-card hover:border-border/60 transition-all group",
+            className
+        )}>
+            {/* Top row: label + days */}
+            <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-foreground truncate leading-tight no-uppercase">
+                        {label}
+                    </p>
+                    {subtitle && (
+                        <p className="text-[11px] text-muted-foreground/60 font-normal mt-0.5 truncate">{subtitle}</p>
+                    )}
+                </div>
+                <div className={cn(
+                    "flex items-center gap-1.5 font-mono font-bold shrink-0 text-sm tabular-nums",
+                    textClass
+                )}>
+                    {timeLeft.d}
+                    <span className="text-[10px] font-semibold opacity-60">ngày</span>
+                    {isUrgent && <AlertCircle className="w-3.5 h-3.5 shrink-0 animate-pulse text-rose-500" />}
+                </div>
             </div>
-            <div className="flex-1 h-2.5 bg-muted/30 rounded-full overflow-hidden relative shadow-inner ring-1 ring-border/5">
+
+            {/* Progress bar — always full width */}
+            <div className="w-full h-2 bg-muted/40 rounded-full overflow-hidden relative">
                 <div
-                    className={cn("h-full rounded-full transition-all duration-1000 ease-in-out", bgClass)}
+                    className={cn(
+                        "h-full rounded-full transition-all duration-1000 ease-out",
+                        bgClass
+                    )}
                     style={{ width: `${percent}%` }}
                 />
-            </div>
-            <div className={cn("flex items-center justify-end gap-1.5 font-mono font-semibold shrink-0 min-w-[50px]", textClass, size === "sm" ? "text-xs" : "text-sm")}>
-                {timeLeft.d}d
-                {isUrgent && <AlertCircle className="w-3.5 h-3.5 shrink-0 animate-pulse text-rose-500" />}
             </div>
         </div>
     );
 }
-

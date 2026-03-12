@@ -74,9 +74,9 @@ export default async function MentorDashboard() {
                     <p className="text-sm text-muted-foreground mt-1">{isAdmin ? "Xem trước giao diện Mentor (tổng hợp dữ liệu toàn hệ thống)" : `Chào buổi sáng, ${session?.user?.name || "Mentor"}.`}</p>
                 </div>
 
-                {/* Unified Countdown Section — matches Mentee style */}
-                <div className="flex flex-col gap-1 w-full max-w-3xl bg-muted/10 rounded-2xl p-4 border border-border/40">
-                    <h3 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-2">
+                {/* Unified Countdown Section */}
+                <div className="flex flex-col gap-4 w-full">
+                    <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
                         <Target className="w-3.5 h-3.5" />
                         Theo dõi thời gian &amp; Deadline
                     </h3>
@@ -115,24 +115,34 @@ export default async function MentorDashboard() {
 
                         return (
                             <>
-                                {uniqueCycles.map((m: any) => (
-                                    <Countdown
-                                        key={`cycle-${m.programCycle.id}`}
-                                        targetDate={m.programCycle.endDate}
-                                        label={`Thời gian còn lại: ${m.programCycle.name}`}
-                                        maxDays={globalMaxDays}
-                                    />
-                                ))}
-                                {goalDeadlines.map((goal: any) => (
-                                    <Countdown
-                                        key={goal.id}
-                                        targetDate={goal.dueDate}
-                                        label={goal.title}
-                                        subtitle={`Mentee: ${goal.menteeName}`}
-                                        size="sm"
-                                        maxDays={globalMaxDays}
-                                    />
-                                ))}
+                                {/* Program cycles — full width */}
+                                {uniqueCycles.length > 0 && (
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {uniqueCycles.map((m: any) => (
+                                            <Countdown
+                                                key={`cycle-${m.programCycle.id}`}
+                                                targetDate={m.programCycle.endDate}
+                                                label={`Thời gian còn lại: ${m.programCycle.name}`}
+                                                maxDays={globalMaxDays}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Goal deadlines — 2 columns on md+ */}
+                                {goalDeadlines.length > 0 && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {goalDeadlines.map((goal: any) => (
+                                            <Countdown
+                                                key={goal.id}
+                                                targetDate={goal.dueDate}
+                                                label={goal.title}
+                                                subtitle={`Mentee: ${goal.menteeName}`}
+                                                maxDays={globalMaxDays}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
                             </>
                         );
                     })()}
