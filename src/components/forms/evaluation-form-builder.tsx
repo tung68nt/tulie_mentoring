@@ -135,7 +135,7 @@ export function FormBuilder({ form }: FormBuilderProps) {
 
     const handleUpdateQuestion = async (id: string, data: Partial<Question>) => {
         try {
-            const updated = await updateQuestion(id, form.id, data);
+            const updated = await updateQuestion(id, form.id, { ...data, options: data.options ?? undefined });
             setQuestions(questions.map(q => q.id === id ? { ...q, ...updated } : q));
             setEditingQuestionId(null);
             toast.success("Đã cập nhật câu hỏi");

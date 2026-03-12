@@ -270,7 +270,7 @@ export function ProceduresList({ procedures, role, userId }: ProceduresListProps
     if (procedures.length === 0) {
         return (
             <EmptyState
-                icon={FileText}
+                icon={<FileText className="w-5 h-5" />}
                 title="Chưa có thủ tục nào"
                 description={isAdmin ? "Nhấn \"Thêm thủ tục\" để tạo yêu cầu mới." : "Không có thủ tục nào cần hoàn thành."}
                 action={isAdmin ? <CreateProcedureModal /> : undefined}

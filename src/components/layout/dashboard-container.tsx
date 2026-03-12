@@ -59,7 +59,7 @@ export function DashboardContainer({
                     onMenuClick={() => setIsSidebarOpen(true)}
                 />
 
-                <main className="flex-1 px-3 sm:px-6 lg:px-8 pt-20 sm:pt-[88px] pb-10 max-w-[1400px] mx-auto w-full" style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom, 2.5rem))' }}>
+                <main className="flex-1 px-4 sm:px-8 lg:px-10 pt-20 sm:pt-[88px] pb-10 max-w-[1400px] mx-auto w-full" style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom, 2.5rem))' }}>
                     <div className="animate-fade-in text-foreground">
                         {children}
                     </div>

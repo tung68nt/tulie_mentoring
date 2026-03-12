@@ -81,7 +81,7 @@ function PageGrid({ pages, emptyMessage }: { pages: any[]; emptyMessage: string 
     if (pages.length === 0) {
         return (
             <EmptyState
-                icon={BookOpen}
+                icon={<BookOpen className="w-5 h-5" />}
                 title="Chưa có trang nào"
                 description={emptyMessage}
             />

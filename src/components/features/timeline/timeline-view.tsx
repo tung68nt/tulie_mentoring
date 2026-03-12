@@ -202,7 +202,7 @@ export function TimelineView({ milestones, programCycle, isAdmin }: TimelineView
     if (!programCycle) {
         return (
             <EmptyState
-                icon={Calendar}
+                icon={<Calendar className="w-5 h-5" />}
                 title="Chưa có chương trình"
                 description="Cần tạo chương trình Mentoring trước khi thêm mốc sự kiện."
             />
@@ -226,7 +226,7 @@ export function TimelineView({ milestones, programCycle, isAdmin }: TimelineView
             {/* Timeline */}
             {milestones.length === 0 ? (
                 <EmptyState
-                    icon={MilestoneIcon}
+                    icon={<MilestoneIcon className="w-5 h-5" />}
                     title="Chưa có mốc sự kiện"
                     description={isAdmin ? "Nhấn \"Thêm mốc\" để tạo lộ trình chương trình." : "Lộ trình chương trình chưa được thiết lập."}
                 />
