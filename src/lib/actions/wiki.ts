@@ -10,6 +10,12 @@ function slugify(text: string) {
         .toString()
         .toLowerCase()
         .trim()
+        // Handle Vietnamese đ/Đ before normalization
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'd')
+        // Remove diacritics: normalize to NFD then strip combining marks
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
         .replace(/\s+/g, '-')
         .replace(/[^\w-]+/g, '')
         .replace(/--+/g, '-');
