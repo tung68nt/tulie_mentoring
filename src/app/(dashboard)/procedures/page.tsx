@@ -8,8 +8,14 @@ export default async function ProceduresPage() {
     if (!session?.user) redirect("/login");
 
     const role = (session.user as any).role;
-    const procedures = await getProcedures();
     const isAdmin = ["admin", "manager", "facilitator", "program_manager"].includes(role);
+
+    let procedures: any[] = [];
+    try {
+        procedures = await getProcedures();
+    } catch (error) {
+        console.error("Failed to fetch procedures:", error);
+    }
 
     return (
         <div className="space-y-8 pb-10 animate-fade-in">

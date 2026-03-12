@@ -8,8 +8,18 @@ export default async function TimelinePage() {
     if (!session?.user) redirect("/login");
 
     const role = (session.user as any).role;
-    const { milestones, programCycle } = await getMilestones();
     const isAdmin = ["admin", "manager", "program_manager"].includes(role);
+
+    let milestones: any[] = [];
+    let programCycle: any = null;
+
+    try {
+        const result = await getMilestones();
+        milestones = result.milestones;
+        programCycle = result.programCycle;
+    } catch (error) {
+        console.error("Failed to fetch milestones:", error);
+    }
 
     return (
         <div className="space-y-8 pb-10 animate-fade-in">
