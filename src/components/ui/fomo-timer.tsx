@@ -100,6 +100,7 @@ export function Countdown({ targetDate, label, subtitle, className, maxDays = 90
         <div className={cn("flex items-center gap-4 w-full py-1.5 group min-h-[44px]", className)}>
             <div className={cn("font-medium text-foreground no-uppercase shrink-0 leading-tight", size === "sm" ? "text-xs w-[140px]" : "text-[13px] w-[180px]")}>
                 {label}
+                {subtitle && <span className="block text-[10px] text-muted-foreground/60 font-normal mt-0.5">{subtitle}</span>}
             </div>
             <div className="flex-1 h-2.5 bg-muted/30 rounded-full overflow-hidden relative shadow-inner ring-1 ring-border/5">
                 <div

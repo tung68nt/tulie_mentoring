@@ -148,6 +148,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                 items: [
                     { id: "wiki", label: "Wiki & Tài liệu", icon: BookMarked, href: "/wiki" },
                     { id: "procedures", label: "Thủ tục & Biểu mẫu", icon: ClipboardList, href: "/procedures" },
+                    { id: "timeline", label: "Lộ trình chương trình", icon: Milestone, href: "/timeline" },
                     { id: "tickets", label: "Yêu cầu hỗ trợ", icon: LifeBuoy, href: "/tickets" },
                 ],
             },

@@ -74,14 +74,47 @@ export default async function MentorDashboard() {
                     <p className="text-sm text-muted-foreground mt-1">{isAdmin ? "Xem trước giao diện Mentor (tổng hợp dữ liệu toàn hệ thống)" : `Chào buổi sáng, ${session?.user?.name || "Mentor"}.`}</p>
                 </div>
 
-                {/* FOMO Countdown for Mentor */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {serializedMentorships?.[0]?.programCycle?.endDate && (
-                        <Countdown
-                            targetDate={serializedMentorships[0].programCycle.endDate}
-                            label={`Thời gian còn lại của đợt: ${serializedMentorships[0].programCycle.name}`}
-                            className="bg-primary/5 border-primary/10 shadow-sm"
-                        />
+                {/* Unified Countdown Section — matches Mentee style */}
+                <div className="flex flex-col gap-1 w-full max-w-3xl bg-muted/10 rounded-2xl p-4 border border-border/40">
+                    <h3 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-2">
+                        <Target className="w-3.5 h-3.5" />
+                        Theo dõi thời gian &amp; Deadline
+                    </h3>
+
+                    {/* Program cycle countdowns — all mentorships */}
+                    {serializedMentorships
+                        .filter((m: any) => m.programCycle?.endDate)
+                        .map((m: any, i: number) => (
+                            <Countdown
+                                key={`cycle-${m.id}`}
+                                targetDate={m.programCycle.endDate}
+                                label={`Thời gian còn lại: ${m.programCycle.name}`}
+                            />
+                        ))}
+
+                    {/* Per-mentee goal deadlines */}
+                    {serializedMentorships.flatMap((m: any) =>
+                        m.goals.map((g: any) => ({
+                            ...g,
+                            menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName
+                        }))
+                    )
+                        .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+                        .slice(0, 6)
+                        .map((goal: any) => (
+                            <Countdown
+                                key={goal.id}
+                                targetDate={goal.dueDate}
+                                label={goal.title}
+                                subtitle={`Mentee: ${goal.menteeName}`}
+                                size="sm"
+                            />
+                        ))}
+
+                    {serializedMentorships.length === 0 && (
+                        <div className="py-4 text-center text-xs text-muted-foreground">
+                            Chưa có chương trình hoạt động
+                        </div>
                     )}
                 </div>
 
@@ -93,43 +126,6 @@ export default async function MentorDashboard() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-10">
-                        {/* Goals Countdown Section */}
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                                <Target className="w-5 h-5 text-primary" />
-                                Theo dõi Deadline Mục tiêu
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {serializedMentorships.flatMap((m: any) =>
-                                    m.goals.map((g: any) => ({ ...g, mentorshipId: m.id, menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName }))
-                                ).length === 0 ? (
-                                    <div className="md:col-span-2 py-8 border border-dashed rounded-xl bg-muted/20 text-center">
-                                        <p className="text-xs text-muted-foreground">Chưa có mục tiêu nào có hạn định gần đây.</p>
-                                    </div>
-                                ) : (
-                                    serializedMentorships.flatMap((m: any) =>
-                                        m.goals.map((g: any) => ({
-                                            ...g,
-                                            mentorshipId: m.id,
-                                            menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName
-                                        }))
-                                    )
-                                        .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-                                        .slice(0, 4)
-                                        .map((goal: any) => (
-                                            <Countdown
-                                                key={goal.id}
-                                                targetDate={goal.dueDate}
-                                                label={goal.title}
-                                                subtitle={`Mentee: ${goal.menteeName}`}
-                                                className="bg-background border-border"
-                                                size="sm"
-                                            />
-                                        ))
-                                )}
-                            </div>
-                        </div>
-
                         <div className="space-y-4 pt-4">
                             <h3 className="text-lg font-semibold text-foreground">Danh sách Mentees</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
