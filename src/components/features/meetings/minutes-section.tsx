@@ -102,34 +102,33 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
                         </Button>
                     )}
 
-                    {(status === "draft" || status === "submitted") && isMentor && (
-                        <div className="space-y-2">
-                            {status === "draft" && (
-                                <p className="text-[11px] text-amber-600 font-medium text-center py-1">
-                                    📝 Biên bản đang ở trạng thái nháp
-                                </p>
-                            )}
-                            <div className="flex gap-2">
-                                <Button
-                                    size="sm"
-                                    className="flex-1"
-                                    onClick={() => handleAction(approveMinutes)}
-                                    disabled={isPending}
-                                >
-                                    <ThumbsUp className="w-3.5 h-3.5 mr-1.5" />
-                                    {isPending ? "..." : "Duyệt"}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="flex-1"
-                                    onClick={() => handleAction(rejectMinutes)}
-                                    disabled={isPending}
-                                >
-                                    <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-                                    {isPending ? "..." : "Trả lại"}
-                                </Button>
-                            </div>
+                    {status === "draft" && isMentor && (
+                        <p className="text-[11px] text-amber-600 font-medium text-center py-1">
+                            ⏳ Chờ mentee nộp biên bản để duyệt
+                        </p>
+                    )}
+
+                    {status === "submitted" && isMentor && (
+                        <div className="flex gap-2">
+                            <Button
+                                size="sm"
+                                className="flex-1"
+                                onClick={() => handleAction(approveMinutes)}
+                                disabled={isPending}
+                            >
+                                <ThumbsUp className="w-3.5 h-3.5 mr-1.5" />
+                                {isPending ? "..." : "Duyệt"}
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => handleAction(rejectMinutes)}
+                                disabled={isPending}
+                            >
+                                <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                                {isPending ? "..." : "Trả lại"}
+                            </Button>
                         </div>
                     )}
 

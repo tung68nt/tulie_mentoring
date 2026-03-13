@@ -125,7 +125,7 @@ export function MinutesManager({ meetings }: { meetings: MeetingMinutesData[] })
                             const mStatus = latest?.status || "none";
                             const cfg = minuteStatusConfig[mStatus] || minuteStatusConfig.none;
                             const isExpanded = expandedId === meeting.id;
-                            const canAction = latest && (mStatus === "draft" || mStatus === "submitted");
+                            const canAction = latest && mStatus === "submitted";
                             const isThisActioning = actionTarget === latest?.id;
 
                             return (
@@ -245,11 +245,12 @@ export function MinutesManager({ meetings }: { meetings: MeetingMinutesData[] })
                                                         <RotateCcw className="w-3.5 h-3.5" />
                                                         {isThisActioning ? "..." : "Yêu cầu bổ sung"}
                                                     </Button>
-                                                    {mStatus === "draft" && (
-                                                        <span className="text-[10px] text-amber-600 font-medium ml-auto">
-                                                            📝 Mentee chưa nộp — bạn vẫn có thể duyệt trực tiếp
-                                                        </span>
-                                                    )}
+                                                </div>
+                                            )}
+
+                                            {latest && mStatus === "draft" && (
+                                                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/30 text-[11px] text-amber-600 font-medium">
+                                                    ⏳ Chờ mentee nộp biên bản để duyệt
                                                 </div>
                                             )}
 

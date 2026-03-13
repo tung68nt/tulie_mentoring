@@ -130,7 +130,7 @@ export async function approveMinutes(minutesId: string) {
     });
 
     if (!minutes) throw new Error("Biên bản không tồn tại");
-    if (minutes.status !== "submitted" && minutes.status !== "draft") throw new Error("Biên bản đã được duyệt hoặc không hợp lệ");
+    if (minutes.status !== "submitted") throw new Error("Chỉ biên bản đã nộp mới có thể duyệt");
 
     // Only mentor of the mentorship or admin can approve
     const isMentor = minutes.meeting.mentorship?.mentorId === session.user.id;
@@ -169,7 +169,7 @@ export async function rejectMinutes(minutesId: string) {
     });
 
     if (!minutes) throw new Error("Biên bản không tồn tại");
-    if (minutes.status !== "submitted" && minutes.status !== "draft") throw new Error("Biên bản đã được duyệt hoặc không hợp lệ");
+    if (minutes.status !== "submitted") throw new Error("Chỉ biên bản đã nộp mới có thể trả lại");
 
     const isMentor = minutes.meeting.mentorship?.mentorId === session.user.id;
     if (!isMentor && role !== "admin" && role !== "program_manager") {
