@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { MoreHorizontal, KeyRound, Ban, CheckCircle, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { MoreHorizontal, KeyRound, Ban, CheckCircle, Trash2, Eye } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { adminResetPassword, toggleUserActive, deleteUser } from "@/lib/actions/user";
+import { startImpersonation } from "@/lib/actions/impersonation";
 
 interface UserActionsDropdownProps {
     userId: string;
@@ -30,10 +32,22 @@ interface UserActionsDropdownProps {
 }
 
 export function UserActionsDropdown({ userId, userName, isActive }: UserActionsDropdownProps) {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [newPassword, setNewPassword] = useState("123456");
+
+    const handleImpersonate = async () => {
+        try {
+            await startImpersonation(userId);
+            toast.success(`Đang đóng vai ${userName}`);
+            router.push("/");
+            router.refresh();
+        } catch (e: any) {
+            toast.error(e.message || "Không thể đóng vai");
+        }
+    };
 
     const handleResetPassword = async () => {
         if (!newPassword || newPassword.length < 6) {
@@ -95,6 +109,11 @@ export function UserActionsDropdown({ userId, userName, isActive }: UserActionsD
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={handleImpersonate}>
+                        <Eye className="w-4 h-4 mr-2 text-amber-500" />
+                        <span className="text-amber-600">Đóng vai</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => setResetPasswordOpen(true)}>
                         <KeyRound className="w-4 h-4 mr-2" />
                         Đổi mật khẩu

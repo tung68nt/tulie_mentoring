@@ -103,7 +103,7 @@ export default async function AdminUsersPage() {
                                         {formatDate(user.createdAt)}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {user.role !== "admin" && user.id !== session?.user?.id && (
+                                        {user.id !== session?.user?.id && (
                                             <UserActionsDropdown
                                                 userId={user.id}
                                                 userName={`${user.firstName} ${user.lastName}`}
