@@ -10,10 +10,8 @@ function slugify(text: string) {
         .toString()
         .toLowerCase()
         .trim()
-        // Handle Vietnamese đ/Đ before normalization
         .replace(/đ/g, 'd')
         .replace(/Đ/g, 'd')
-        // Remove diacritics: normalize to NFD then strip combining marks
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/\s+/g, '-')
@@ -21,10 +19,237 @@ function slugify(text: string) {
         .replace(/--+/g, '-');
 }
 
+// ─── WikiCategory CRUD ───────────────────────────────────────────
+
+export async function createWikiCategory(data: {
+    name: string;
+    description?: string;
+    icon?: string;
+}) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const role = (session.user as any).role;
+    if (!["admin", "manager", "program_manager", "mentor"].includes(role)) {
+        throw new Error("Permission denied");
+    }
+
+    const maxOrder = await prisma.wikiCategory.aggregate({ _max: { order: true } });
+    const slug = `${slugify(data.name)}-${Math.random().toString(36).substring(2, 5)}`;
+
+    const category = await prisma.wikiCategory.create({
+        data: {
+            name: data.name,
+            slug,
+            description: data.description,
+            icon: data.icon,
+            order: (maxOrder._max.order ?? -1) + 1,
+        },
+    });
+
+    revalidatePath("/wiki");
+    return JSON.parse(JSON.stringify(category));
+}
+
+export async function updateWikiCategory(id: string, data: {
+    name?: string;
+    description?: string;
+    icon?: string;
+}) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const role = (session.user as any).role;
+    if (!["admin", "manager", "program_manager", "mentor"].includes(role)) {
+        throw new Error("Permission denied");
+    }
+
+    const category = await prisma.wikiCategory.update({
+        where: { id },
+        data: {
+            ...(data.name && { name: data.name }),
+            ...(data.description !== undefined && { description: data.description }),
+            ...(data.icon !== undefined && { icon: data.icon }),
+        },
+    });
+
+    revalidatePath("/wiki");
+    return JSON.parse(JSON.stringify(category));
+}
+
+export async function deleteWikiCategory(id: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const role = (session.user as any).role;
+    if (!["admin", "manager", "program_manager"].includes(role)) {
+        throw new Error("Permission denied: Only admin/manager can delete categories");
+    }
+
+    await prisma.wikiCategory.delete({ where: { id } });
+    revalidatePath("/wiki");
+}
+
+export async function reorderCategories(orderedIds: string[]) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    await Promise.all(
+        orderedIds.map((id, index) =>
+            prisma.wikiCategory.update({ where: { id }, data: { order: index } })
+        )
+    );
+
+    revalidatePath("/wiki");
+}
+
+// ─── Wiki CRUD ───────────────────────────────────────────────────
+
+export async function createWiki(data: {
+    title: string;
+    categoryId: string;
+    description?: string;
+    coverImage?: string;
+    visibility?: string;
+}) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const role = (session.user as any).role;
+    if (!["admin", "manager", "program_manager", "mentor"].includes(role)) {
+        throw new Error("Permission denied");
+    }
+
+    const maxOrder = await prisma.wiki.aggregate({
+        _max: { order: true },
+        where: { categoryId: data.categoryId },
+    });
+
+    const slug = `${slugify(data.title)}-${Math.random().toString(36).substring(2, 5)}`;
+
+    const wiki = await prisma.wiki.create({
+        data: {
+            title: data.title,
+            slug,
+            description: data.description,
+            coverImage: data.coverImage,
+            categoryId: data.categoryId,
+            authorId: session.user.id!,
+            visibility: data.visibility || "private",
+            order: (maxOrder._max.order ?? -1) + 1,
+        },
+    });
+
+    await logActivity("create_wiki", wiki.id, "wiki", { title: wiki.title });
+    revalidatePath("/wiki");
+    return JSON.parse(JSON.stringify(wiki));
+}
+
+export async function updateWiki(id: string, data: {
+    title?: string;
+    description?: string;
+    coverImage?: string;
+    visibility?: string;
+    categoryId?: string;
+}) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const wiki = await prisma.wiki.findUnique({ where: { id }, select: { authorId: true } });
+    if (!wiki) throw new Error("Wiki not found");
+
+    const role = (session.user as any).role;
+    const isAdmin = ["admin", "manager", "program_manager"].includes(role);
+    if (!isAdmin && wiki.authorId !== session.user.id) {
+        throw new Error("Permission denied");
+    }
+
+    const updated = await prisma.wiki.update({
+        where: { id },
+        data: {
+            ...(data.title && { title: data.title }),
+            ...(data.description !== undefined && { description: data.description }),
+            ...(data.coverImage !== undefined && { coverImage: data.coverImage }),
+            ...(data.visibility && { visibility: data.visibility }),
+            ...(data.categoryId && { categoryId: data.categoryId }),
+        },
+    });
+
+    revalidatePath("/wiki");
+    return JSON.parse(JSON.stringify(updated));
+}
+
+export async function deleteWiki(id: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const wiki = await prisma.wiki.findUnique({ where: { id }, select: { authorId: true } });
+    if (!wiki) throw new Error("Wiki not found");
+
+    const role = (session.user as any).role;
+    const isAdmin = ["admin", "manager", "program_manager"].includes(role);
+    if (!isAdmin && wiki.authorId !== session.user.id) {
+        throw new Error("Permission denied");
+    }
+
+    await prisma.wiki.delete({ where: { id } });
+    revalidatePath("/wiki");
+}
+
+export async function reorderWikis(categoryId: string, orderedIds: string[]) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    await Promise.all(
+        orderedIds.map((id, index) =>
+            prisma.wiki.update({ where: { id }, data: { order: index } })
+        )
+    );
+
+    revalidatePath("/wiki");
+}
+
+// ─── Wiki Structure (for Sidebar) ───────────────────────────────
+
+export async function getWikiStructure() {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const categories = await prisma.wikiCategory.findMany({
+        orderBy: { order: "asc" },
+        include: {
+            wikis: {
+                orderBy: { order: "asc" },
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    order: true,
+                    visibility: true,
+                    pages: {
+                        orderBy: { order: "asc" },
+                        select: {
+                            id: true,
+                            title: true,
+                            slug: true,
+                            order: true,
+                            wikiId: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    return JSON.parse(JSON.stringify(categories));
+}
+
+// ─── WikiPage CRUD (updated) ────────────────────────────────────
+
 export async function createWikiPage(data: {
     title: string;
     content: string;
-    category?: string;
+    wikiId?: string;
     visibility?: "private" | "mentorship" | "public" | "selected";
     coverImage?: string;
     shareWithUserIds?: string[];
@@ -45,16 +270,27 @@ export async function createWikiPage(data: {
         if (mentorship) mentorshipId = mentorship.id;
     }
 
+    // Get max order in wiki
+    let maxOrder = 0;
+    if (data.wikiId) {
+        const agg = await prisma.wikiPage.aggregate({
+            _max: { order: true },
+            where: { wikiId: data.wikiId },
+        });
+        maxOrder = (agg._max.order ?? -1) + 1;
+    }
+
     const page = await prisma.wikiPage.create({
         data: {
             title: data.title,
             slug,
             content: data.content,
-            category: data.category,
+            wikiId: data.wikiId || null,
             visibility: data.visibility || "private",
             coverImage: data.coverImage,
             authorId: session.user.id!,
             mentorshipId,
+            order: maxOrder,
         }
     });
 
@@ -76,12 +312,9 @@ export async function createWikiPage(data: {
 }
 
 /**
- * Get wiki pages grouped into 3 sections:
- * - myPages: pages authored by the current user
- * - sharedPages: pages shared with this user (via mentorship or selected sharing)
- * - communityPages: public pages by others
+ * Get wiki pages — can filter by wikiId
  */
-export async function getWikiPages(category?: string) {
+export async function getWikiPages(wikiId?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
@@ -89,19 +322,20 @@ export async function getWikiPages(category?: string) {
     const userId = session.user.id!;
     const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
 
-    const categoryFilter = category ? { category } : {};
+    const wikiFilter = wikiId ? { wikiId } : {};
 
-    // 1. My pages (authored by me)
+    // 1. My pages
     const myPages = await prisma.wikiPage.findMany({
-        where: { authorId: userId, ...categoryFilter },
+        where: { authorId: userId, ...wikiFilter },
         include: {
             author: { select: { firstName: true, lastName: true, avatar: true } },
             shares: { select: { userId: true } },
+            wiki: { select: { id: true, title: true, slug: true } },
         },
-        orderBy: { updatedAt: "desc" },
+        orderBy: { order: "asc" },
     });
 
-    // 2. Shared with me (mentorship + selected shares)
+    // 2. Shared with me
     let sharedPages: any[] = [];
     if (!isAdmin) {
         const mentorships = await prisma.mentorship.findMany({
@@ -115,14 +349,12 @@ export async function getWikiPages(category?: string) {
         sharedPages = await prisma.wikiPage.findMany({
             where: {
                 authorId: { not: userId },
-                ...categoryFilter,
+                ...wikiFilter,
                 OR: [
-                    // Mentorship visibility: pages from my mentorship
                     ...(mentorshipIds.length > 0 ? [{
                         visibility: "mentorship",
                         mentorshipId: { in: mentorshipIds },
                     }] : []),
-                    // Selected visibility: shared specifically with me
                     {
                         visibility: "selected",
                         shares: { some: { userId } },
@@ -131,35 +363,37 @@ export async function getWikiPages(category?: string) {
             },
             include: {
                 author: { select: { firstName: true, lastName: true, avatar: true } },
+                wiki: { select: { id: true, title: true, slug: true } },
             },
-            orderBy: { updatedAt: "desc" },
+            orderBy: { order: "asc" },
         });
     } else {
-        // Admin/manager sees all non-public, non-own pages as "shared"
         sharedPages = await prisma.wikiPage.findMany({
             where: {
                 authorId: { not: userId },
                 visibility: { not: "public" },
-                ...categoryFilter,
+                ...wikiFilter,
             },
             include: {
                 author: { select: { firstName: true, lastName: true, avatar: true } },
+                wiki: { select: { id: true, title: true, slug: true } },
             },
-            orderBy: { updatedAt: "desc" },
+            orderBy: { order: "asc" },
         });
     }
 
-    // 3. Community pages (public)
+    // 3. Community pages
     const communityPages = await prisma.wikiPage.findMany({
         where: {
             visibility: "public",
             authorId: { not: userId },
-            ...categoryFilter,
+            ...wikiFilter,
         },
         include: {
             author: { select: { firstName: true, lastName: true, avatar: true } },
+            wiki: { select: { id: true, title: true, slug: true } },
         },
-        orderBy: { updatedAt: "desc" },
+        orderBy: { order: "asc" },
     });
 
     return {
@@ -178,6 +412,16 @@ export async function getWikiPageDetail(slug: string, isPublic: boolean = false)
         include: {
             author: {
                 select: { firstName: true, lastName: true, avatar: true }
+            },
+            wiki: {
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    category: {
+                        select: { id: true, name: true, slug: true }
+                    },
+                }
             },
             shares: {
                 include: {
@@ -239,19 +483,18 @@ export async function updateWikiPage(id: string, data: any) {
 
     const role = (session.user as any).role;
     const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
-    // SECURITY: Only author or admin can update
     if (!isAdmin && page.authorId !== session.user.id) {
         throw new Error("Permission denied: Only the author or admin can update this page");
     }
 
-    const { title, content, category, visibility, coverImage, shareWithUserIds } = data;
+    const { title, content, wikiId, visibility, coverImage, shareWithUserIds } = data;
 
     const updatedPage = await prisma.wikiPage.update({
         where: { id },
         data: {
             title,
             content,
-            category,
+            wikiId: wikiId || null,
             visibility,
             coverImage,
             updatedAt: new Date()
@@ -260,9 +503,7 @@ export async function updateWikiPage(id: string, data: any) {
 
     // Update shares if visibility is "selected"
     if (visibility === "selected" && shareWithUserIds) {
-        // Remove old shares
         await prisma.wikiPageShare.deleteMany({ where: { wikiPageId: id } });
-        // Add new shares
         if (shareWithUserIds.length > 0) {
             await prisma.wikiPageShare.createMany({
                 data: shareWithUserIds.map((userId: string) => ({
@@ -273,14 +514,12 @@ export async function updateWikiPage(id: string, data: any) {
             });
         }
     } else if (visibility !== "selected") {
-        // Clear shares if not selected mode
         await prisma.wikiPageShare.deleteMany({ where: { wikiPageId: id } });
     }
 
     await logActivity("update_wiki_page", id, "wiki", { title: updatedPage.title });
 
     revalidatePath("/wiki");
-    revalidatePath(`/wiki/${updatedPage.slug}`);
     return JSON.parse(JSON.stringify(updatedPage));
 }
 
@@ -297,14 +536,23 @@ export async function deleteWikiPage(id: string) {
 
     const role = (session.user as any).role;
     const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
-    // SECURITY: Only author or admin can delete
     if (!isAdmin && page.authorId !== session.user.id) {
         throw new Error("Permission denied: Only the author or admin can delete this page");
     }
 
-    await prisma.wikiPage.delete({
-        where: { id }
-    });
+    await prisma.wikiPage.delete({ where: { id } });
+    revalidatePath("/wiki");
+}
+
+export async function reorderPages(wikiId: string, orderedIds: string[]) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    await Promise.all(
+        orderedIds.map((id, index) =>
+            prisma.wikiPage.update({ where: { id }, data: { order: index } })
+        )
+    );
 
     revalidatePath("/wiki");
 }
@@ -329,4 +577,48 @@ export async function searchUsersForSharing(query: string) {
     });
 
     return JSON.parse(JSON.stringify(users));
+}
+
+// ─── Wiki Detail ─────────────────────────────────────────────────
+
+export async function getWikiDetail(slug: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const wiki = await prisma.wiki.findUnique({
+        where: { slug },
+        include: {
+            author: { select: { firstName: true, lastName: true, avatar: true } },
+            category: { select: { id: true, name: true, slug: true } },
+            pages: {
+                orderBy: { order: "asc" },
+                include: {
+                    author: { select: { firstName: true, lastName: true, avatar: true } },
+                },
+            },
+        },
+    });
+
+    if (!wiki) throw new Error("Wiki not found");
+
+    return JSON.parse(JSON.stringify(wiki));
+}
+
+// ─── Get All Wiki Categories (for forms) ─────────────────────────
+
+export async function getWikiCategories() {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const categories = await prisma.wikiCategory.findMany({
+        orderBy: { order: "asc" },
+        include: {
+            wikis: {
+                orderBy: { order: "asc" },
+                select: { id: true, title: true, slug: true },
+            },
+        },
+    });
+
+    return JSON.parse(JSON.stringify(categories));
 }

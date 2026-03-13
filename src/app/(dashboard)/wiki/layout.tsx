@@ -1,5 +1,5 @@
 import React from "react";
-import { getWikiPages } from "@/lib/actions/wiki";
+import { getWikiStructure } from "@/lib/actions/wiki";
 import { WikiTreeSidebar } from "@/components/features/wiki/wiki-tree-sidebar";
 
 export default async function WikiLayout({
@@ -7,18 +7,17 @@ export default async function WikiLayout({
 }: {
     children: React.ReactNode;
 }) {
-    let allPages: any[] = [];
+    let structure: any[] = [];
     try {
-        const result = await getWikiPages();
-        allPages = [...result.myPages, ...result.sharedPages, ...result.communityPages];
+        structure = await getWikiStructure();
     } catch (error) {
-        console.error("Failed to fetch wiki pages for sidebar:", error);
+        console.error("Failed to fetch wiki structure for sidebar:", error);
     }
 
     return (
         <div className="flex gap-0 -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 min-h-[calc(100vh-var(--header-height))]">
-            {/* Tree sidebar - Lark style */}
-            <WikiTreeSidebar pages={allPages} />
+            {/* Tree sidebar */}
+            <WikiTreeSidebar structure={structure} />
 
             {/* Main content */}
             <main className="flex-1 min-w-0 overflow-y-auto custom-scrollbar">

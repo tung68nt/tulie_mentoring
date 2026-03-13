@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createWikiPage, getWikiCategories, searchUsersForSharing } from "@/lib/actions/wiki";
+import { createWikiPage, searchUsersForSharing } from "@/lib/actions/wiki";
 import { BlockEditor } from "@/components/ui/block-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, Save, Loader2, Globe, Lock, Users, UserCheck, Search, X, BookOpen } from "lucide-react";
+import { ChevronLeft, Save, Loader2, Globe, Lock, Users, UserCheck, Search, X } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -17,26 +17,25 @@ const visibilityOptions = [
     { value: "selected", label: "Chọn người", icon: UserCheck, color: "text-purple-600", desc: "Chỉ người được chọn" },
 ];
 
-export default function NewWikiPage() {
+interface NewWikiPageFormProps {
+    wikiSlug: string;
+    wikiId: string;
+    wikiTitle: string;
+}
+
+export function NewWikiPageForm({ wikiSlug, wikiId, wikiTitle }: NewWikiPageFormProps) {
     const router = useRouter();
     const [title, setTitle] = useState("");
-    const [selectedWikiId, setSelectedWikiId] = useState("");
-    const [selectedWikiSlug, setSelectedWikiSlug] = useState("");
     const [visibility, setVisibility] = useState("private");
     const [coverImage, setCoverImage] = useState("");
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [categories, setCategories] = useState<any[]>([]);
 
     // User picker state
     const [selectedUsers, setSelectedUsers] = useState<{ id: string; firstName: string; lastName: string; email: string }[]>([]);
     const [userSearch, setUserSearch] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
-
-    useEffect(() => {
-        getWikiCategories().then(setCategories).catch(console.error);
-    }, []);
 
     useEffect(() => {
         if (visibility !== "selected" || userSearch.length < 2) {
@@ -66,10 +65,6 @@ export default function NewWikiPage() {
             toast.error("Vui lòng nhập nội dung trang");
             return;
         }
-        if (!selectedWikiId) {
-            toast.error("Vui lòng chọn Wiki chứa trang này");
-            return;
-        }
         if (visibility === "selected" && selectedUsers.length === 0) {
             toast.error("Vui lòng chọn ít nhất một người để chia sẻ");
             return;
@@ -80,13 +75,13 @@ export default function NewWikiPage() {
             const page = await createWikiPage({
                 title,
                 content,
-                wikiId: selectedWikiId,
+                wikiId,
                 visibility: visibility as any,
                 coverImage,
                 shareWithUserIds: visibility === "selected" ? selectedUsers.map(u => u.id) : undefined,
             });
             toast.success("Đã tạo trang Wiki thành công");
-            router.push(`/wiki/${selectedWikiSlug}/${page.slug}`);
+            router.push(`/wiki/${wikiSlug}/${page.slug}`);
         } catch (error) {
             toast.error("Không thể tạo trang. Vui lòng thử lại.");
         } finally {
@@ -98,12 +93,17 @@ export default function NewWikiPage() {
         <div className="max-w-5xl mx-auto space-y-8 pb-10 animate-fade-in">
             <header className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/wiki">
+                    <Link href={`/wiki/${wikiSlug}`}>
                         <Button variant="ghost" size="icon" className="rounded-lg">
                             <ChevronLeft className="w-5 h-5" />
                         </Button>
                     </Link>
-                    <h1 className="text-2xl font-semibold text-foreground">Tạo trang mới</h1>
+                    <div>
+                        <h1 className="text-2xl font-semibold text-foreground">Tạo trang mới</h1>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                            trong wiki: {wikiTitle}
+                        </p>
+                    </div>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button
@@ -151,37 +151,6 @@ export default function NewWikiPage() {
 
                 <aside className="space-y-6">
                     <SideCard>
-                        {/* Wiki picker */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-medium text-muted-foreground">Chọn Wiki</label>
-                            <div className="space-y-1 max-h-60 overflow-y-auto">
-                                {categories.map((cat: any) => (
-                                    <div key={cat.id}>
-                                        <p className="text-[10px] font-medium text-muted-foreground/60 px-2 py-1">{cat.name}</p>
-                                        {cat.wikis.map((wiki: any) => (
-                                            <button
-                                                key={wiki.id}
-                                                onClick={() => { setSelectedWikiId(wiki.id); setSelectedWikiSlug(wiki.slug); }}
-                                                className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-left text-sm transition-all ${
-                                                    selectedWikiId === wiki.id
-                                                        ? "bg-primary/10 text-primary font-medium"
-                                                        : "text-foreground hover:bg-muted/50"
-                                                }`}
-                                            >
-                                                <BookOpen className="w-3.5 h-3.5 shrink-0" />
-                                                {wiki.title}
-                                            </button>
-                                        ))}
-                                    </div>
-                                ))}
-                                {categories.length === 0 && (
-                                    <p className="text-xs text-muted-foreground/50 px-2 py-4 text-center">
-                                        Chưa có wiki nào. Tạo chuyên mục và wiki từ sidebar trước.
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-
                         <div className="space-y-2">
                             <label className="text-xs font-medium text-muted-foreground">Ảnh bìa (URL)</label>
                             <Input

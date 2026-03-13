@@ -47,6 +47,7 @@ model User {
   todoItems          TodoItem[]
   whiteboards        Whiteboard[]        @relation("WhiteboardCreator")
   wikiPages          WikiPage[]
+  wikisCreated       Wiki[]              @relation("WikiAuthor")
 
   // Social & Chat relations
   posts              Post[]
@@ -531,26 +532,65 @@ model TicketComment {
   @@index([ticketId])
 }
 
+model WikiCategory {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  icon        String?  // emoji or lucide icon name
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  wikis       Wiki[]
+
+  @@index([order])
+}
+
+model Wiki {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  description String?
+  coverImage  String?
+  categoryId  String
+  authorId    String
+  visibility  String       @default("private") // private, mentorship, public
+  order       Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  category    WikiCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  author      User         @relation("WikiAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  pages       WikiPage[]
+
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([order])
+}
+
 model WikiPage {
-  id         String          @id @default(cuid())
-  title      String
-  slug       String          @unique
-  content    String?         @db.Text
-  category   String?
-  visibility String          @default("private") // private, mentorship, public, selected
-  authorId   String
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
-  coverImage String?
-  author     User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  mentorship   Mentorship?   @relation(fields: [mentorshipId], references: [id])
+  id           String          @id @default(cuid())
+  title        String
+  slug         String          @unique
+  content      String?         @db.Text
+  wikiId       String?
+  visibility   String          @default("private") // private, mentorship, public, selected
+  authorId     String
+  order        Int             @default(0)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  coverImage   String?
+  author       User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  wiki         Wiki?           @relation(fields: [wikiId], references: [id], onDelete: SetNull)
+  mentorship   Mentorship?     @relation(fields: [mentorshipId], references: [id])
   mentorshipId String?
-  shares     WikiPageShare[]
+  shares       WikiPageShare[]
 
   @@index([authorId])
-  @@index([category])
+  @@index([wikiId])
   @@index([mentorshipId])
   @@index([visibility])
+  @@index([order])
 }
 
 model WikiPageShare {

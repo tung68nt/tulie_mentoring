@@ -16,25 +16,25 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { ChevronLeft, Save, Loader2, Globe, Lock, Users, UserCheck, Trash2, Layout, Search, X } from "lucide-react";
+import { ChevronLeft, Save, Loader2, Globe, Lock, Users, UserCheck, Trash2, Search, X } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
 const visibilityOptions = [
-    { value: "private", label: "Chỉ mình tôi", icon: Lock, color: "text-gray-500", desc: "Không ai khác xem được" },
-    { value: "mentorship", label: "Nhóm Mentoring", icon: Users, color: "text-blue-500", desc: "Mentor/Mentee và Manager của tôi" },
-    { value: "public", label: "Cộng đồng", icon: Globe, color: "text-emerald-500", desc: "Toàn bộ mọi người" },
-    { value: "selected", label: "Chọn người", icon: UserCheck, color: "text-purple-500", desc: "Chỉ người được chọn" },
+    { value: "private", label: "Chỉ mình tôi", icon: Lock, color: "text-muted-foreground", desc: "Không ai khác xem được" },
+    { value: "mentorship", label: "Nhóm Mentoring", icon: Users, color: "text-blue-600", desc: "Mentor/Mentee và Manager của tôi" },
+    { value: "public", label: "Cộng đồng", icon: Globe, color: "text-emerald-600", desc: "Toàn bộ mọi người" },
+    { value: "selected", label: "Chọn người", icon: UserCheck, color: "text-purple-600", desc: "Chỉ người được chọn" },
 ];
 
 interface WikiEditFormProps {
     page: any;
+    wikiSlug: string;
 }
 
-export function WikiEditForm({ page }: WikiEditFormProps) {
+export function WikiEditForm({ page, wikiSlug }: WikiEditFormProps) {
     const router = useRouter();
     const [title, setTitle] = useState(page.title);
-    const [category, setCategory] = useState(page.category || "");
     const [visibility, setVisibility] = useState<string>(page.visibility || "private");
     const [coverImage, setCoverImage] = useState(page.coverImage || "");
     const [content, setContent] = useState(page.content);
@@ -84,13 +84,13 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
             await updateWikiPage(page.id, {
                 title,
                 content,
-                category,
+                wikiId: page.wikiId,
                 visibility,
                 coverImage,
                 shareWithUserIds: visibility === "selected" ? selectedUsers.map(u => u.id) : [],
             });
             toast.success("Đã cập nhật trang Wiki");
-            router.push(`/wiki/${page.slug}`);
+            router.push(`/wiki/${wikiSlug}/${page.slug}`);
             router.refresh();
         } catch {
             toast.error("Không thể cập nhật trang. Vui lòng thử lại.");
@@ -104,7 +104,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
         try {
             await deleteWikiPage(page.id);
             toast.success("Đã xóa trang Wiki");
-            router.push("/wiki");
+            router.push(`/wiki/${wikiSlug}`);
         } catch {
             toast.error("Không thể xóa trang. Vui lòng thử lại.");
             setIsDeleting(false);
@@ -114,43 +114,42 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
     return (
         <div className="max-w-5xl mx-auto space-y-8 pb-10 animate-fade-in">
             <header className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-5">
-                    <Link href={`/wiki/${page.slug}`}>
-                        <Button variant="ghost" size="icon" className="rounded-lg hover:bg-accent/50 transition-colors">
+                <div className="flex items-center gap-4">
+                    <Link href={`/wiki/${wikiSlug}/${page.slug}`}>
+                        <Button variant="ghost" size="icon" className="rounded-lg">
                             <ChevronLeft className="w-5 h-5" />
                         </Button>
                     </Link>
-                    <div className="space-y-1">
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground leading-none no-uppercase">Chỉnh sửa tài liệu</h1>
-                        <p className="text-[11px] text-muted-foreground/50 no-uppercase font-bold tracking-widest flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
-                            SLUG: {page.slug}
+                    <div>
+                        <h1 className="text-2xl font-semibold text-foreground">Chỉnh sửa trang</h1>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                            {page.slug}
                         </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" className="rounded-lg text-destructive hover:bg-destructive/5 hover:text-destructive no-uppercase gap-2">
+                            <Button variant="ghost" className="rounded-lg text-destructive hover:bg-destructive/5 hover:text-destructive gap-2">
                                 <Trash2 className="w-4 h-4" />
-                                Xóa trang
+                                Xóa
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="rounded-xl border border-border/60 shadow-none">
+                        <DialogContent className="rounded-lg border border-border/60 shadow-none">
                             <DialogHeader>
-                                <DialogTitle className="no-uppercase font-bold">Xác nhận xóa tài liệu?</DialogTitle>
-                                <DialogDescription className="no-uppercase">
-                                    Hành động này không thể hoàn tác. Trang wiki &quot;{page.title}&quot; sẽ bị xóa vĩnh viễn khỏi hệ thống.
+                                <DialogTitle className="font-semibold">Xác nhận xóa?</DialogTitle>
+                                <DialogDescription>
+                                    Trang &quot;{page.title}&quot; sẽ bị xóa vĩnh viễn.
                                 </DialogDescription>
                             </DialogHeader>
                             <DialogFooter>
-                                <Button variant="ghost" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()} className="rounded-lg no-uppercase border-border">Hủy</Button>
+                                <Button variant="ghost" className="rounded-lg">Hủy</Button>
                                 <Button
                                     variant="destructive"
                                     onClick={handleDelete}
-                                    className="rounded-lg no-uppercase bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    className="rounded-lg"
                                 >
-                                    {isDeleting ? "Đang xóa..." : "Xóa tài liệu"}
+                                    {isDeleting ? "Đang xóa..." : "Xóa trang"}
                                 </Button>
                             </DialogFooter>
                         </DialogContent>
@@ -159,7 +158,7 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                     <Button
                         onClick={handleSave}
                         disabled={isSubmitting}
-                        className="rounded-lg no-uppercase min-w-[120px]"
+                        className="rounded-lg min-w-[120px] shadow-none"
                     >
                         {isSubmitting ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -173,56 +172,42 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
                 <div className="space-y-6 min-w-0 overflow-hidden">
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-bold text-muted-foreground/40 no-uppercase tracking-[0.1em] px-1">Tiêu đề tài liệu</label>
+                    <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted-foreground px-1">Tiêu đề</label>
                         <Input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Nhập tiêu đề ấn tượng..."
-                            className="text-3xl font-bold h-20 rounded-xl border-border/40 focus:border-primary/20 px-8 flex-1 bg-background/50 backdrop-blur-sm transition-all shadow-none"
+                            placeholder="Nhập tiêu đề..."
+                            className="text-2xl font-semibold h-14 rounded-lg border-border/40 focus:border-primary/20 px-5 shadow-none"
                         />
                     </div>
 
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-bold text-muted-foreground/40 no-uppercase tracking-[0.1em] px-1">Nội dung chi tiết</label>
-                        <div className="rounded-xl border border-border/40 bg-background/50 backdrop-blur-sm shadow-none overflow-hidden ring-1 ring-border/5">
+                    <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted-foreground px-1">Nội dung</label>
+                        <div className="rounded-lg border border-border/40 overflow-hidden">
                             <BlockEditor
                                 initialContent={content}
                                 onChange={setContent}
-                                className="min-h-[700px] border-none"
+                                className="min-h-[600px] border-none"
                             />
                         </div>
                     </div>
                 </div>
 
                 <aside className="space-y-6">
-                    <Card className="p-8 rounded-xl border-border/40 shadow-none bg-muted/20 space-y-6">
+                    <Card className="p-6 rounded-lg border-border/40 shadow-none bg-muted/20 space-y-6">
                         <div className="space-y-2">
-                            <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Danh mục</label>
-                            <div className="relative">
-                                <Layout className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-                                <Input
-                                    value={category}
-                                    onChange={(e) => setCategory(e.target.value)}
-                                    placeholder="Danh mục..."
-                                    className="rounded-lg border-border/40 bg-background pl-10"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Ảnh bìa (URL)</label>
+                            <label className="text-xs font-medium text-muted-foreground">Ảnh bìa (URL)</label>
                             <Input
                                 value={coverImage}
                                 onChange={(e) => setCoverImage(e.target.value)}
-                                placeholder="https://unsplash.com/..."
+                                placeholder="https://..."
                                 className="rounded-lg border-border/40 bg-background"
                             />
                         </div>
 
-                        {/* Visibility radio group — matches new/page.tsx */}
                         <div className="space-y-3">
-                            <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Phạm vi chia sẻ</label>
+                            <label className="text-xs font-medium text-muted-foreground">Phạm vi chia sẻ</label>
                             <div className="space-y-2">
                                 {visibilityOptions.map((opt) => {
                                     const Icon = opt.icon;
@@ -255,12 +240,11 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                             </div>
                         </div>
 
-                        {/* User picker — only when "selected" */}
+                        {/* User picker */}
                         {visibility === "selected" && (
                             <div className="space-y-3">
-                                <label className="text-[11px] font-bold text-muted-foreground/60 no-uppercase">Chọn người nhận</label>
+                                <label className="text-xs font-medium text-muted-foreground">Chọn người nhận</label>
 
-                                {/* Selected users chips */}
                                 {selectedUsers.length > 0 && (
                                     <div className="flex flex-wrap gap-1.5">
                                         {selectedUsers.map(u => (
@@ -280,22 +264,20 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                                     </div>
                                 )}
 
-                                {/* Search input */}
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
                                     <Input
                                         value={userSearch}
                                         onChange={(e) => setUserSearch(e.target.value)}
                                         placeholder="Tìm theo tên hoặc email..."
-                                        className="rounded-lg border-border/40 bg-background pl-8 h-9 text-[12px]"
+                                        className="rounded-lg border-border/40 bg-background pl-8 h-9 text-xs"
                                     />
                                 </div>
 
-                                {/* Search results dropdown */}
                                 {(searchResults.length > 0 || isSearching) && (
                                     <div className="border border-border/40 rounded-lg bg-background max-h-40 overflow-y-auto">
                                         {isSearching ? (
-                                            <div className="p-3 text-center text-[11px] text-muted-foreground">
+                                            <div className="p-3 text-center text-xs text-muted-foreground">
                                                 <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto mb-1" />
                                                 Đang tìm...
                                             </div>
@@ -308,9 +290,9 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                                                         setUserSearch("");
                                                         setSearchResults([]);
                                                     }}
-                                                    className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-muted/30 transition-colors text-[12px]"
+                                                    className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-muted/30 transition-colors text-xs"
                                                 >
-                                                    <div className="w-6 h-6 rounded-full bg-purple-500/10 text-purple-600 flex items-center justify-center text-[10px] font-bold shrink-0">
+                                                    <div className="w-6 h-6 rounded-full bg-purple-500/10 text-purple-600 flex items-center justify-center text-[10px] font-medium shrink-0">
                                                         {u.firstName?.[0]}{u.lastName?.[0]}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
@@ -321,10 +303,6 @@ export function WikiEditForm({ page }: WikiEditFormProps) {
                                             ))
                                         )}
                                     </div>
-                                )}
-
-                                {userSearch.length > 0 && userSearch.length < 2 && (
-                                    <p className="text-[10px] text-muted-foreground/50 px-1">Nhập ít nhất 2 ký tự để tìm kiếm</p>
                                 )}
                             </div>
                         )}

@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
-import { getWikiPageDetail } from "@/lib/actions/wiki";
+import { getWikiPageDetail, getWikiDetail } from "@/lib/actions/wiki";
 import { BlockEditor } from "@/components/ui/block-editor";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
@@ -16,14 +16,14 @@ import Image from "next/image";
 const visIcons: Record<string, any> = { private: Lock, mentorship: Users, public: Globe, selected: UserCheck };
 const visLabels: Record<string, string> = { private: "Riêng tư", mentorship: "Nhóm", public: "Cộng đồng", selected: "Chọn người" };
 
-export default async function WikiDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function WikiPageDetail({ params }: { params: Promise<{ wikiSlug: string; pageSlug: string }> }) {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const { slug } = await params;
+    const { wikiSlug, pageSlug } = await params;
     let page;
     try {
-        page = await getWikiPageDetail(slug);
+        page = await getWikiPageDetail(pageSlug);
     } catch (e) {
         return notFound();
     }
@@ -36,22 +36,33 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
         <div className="flex flex-col gap-0 max-w-[780px] animate-in fade-in duration-500">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-1.5 text-muted-foreground/40 mb-5">
-                <Link href="/wiki" className="hover:text-primary transition-colors text-[12px] font-medium">
+                <Link href="/wiki" className="hover:text-primary transition-colors text-xs font-medium">
                     Wiki
                 </Link>
-                {page.category && (
+                {page.wiki && (
                     <>
                         <ChevronRight className="w-3 h-3" />
-                        <span className="text-[12px] font-medium">{page.category}</span>
+                        {page.wiki.category && (
+                            <>
+                                <span className="text-xs font-medium">{page.wiki.category.name}</span>
+                                <ChevronRight className="w-3 h-3" />
+                            </>
+                        )}
+                        <Link
+                            href={`/wiki/${page.wiki.slug}`}
+                            className="hover:text-primary transition-colors text-xs font-medium"
+                        >
+                            {page.wiki.title}
+                        </Link>
                     </>
                 )}
                 <ChevronRight className="w-3 h-3" />
-                <span className="text-foreground/50 truncate max-w-[250px] text-[12px] font-medium">{page.title}</span>
+                <span className="text-foreground/50 truncate max-w-[250px] text-xs font-medium">{page.title}</span>
             </nav>
 
             {/* Cover Image */}
             {page.coverImage && (
-                <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-6">
+                <div className="relative w-full aspect-[21/9] rounded-lg overflow-hidden mb-6">
                     <Image
                         src={page.coverImage}
                         alt="Cover"
@@ -63,7 +74,7 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
             )}
 
             {/* Title */}
-            <h1 className="text-[28px] font-bold text-foreground tracking-tight leading-tight mb-4">
+            <h1 className="text-2xl font-semibold text-foreground tracking-tight leading-tight mb-4">
                 {page.title}
             </h1>
 
@@ -77,16 +88,16 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
                         size="sm"
                     />
                     <div className="flex flex-col">
-                        <span className="text-[13px] font-semibold text-foreground leading-none">
+                        <span className="text-sm font-semibold text-foreground leading-none">
                             {page.author.firstName} {page.author.lastName}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[11px] text-muted-foreground/50 flex items-center gap-1">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {formatDate(new Date(page.updatedAt), "dd/MM/yyyy")}
                             </span>
                             <span className="text-muted-foreground/20">·</span>
-                            <span className="text-[11px] text-muted-foreground/40 flex items-center gap-1">
+                            <span className="text-xs text-muted-foreground/40 flex items-center gap-1">
                                 <VisIcon className="w-3 h-3" />
                                 {visLabels[page.visibility]}
                             </span>
@@ -100,8 +111,8 @@ export default async function WikiDetailPage({ params }: { params: Promise<{ slu
                     )}
                     {canEdit && (
                         <>
-                            <Link href={`/wiki/${page.slug}/edit`}>
-                                <Button variant="ghost" className="h-7 rounded-md gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground" size="sm">
+                            <Link href={`/wiki/${wikiSlug}/${page.slug}/edit`}>
+                                <Button variant="ghost" className="h-7 rounded-md gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground" size="sm">
                                     <Edit className="w-3 h-3" />
                                     Sửa
                                 </Button>
