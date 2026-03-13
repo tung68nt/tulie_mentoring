@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Users, Calendar, CheckCircle, Clock, Target, ArrowRight, FileText, AlertTriangle } from "lucide-react";
+import { Users, Calendar, CheckCircle, Clock, Target, ArrowRight } from "lucide-react";
+import { MinutesManager } from "@/components/features/meetings/minutes-manager";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
@@ -55,13 +56,23 @@ export default async function MentorDashboard() {
                 where: allMeetingFilter,
                 include: {
                     minutes: {
-                        select: { id: true, status: true, submittedAt: true, approvedAt: true }
+                        select: {
+                            id: true,
+                            status: true,
+                            keyPoints: true,
+                            agenda: true,
+                            actionItems: true,
+                            outcome: true,
+                            submittedAt: true,
+                            approvedAt: true,
+                            author: { select: { firstName: true, lastName: true } },
+                        }
                     },
                     mentorship: {
                         select: { id: true, mentor: { select: { firstName: true, lastName: true } } }
                     }
                 },
-                orderBy: { scheduledAt: "asc" },
+                orderBy: { scheduledAt: "desc" },
             })
         ]);
 
@@ -166,108 +177,8 @@ export default async function MentorDashboard() {
                     ))}
                 </div>
 
-                {/* Meeting Minutes Tracking */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-primary" />
-                            Theo dõi biên bản cuộc họp
-                        </h3>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                                Đã duyệt
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                                Đã nộp
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                                Nháp
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-rose-500" />
-                                Chưa có
-                            </span>
-                        </div>
-                    </div>
-
-                    {serializedAllMeetings.length === 0 ? (
-                        <div className="py-8 text-center text-sm text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-                            Chưa có cuộc họp nào.
-                        </div>
-                    ) : (
-                        <div className="border border-border/40 rounded-xl overflow-hidden bg-card">
-                            <div className="grid grid-cols-[1fr_120px_100px_100px] md:grid-cols-[1fr_160px_120px_120px] gap-0 px-4 py-2.5 bg-muted/30 border-b border-border/40 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                                <span>Cuộc họp</span>
-                                <span>Ngày</span>
-                                <span>Trạng thái</span>
-                                <span className="text-right">Biên bản</span>
-                            </div>
-                            <div className="divide-y divide-border/30 max-h-[400px] overflow-y-auto">
-                                {serializedAllMeetings.map((meeting: any) => {
-                                    const hasMinutes = meeting.minutes?.length > 0;
-                                    const latestMinute = hasMinutes ? meeting.minutes[meeting.minutes.length - 1] : null;
-                                    const minuteStatus = latestMinute?.status || null;
-
-                                    let statusLabel = "Chưa có";
-                                    let statusColor = "bg-rose-500/10 text-rose-600";
-                                    let dotColor = "bg-rose-500";
-
-                                    if (minuteStatus === "approved") {
-                                        statusLabel = "Đã duyệt";
-                                        statusColor = "bg-emerald-500/10 text-emerald-600";
-                                        dotColor = "bg-emerald-500";
-                                    } else if (minuteStatus === "submitted") {
-                                        statusLabel = "Đã nộp";
-                                        statusColor = "bg-blue-500/10 text-blue-600";
-                                        dotColor = "bg-blue-500";
-                                    } else if (minuteStatus === "draft") {
-                                        statusLabel = "Nháp";
-                                        statusColor = "bg-amber-500/10 text-amber-600";
-                                        dotColor = "bg-amber-500";
-                                    }
-
-                                    return (
-                                        <div key={meeting.id} className="grid grid-cols-[1fr_120px_100px_100px] md:grid-cols-[1fr_160px_120px_120px] gap-0 px-4 py-3 items-center hover:bg-muted/20 transition-colors group">
-                                            <div className="min-w-0">
-                                                <p className="text-[13px] font-semibold text-foreground truncate">
-                                                    {meeting.sessionNumber && !meeting.title.startsWith("Buổi") ? `Buổi ${meeting.sessionNumber}: ` : ""}{meeting.title}
-                                                </p>
-                                            </div>
-                                            <div className="text-[12px] text-muted-foreground font-medium">
-                                                {formatDate(meeting.scheduledAt, "dd/MM/yyyy")}
-                                            </div>
-                                            <div>
-                                                <Badge status={meeting.status} size="sm" />
-                                            </div>
-                                            <div className="flex justify-end">
-                                                <Link
-                                                    href={`/meetings/${meeting.id}`}
-                                                    className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full cursor-pointer transition-all hover:opacity-80 hover:scale-105 active:scale-95 ${statusColor}`}
-                                                >
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
-                                                    {statusLabel}
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            {(() => {
-                                const missing = serializedAllMeetings.filter((m: any) => !m.minutes?.length && ["completed", "cancelled"].indexOf(m.status) === -1);
-                                if (missing.length === 0) return null;
-                                return (
-                                    <div className="px-4 py-2.5 bg-amber-500/5 border-t border-amber-500/20 flex items-center gap-2 text-[12px] text-amber-600 font-medium">
-                                        <AlertTriangle className="w-3.5 h-3.5" />
-                                        {missing.length} cuộc họp chưa có biên bản
-                                    </div>
-                                );
-                            })()}
-                        </div>
-                    )}
-                </div>
+                {/* Minutes Management */}
+                <MinutesManager meetings={serializedAllMeetings} />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-10">
