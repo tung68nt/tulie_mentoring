@@ -25,88 +25,122 @@ export async function createMeeting(data: MeetingInput) {
 
     const validatedData = meetingSchema.parse(data);
 
-    if ((session.user as any).role === "mentor") {
-        const mentorship = await prisma.mentorship.findUnique({
-            where: { id: validatedData.mentorshipId },
-        });
-        if (mentorship?.mentorId !== session.user.id) {
-            throw new Error("Unauthorized: You are not the mentor of this mentorship");
-        }
-    } else if ((session.user as any).role === "mentee") {
-        const mentorship = await prisma.mentorship.findUnique({
-            where: { id: validatedData.mentorshipId },
-            include: { mentees: true }
-        });
-        const isParticipant = mentorship?.mentees.some(m => m.menteeId === session.user.id);
-        if (!isParticipant) {
-            throw new Error("Unauthorized: You are not a participant of this mentorship");
+    // Normalize empty mentorshipId to null
+    const mentorshipId = validatedData.mentorshipId || null;
+
+    // Authorization check only if mentorship is selected
+    if (mentorshipId) {
+        if ((session.user as any).role === "mentor") {
+            const mentorship = await prisma.mentorship.findUnique({
+                where: { id: mentorshipId },
+            });
+            if (mentorship?.mentorId !== session.user.id) {
+                throw new Error("Unauthorized: You are not the mentor of this mentorship");
+            }
+        } else if ((session.user as any).role === "mentee") {
+            const mentorship = await prisma.mentorship.findUnique({
+                where: { id: mentorshipId },
+                include: { mentees: true }
+            });
+            const isParticipant = mentorship?.mentees.some(m => m.menteeId === session.user.id);
+            if (!isParticipant) {
+                throw new Error("Unauthorized: You are not a participant of this mentorship");
+            }
         }
     }
+
+    // Calculate sessionNumber if mentorship is selected
+    let sessionNumber: number | null = null;
+    if (mentorshipId) {
+        const existingCount = await prisma.meeting.count({
+            where: { mentorshipId },
+        });
+        sessionNumber = existingCount + 1;
+    }
+
+    const { mentorshipId: _removedId, ...restData } = validatedData;
 
     const meeting = await prisma.meeting.create({
         data: {
-            ...validatedData,
+            ...restData,
+            mentorshipId: mentorshipId || undefined,
+            sessionNumber: sessionNumber ?? undefined,
             creatorId: session.user.id!,
             qrToken: uuidv4(),
             checkInCode: generateCheckInCode(),
-            qrExpiresAt: addMinutes(validatedData.scheduledAt, validatedData.duration + 60), // Allow 1 hour grace
+            qrExpiresAt: addMinutes(validatedData.scheduledAt, validatedData.duration + 60),
         },
     });
 
-    const mentees = await prisma.mentorshipMentee.findMany({
-        where: { mentorshipId: validatedData.mentorshipId },
-    });
-
-    if (mentees.length > 0) {
-        await prisma.attendance.createMany({
-            data: mentees.map((m: any) => ({
-                meetingId: meeting.id,
-                userId: m.menteeId,
-                status: "absent",
-            })),
+    // Create attendance records if mentorship is selected
+    if (mentorshipId) {
+        const mentees = await prisma.mentorshipMentee.findMany({
+            where: { mentorshipId },
         });
+
+        if (mentees.length > 0) {
+            await prisma.attendance.createMany({
+                data: mentees.map((m: any) => ({
+                    meetingId: meeting.id,
+                    userId: m.menteeId,
+                    status: "absent",
+                })),
+            });
+        }
     }
 
-    // Notify all participants (mentor + mentees)
+    // Notify participants
     try {
-        const mentorship = await prisma.mentorship.findUnique({
-            where: { id: validatedData.mentorshipId },
-            select: { mentorId: true, mentees: { select: { menteeId: true } } },
-        });
-
-        if (mentorship) {
-            const creatorName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim() || "Ai đó";
-            const participantIds = [
-                mentorship.mentorId,
-                ...mentorship.mentees.map(m => m.menteeId),
-            ].filter(id => id !== session.user.id); // Exclude creator
-
-            const meetingLink = `/meetings/${meeting.id}`;
-            const scheduledAtStr = format(new Date(validatedData.scheduledAt), "HH:mm - EEEE, dd/MM/yyyy", { locale: vi });
-
-            await sendNotificationToUsers({
-                userIds: participantIds,
-                title: `Cuộc họp mới: ${meeting.title}`,
-                message: `${creatorName} đã tạo cuộc họp "${meeting.title}" vào ${scheduledAtStr}`,
-                type: "meeting",
-                link: meetingLink,
-                sendEmailToo: true,
-                emailSubject: `[Tulie] Cuộc họp mới: ${meeting.title}`,
-                emailHtml: meetingCreatedTemplate({
-                    meetingTitle: meeting.title,
-                    scheduledAt: scheduledAtStr,
-                    creatorName,
-                    link: `${process.env.NEXTAUTH_URL || "https://mentoring.tulie.vn"}${meetingLink}`,
-                }),
+        if (mentorshipId) {
+            const mentorship = await prisma.mentorship.findUnique({
+                where: { id: mentorshipId },
+                select: { mentorId: true, mentees: { select: { menteeId: true } } },
             });
+
+            if (mentorship) {
+                const creatorName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim() || "Ai đó";
+                const participantIds = [
+                    mentorship.mentorId,
+                    ...mentorship.mentees.map(m => m.menteeId),
+                ].filter(id => id !== session.user.id);
+
+                const meetingLink = `/meetings/${meeting.id}`;
+                const scheduledAtStr = format(new Date(validatedData.scheduledAt), "HH:mm - EEEE, dd/MM/yyyy", { locale: vi });
+                const sessionLabel = sessionNumber ? ` (Buổi #${sessionNumber})` : "";
+
+                await sendNotificationToUsers({
+                    userIds: participantIds,
+                    title: `Cuộc họp mới: ${meeting.title}${sessionLabel}`,
+                    message: `${creatorName} đã tạo cuộc họp "${meeting.title}"${sessionLabel} vào ${scheduledAtStr}`,
+                    type: "meeting",
+                    link: meetingLink,
+                    sendEmailToo: true,
+                    emailSubject: `[Tulie] Cuộc họp mới: ${meeting.title}${sessionLabel}`,
+                    emailHtml: meetingCreatedTemplate({
+                        meetingTitle: `${meeting.title}${sessionLabel}`,
+                        scheduledAt: scheduledAtStr,
+                        creatorName,
+                        link: `${process.env.NEXTAUTH_URL || "https://mentoring.tulie.vn"}${meetingLink}`,
+                    }),
+                });
+            }
         }
     } catch (notifError) {
         console.error("Failed to send meeting creation notifications:", notifError);
     }
 
     revalidatePath("/calendar");
-    revalidatePath(`/admin/mentorships/${validatedData.mentorshipId}`);
+    if (mentorshipId) {
+        revalidatePath(`/admin/mentorships/${mentorshipId}`);
+    }
     return JSON.parse(JSON.stringify(meeting));
+}
+
+export async function getNextSessionNumber(mentorshipId: string): Promise<number> {
+    const count = await prisma.meeting.count({
+        where: { mentorshipId },
+    });
+    return count + 1;
 }
 
 export async function getMeetings(filters?: {
@@ -128,14 +162,19 @@ export async function getMeetings(filters?: {
         where.mentorshipId = filters.mentorshipId;
     }
 
-    // Security: scope by role
+    // Security: scope by role — also include standalone meetings (no mentorship) created by this user
     if (currentUserRole !== "admin" && currentUserRole !== "program_manager" && currentUserRole !== "manager") {
         if (currentUserRole === "mentor") {
-            where.mentorship = { mentorId: currentUserId };
+            where.OR = [
+                { mentorship: { mentorId: currentUserId } },
+                { creatorId: currentUserId, mentorshipId: null },
+            ];
         } else if (currentUserRole === "mentee") {
-            where.mentorship = { mentees: { some: { menteeId: currentUserId } } };
+            where.OR = [
+                { mentorship: { mentees: { some: { menteeId: currentUserId } } } },
+                { creatorId: currentUserId, mentorshipId: null },
+            ];
         } else if (currentUserRole === "facilitator") {
-            // Facilitator only sees meetings in assigned programs/mentorships
             const assignments = await prisma.facilitatorAssignment.findMany({
                 where: { facilitatorId: currentUserId },
                 select: { programCycleId: true, mentorshipId: true },
@@ -147,12 +186,10 @@ export async function getMeetings(filters?: {
                 .map(a => a.mentorshipId)
                 .filter((id): id is string => id !== null);
 
-            where.mentorship = {
-                OR: [
-                    { programCycleId: { in: programCycleIds } },
-                    { id: { in: mentorshipIds } },
-                ],
-            };
+            where.OR = [
+                { mentorship: { OR: [{ programCycleId: { in: programCycleIds } }, { id: { in: mentorshipIds } }] } },
+                { creatorId: currentUserId, mentorshipId: null },
+            ];
         }
     }
 
@@ -209,12 +246,13 @@ export async function getMeetingDetail(id: string) {
 
         if (!meeting) return null;
 
-        // Security check: Only members or admin
+        // Security check: Only members, creator, or admin
         const role = (session.user as any).role;
         if (role !== "admin") {
-            const isMentor = meeting.mentorship.mentorId === session.user.id;
-            const isMentee = meeting.mentorship.mentees.some(m => m.menteeId === session.user.id);
-            if (!isMentor && !isMentee) {
+            const isCreator = meeting.creatorId === session.user.id;
+            const isMentor = meeting.mentorship?.mentorId === session.user.id;
+            const isMentee = meeting.mentorship?.mentees.some(m => m.menteeId === session.user.id) ?? false;
+            if (!isCreator && !isMentor && !isMentee) {
                 throw new Error("Unauthorized: You do not have access to this meeting");
             }
         }
@@ -262,11 +300,13 @@ export async function checkIn(meetingIdOrCode: string, token?: string) {
 
         if (!meeting) throw new Error("Cuộc họp không tồn tại");
 
-        // Ensure user is a participant
-        const isParticipant = meeting.mentorship.mentorId === session.user.id ||
-            meeting.mentorship.mentees.some(m => m.menteeId === session.user.id);
+        // Ensure user is a participant (for meetings with mentorship)
+        if (meeting.mentorship) {
+            const isParticipant = meeting.mentorship.mentorId === session.user.id ||
+                meeting.mentorship.mentees.some(m => m.menteeId === session.user.id);
 
-        if (!isParticipant) throw new Error("Bạn không phải là thành viên của cuộc họp này");
+            if (!isParticipant) throw new Error("Bạn không phải là thành viên của cuộc họp này");
+        }
 
         // allow direct check-in for online meetings, or if it's already scheduled
         if (meeting.type !== "online" && meeting.status !== "scheduled" && meeting.status !== "ongoing") {
@@ -353,10 +393,14 @@ export async function updateMeetingStatus(id: string, status: string) {
 
     if (!meeting) throw new Error("Meeting not found");
 
-    // Security check: Only mentor of the mentorship, PM, or admin can update status
+    // Security check: Only mentor of the mentorship, creator, PM, or admin can update status
     if (role !== "admin" && role !== "program_manager") {
-        if (meeting.mentorship.mentorId !== session.user.id) {
-            throw new Error("Unauthorized: Only mentors or admins can update meeting status");
+        if (meeting.mentorship) {
+            if (meeting.mentorship.mentorId !== session.user.id) {
+                throw new Error("Unauthorized: Only mentors or admins can update meeting status");
+            }
+        } else if (meeting.creatorId !== session.user.id) {
+            throw new Error("Unauthorized: Only the creator or admins can update meeting status");
         }
     }
 
@@ -396,10 +440,10 @@ export async function updateMeetingStatus(id: string, status: string) {
                 completed: "đã hoàn thành",
                 cancelled: "đã bị hủy",
             };
-            const participantIds = [
+            const participantIds = meeting.mentorship ? [
                 meeting.mentorship.mentorId,
                 ...meeting.mentorship.mentees.map(m => m.menteeId),
-            ].filter(uid => uid !== session.user.id);
+            ].filter(uid => uid !== session.user.id) : [];
 
             if (participantIds.length > 0) {
                 await sendNotificationToUsers({
@@ -456,10 +500,11 @@ export async function quickCheckIn(meetingId: string, token: string) {
 
     // 4. Check participant membership
     const userId = session.user.id!;
-    const isMentor = meeting.mentorship.mentorId === userId;
-    const isMentee = meeting.mentorship.mentees.some(m => m.menteeId === userId);
+    const isMentor = meeting.mentorship?.mentorId === userId;
+    const isMentee = meeting.mentorship?.mentees.some(m => m.menteeId === userId) ?? false;
+    const isCreator = meeting.creatorId === userId;
 
-    if (!isMentor && !isMentee) {
+    if (!isMentor && !isMentee && !isCreator) {
         throw new Error("Bạn không thuộc cuộc họp này. Vui lòng kiểm tra lại mã QR — có thể bạn đã quét nhầm mã.");
     }
 

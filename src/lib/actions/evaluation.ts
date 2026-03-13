@@ -3,7 +3,8 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { requireAuth, requireEvaluationSubmitAccess, isAdminLevel } from "@/lib/permissions";
+import { requireAuth, requireEvaluationSubmitAccess } from "@/lib/permissions";
+import { isAdminLevel } from "@/lib/role-helpers";
 
 // ─── Helpers ──────────────────────────────────────────
 async function requireFormAccess() {

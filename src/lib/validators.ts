@@ -37,7 +37,7 @@ export const meetingSchema = z.object({
     duration: z.coerce.number().min(15).max(180),
     location: z.string().optional(),
     meetingUrl: z.string().url().optional().or(z.literal("")),
-    mentorshipId: z.string().min(1, "Vui lòng chọn mentorship"),
+    mentorshipId: z.string().optional().or(z.literal("")),
 });
 
 // ─── Goal ────────────────────────────────────────────────────────

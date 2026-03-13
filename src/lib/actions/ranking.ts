@@ -22,23 +22,27 @@ export async function getMenteeRankings(filters?: {
         // effectiveFilters.facilitatorId = session.user.id;
     }
 
-    const rankings = await prisma.menteeRanking.findMany({
-        where: {
-            programCycleId: effectiveFilters.programCycleId,
-            mentee: {
-                menteeships: {
-                    some: {
-                        mentorship: {
-                            mentorId: effectiveFilters.mentorId,
-                            facilitatorAssignments: effectiveFilters.facilitatorId ? {
-                                some: {
-                                    facilitatorId: effectiveFilters.facilitatorId
-                                }
-                            } : undefined
+    // Build where clause — only include filters that are defined
+    const menteeFilter: any = {};
+    if (effectiveFilters.mentorId || effectiveFilters.facilitatorId) {
+        menteeFilter.menteeships = {
+            some: {
+                mentorship: {
+                    ...(effectiveFilters.mentorId ? { mentorId: effectiveFilters.mentorId } : {}),
+                    ...(effectiveFilters.facilitatorId ? {
+                        facilitatorAssignments: {
+                            some: { facilitatorId: effectiveFilters.facilitatorId }
                         }
-                    }
+                    } : {})
                 }
             }
+        };
+    }
+
+    let rankings = await prisma.menteeRanking.findMany({
+        where: {
+            programCycleId: effectiveFilters.programCycleId,
+            ...(Object.keys(menteeFilter).length > 0 ? { mentee: menteeFilter } : {}),
         },
         orderBy: {
             totalScore: "desc",
@@ -55,6 +59,43 @@ export async function getMenteeRankings(filters?: {
             },
         },
     });
+
+    // Auto-compute rankings if none exist
+    if (rankings.length === 0) {
+        // Find the active program cycle
+        const activeCycle = effectiveFilters.programCycleId
+            ? { id: effectiveFilters.programCycleId }
+            : await prisma.programCycle.findFirst({
+                where: { status: "active" },
+                orderBy: { startDate: "desc" },
+            });
+
+        if (activeCycle) {
+            await computeRankings(activeCycle.id);
+
+            // Re-fetch after computing
+            rankings = await prisma.menteeRanking.findMany({
+                where: {
+                    programCycleId: activeCycle.id,
+                    ...(Object.keys(menteeFilter).length > 0 ? { mentee: menteeFilter } : {}),
+                },
+                orderBy: {
+                    totalScore: "desc",
+                },
+                include: {
+                    mentee: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            email: true,
+                            image: true,
+                        },
+                    },
+                },
+            });
+        }
+    }
 
     return rankings;
 }

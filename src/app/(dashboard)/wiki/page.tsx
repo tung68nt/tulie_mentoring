@@ -37,8 +37,8 @@ export default async function WikiPage() {
                         <BookOpen className="w-4.5 h-4.5 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-foreground tracking-tight leading-none">Wiki</h1>
-                        <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+                        <h1 className="text-xl font-semibold text-foreground leading-none">Wiki</h1>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
                             {totalPages} tài liệu
                         </p>
                     </div>

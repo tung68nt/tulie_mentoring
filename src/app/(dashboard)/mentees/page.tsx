@@ -60,7 +60,7 @@ export default async function MenteesPage() {
             <div className="space-y-8 pb-10 animate-fade-in">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                        <h1 className="text-2xl font-semibold text-foreground">
                             {role === "mentor" ? "Mentees của tôi" : "Theo dõi Toàn bộ Mentees"}
                         </h1>
                         <p className="text-sm text-muted-foreground mt-1 max-w-lg">
@@ -82,9 +82,9 @@ export default async function MenteesPage() {
                             <Card key={mt.id} className="group overflow-hidden flex flex-col h-full border-border/80 shadow-none hover:border-primary/30 transition-all duration-300" hover padding="none">
                                 <div className="p-6 flex-1">
                                     <div className="flex items-center justify-between mb-6">
-                                        <Badge status={mt.status} size="sm" className="font-bold text-[9px]" />
+                                        <Badge status={mt.status} size="sm" className="font-semibold text-[9px]" />
                                         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/50 rounded-full border border-border/40">
-                                            <span className="text-[10px] font-bold text-muted-foreground truncate max-w-[120px]">{mt.programName || "General"}</span>
+                                            <span className="text-[10px] font-semibold text-muted-foreground truncate max-w-[120px]">{mt.programName || "General"}</span>
                                         </div>
                                     </div>
 
@@ -97,7 +97,7 @@ export default async function MenteesPage() {
                                             className="ring-2 ring-muted ring-offset-2 ring-offset-background"
                                         />
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="text-base font-bold text-foreground leading-tight truncate mb-1">
+                                            <h3 className="text-base font-semibold text-foreground leading-tight truncate mb-1">
                                                 {mt.mentee?.firstName} {mt.mentee?.lastName}
                                             </h3>
                                             <p className="text-xs text-muted-foreground font-medium truncate mb-2">
@@ -114,7 +114,7 @@ export default async function MenteesPage() {
                                                 src={mt.mentorAvatar}
                                                 size="xs"
                                             />
-                                            <p className="text-[11px] font-bold text-muted-foreground">
+                                            <p className="text-[11px] font-semibold text-muted-foreground">
                                                 Mentor: <span className="text-foreground">{mt.mentorName}</span>
                                             </p>
                                         </div>
@@ -122,8 +122,8 @@ export default async function MenteesPage() {
                                 </div>
 
                                 <div className="px-6 py-4 bg-muted/30 border-t border-border/40 mt-auto">
-                                    <Button variant="secondary" size="sm" asChild className="w-full font-bold text-xs shadow-none transition-all group-hover:bg-primary group-hover:text-primary-foreground">
-                                        <Link href={`/admin/mentorships/${mt.mentorshipId}`}>
+                                    <Button variant="outline" size="sm" asChild className="w-full font-semibold text-xs shadow-none transition-all hover:border-foreground/30">
+                                        <Link href={role === "mentor" ? `/mentees/${mt.mentorshipId}` : `/admin/mentorships/${mt.mentorshipId}`}>
                                             Xem hồ sơ & Tiến độ
                                         </Link>
                                     </Button>

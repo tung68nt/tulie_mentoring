@@ -195,7 +195,7 @@ export default async function ManagerDashboard() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-semibold text-foreground truncate">{meeting.title}</p>
-                                        <p className="text-xs text-muted-foreground">Mentor: {meeting.mentorship.mentor.firstName} {meeting.mentorship.mentor.lastName}</p>
+                                        <p className="text-xs text-muted-foreground">{meeting.mentorship ? `Mentor: ${meeting.mentorship.mentor.firstName} ${meeting.mentorship.mentor.lastName}` : "Cuộc họp độc lập"}</p>
                                     </div>
                                     <Badge status={meeting.status} size="sm" />
                                 </div>

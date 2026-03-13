@@ -35,7 +35,7 @@ interface Meeting {
     meetingType: string;
     mentorship: {
         mentor: { firstName: string; lastName: string };
-    };
+    } | null;
 }
 
 interface CalendarViewProps {
@@ -293,7 +293,7 @@ export function CalendarView({ meetings }: CalendarViewProps) {
                                 </div>
                                 <div className="flex items-center gap-2.5 text-[11px] text-foreground font-medium">
                                     <User className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <span className="truncate">Mentor: {meeting.mentorship.mentor.firstName} {meeting.mentorship.mentor.lastName}</span>
+                                    <span className="truncate">{meeting.mentorship ? `Mentor: ${meeting.mentorship.mentor.firstName} ${meeting.mentorship.mentor.lastName}` : "Cuộc họp độc lập"}</span>
                                 </div>
                             </div>
                         </div>

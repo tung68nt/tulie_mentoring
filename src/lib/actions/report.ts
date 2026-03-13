@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
-import { isAdminLevel } from "@/lib/permissions";
+import { isAdminLevel } from "@/lib/role-helpers";
 
 export async function getMenteeStats(specificUserId?: string) {
     const session = await auth();

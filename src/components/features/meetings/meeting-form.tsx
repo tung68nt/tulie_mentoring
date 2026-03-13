@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { createMeeting } from "@/lib/actions/meeting";
+import { createMeeting, getNextSessionNumber } from "@/lib/actions/meeting";
+import { Hash } from "lucide-react";
 
 interface MeetingFormProps {
     mentorships: any[];
@@ -20,10 +21,14 @@ export function MeetingForm({ mentorships, defaultMentorshipId }: MeetingFormPro
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [linkMentorship, setLinkMentorship] = useState(!!defaultMentorshipId);
+    const [nextSessionNumber, setNextSessionNumber] = useState<number | null>(null);
 
     const {
         register,
         handleSubmit,
+        watch,
+        setValue,
         formState: { errors },
     } = useForm<MeetingInput>({
         resolver: zodResolver(meetingSchema) as any,
@@ -35,12 +40,45 @@ export function MeetingForm({ mentorships, defaultMentorshipId }: MeetingFormPro
         },
     });
 
+    const selectedMentorshipId = watch("mentorshipId");
+
+    // Fetch next session number when mentorship changes
+    const fetchSessionNumber = useCallback(async (id: string) => {
+        if (!id) {
+            setNextSessionNumber(null);
+            return;
+        }
+        try {
+            const num = await getNextSessionNumber(id);
+            setNextSessionNumber(num);
+        } catch {
+            setNextSessionNumber(null);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (linkMentorship && selectedMentorshipId) {
+            fetchSessionNumber(selectedMentorshipId);
+        } else {
+            setNextSessionNumber(null);
+        }
+    }, [selectedMentorshipId, linkMentorship, fetchSessionNumber]);
+
+    // Auto-select when only 1 mentorship and linkMentorship is on
+    useEffect(() => {
+        if (linkMentorship && mentorships.length === 1 && !selectedMentorshipId) {
+            setValue("mentorshipId", mentorships[0].id);
+        }
+    }, [linkMentorship, mentorships, selectedMentorshipId, setValue]);
+
     const onSubmit = async (data: MeetingInput) => {
         setIsLoading(true);
         setError(null);
 
         try {
-            await createMeeting(data);
+            // If not linking mentorship, clear the mentorshipId
+            const submitData = linkMentorship ? data : { ...data, mentorshipId: "" };
+            await createMeeting(submitData);
             if (defaultMentorshipId) {
                 router.push(`/admin/mentorships/${defaultMentorshipId}`);
             } else {
@@ -54,6 +92,8 @@ export function MeetingForm({ mentorships, defaultMentorshipId }: MeetingFormPro
         }
     };
 
+    const showMentorshipSection = mentorships.length > 0 && !defaultMentorshipId;
+
     return (
         <Card className="w-full max-w-xl mx-auto p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -63,17 +103,51 @@ export function MeetingForm({ mentorships, defaultMentorshipId }: MeetingFormPro
                     </div>
                 )}
 
-                {!defaultMentorshipId && (
-                    <Select
-                        label="Chọn nhóm/cặp Mentoring"
-                        options={mentorships.map(m => ({
-                            value: m.id,
-                            label: `${m.mentor.lastName} ➔ ${m.mentees[0]?.mentee.lastName}${m.mentees.length > 1 ? '...' : ''}`
-                        }))}
-                        placeholder="Chọn mentorship..."
-                        {...register("mentorshipId")}
-                        error={errors.mentorshipId?.message}
-                    />
+                {/* Mentorship Link Section */}
+                {showMentorshipSection && (
+                    <div className="space-y-3">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                            <input
+                                type="checkbox"
+                                checked={linkMentorship}
+                                onChange={(e) => {
+                                    setLinkMentorship(e.target.checked);
+                                    if (!e.target.checked) {
+                                        setValue("mentorshipId", "");
+                                        setNextSessionNumber(null);
+                                    }
+                                }}
+                                className="rounded border-border text-foreground focus:ring-foreground/20 w-4 h-4"
+                            />
+                            <span className="text-sm font-medium text-foreground">
+                                Gắn với nhóm Mentoring
+                            </span>
+                        </label>
+
+                        {linkMentorship && (
+                            <div className="space-y-2">
+                                <Select
+                                    label="Chọn nhóm/cặp Mentoring"
+                                    options={mentorships.map(m => ({
+                                        value: m.id,
+                                        label: `${m.mentor.lastName} ➔ ${m.mentees[0]?.mentee.lastName}${m.mentees.length > 1 ? '...' : ''}`
+                                    }))}
+                                    placeholder="Chọn mentorship..."
+                                    {...register("mentorshipId")}
+                                    error={errors.mentorshipId?.message}
+                                />
+
+                                {nextSessionNumber !== null && (
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-md w-fit">
+                                        <Hash className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-sm font-medium text-foreground">
+                                            Buổi #{nextSessionNumber}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 )}
 
                 <Input

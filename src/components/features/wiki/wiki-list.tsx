@@ -19,11 +19,11 @@ interface WikiListProps {
     role: string;
 }
 
-const visibilityConfig: Record<string, { label: string; icon: any; bg: string; text: string }> = {
-    private: { label: "Riêng tư", icon: Lock, bg: "bg-gray-100", text: "text-gray-500" },
-    mentorship: { label: "Nhóm", icon: Users, bg: "bg-blue-50", text: "text-blue-500" },
-    public: { label: "Cộng đồng", icon: Globe, bg: "bg-emerald-50", text: "text-emerald-500" },
-    selected: { label: "Chọn người", icon: UserCheck, bg: "bg-purple-50", text: "text-purple-500" },
+const visibilityConfig: Record<string, { label: string; icon: any; className: string }> = {
+    private: { label: "Riêng tư", icon: Lock, className: "text-muted-foreground bg-muted" },
+    mentorship: { label: "Nhóm", icon: Users, className: "text-blue-600 bg-blue-500/10" },
+    public: { label: "Cộng đồng", icon: Globe, className: "text-emerald-600 bg-emerald-500/10" },
+    selected: { label: "Chọn người", icon: UserCheck, className: "text-purple-600 bg-purple-500/10" },
 };
 
 const tabs = [
@@ -39,35 +39,50 @@ function WikiCard({ page }: { page: any }) {
     const VisIcon = vis.icon;
 
     return (
-        <Link href={`/wiki/${page.slug}`} className="block group">
-            <div className="relative rounded-xl border border-border/50 bg-card hover:shadow-md hover:border-primary/20 transition-all duration-200 overflow-hidden">
-                {/* Cover Image or subtle top accent */}
+        <Link href={`/wiki/${page.slug}`} className="block group h-full">
+            <div className="relative flex flex-col h-full rounded-xl border border-border/50 bg-card hover:border-foreground/20 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+                {/* Cover Image — with fallback for broken images */}
                 {page.coverImage ? (
-                    <div className="h-32 overflow-hidden">
-                        <img src={page.coverImage} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="h-36 overflow-hidden bg-muted flex-shrink-0">
+                        <img
+                            src={page.coverImage}
+                            alt=""
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => {
+                                // Hide broken image, show placeholder
+                                const target = e.currentTarget;
+                                target.style.display = "none";
+                                target.parentElement!.classList.add("items-center", "justify-center");
+                                const placeholder = document.createElement("div");
+                                placeholder.className = "flex items-center justify-center w-full h-full";
+                                placeholder.innerHTML = `<svg class="w-8 h-8 text-muted-foreground/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>`;
+                                target.parentElement!.appendChild(placeholder);
+                            }}
+                        />
                     </div>
-                ) : (
-                    <div className="h-1.5 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent" />
-                )}
+                ) : null}
 
-                <div className="p-4 space-y-3">
-                    {/* Visibility badge */}
+                <div className="flex flex-col flex-1 p-4 space-y-3">
+                    {/* Category + Visibility */}
                     <div className="flex items-center justify-between gap-2">
                         {page.category && (
-                            <span className="text-[11px] font-medium text-muted-foreground/60">
+                            <span className="text-[11px] font-medium text-muted-foreground">
                                 {page.category}
                             </span>
                         )}
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md", vis.bg, vis.text)}>
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md", vis.className)}>
                             <VisIcon className="w-3 h-3" />
                             {vis.label}
                         </span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-[14px] font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                    <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
                         {page.title}
                     </h3>
+
+                    {/* Spacer to push footer down */}
+                    <div className="flex-1" />
 
                     {/* Author + Date */}
                     <div className="flex items-center gap-2 pt-2 border-t border-border/30">
@@ -77,10 +92,10 @@ function WikiCard({ page }: { page: any }) {
                             src={page.author?.avatar}
                             size="xs"
                         />
-                        <span className="text-[11px] text-muted-foreground/70 truncate flex-1">
+                        <span className="text-[11px] text-muted-foreground truncate flex-1">
                             {page.author?.firstName} {page.author?.lastName}
                         </span>
-                        <span className="text-[10px] text-muted-foreground/40 shrink-0 flex items-center gap-1">
+                        <span className="text-[10px] text-muted-foreground/50 shrink-0 flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {formatDate(page.updatedAt)}
                         </span>
@@ -94,14 +109,14 @@ function WikiCard({ page }: { page: any }) {
 /* ── Category Group ── */
 function CategoryGroup({ category, pages }: { category: string; pages: any[] }) {
     return (
-        <div className="space-y-3">
+        <div className="space-y-4">
             <div className="flex items-center gap-2 px-1">
-                <Hash className="w-3.5 h-3.5 text-muted-foreground/30" />
-                <h2 className="text-[13px] font-bold text-foreground">{category}</h2>
-                <span className="text-[11px] text-muted-foreground/30 font-medium">{pages.length}</span>
+                <Hash className="w-3.5 h-3.5 text-muted-foreground/40" />
+                <h2 className="text-sm font-semibold text-foreground">{category}</h2>
+                <span className="text-[11px] text-muted-foreground/40 font-medium">{pages.length}</span>
                 <div className="flex-1 h-px bg-border/30 ml-2" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {pages.map((page: any) => (
                     <WikiCard key={page.id} page={page} />
                 ))}

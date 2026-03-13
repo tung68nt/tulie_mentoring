@@ -64,7 +64,7 @@ export function RankingDashboard({ role, userId }: MenteeRankingProps) {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Bảng xếp hạng Mentee</h2>
+                    <h2 className="text-2xl font-semibold">Bảng xếp hạng Mentee</h2>
                     <p className="text-muted-foreground">Theo dõi và so sánh tiến độ dựa trên các chỉ số hoạt động.</p>
                 </div>
                 <div className="flex items-center gap-2">

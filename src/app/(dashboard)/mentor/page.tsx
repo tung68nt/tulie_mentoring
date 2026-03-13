@@ -241,10 +241,13 @@ export default async function MentorDashboard() {
                                                 <Badge status={meeting.status} size="sm" />
                                             </div>
                                             <div className="flex justify-end">
-                                                <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ${statusColor}`}>
+                                                <Link
+                                                    href={`/meetings/${meeting.id}`}
+                                                    className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full transition-all hover:underline underline-offset-2 ${statusColor}`}
+                                                >
                                                     <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
                                                     {statusLabel}
-                                                </span>
+                                                </Link>
                                             </div>
                                         </div>
                                     );
@@ -283,16 +286,23 @@ export default async function MentorDashboard() {
                                                 src={mt.mentee?.avatar}
                                                 size="lg"
                                             />
-                                            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-card ring-1 ring-black/5" />
+                                            {mt.status === "active" && (
+                                                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-card" />
+                                            )}
                                         </div>
-                                        <p className="text-sm font-bold text-foreground text-center truncate w-full">
+                                        <p className="text-sm font-semibold text-foreground text-center truncate w-full">
                                             {mt.mentee?.firstName} {mt.mentee?.lastName}
                                         </p>
-                                        <Badge 
-                                            status={mt.status || "active"} 
-                                            size="sm"
-                                            className="mt-1.5"
-                                        />
+                                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium mt-1.5 px-2 py-0.5 rounded-full ${
+                                            mt.status === "active"
+                                                ? "text-emerald-600 bg-emerald-500/10"
+                                                : "text-muted-foreground bg-muted"
+                                        }`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${
+                                                mt.status === "active" ? "bg-emerald-500" : "bg-muted-foreground/40"
+                                            }`} />
+                                            {mt.status === "active" ? "Đang hoạt động" : "Không hoạt động"}
+                                        </span>
                                         <span className="text-[11px] text-primary font-medium mt-3 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                                             Xem hồ sơ
                                             <ArrowRight className="w-3 h-3" />

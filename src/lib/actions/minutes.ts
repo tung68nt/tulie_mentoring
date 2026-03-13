@@ -40,10 +40,10 @@ export async function createMinutes(data: {
 
         if (meeting) {
             const authorName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim() || "Ai đó";
-            const participantIds = [
+            const participantIds = meeting.mentorship ? [
                 meeting.mentorship.mentorId,
                 ...meeting.mentorship.mentees.map(m => m.menteeId),
-            ].filter(id => id !== session.user.id);
+            ].filter(id => id !== session.user.id) : [];
 
             const meetingLink = `/meetings/${data.meetingId}`;
 

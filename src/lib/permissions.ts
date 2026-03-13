@@ -2,9 +2,9 @@
 
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { isAdminOrPM, isAdminLevel, type UserRole } from "@/lib/role-helpers";
 
 // ─── Types ───────────────────────────────────────────────
-export type UserRole = "admin" | "program_manager" | "facilitator" | "mentor" | "mentee" | "manager";
 export type MembershipRole = "mentor" | "mentee";
 
 // ─── Session Helpers ─────────────────────────────────────
@@ -25,20 +25,7 @@ export async function requireAuth() {
 }
 
 // ─── Role Checks ─────────────────────────────────────────
-
-/**
- * Check if role is admin or program_manager
- */
-export function isAdminOrPM(role: string): boolean {
-    return role === "admin" || role === "program_manager";
-}
-
-/**
- * Check if role has admin-level access (admin, manager, program_manager)
- */
-export function isAdminLevel(role: string): boolean {
-    return role === "admin" || role === "manager" || role === "program_manager";
-}
+// isAdminOrPM & isAdminLevel are re-exported from @/lib/role-helpers above
 
 /**
  * Require admin or program_manager role. Throws if not.

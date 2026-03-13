@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireMentorshipAccess, isAdminLevel } from "@/lib/permissions";
+import { requireAuth, requireMentorshipAccess } from "@/lib/permissions";
+import { isAdminLevel } from "@/lib/role-helpers";
 import { logActivity } from "./activity";
 
 // ─── Types ───────────────────────────────────────────────

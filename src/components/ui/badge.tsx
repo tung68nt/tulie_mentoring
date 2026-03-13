@@ -12,7 +12,7 @@ const badgeVariants = cva(
         default: "bg-primary text-primary-foreground",
         primary: "bg-primary text-primary-foreground",
         secondary: "bg-secondary text-foreground border-border shadow-none",
-        success: "bg-primary text-primary-foreground",
+        success: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
         warning: "bg-secondary text-foreground border-border shadow-none",
         error: "bg-destructive/10 text-destructive border-destructive/20",
         destructive: "bg-destructive/10 text-destructive border-destructive/20",
@@ -41,7 +41,8 @@ const statusConfig: Record<
     label: string;
   }
 > = {
-  active: { variant: "primary", label: "Đang hoạt động" },
+  active: { variant: "secondary", label: "Đang hoạt động" },
+  online: { variant: "secondary", label: "Đang trực tuyến" },
   completed: { variant: "primary", label: "Hoàn thành" },
   in_progress: { variant: "primary", label: "Đang diễn ra" },
   scheduled: { variant: "secondary", label: "Đã lên lịch" },

@@ -64,6 +64,8 @@ export async function GET(request: Request) {
         });
 
         for (const meeting of upcomingMeetings) {
+            if (!meeting.mentorship) continue; // Skip standalone meetings
+
             const participants = [
                 meeting.mentorship.mentor,
                 ...meeting.mentorship.mentees.map(m => m.mentee),
