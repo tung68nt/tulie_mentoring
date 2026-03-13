@@ -8,6 +8,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { QRManager } from "@/components/features/meetings/qr-manager";
 import { QRSentry } from "@/components/features/meetings/qr-sentry";
 import { MinutesSection } from "@/components/features/meetings/minutes-section";
+import { EditableTitle } from "@/components/features/meetings/editable-title";
 import { formatDate } from "@/lib/utils";
 import { Calendar, MapPin, Video, Clock, ChevronLeft, Users } from "lucide-react";
 import Link from "next/link";
@@ -67,7 +68,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                     <Badge status={meeting.status} />
                                     <span className="text-xs font-medium text-muted-foreground">{meeting.meetingType}</span>
                                 </div>
-                                <h1 className="text-3xl font-semibold text-foreground leading-tight">{meeting.title}</h1>
+                                <EditableTitle meetingId={meeting.id} title={meeting.title} canEdit={isMentor || isCreator} />
                             </div>
                         </div>
 

@@ -83,3 +83,115 @@ export async function getMinutes(meetingId: string) {
         },
     });
 }
+
+export async function submitMinutes(minutesId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const minutes = await prisma.meetingMinutes.findUnique({
+        where: { id: minutesId },
+        include: { meeting: { include: { mentorship: { select: { mentorId: true } } } } },
+    });
+
+    if (!minutes) throw new Error("Biên bản không tồn tại");
+    if (minutes.authorId !== session.user.id) throw new Error("Chỉ tác giả mới có thể nộp biên bản");
+    if (minutes.status !== "draft") throw new Error("Chỉ biên bản nháp mới có thể nộp");
+
+    const updated = await prisma.meetingMinutes.update({
+        where: { id: minutesId },
+        data: { status: "submitted", submittedAt: new Date() },
+    });
+
+    // Notify mentor
+    if (minutes.meeting.mentorship?.mentorId) {
+        const authorName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim();
+        await sendNotificationToUsers({
+            userIds: [minutes.meeting.mentorship.mentorId],
+            title: `Biên bản cần duyệt`,
+            message: `${authorName} đã nộp biên bản cho cuộc họp "${minutes.meeting.title}"`,
+            type: "meeting",
+            link: `/meetings/${minutes.meetingId}`,
+        }).catch(() => {});
+    }
+
+    revalidatePath(`/meetings/${minutes.meetingId}`);
+    revalidatePath("/mentor");
+    return updated;
+}
+
+export async function approveMinutes(minutesId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+    const role = (session.user as any).role;
+
+    const minutes = await prisma.meetingMinutes.findUnique({
+        where: { id: minutesId },
+        include: { meeting: { include: { mentorship: { select: { mentorId: true } } } } },
+    });
+
+    if (!minutes) throw new Error("Biên bản không tồn tại");
+    if (minutes.status !== "submitted") throw new Error("Chỉ biên bản đã nộp mới có thể duyệt");
+
+    // Only mentor of the mentorship or admin can approve
+    const isMentor = minutes.meeting.mentorship?.mentorId === session.user.id;
+    if (!isMentor && role !== "admin" && role !== "program_manager") {
+        throw new Error("Chỉ mentor hoặc admin mới có thể duyệt biên bản");
+    }
+
+    const updated = await prisma.meetingMinutes.update({
+        where: { id: minutesId },
+        data: { status: "approved", approvedAt: new Date() },
+    });
+
+    // Notify author
+    const approverName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim();
+    await sendNotificationToUsers({
+        userIds: [minutes.authorId],
+        title: `Biên bản đã được duyệt`,
+        message: `${approverName} đã duyệt biên bản cuộc họp "${minutes.meeting.title}"`,
+        type: "meeting",
+        link: `/meetings/${minutes.meetingId}`,
+    }).catch(() => {});
+
+    revalidatePath(`/meetings/${minutes.meetingId}`);
+    revalidatePath("/mentor");
+    return updated;
+}
+
+export async function rejectMinutes(minutesId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+    const role = (session.user as any).role;
+
+    const minutes = await prisma.meetingMinutes.findUnique({
+        where: { id: minutesId },
+        include: { meeting: { include: { mentorship: { select: { mentorId: true } } } } },
+    });
+
+    if (!minutes) throw new Error("Biên bản không tồn tại");
+    if (minutes.status !== "submitted") throw new Error("Chỉ biên bản đã nộp mới có thể trả lại");
+
+    const isMentor = minutes.meeting.mentorship?.mentorId === session.user.id;
+    if (!isMentor && role !== "admin" && role !== "program_manager") {
+        throw new Error("Chỉ mentor hoặc admin mới có thể trả lại biên bản");
+    }
+
+    const updated = await prisma.meetingMinutes.update({
+        where: { id: minutesId },
+        data: { status: "draft", submittedAt: null },
+    });
+
+    // Notify author to revise
+    const reviewerName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim();
+    await sendNotificationToUsers({
+        userIds: [minutes.authorId],
+        title: `Biên bản cần chỉnh sửa`,
+        message: `${reviewerName} yêu cầu chỉnh sửa biên bản cuộc họp "${minutes.meeting.title}"`,
+        type: "meeting",
+        link: `/meetings/${minutes.meetingId}`,
+    }).catch(() => {});
+
+    revalidatePath(`/meetings/${minutes.meetingId}`);
+    revalidatePath("/mentor");
+    return updated;
+}

@@ -143,6 +143,46 @@ export async function getNextSessionNumber(mentorshipId: string): Promise<number
     return count + 1;
 }
 
+export async function updateMeeting(id: string, data: {
+    title?: string;
+    description?: string;
+    location?: string;
+    meetingUrl?: string;
+}) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+    const role = (session.user as any).role;
+
+    const meeting = await prisma.meeting.findUnique({
+        where: { id },
+        include: { mentorship: { select: { mentorId: true } } },
+    });
+
+    if (!meeting) throw new Error("Cuộc họp không tồn tại");
+
+    // Auth: mentor, creator, or admin
+    const isMentor = meeting.mentorship?.mentorId === session.user.id;
+    const isCreator = meeting.creatorId === session.user.id;
+    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager") {
+        throw new Error("Bạn không có quyền chỉnh sửa cuộc họp này");
+    }
+
+    const updated = await prisma.meeting.update({
+        where: { id },
+        data: {
+            ...(data.title !== undefined && { title: data.title }),
+            ...(data.description !== undefined && { description: data.description }),
+            ...(data.location !== undefined && { location: data.location }),
+            ...(data.meetingUrl !== undefined && { meetingUrl: data.meetingUrl }),
+        },
+    });
+
+    revalidatePath(`/meetings/${id}`);
+    revalidatePath("/calendar");
+    revalidatePath("/mentor");
+    return JSON.parse(JSON.stringify(updated));
+}
+
 export async function getMeetings(filters?: {
     role?: string;
     userId?: string;

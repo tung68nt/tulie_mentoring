@@ -233,7 +233,7 @@ export default async function MentorDashboard() {
                                         <div key={meeting.id} className="grid grid-cols-[1fr_120px_100px_100px] md:grid-cols-[1fr_160px_120px_120px] gap-0 px-4 py-3 items-center hover:bg-muted/20 transition-colors group">
                                             <div className="min-w-0">
                                                 <p className="text-[13px] font-semibold text-foreground truncate">
-                                                    {meeting.sessionNumber ? `Buổi ${meeting.sessionNumber}: ` : ""}{meeting.title}
+                                                    {meeting.sessionNumber && !meeting.title.startsWith("Buổi") ? `Buổi ${meeting.sessionNumber}: ` : ""}{meeting.title}
                                                 </p>
                                             </div>
                                             <div className="text-[12px] text-muted-foreground font-medium">
