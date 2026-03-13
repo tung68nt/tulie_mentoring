@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getNotifications, getUnreadCount } from "@/lib/actions/notification";
 import { DashboardContainer } from "@/components/layout/dashboard-container";
 import { getSystemSettings } from "@/lib/actions/settings";
+import { getImpersonatedUser } from "@/lib/actions/impersonation";
+import { ImpersonationBanner } from "@/components/layout/impersonation-banner";
 
 export default async function DashboardLayout({
     children,
@@ -16,13 +18,32 @@ export default async function DashboardLayout({
     }
 
     const role = (session.user as any).role;
-    const user = {
-        id: session.user.id!,
+
+    // Check impersonation
+    const impersonatedUser = await getImpersonatedUser();
+    const isImpersonating = !!impersonatedUser;
+
+    const realAdmin = {
         firstName: (session.user as any).firstName,
         lastName: (session.user as any).lastName,
-        role: role as "admin" | "mentor" | "mentee" | "manager" | "program_manager" | "facilitator",
-        avatar: session.user.image || null,
     };
+
+    // Use impersonated user data for display, or real session user
+    const displayUser = impersonatedUser
+        ? {
+            id: impersonatedUser.id,
+            firstName: impersonatedUser.firstName,
+            lastName: impersonatedUser.lastName,
+            role: impersonatedUser.role as "admin" | "mentor" | "mentee" | "manager" | "program_manager" | "facilitator",
+            avatar: impersonatedUser.avatar || impersonatedUser.image || null,
+        }
+        : {
+            id: session.user.id!,
+            firstName: (session.user as any).firstName,
+            lastName: (session.user as any).lastName,
+            role: role as "admin" | "mentor" | "mentee" | "manager" | "program_manager" | "facilitator",
+            avatar: session.user.image || null,
+        };
 
     let notifications: any[] = [];
     let unreadCount = 0;
@@ -42,14 +63,24 @@ export default async function DashboardLayout({
     }
 
     return (
-        <DashboardContainer
-            user={user}
-            notifications={JSON.parse(JSON.stringify(notifications))}
-            unreadCount={unreadCount}
-            logoUrl={settings.sidebar_logo}
-            siteName={settings.site_name}
-        >
-            {children}
-        </DashboardContainer>
+        <>
+            {isImpersonating && impersonatedUser && (
+                <ImpersonationBanner
+                    targetUser={impersonatedUser}
+                    realAdmin={realAdmin}
+                />
+            )}
+            <div className={isImpersonating ? "pt-10" : ""}>
+                <DashboardContainer
+                    user={displayUser}
+                    notifications={JSON.parse(JSON.stringify(notifications))}
+                    unreadCount={unreadCount}
+                    logoUrl={settings.sidebar_logo}
+                    siteName={settings.site_name}
+                >
+                    {children}
+                </DashboardContainer>
+            </div>
+        </>
     );
 }

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { formatDate, getRoleLabel, getStatusLabel, getStatusColor } from "@/lib/utils";
+import { ImpersonateButton } from "@/components/features/admin/impersonate-button";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -70,9 +71,15 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                 <h1 className="text-2xl font-semibold text-foreground">{user.firstName} {user.lastName}</h1>
                                 <p className="text-sm text-muted-foreground mt-0.5">{getRoleLabel(user.role)}</p>
                             </div>
-                            <Badge className={user.isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"}>
-                                {user.isActive ? "Đang hoạt động" : "Ngừng hoạt động"}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                                <ImpersonateButton
+                                    targetUserId={user.id}
+                                    targetName={`${user.firstName} ${user.lastName}`}
+                                />
+                                <Badge className={user.isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"}>
+                                    {user.isActive ? "Đang hoạt động" : "Ngừng hoạt động"}
+                                </Badge>
+                            </div>
                         </div>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
