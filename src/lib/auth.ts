@@ -188,6 +188,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 session.user.firstName = token.firstName as string;
                 session.user.lastName = token.lastName as string;
             }
+
+            // Impersonation: override session with target user data
+            const realRole = token?.role as string;
+            if (["admin", "program_manager"].includes(realRole)) {
+                try {
+                    const { cookies } = await import("next/headers");
+                    const cookieStore = await cookies();
+                    const targetUserId = cookieStore.get("impersonateUserId")?.value;
+
+                    if (targetUserId) {
+                        const targetUser = await prisma.user.findUnique({
+                            where: { id: targetUserId },
+                            select: { id: true, email: true, role: true, firstName: true, lastName: true, avatar: true, image: true },
+                        });
+
+                        if (targetUser) {
+                            (session as any).realAdminId = session.user.id;
+                            (session as any).isImpersonating = true;
+                            session.user.id = targetUser.id;
+                            (session.user as any).role = targetUser.role;
+                            (session.user as any).firstName = targetUser.firstName;
+                            (session.user as any).lastName = targetUser.lastName;
+                            session.user.email = targetUser.email ?? session.user.email;
+                            session.user.image = targetUser.avatar || targetUser.image;
+                        }
+                    }
+                } catch {
+                    // cookies() may fail in edge runtime — silently ignore
+                }
+            }
+
             return session;
         },
     },
