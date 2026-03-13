@@ -61,7 +61,7 @@ export default async function MentorDashboard() {
                         select: { id: true, mentor: { select: { firstName: true, lastName: true } } }
                     }
                 },
-                orderBy: { scheduledAt: "desc" },
+                orderBy: { scheduledAt: "asc" },
             })
         ]);
 
@@ -232,7 +232,9 @@ export default async function MentorDashboard() {
                                     return (
                                         <div key={meeting.id} className="grid grid-cols-[1fr_120px_100px_100px] md:grid-cols-[1fr_160px_120px_120px] gap-0 px-4 py-3 items-center hover:bg-muted/20 transition-colors group">
                                             <div className="min-w-0">
-                                                <p className="text-[13px] font-semibold text-foreground truncate">{meeting.title}</p>
+                                                <p className="text-[13px] font-semibold text-foreground truncate">
+                                                    {meeting.sessionNumber ? `Buổi ${meeting.sessionNumber}: ` : ""}{meeting.title}
+                                                </p>
                                             </div>
                                             <div className="text-[12px] text-muted-foreground font-medium">
                                                 {formatDate(meeting.scheduledAt, "dd/MM/yyyy")}
@@ -243,7 +245,7 @@ export default async function MentorDashboard() {
                                             <div className="flex justify-end">
                                                 <Link
                                                     href={`/meetings/${meeting.id}`}
-                                                    className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full transition-all hover:underline underline-offset-2 ${statusColor}`}
+                                                    className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full cursor-pointer transition-all hover:opacity-80 hover:scale-105 active:scale-95 ${statusColor}`}
                                                 >
                                                     <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
                                                     {statusLabel}
@@ -286,9 +288,6 @@ export default async function MentorDashboard() {
                                                 src={mt.mentee?.avatar}
                                                 size="lg"
                                             />
-                                            {mt.status === "active" && (
-                                                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-card" />
-                                            )}
                                         </div>
                                         <p className="text-sm font-semibold text-foreground text-center truncate w-full">
                                             {mt.mentee?.firstName} {mt.mentee?.lastName}
@@ -301,7 +300,7 @@ export default async function MentorDashboard() {
                                             <span className={`w-1.5 h-1.5 rounded-full ${
                                                 mt.status === "active" ? "bg-emerald-500" : "bg-muted-foreground/40"
                                             }`} />
-                                            {mt.status === "active" ? "Đang hoạt động" : "Không hoạt động"}
+                                            {mt.status === "active" ? "Đang tham gia" : "Không hoạt động"}
                                         </span>
                                         <span className="text-[11px] text-primary font-medium mt-3 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                                             Xem hồ sơ
