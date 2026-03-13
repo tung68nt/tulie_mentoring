@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "./activity";
+import { validateTransition, TASK_TRANSITIONS } from "@/lib/state-machines";
 
 export async function getTasks() {
     const session = await auth();
@@ -104,6 +105,13 @@ export async function updateTaskStatus(id: string, status: string, column?: stri
         status,
         column: column || status
     };
+
+    // Validate state transition
+    const role = (session.user as any).role || "mentee";
+    const transition = validateTransition(TASK_TRANSITIONS, existingTask.status, status, role);
+    if (!transition.valid) {
+        throw new Error(transition.error || `Cannot change task from "${existingTask.status}" to "${status}"`);
+    }
 
     if (status === "done" && existingTask.status !== "done") {
         updateData.completedPercentage = 100;

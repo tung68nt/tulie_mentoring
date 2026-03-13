@@ -42,12 +42,29 @@ export async function getMentorships() {
     const role = (session.user as any).role;
 
     const where: any = {};
-    const isAdmin = role === "admin" || role === "manager";
+    const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
     if (!isAdmin) {
         if (role === "mentor") {
             where.mentorId = userId;
         } else if (role === "mentee") {
             where.mentees = { some: { menteeId: userId } };
+        } else if (role === "facilitator") {
+            // Facilitator only sees mentorships in assigned programs/groups
+            const assignments = await prisma.facilitatorAssignment.findMany({
+                where: { facilitatorId: userId },
+                select: { programCycleId: true, mentorshipId: true },
+            });
+            const programCycleIds = assignments
+                .map(a => a.programCycleId)
+                .filter((id): id is string => id !== null);
+            const mentorshipIds = assignments
+                .map(a => a.mentorshipId)
+                .filter((id): id is string => id !== null);
+
+            where.OR = [
+                { programCycleId: { in: programCycleIds } },
+                { id: { in: mentorshipIds } },
+            ];
         }
     }
 

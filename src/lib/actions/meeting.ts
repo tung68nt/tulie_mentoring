@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { v4 as uuidv4 } from "uuid";
 import { addMinutes } from "date-fns";
 import { logActivity } from "./activity";
+import { validateTransition, MEETING_TRANSITIONS } from "@/lib/state-machines";
 
 import { sendNotificationToUsers } from "@/lib/notifications/service";
 import { meetingCreatedTemplate } from "@/lib/email/templates";
@@ -127,12 +128,31 @@ export async function getMeetings(filters?: {
         where.mentorshipId = filters.mentorshipId;
     }
 
-    // Security: If not admin, ensure user only sees meetings they are part of
-    if (currentUserRole !== "admin") {
+    // Security: scope by role
+    if (currentUserRole !== "admin" && currentUserRole !== "program_manager" && currentUserRole !== "manager") {
         if (currentUserRole === "mentor") {
             where.mentorship = { mentorId: currentUserId };
         } else if (currentUserRole === "mentee") {
             where.mentorship = { mentees: { some: { menteeId: currentUserId } } };
+        } else if (currentUserRole === "facilitator") {
+            // Facilitator only sees meetings in assigned programs/mentorships
+            const assignments = await prisma.facilitatorAssignment.findMany({
+                where: { facilitatorId: currentUserId },
+                select: { programCycleId: true, mentorshipId: true },
+            });
+            const programCycleIds = assignments
+                .map(a => a.programCycleId)
+                .filter((id): id is string => id !== null);
+            const mentorshipIds = assignments
+                .map(a => a.mentorshipId)
+                .filter((id): id is string => id !== null);
+
+            where.mentorship = {
+                OR: [
+                    { programCycleId: { in: programCycleIds } },
+                    { id: { in: mentorshipIds } },
+                ],
+            };
         }
     }
 
@@ -325,20 +345,37 @@ export async function updateMeetingStatus(id: string, status: string) {
 
     const role = (session.user as any).role;
 
-    // Security check: Only mentor of the mentorship or admin can update status
-    if (role !== "admin") {
-        const meeting = await prisma.meeting.findUnique({
-            where: { id },
-            include: { mentorship: true }
-        });
-        if (!meeting || meeting.mentorship.mentorId !== session.user.id) {
+    // Fetch meeting with current status
+    const meeting = await prisma.meeting.findUnique({
+        where: { id },
+        include: { mentorship: true }
+    });
+
+    if (!meeting) throw new Error("Meeting not found");
+
+    // Security check: Only mentor of the mentorship, PM, or admin can update status
+    if (role !== "admin" && role !== "program_manager") {
+        if (meeting.mentorship.mentorId !== session.user.id) {
             throw new Error("Unauthorized: Only mentors or admins can update meeting status");
         }
+    }
+
+    // Validate state transition
+    const transition = validateTransition(MEETING_TRANSITIONS, meeting.status, status, role);
+    if (!transition.valid) {
+        throw new Error(transition.error || `Cannot change meeting status from "${meeting.status}" to "${status}"`);
     }
 
     const updatedMeeting = await prisma.meeting.update({
         where: { id },
         data: { status },
+    });
+
+    // Audit log for status change
+    await logActivity("update_meeting_status", id, "meeting", {
+        title: meeting.title,
+        from: meeting.status,
+        to: status,
     });
 
     // Notify participants about status change

@@ -3,19 +3,23 @@
 import { prisma } from "@/lib/db";
 import { goalSchema, type GoalInput } from "@/lib/validators";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
+import { requireAuth, requireMentorshipAccess, requireGoalAccess } from "@/lib/permissions";
+import { logActivity } from "./activity";
 
 export async function createGoal(data: GoalInput) {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    const { userId, role } = await requireAuth();
 
     const validatedData = goalSchema.parse(data);
+
+    // Verify user has access to this mentorship
+    await requireMentorshipAccess(validatedData.mentorshipId, userId, role);
+
     const { subGoals, ...goalData } = validatedData;
 
     const goal = await prisma.goal.create({
         data: {
             ...goalData,
-            creatorId: session.user.id!,
+            creatorId: userId,
             status: "in_progress",
             subGoals: subGoals && subGoals.length > 0 ? {
                 create: subGoals.map(sg => ({
@@ -65,10 +69,20 @@ async function recalculateGoalProgress(goalId: string) {
 }
 
 export async function updateSubGoalProgress(subGoalId: string, value: number, note?: string) {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    const { userId, role } = await requireAuth();
 
-    const subGoal = await prisma.subGoal.update({
+    // Fetch sub-goal with its parent goal to verify access
+    const subGoal = await prisma.subGoal.findUnique({
+        where: { id: subGoalId },
+        include: { goal: { select: { id: true, mentorshipId: true } } }
+    });
+
+    if (!subGoal) throw new Error("Sub-goal not found");
+
+    // Verify user has access to the mentorship that owns this goal
+    await requireMentorshipAccess(subGoal.goal.mentorshipId, userId, role);
+
+    const updated = await prisma.subGoal.update({
         where: { id: subGoalId },
         data: { currentValue: value },
         include: { goal: true }
@@ -80,7 +94,7 @@ export async function updateSubGoalProgress(subGoalId: string, value: number, no
         await prisma.progressNote.create({
             data: {
                 goalId: subGoal.goalId,
-                note: `[${subGoal.title}] ${note}`,
+                note: `[${updated.title}] ${note}`,
                 value: overallProgress || 0
             }
         });
@@ -88,15 +102,16 @@ export async function updateSubGoalProgress(subGoalId: string, value: number, no
 
     revalidatePath("/goals");
     revalidatePath(`/admin/mentorships/${subGoal.goal.mentorshipId}`);
-    return subGoal;
+    return updated;
 }
 
 export async function updateGoalProgress(id: string, value: number, note?: string) {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    const { userId, role } = await requireAuth();
 
-    // Check if goal has subgoals. If it does, we shouldn't update progress directly like this
-    // but for backward compatibility or simple goals, we allow it.
+    // Verify access to this goal's mentorship
+    const { goal: goalMeta } = await requireGoalAccess(id, userId, role);
+
+    // Check if goal has subgoals
     const goalWithSubGoals = await prisma.goal.findUnique({
         where: { id },
         include: { subGoals: true }
@@ -127,6 +142,11 @@ export async function updateGoalProgress(id: string, value: number, note?: strin
 }
 
 export async function getGoals(mentorshipId: string) {
+    const { userId, role } = await requireAuth();
+
+    // Verify user has access to this mentorship
+    await requireMentorshipAccess(mentorshipId, userId, role);
+
     const goals = await prisma.goal.findMany({
         where: { mentorshipId },
         include: {
@@ -143,38 +163,62 @@ export async function getGoals(mentorshipId: string) {
 }
 
 export async function confirmGoal(id: string) {
-    const session = await auth();
-    if (!session?.user || (session.user as any).role !== "mentor") {
+    const { userId, role } = await requireAuth();
+
+    // Only mentors can confirm — and they must be the mentor of this goal's match
+    if (role !== "mentor" && role !== "admin" && role !== "program_manager") {
         throw new Error("Only mentors can confirm goals");
     }
 
-    const goal = await prisma.goal.update({
+    // Verify this mentor belongs to the goal's mentorship
+    const { goal } = await requireGoalAccess(id, userId, role);
+
+    // For non-admin, verify they are the mentor (not just any member)
+    if (role === "mentor") {
+        const mentorship = await prisma.mentorship.findUnique({
+            where: { id: goal.mentorshipId },
+            select: { mentorId: true },
+        });
+        if (mentorship?.mentorId !== userId) {
+            throw new Error("Unauthorized: Only the assigned mentor can confirm goals");
+        }
+    }
+
+    const updated = await prisma.goal.update({
         where: { id },
         data: { mentorConfirmed: true },
     });
 
+    // Audit log for sensitive action
+    await logActivity("confirm_goal", id, "goal", {
+        title: updated.title,
+        mentorshipId: goal.mentorshipId,
+    });
+
     revalidatePath("/goals");
     revalidatePath(`/admin/mentorships/${goal.mentorshipId}`);
-    return goal;
+    return updated;
 }
 
 export async function deleteGoal(id: string) {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    const { userId, role } = await requireAuth();
 
-    const goal = await prisma.goal.findUnique({
-        where: { id },
-    });
+    // Verify access to this goal
+    const { goal, memberRole } = await requireGoalAccess(id, userId, role);
 
-    if (!goal) throw new Error("Goal not found");
-
-    const role = (session.user as any).role;
-    if (role === "mentee" && goal.mentorConfirmed) {
+    // Mentees cannot delete confirmed goals
+    if (memberRole === "mentee" && goal.mentorConfirmed) {
         throw new Error("Cannot delete a confirmed goal");
     }
 
     await prisma.goal.delete({
         where: { id },
+    });
+
+    // Audit log for sensitive action
+    await logActivity("delete_goal", id, "goal", {
+        mentorshipId: goal.mentorshipId,
+        wasConfirmed: goal.mentorConfirmed,
     });
 
     revalidatePath("/goals");

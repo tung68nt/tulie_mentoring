@@ -62,6 +62,13 @@ model User {
   rankings               MenteeRanking[]
   wikiPageShares         WikiPageShare[]
 
+  // Mentor notes
+  notesAuthored          MentorNote[]            @relation("NoteAuthor")
+  notesAbout             MentorNote[]            @relation("NoteAbout")
+
+  // Audit
+  auditLogs              AuditLog[]
+
   @@index([role])
   @@index([email])
 }
@@ -83,6 +90,7 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId])
+  @@index([provider])
 }
 
 model MentorProfile {
@@ -166,6 +174,9 @@ model Mentorship {
   // Social & Chat relations
   chatRooms      ChatRoom[]
   posts          Post[]
+
+  // Mentor notes
+  mentorNotes    MentorNote[]
 
 
   @@index([mentorId])
@@ -470,6 +481,8 @@ model TodoItem {
 
   @@index([menteeId])
   @@index([reflectionId])
+  @@index([status])
+  @@index([dueDate])
 }
 
 model ActivityLog {
@@ -921,4 +934,49 @@ model ProgramMilestone {
 
   @@index([programCycleId])
   @@index([date])
+}
+
+// ─── Mentor Private Notes ───────────────────────────────
+
+model MentorNote {
+  id           String     @id @default(cuid())
+  mentorshipId String
+  authorId     String
+  aboutUserId  String
+  content      String     @db.Text
+  category     String     @default("general") // general, strength, improvement, plan
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  mentorship   Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  author       User       @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  aboutUser    User       @relation("NoteAbout", fields: [aboutUserId], references: [id], onDelete: Cascade)
+
+  @@index([mentorshipId])
+  @@index([authorId])
+  @@index([aboutUserId])
+  @@index([mentorshipId, aboutUserId])
+}
+
+// ─── Structured Audit Log ────────────────────────────────
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  userId       String
+  action       String   // e.g. "permission.denied", "data.access", "status.change"
+  severity     String   @default("info") // info, warning, critical
+  entityType   String?  // e.g. "goal", "mentorship", "evaluation"
+  entityId     String?
+  details      String?  @db.Text // JSON with before/after state
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([severity])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }

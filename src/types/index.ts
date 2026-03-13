@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "mentor" | "mentee";
+export type UserRole = "admin" | "program_manager" | "facilitator" | "mentor" | "mentee" | "manager";
 
 export type MentorshipType = "one_on_one" | "group";
 export type MentorshipStatus = "pending" | "active" | "completed" | "cancelled";

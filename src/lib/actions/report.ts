@@ -4,13 +4,14 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
+import { isAdminLevel } from "@/lib/permissions";
 
 export async function getMenteeStats(specificUserId?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "manager";
+    const isAdmin = isAdminLevel(role);
 
     // If specificUserId is provided, use it (only if authorized or if it's the current user)
     // If not, use session.user.id for mentees, or global stats for admin/viewer
@@ -29,9 +30,49 @@ export async function getMenteeStats(specificUserId?: string) {
         };
     }
 
-    // Authorization check: only admin/viewer or the owner can see specific stats
+    // Authorization check: admin/manager/PM or the owner can see specific stats
+    // Facilitators can see stats for mentees in their assigned programs
     if (specificUserId && !isAdmin && specificUserId !== session.user.id) {
-        throw new Error("Unauthorized access to specific user stats");
+        if (role === "facilitator") {
+            // Verify facilitator has access to this mentee
+            const assignment = await prisma.facilitatorAssignment.findFirst({
+                where: {
+                    facilitatorId: session.user.id,
+                    OR: [
+                        {
+                            mentorship: {
+                                mentees: { some: { menteeId: specificUserId } },
+                            },
+                        },
+                        {
+                            programCycle: {
+                                mentorships: {
+                                    some: {
+                                        mentees: { some: { menteeId: specificUserId } },
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
+            });
+            if (!assignment) {
+                throw new Error("Unauthorized: This mentee is not in your assigned scope");
+            }
+        } else if (role === "mentor") {
+            // Mentors can see stats for their own mentees
+            const mentorship = await prisma.mentorship.findFirst({
+                where: {
+                    mentorId: session.user.id,
+                    mentees: { some: { menteeId: specificUserId } },
+                },
+            });
+            if (!mentorship) {
+                throw new Error("Unauthorized: This mentee is not in your mentorship");
+            }
+        } else {
+            throw new Error("Unauthorized access to specific user stats");
+        }
     }
 
     // Determine filter based on whether we want global stats or specific user stats
@@ -107,7 +148,7 @@ export async function getProgramProgress(specificUserId?: string) {
 
     const userId = session.user.id!;
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "viewer" || role === "program_manager";
+    const isAdmin = isAdminLevel(role);
     const targetUserId = specificUserId || userId;
 
     let mentorship = null;

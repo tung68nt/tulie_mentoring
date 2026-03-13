@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import { requireAuth, requireEvaluationSubmitAccess, isAdminLevel } from "@/lib/permissions";
 
 // ─── Helpers ──────────────────────────────────────────
 async function requireFormAccess() {
@@ -169,13 +170,15 @@ export async function submitFormResponse(formId: string, answers: {
     value: string;
     score?: number;
 }[], targetMenteeId?: string) {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    const { userId, role } = await requireAuth();
+
+    // Only admin, facilitator, program_manager, and mentor can submit evaluations
+    await requireEvaluationSubmitAccess(userId, role);
 
     const response = await prisma.evaluationResponse.create({
         data: {
             formId,
-            submitterId: session.user.id!,
+            submitterId: userId,
             targetMenteeId: targetMenteeId || null,
             answers: {
                 create: answers.map(a => ({
@@ -274,12 +277,67 @@ export async function deleteFormResponse(responseId: string, formId: string) {
 
 // ─── Get mentees for evaluation target selection ──────
 export async function getMenteesForEvaluation() {
-    const session = await auth();
-    if (!session?.user) throw new Error("Unauthorized");
+    const { userId, role } = await requireAuth();
 
-    return await prisma.user.findMany({
-        where: { role: "mentee" },
-        select: { id: true, firstName: true, lastName: true, email: true, image: true },
-        orderBy: { firstName: "asc" },
-    });
+    // Admin/PM see all mentees
+    if (isAdminLevel(role)) {
+        return await prisma.user.findMany({
+            where: { role: "mentee" },
+            select: { id: true, firstName: true, lastName: true, email: true, image: true },
+            orderBy: { firstName: "asc" },
+        });
+    }
+
+    // Facilitators see only mentees in their assigned programs
+    if (role === "facilitator") {
+        const assignments = await prisma.facilitatorAssignment.findMany({
+            where: { facilitatorId: userId },
+            select: { programCycleId: true, mentorshipId: true },
+        });
+
+        const programCycleIds = assignments
+            .map(a => a.programCycleId)
+            .filter((id): id is string => id !== null);
+        const mentorshipIds = assignments
+            .map(a => a.mentorshipId)
+            .filter((id): id is string => id !== null);
+
+        return await prisma.user.findMany({
+            where: {
+                role: "mentee",
+                menteeships: {
+                    some: {
+                        mentorship: {
+                            OR: [
+                                { programCycleId: { in: programCycleIds } },
+                                { id: { in: mentorshipIds } },
+                            ],
+                        },
+                    },
+                },
+            },
+            select: { id: true, firstName: true, lastName: true, email: true, image: true },
+            orderBy: { firstName: "asc" },
+        });
+    }
+
+    // Mentors see only their own mentees
+    if (role === "mentor") {
+        return await prisma.user.findMany({
+            where: {
+                role: "mentee",
+                menteeships: {
+                    some: {
+                        mentorship: {
+                            mentorId: userId,
+                        },
+                    },
+                },
+            },
+            select: { id: true, firstName: true, lastName: true, email: true, image: true },
+            orderBy: { firstName: "asc" },
+        });
+    }
+
+    throw new Error("Unauthorized: Cannot access mentee list for evaluation");
 }
