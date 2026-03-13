@@ -115,7 +115,7 @@ export function WikiLanding({ structure, role }: WikiLandingProps) {
                         placeholder="Tìm kiếm wiki..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="h-8 pl-9 text-xs bg-muted/30 border-transparent focus:border-border/40 focus:bg-background shadow-none rounded-lg"
+                        className="h-9 pl-9 text-sm bg-muted/30 border-transparent focus:border-border/40 focus:bg-background shadow-none rounded-lg"
                     />
                 </div>
             </div>
