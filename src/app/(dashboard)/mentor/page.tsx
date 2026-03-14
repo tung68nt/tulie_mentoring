@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Users, Calendar, CheckCircle, Clock, Target, ArrowRight } from "lucide-react";
+import { Users, Calendar, CheckCircle, Clock, Target, ArrowRight, PenLine, MessageSquare, Check, Eye } from "lucide-react";
 import { MinutesManager } from "@/components/features/meetings/minutes-manager";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +32,7 @@ export default async function MentorDashboard() {
             ? {}
             : { mentorship: { mentorId: userId } };
 
-        const [mentorships, upcomingMeetings, allMeetings] = await Promise.all([
+        const [mentorships, upcomingMeetings, allMeetings, recentReflections] = await Promise.all([
             prisma.mentorship.findMany({
                 where: mentorFilter,
                 include: {
@@ -73,12 +73,49 @@ export default async function MentorDashboard() {
                     }
                 },
                 orderBy: { scheduledAt: "desc" },
-            })
+            }),
+            // Reflections from mentees for meetings in mentor's mentorships
+            prisma.meeting.findMany({
+                where: {
+                    ...allMeetingFilter,
+                    status: { in: ["scheduled", "completed"] },
+                },
+                include: {
+                    sessionReflections: {
+                        include: {
+                            mentee: {
+                                select: { id: true, firstName: true, lastName: true, avatar: true }
+                            }
+                        }
+                    },
+                    mentorship: {
+                        include: {
+                            mentees: {
+                                include: {
+                                    mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } }
+                                }
+                            }
+                        }
+                    },
+                    attendances: {
+                        where: { status: "present" },
+                        select: { userId: true }
+                    }
+                },
+                orderBy: { scheduledAt: "desc" },
+                take: 15,
+            }),
         ]);
 
         const serializedMentorships = JSON.parse(JSON.stringify(mentorships || []));
         const serializedUpcomingMeetings = JSON.parse(JSON.stringify(upcomingMeetings || []));
         const serializedAllMeetings = JSON.parse(JSON.stringify(allMeetings || []));
+        const serializedReflections = JSON.parse(JSON.stringify(recentReflections || []));
+
+        // Calculate reflection stats
+        const totalReflectionsExpected = serializedReflections.reduce((acc: number, m: any) => acc + (m.attendances?.length || 0), 0);
+        const totalReflectionsSubmitted = serializedReflections.reduce((acc: number, m: any) => acc + (m.sessionReflections?.length || 0), 0);
+        const reflectionRate = totalReflectionsExpected > 0 ? Math.round((totalReflectionsSubmitted / totalReflectionsExpected) * 100) : 0;
 
         const totalMentees = serializedMentorships.reduce((acc: number, m: any) => acc + m.mentees.length, 0);
 
@@ -86,6 +123,7 @@ export default async function MentorDashboard() {
             { title: "Mentees", value: totalMentees, icon: <Users /> },
             { title: "Buổi họp sắp tới", value: serializedUpcomingMeetings.length, icon: <Calendar /> },
             { title: "Mentorship", value: serializedMentorships.length, icon: <CheckCircle /> },
+            { title: "Thu hoạch", value: `${reflectionRate}%`, icon: <PenLine /> },
         ];
 
         return (
@@ -179,6 +217,126 @@ export default async function MentorDashboard() {
 
                 {/* Minutes Management */}
                 <MinutesManager meetings={serializedAllMeetings} />
+
+                {/* Reflection / Harvest Tracking */}
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                            <PenLine className="w-4 h-4 text-purple-500" />
+                            Theo dõi Thu hoạch Mentoring
+                        </h3>
+                        <Button variant="outline" size="sm" asChild>
+                            <Link href="/reflections">
+                                <Eye className="w-3.5 h-3.5 mr-1.5" />
+                                Xem tất cả
+                            </Link>
+                        </Button>
+                    </div>
+
+                    {serializedReflections.length === 0 ? (
+                        <Card className="p-8 text-center">
+                            <PenLine className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+                            <p className="text-sm text-muted-foreground">Chưa có buổi họp nào để theo dõi thu hoạch.</p>
+                        </Card>
+                    ) : (
+                        <div className="space-y-3">
+                            {serializedReflections.map((meeting: any) => {
+                                const mentees = meeting.mentorship?.mentees || [];
+                                const attendedUserIds = new Set((meeting.attendances || []).map((a: any) => a.userId));
+                                const reflectionMap = new Map(
+                                    (meeting.sessionReflections || []).map((r: any) => [r.menteeId, r])
+                                );
+                                // Only mentees who attended
+                                const relevantMentees = mentees.filter((mt: any) => attendedUserIds.has(mt.mentee.id));
+                                if (relevantMentees.length === 0) return null;
+
+                                const submittedCount = relevantMentees.filter((mt: any) => reflectionMap.has(mt.mentee.id)).length;
+                                const allSubmitted = submittedCount === relevantMentees.length;
+                                const confirmedCount = relevantMentees.filter((mt: any) => {
+                                    const ref = reflectionMap.get(mt.mentee.id);
+                                    return ref?.mentorConfirmed;
+                                }).length;
+
+                                return (
+                                    <Card key={meeting.id} className="p-0 overflow-hidden">
+                                        {/* Meeting header */}
+                                        <div className="flex items-center gap-4 px-5 py-3 bg-muted/30 border-b border-border/30">
+                                            <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex flex-col items-center justify-center shrink-0">
+                                                <span className="text-[9px] font-bold text-purple-600 leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
+                                                <span className="text-sm font-bold text-purple-600 leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-foreground truncate">{meeting.title}</p>
+                                                <p className="text-xs text-muted-foreground mt-0.5">
+                                                    {formatDate(meeting.scheduledAt, "HH:mm")} · {submittedCount}/{relevantMentees.length} đã nộp
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                {allSubmitted ? (
+                                                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200/50 text-xs">
+                                                        <CheckCircle className="w-3 h-3 mr-1" />
+                                                        Đầy đủ
+                                                    </Badge>
+                                                ) : (
+                                                    <Badge className="bg-amber-500/10 text-amber-600 border-amber-200/50 text-xs">
+                                                        <Clock className="w-3 h-3 mr-1" />
+                                                        Chờ {relevantMentees.length - submittedCount} bài
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Mentee reflection rows */}
+                                        <div className="divide-y divide-border/20">
+                                            {relevantMentees.map((mt: any) => {
+                                                const reflection = reflectionMap.get(mt.mentee.id);
+                                                const hasSubmitted = !!reflection;
+                                                const isConfirmed = reflection?.mentorConfirmed;
+
+                                                return (
+                                                    <div key={mt.mentee.id} className="flex items-center gap-3 px-5 py-3 hover:bg-muted/20 transition-colors">
+                                                        <Avatar
+                                                            firstName={mt.mentee.firstName}
+                                                            lastName={mt.mentee.lastName}
+                                                            src={mt.mentee.avatar}
+                                                            size="sm"
+                                                        />
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-sm font-medium text-foreground truncate">
+                                                                {mt.mentee.firstName} {mt.mentee.lastName}
+                                                            </p>
+                                                            {hasSubmitted && reflection.content && (
+                                                                <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                                                                    {reflection.content.substring(0, 80)}...
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex items-center gap-2 shrink-0">
+                                                            {!hasSubmitted ? (
+                                                                <span className="text-xs text-muted-foreground/50 font-medium px-2 py-1 rounded-md bg-muted/50">
+                                                                    Chưa nộp
+                                                                </span>
+                                                            ) : isConfirmed ? (
+                                                                <span className="text-xs text-emerald-600 font-medium flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-500/10">
+                                                                    <Check className="w-3 h-3" />
+                                                                    Đã xác nhận
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-xs text-purple-600 font-medium px-2 py-1 rounded-md bg-purple-500/10">
+                                                                    Đã nộp
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </Card>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-10">
