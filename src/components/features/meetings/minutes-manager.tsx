@@ -125,7 +125,7 @@ export function MinutesManager({ meetings }: { meetings: MeetingMinutesData[] })
                             const mStatus = latest?.status || "none";
                             const cfg = minuteStatusConfig[mStatus] || minuteStatusConfig.none;
                             const isExpanded = expandedId === meeting.id;
-                            const canAction = latest && mStatus === "submitted";
+                            const canAction = latest && (mStatus === "submitted" || mStatus === "draft");
                             const isThisActioning = actionTarget === latest?.id;
 
                             return (
@@ -248,11 +248,8 @@ export function MinutesManager({ meetings }: { meetings: MeetingMinutesData[] })
                                                 </div>
                                             )}
 
-                                            {latest && mStatus === "draft" && (
-                                                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/30 text-[11px] text-amber-600 font-medium">
-                                                    ⏳ Chờ mentee nộp biên bản để duyệt
-                                                </div>
-                                            )}
+
+
 
                                             {mStatus === "approved" && (
                                                 <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/30 text-[11px] text-emerald-600 font-medium">

@@ -209,7 +209,7 @@ export default async function MentorDashboard() {
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {stats.map((stat) => (
                         <StatCard key={stat.title} {...stat} />
                     ))}
@@ -242,12 +242,11 @@ export default async function MentorDashboard() {
                         <div className="space-y-3">
                             {serializedReflections.map((meeting: any) => {
                                 const mentees = meeting.mentorship?.mentees || [];
-                                const attendedUserIds = new Set((meeting.attendances || []).map((a: any) => a.userId));
-                                const reflectionMap = new Map(
+                                const reflectionMap = new Map<string, any>(
                                     (meeting.sessionReflections || []).map((r: any) => [r.menteeId, r])
                                 );
-                                // Only mentees who attended
-                                const relevantMentees = mentees.filter((mt: any) => attendedUserIds.has(mt.mentee.id));
+                                // Show all mentees in the mentorship
+                                const relevantMentees = mentees;
                                 if (relevantMentees.length === 0) return null;
 
                                 const submittedCount = relevantMentees.filter((mt: any) => reflectionMap.has(mt.mentee.id)).length;
