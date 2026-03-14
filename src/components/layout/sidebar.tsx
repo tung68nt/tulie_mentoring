@@ -139,6 +139,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             {
                 items: [
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
+                    { id: "reflections", label: "Thu hoạch Mentee", icon: PenLine, href: "/reflections" },
                     { id: "ranking", label: "Bảng xếp hạng", icon: BarChart, href: "/ranking" },
                     { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
                     { id: "focus", label: "Không gian tập trung", icon: Timer, href: "/focus" },
