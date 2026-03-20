@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { Card, StatCard, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Users, Calendar, CheckCircle, Clock, Target, ArrowRight, PenLine, MessageSquare, Check, Eye } from "lucide-react";
 import { MinutesManager } from "@/components/features/meetings/minutes-manager";
+import { ReflectionTracker } from "@/components/features/reflections/reflection-tracker";
+import { DeadlineTracker } from "@/components/features/mentorships/deadline-tracker";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
@@ -69,7 +71,15 @@ export default async function MentorDashboard() {
                         }
                     },
                     mentorship: {
-                        select: { id: true, mentor: { select: { firstName: true, lastName: true } } }
+                        select: { 
+                            id: true, 
+                            mentor: { select: { firstName: true, lastName: true } },
+                            mentees: {
+                                include: {
+                                    mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } }
+                                }
+                            }
+                        }
                     }
                 },
                 orderBy: { scheduledAt: "desc" },
@@ -142,71 +152,12 @@ export default async function MentorDashboard() {
 
                 {/* Unified Countdown Section */}
                 <div className="flex flex-col gap-4 w-full">
-                    <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
+                    <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2 mb-2">
                         <Target className="w-3.5 h-3.5" />
                         Theo dõi thời gian &amp; Deadline
                     </h3>
 
-                    {(() => {
-                        // Deduplicate program cycles
-                        const seenCycles = new Set<string>();
-                        const uniqueCycles = serializedMentorships
-                            .filter((m: any) => m.programCycle?.endDate)
-                            .filter((m: any) => {
-                                if (seenCycles.has(m.programCycle.id)) return false;
-                                seenCycles.add(m.programCycle.id);
-                                return true;
-                            });
-
-                        // Collect all goal deadlines
-                        const goalDeadlines = serializedMentorships.flatMap((m: any) =>
-                            m.goals.map((g: any) => ({
-                                ...g,
-                                menteeName: m.mentees?.[0]?.mentee?.firstName + ' ' + m.mentees?.[0]?.mentee?.lastName
-                            }))
-                        )
-                            .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-                            .slice(0, 6);
-
-                        // Calculate maxDays from the longest countdown for consistent bar scale
-                        const now = new Date();
-                        const allDates = [
-                            ...uniqueCycles.map((m: any) => new Date(m.programCycle.endDate)),
-                            ...goalDeadlines.map((g: any) => new Date(g.dueDate)),
-                        ];
-                        const globalMaxDays = Math.max(
-                            30,
-                            ...allDates.map(d => Math.max(0, Math.ceil((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))))
-                        );
-
-                        return (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {uniqueCycles.map((m: any) => (
-                                    <Countdown
-                                        key={`cycle-${m.programCycle.id}`}
-                                        targetDate={m.programCycle.endDate}
-                                        label={`Thời gian còn lại: ${m.programCycle.name}`}
-                                        maxDays={globalMaxDays}
-                                    />
-                                ))}
-                                {goalDeadlines.map((goal: any) => (
-                                    <Countdown
-                                        key={goal.id}
-                                        targetDate={goal.dueDate}
-                                        label={goal.title}
-                                        subtitle={`Mentee: ${goal.menteeName}`}
-                                        maxDays={globalMaxDays}
-                                    />
-                                ))}
-                            </div>
-                        );
-                    })()}
-
-                    {serializedMentorships.length === 0 && (
-                        <div className="py-4 text-center text-xs text-muted-foreground">
-                            Chưa có chương trình hoạt động
-                        </div>
-                    )}
+                    <DeadlineTracker mentorships={serializedMentorships} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -222,7 +173,7 @@ export default async function MentorDashboard() {
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                            <PenLine className="w-4 h-4 text-purple-500" />
+                            <PenLine className="w-4 h-4 text-foreground/70" />
                             Theo dõi Thu hoạch Mentoring
                         </h3>
                         <Button variant="outline" size="sm" asChild>
@@ -233,95 +184,7 @@ export default async function MentorDashboard() {
                         </Button>
                     </div>
 
-                    {serializedReflections.length === 0 ? (
-                        <Card className="p-6 text-center">
-                            <PenLine className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
-                            <p className="text-sm text-muted-foreground">Chưa có buổi họp nào để theo dõi thu hoạch.</p>
-                        </Card>
-                    ) : (
-                        <Card className="p-0 overflow-hidden">
-                            <div className="divide-y divide-border/30">
-                                {serializedReflections.slice(0, 8).map((meeting: any) => {
-                                    const mentees = meeting.mentorship?.mentees || [];
-                                    const reflectionMap = new Map<string, any>(
-                                        (meeting.sessionReflections || []).map((r: any) => [r.menteeId, r])
-                                    );
-                                    const relevantMentees = mentees;
-                                    if (relevantMentees.length === 0) return null;
-
-                                    const submittedCount = relevantMentees.filter((mt: any) => reflectionMap.has(mt.mentee.id)).length;
-                                    const allSubmitted = submittedCount === relevantMentees.length;
-                                    const confirmedCount = relevantMentees.filter((mt: any) => reflectionMap.get(mt.mentee.id)?.mentorConfirmed).length;
-
-                                    return (
-                                        <div key={meeting.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/20 transition-colors">
-                                            {/* Date badge - compact */}
-                                            <div className="w-9 h-9 rounded-md bg-purple-500/10 flex flex-col items-center justify-center shrink-0">
-                                                <span className="text-[8px] font-bold text-purple-600 leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
-                                                <span className="text-xs font-bold text-purple-600 leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
-                                            </div>
-                                            {/* Meeting info */}
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-foreground truncate">{meeting.title}</p>
-                                                <p className="text-[11px] text-muted-foreground">
-                                                    {formatDate(meeting.scheduledAt, "HH:mm")} · {submittedCount}/{relevantMentees.length} đã nộp
-                                                </p>
-                                            </div>
-                                            {/* Mentee avatars inline */}
-                                            <div className="flex items-center -space-x-1.5 shrink-0">
-                                                {relevantMentees.slice(0, 4).map((mt: any) => {
-                                                    const ref = reflectionMap.get(mt.mentee.id);
-                                                    const hasSubmitted = !!ref;
-                                                    return (
-                                                        <div key={mt.mentee.id} className={`relative ring-2 ring-background rounded-full ${!hasSubmitted ? 'opacity-40' : ''}`}>
-                                                            <Avatar
-                                                                firstName={mt.mentee.firstName}
-                                                                lastName={mt.mentee.lastName}
-                                                                src={mt.mentee.avatar}
-                                                                size="xs"
-                                                            />
-                                                            {ref?.mentorConfirmed && (
-                                                                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border border-background" />
-                                                            )}
-                                                        </div>
-                                                    );
-                                                })}
-                                                {relevantMentees.length > 4 && (
-                                                    <span className="text-[10px] text-muted-foreground ml-2">+{relevantMentees.length - 4}</span>
-                                                )}
-                                            </div>
-                                            {/* Status badge */}
-                                            <div className="shrink-0">
-                                                {allSubmitted ? (
-                                                    confirmedCount === relevantMentees.length ? (
-                                                        <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500/10">
-                                                            <Check className="w-3 h-3" />
-                                                            Xong
-                                                        </span>
-                                                    ) : (
-                                                        <Badge className="bg-purple-500/10 text-purple-600 border-purple-200/50 text-[10px] px-1.5 py-0">
-                                                            Chờ duyệt
-                                                        </Badge>
-                                                    )
-                                                ) : (
-                                                    <Badge className="bg-amber-500/10 text-amber-600 border-amber-200/50 text-[10px] px-1.5 py-0">
-                                                        Chờ {relevantMentees.length - submittedCount} bài
-                                                    </Badge>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            {serializedReflections.length > 8 && (
-                                <div className="border-t border-border/30 px-4 py-2 text-center">
-                                    <Link href="/reflections" className="text-xs text-primary font-medium hover:underline">
-                                        Xem thêm {serializedReflections.length - 8} buổi →
-                                    </Link>
-                                </div>
-                            )}
-                        </Card>
-                    )}
+                    <ReflectionTracker reflections={serializedReflections} />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
