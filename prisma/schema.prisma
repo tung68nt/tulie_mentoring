@@ -164,7 +164,7 @@ model Mentorship {
   goals          Goal[]
   meetings       Meeting[]
   mentor         User               @relation("MentorUser", fields: [mentorId], references: [id], onDelete: Cascade)
-  programCycle   ProgramCycle       @relation(fields: [programCycleId], references: [id])
+  programCycle   ProgramCycle       @relation(fields: [programCycleId], references: [id], onDelete: Cascade)
   mentees        MentorshipMentee[]
 
   wikiPages      WikiPage[]
@@ -930,7 +930,7 @@ model Procedure {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   
-  programCycle   ProgramCycle? @relation(fields: [programCycleId], references: [id])
+  programCycle   ProgramCycle? @relation(fields: [programCycleId], references: [id], onDelete: Cascade)
   submissions    ProcedureSubmission[]
 
   @@index([targetRole])

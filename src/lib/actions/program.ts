@@ -59,15 +59,6 @@ export async function deleteProgramCycle(id: string) {
         throw new Error("Unauthorized");
     }
 
-    // Check if there are mentorships associated with this cycle
-    const mentorshipCount = await prisma.mentorship.count({
-        where: { programCycleId: id },
-    });
-
-    if (mentorshipCount > 0) {
-        return { success: false, error: "Không thể xóa chương trình đã có mentorship. Vui lòng xóa các mentorship liên quan trước." };
-    }
-
     try {
         await prisma.programCycle.delete({
             where: { id },
