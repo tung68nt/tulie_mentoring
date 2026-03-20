@@ -27,10 +27,12 @@ export function DeleteProgramButton({ programId, programName }: DeleteProgramBut
     const handleDelete = async () => {
         setLoading(true);
         try {
-            const res = await deleteProgramCycle(programId);
+            const res: any = await deleteProgramCycle(programId);
             if (res.success) {
                 toast.success(`Đã xóa chương trình ${programName}`);
                 setOpen(false);
+            } else {
+                toast.error(res.error || "Không thể xóa chương trình");
             }
         } catch (error: any) {
             toast.error(error.message || "Không thể xóa chương trình");

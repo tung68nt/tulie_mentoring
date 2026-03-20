@@ -65,15 +65,22 @@ export async function deleteProgramCycle(id: string) {
     });
 
     if (mentorshipCount > 0) {
-        throw new Error("Không thể xóa chương trình đã có mentorship. Vui lòng xóa các mentorship liên quan trước.");
+        return { success: false, error: "Không thể xóa chương trình đã có mentorship. Vui lòng xóa các mentorship liên quan trước." };
     }
 
-    await prisma.programCycle.delete({
-        where: { id },
-    });
+    try {
+        await prisma.programCycle.delete({
+            where: { id },
+        });
 
-    revalidatePath("/admin/programs");
-    return { success: true };
+        revalidatePath("/admin/programs");
+        return { success: true };
+    } catch (err: any) {
+        if (err.code === "P2003") {
+            return { success: false, error: "Không thể xóa do chương trình này đang được gắn với Quy trình đánh giá thu hoạch, môn học hoặc dữ liệu quan trọng." };
+        }
+        return { success: false, error: "Lỗi hệ thống khi xóa chương trình." };
+    }
 }
 
 export async function getAllProgramCycles() {
