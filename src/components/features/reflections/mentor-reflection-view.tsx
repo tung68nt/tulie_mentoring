@@ -139,7 +139,7 @@ function MenteeSidebarView({ meetings, onConfirm, isLoading, mentee }: { meeting
     const scheduledList = processedMeetings.filter(m => !m.reflection && m.status === "scheduled");
 
     return (
-        <Card className="flex border-border/60 overflow-hidden h-[calc(100vh-280px)] min-h-[600px] animate-fade-in shadow-sm">
+        <Card padding="none" className="flex flex-row border-border/60 overflow-hidden h-[calc(100vh-280px)] min-h-[600px] animate-fade-in shadow-sm">
             {/* ─── LEFT SIDEBAR: Meeting list ─── */}
             <div className="w-[320px] shrink-0 border-r border-border/40 flex flex-col bg-muted/5 relative">
                 <div className="px-4 py-3 border-b border-border/30 bg-background/50 backdrop-blur-sm sticky top-0 z-10 shadow-sm">
