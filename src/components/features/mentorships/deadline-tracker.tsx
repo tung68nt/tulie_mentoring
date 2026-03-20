@@ -117,7 +117,7 @@ export function DeadlineTracker({ mentorships }: DeadlineTrackerProps) {
                 </Tabs>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-fade-in">
+            <div className="flex flex-col gap-3 animate-fade-in">
                 {displayedCycles.map((cycle: any) => (
                     <Countdown
                         key={`cycle-${cycle.id}`}
