@@ -7,16 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { formatDate, cn } from "@/lib/utils";
 import { confirmReflection } from "@/lib/actions/reflection";
-import { Check, Eye, PenLine, ChevronDown, ChevronUp, Search } from "lucide-react";
+import { Check, PenLine, ChevronDown, ChevronUp, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { blocksToText } from "@/components/ui/block-editor";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 
 interface MentorReflectionViewProps {
@@ -155,7 +148,7 @@ function MeetingReflectionGroup({
             {/* Meeting header */}
             <button
                 onClick={() => setExpanded(!expanded)}
-                className="w-full flex items-center gap-4 px-5 py-4 bg-muted/20 border-b border-border/30 text-left hover:bg-muted/30 transition-colors"
+                className="w-full flex items-center gap-4 px-5 py-3.5 bg-muted/20 border-b border-border/30 text-left hover:bg-muted/30 transition-colors"
             >
                 <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex flex-col items-center justify-center shrink-0">
                     <span className="text-[9px] font-bold text-purple-600 leading-none">
@@ -213,13 +206,22 @@ function ReflectionRow({
     onConfirm: (id: string) => void;
     isLoading: boolean;
 }) {
+    const [expanded, setExpanded] = useState(false);
+
     const contentText = reflection.content
         ? (reflection.content.startsWith("[") ? blocksToText(reflection.content) : reflection.content)
         : "Chưa có nội dung.";
 
     return (
-        <Dialog>
-            <div className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/10 transition-colors">
+        <div className="group">
+            {/* Row header - clickable to expand */}
+            <button
+                onClick={() => setExpanded(!expanded)}
+                className={cn(
+                    "w-full flex items-center gap-3 px-5 py-3 text-left transition-colors",
+                    expanded ? "bg-primary/3 border-l-2 border-l-primary" : "hover:bg-muted/10"
+                )}
+            >
                 <Avatar
                     firstName={reflection.mentee?.firstName}
                     lastName={reflection.mentee?.lastName}
@@ -230,9 +232,11 @@ function ReflectionRow({
                     <p className="text-sm font-medium text-foreground truncate">
                         {reflection.mentee?.firstName} {reflection.mentee?.lastName}
                     </p>
-                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                        {contentText.substring(0, 100)}
-                    </p>
+                    {!expanded && (
+                        <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                            {contentText.substring(0, 120)}
+                        </p>
+                    )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                     <span className="text-xs text-muted-foreground/50">
@@ -261,51 +265,33 @@ function ReflectionRow({
                         </Button>
                     )}
 
-                    <DialogTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground">
-                            <Eye className="w-3.5 h-3.5" />
-                        </Button>
-                    </DialogTrigger>
+                    {expanded ? (
+                        <ChevronUp className="w-4 h-4 text-muted-foreground/40" />
+                    ) : (
+                        <ChevronDown className="w-4 h-4 text-muted-foreground/40" />
+                    )}
                 </div>
-            </div>
+            </button>
 
-            <DialogContent className="max-w-2xl rounded-2xl border border-border/60 p-0 overflow-hidden shadow-2xl">
-                <DialogHeader className="p-8 bg-muted/20 border-b border-border/40">
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                            <Avatar
-                                firstName={reflection.mentee?.firstName}
-                                lastName={reflection.mentee?.lastName}
-                                src={reflection.mentee?.avatar}
-                                size="md"
-                            />
-                            <div>
-                                <p className="text-base font-semibold text-foreground">
-                                    {reflection.mentee?.firstName} {reflection.mentee?.lastName}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                    {formatDate(reflection.createdAt)} · {reflection.meeting?.title}
-                                </p>
+            {/* Expanded content - inline, no popup */}
+            {expanded && (
+                <div className="px-5 pb-4 pt-0 animate-in slide-in-from-top-2 fade-in duration-200">
+                    <div className="ml-9 pl-4 border-l-2 border-primary/15">
+                        <div className="bg-muted/15 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="text-[10px] font-bold text-primary/70 uppercase tracking-wider">Nội dung thu hoạch</span>
+                                <span className="text-[10px] text-muted-foreground/40">·</span>
+                                <span className="text-[10px] text-muted-foreground/50">
+                                    Nộp lúc {formatDate(reflection.createdAt, "HH:mm dd/MM/yyyy")}
+                                </span>
                             </div>
-                            {reflection.mentorConfirmed && (
-                                <Badge variant="outline" className="bg-green-500/5 text-green-600 border-green-200/50 text-xs ml-auto">
-                                    Đã xác nhận
-                                </Badge>
-                            )}
-                        </div>
-                        <DialogTitle className="text-xl font-bold tracking-tight text-foreground no-uppercase">
-                            Thu hoạch: {reflection.meeting?.title}
-                        </DialogTitle>
-                    </div>
-                </DialogHeader>
-                <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                    <div className="prose prose-slate max-w-none">
-                        <div className="whitespace-pre-wrap text-sm text-foreground/90 leading-relaxed">
-                            {contentText || "Chưa có nội dung ghi chép."}
+                            <div className="whitespace-pre-wrap text-sm text-foreground/85 leading-relaxed">
+                                {contentText || "Chưa có nội dung ghi chép."}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </DialogContent>
-        </Dialog>
+            )}
+        </div>
     );
 }
