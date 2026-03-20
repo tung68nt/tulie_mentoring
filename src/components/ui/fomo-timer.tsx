@@ -103,42 +103,44 @@ export function Countdown({ targetDate, label, subtitle, className, maxDays = 90
 
     return (
         <div className={cn(
-            "flex flex-col gap-1.5 px-4 py-3 rounded-xl border border-border/40 bg-card hover:border-border/60 transition-all group",
+            "relative flex items-center gap-4 p-4 rounded-xl border border-border/60 bg-card hover:border-border transition-all group",
             className
         )}>
-            {/* Label row */}
-            <div className="flex items-center justify-between gap-3 min-h-[20px]">
-                <p className="text-[13px] font-semibold text-foreground truncate leading-tight no-uppercase flex-1 min-w-0">
-                    {label}
-                </p>
-                <div className={cn(
-                    "flex items-center gap-1 font-mono font-bold shrink-0 text-sm tabular-nums",
-                    textClass
-                )}>
-                    {timeLeft.d}
-                    <span className="text-[10px] font-semibold opacity-60">ngày</span>
-                    {isUrgent && <AlertCircle className="w-3.5 h-3.5 shrink-0 animate-pulse text-rose-500" />}
+            {/* Prominent Number Box */}
+            <div className={cn(
+                "flex flex-col items-center justify-center w-16 h-16 rounded-xl shrink-0 transition-colors",
+                bgClass.replace("500", "500/10").replace("400", "400/10"), // auto-generate soft background based on main color
+                textClass
+            )}>
+                <span className="text-2xl font-black leading-none mb-1 tracking-tight">{timeLeft.d}</span>
+                <span className="text-[9px] uppercase font-bold opacity-80 tracking-wider">Ngày</span>
+            </div>
+
+            <div className="flex-1 min-w-0 flex flex-col justify-center">
+                {/* Headers */}
+                <h4 className="text-sm font-semibold truncate text-foreground leading-snug">{label}</h4>
+                {subtitle && <p className="text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</p>}
+
+                {/* Progress & Target Date Row */}
+                <div className="mt-3 flex items-center gap-3">
+                    <div className="flex-1 h-1.5 bg-muted/50 rounded-full overflow-hidden">
+                        <div
+                            className={cn("h-full rounded-full transition-all duration-1000 ease-out", bgClass)}
+                            style={{ width: `${Math.max(2, percent)}%` }}
+                        />
+                    </div>
+                    <span className="text-[10px] whitespace-nowrap text-muted-foreground/70 font-semibold tabular-nums tracking-wide">
+                        {new Date(targetDate).toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    </span>
                 </div>
             </div>
-
-            {/* Subtitle — always takes space to ensure equal height */}
-            <p className={cn(
-                "text-[11px] font-normal truncate h-[16px] leading-[16px]",
-                subtitle ? "text-muted-foreground/60" : "text-transparent select-none"
-            )}>
-                {subtitle || "\u00A0"}
-            </p>
-
-            {/* Progress bar */}
-            <div className="w-full h-2 bg-muted/40 rounded-full overflow-hidden">
-                <div
-                    className={cn(
-                        "h-full rounded-full transition-all duration-1000 ease-out",
-                        bgClass
-                    )}
-                    style={{ width: `${percent}%` }}
-                />
-            </div>
+            
+            {/* Urgent Warning Icon */}
+            {isUrgent && (
+                <div className="absolute top-3 right-3">
+                    <AlertCircle className="w-4 h-4 text-rose-500 animate-pulse" />
+                </div>
+            )}
         </div>
     );
 }

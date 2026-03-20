@@ -215,7 +215,7 @@ export async function getWikiStructure() {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
-    const categories = await prisma.wikiCategory.findMany({
+    let categories = await prisma.wikiCategory.findMany({
         orderBy: { order: "asc" },
         include: {
             wikis: {
@@ -240,6 +240,33 @@ export async function getWikiStructure() {
             },
         },
     });
+
+    // Auto-create default category if none exist
+    if (categories.length === 0) {
+        const defaultCat = await prisma.wikiCategory.create({
+            data: {
+                name: "Chung",
+                slug: "chung",
+                order: 0,
+            },
+            include: {
+                wikis: {
+                    select: {
+                        id: true,
+                        title: true,
+                        slug: true,
+                        order: true,
+                        visibility: true,
+                        pages: { select: { id: true, title: true, slug: true, order: true, wikiId: true } }
+                    }
+                }
+            }
+        });
+        categories = [defaultCat];
+        
+        // Recover orphaned wikis if any somehow exist without category (e.g. from forced migrations)
+        // Prisma will crash if we try to reference a null categoryId, but if there's any hacky data, we can try to link them.
+    }
 
     return JSON.parse(JSON.stringify(categories));
 }
