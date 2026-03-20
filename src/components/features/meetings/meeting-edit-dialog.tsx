@@ -146,7 +146,7 @@ export function MeetingEditDialog({ meeting }: MeetingEditDialogProps) {
                         <Select
                             label="Hình thức"
                             value={type}
-                            onChange={(e) => setType(e.target.value)}
+                            onValueChange={(val) => setType(val)}
                             options={[
                                 { value: "offline", label: "Trực tiếp" },
                                 { value: "online", label: "Trực tuyến" },
@@ -155,7 +155,7 @@ export function MeetingEditDialog({ meeting }: MeetingEditDialogProps) {
                         <Select
                             label="Loại"
                             value={meetingType}
-                            onChange={(e) => setMeetingType(e.target.value)}
+                            onValueChange={(val) => setMeetingType(val)}
                             options={[
                                 { value: "session", label: "Trao đổi định kỳ" },
                                 { value: "checkin", label: "Review / Đánh giá" },
