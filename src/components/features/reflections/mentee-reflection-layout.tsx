@@ -24,6 +24,7 @@ interface MeetingItem {
     content?: string;
     mentorConfirmed?: boolean;
     reflectionId?: string;
+    sessionNumber?: number;
 }
 
 interface MenteeReflectionLayoutProps {
@@ -59,7 +60,19 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
             reflectionId: r.id,
         }));
 
-        return [...pending, ...submitted];
+        const all = [...pending, ...submitted];
+
+        // Calculate session numbers: sort by scheduledAt ascending (oldest = Buổi 1)
+        const withDates = all.filter(m => m.scheduledAt);
+        const sorted = [...withDates].sort((a, b) => 
+            new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime()
+        );
+        sorted.forEach((item, index) => {
+            const found = all.find(m => m.id === item.id);
+            if (found) found.sessionNumber = index + 1;
+        });
+
+        return all;
     }, [pendingMeetings, reflections]);
 
     const [selectedId, setSelectedId] = useState<string | null>(meetings[0]?.id || null);
@@ -138,6 +151,7 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
                             meetingTitle={selected.meetingTitle}
                             mentorName={selected.mentorName}
                             scheduledAt={selected.scheduledAt}
+                            sessionNumber={selected.sessionNumber}
                         />
                     ) : (
                         <SubmittedView
@@ -194,6 +208,7 @@ function SidebarItem({ item, isSelected, onClick }: { item: MeetingItem; isSelec
                         "text-sm truncate leading-tight",
                         isSelected ? "font-semibold text-foreground" : "font-medium text-foreground/80"
                     )}>
+                        {item.sessionNumber && <span className="text-primary/70 font-bold">#{item.sessionNumber} </span>}
                         {item.meetingTitle}
                     </p>
                     <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
@@ -218,11 +233,12 @@ function SidebarItem({ item, isSelected, onClick }: { item: MeetingItem; isSelec
 }
 
 // ─── Editor for Pending Meetings ───
-function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt }: {
+function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessionNumber }: {
     meetingId: string;
     meetingTitle: string;
     mentorName: string;
     scheduledAt?: string;
+    sessionNumber?: number;
 }) {
     const [content, setContent] = useState("");
     const [isSaving, setIsSaving] = useState(false);
@@ -264,7 +280,10 @@ function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt }: {
                                 </>
                             )}
                         </div>
-                        <h2 className="text-lg font-semibold text-foreground truncate">{meetingTitle}</h2>
+                        <h2 className="text-lg font-semibold text-foreground truncate">
+                            {sessionNumber && <span className="text-primary">Buổi {sessionNumber}: </span>}
+                            {meetingTitle}
+                        </h2>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                         {lastSaved && (
@@ -353,7 +372,10 @@ function SubmittedView({ item, userRole }: { item: MeetingItem; userRole: string
                                 </>
                             )}
                         </div>
-                        <h2 className="text-lg font-semibold text-foreground truncate">{item.meetingTitle}</h2>
+                        <h2 className="text-lg font-semibold text-foreground truncate">
+                            {item.sessionNumber && <span className="text-primary">Buổi {item.sessionNumber}: </span>}
+                            {item.meetingTitle}
+                        </h2>
                     </div>
                     <div className="shrink-0">
                         {!(userRole === "mentee" && item.mentorConfirmed) && (
