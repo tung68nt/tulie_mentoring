@@ -106,7 +106,10 @@ export function ReflectionTracker({ reflections }: ReflectionTrackerProps) {
                                 </div>
                                 {/* Meeting info */}
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-foreground truncate">{meeting.title}</p>
+                                    <p className="text-sm font-medium text-foreground truncate">
+                                        {meeting.sessionNumber && !meeting.title.startsWith("Buổi") ? <span className="font-bold mr-1 text-muted-foreground">Buổi #{meeting.sessionNumber}:</span> : ""}
+                                        {meeting.title}
+                                    </p>
                                     <p className="text-[11px] text-muted-foreground">
                                         {formatDate(meeting.scheduledAt, "HH:mm")} · {submittedCount}/{relevantMentees.length} đã nộp
                                     </p>
