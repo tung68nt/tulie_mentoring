@@ -9,6 +9,8 @@ import { QRManager } from "@/components/features/meetings/qr-manager";
 import { QRSentry } from "@/components/features/meetings/qr-sentry";
 import { MinutesSection } from "@/components/features/meetings/minutes-section";
 import { EditableTitle } from "@/components/features/meetings/editable-title";
+import { MeetingEditDialog } from "@/components/features/meetings/meeting-edit-dialog";
+import { MeetingDeleteDialog } from "@/components/features/meetings/meeting-delete-dialog";
 import { formatDate } from "@/lib/utils";
 import { Calendar, MapPin, Video, Clock, ChevronLeft, Users } from "lucide-react";
 import Link from "next/link";
@@ -45,6 +47,8 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
     const isMentor = meeting.mentorship?.mentorId === userId || role === "admin";
     const isCreator = meeting.creatorId === userId;
+    const isAdminOrPM = role === "admin" || role === "program_manager";
+    const canEditMeeting = isMentor || isCreator || isAdminOrPM;
     const isParticipant = meeting.mentorship?.mentees?.some((m: any) => m.menteeId === userId) || isMentor || isCreator;
 
     if (!isParticipant) notFound();
@@ -70,6 +74,28 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                 </div>
                                 <EditableTitle meetingId={meeting.id} title={meeting.title} canEdit={isMentor || isCreator} />
                             </div>
+                            {canEditMeeting && (
+                                <div className="flex items-center gap-2 shrink-0 ml-4">
+                                    <MeetingEditDialog meeting={{
+                                        id: meeting.id,
+                                        title: meeting.title,
+                                        description: meeting.description,
+                                        type: meeting.type,
+                                        meetingType: meeting.meetingType,
+                                        scheduledAt: meeting.scheduledAt,
+                                        duration: meeting.duration,
+                                        location: meeting.location,
+                                        meetingUrl: meeting.meetingUrl,
+                                        status: meeting.status,
+                                    }} />
+                                    <MeetingDeleteDialog meeting={{
+                                        id: meeting.id,
+                                        title: meeting.title,
+                                        scheduledAt: meeting.scheduledAt,
+                                        status: meeting.status,
+                                    }} />
+                                </div>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-y border-border">

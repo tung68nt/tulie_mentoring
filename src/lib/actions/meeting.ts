@@ -183,6 +183,183 @@ export async function updateMeeting(id: string, data: {
     return JSON.parse(JSON.stringify(updated));
 }
 
+export async function updateMeetingSchedule(id: string, data: {
+    scheduledAt?: Date | string;
+    duration?: number;
+    type?: string;
+    meetingType?: string;
+    location?: string;
+    meetingUrl?: string;
+    title?: string;
+    description?: string;
+}) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+    const role = (session.user as any).role;
+
+    const meeting = await prisma.meeting.findUnique({
+        where: { id },
+        include: {
+            mentorship: {
+                select: {
+                    mentorId: true,
+                    mentees: { select: { menteeId: true } },
+                },
+            },
+        },
+    });
+
+    if (!meeting) throw new Error("Cuộc họp không tồn tại");
+
+    // Only allow edit if meeting is still scheduled (not completed/cancelled)
+    if (meeting.status === "completed") {
+        throw new Error("Không thể chỉnh sửa cuộc họp đã hoàn thành");
+    }
+
+    // Auth: mentor, creator, or admin/PM
+    const isMentor = meeting.mentorship?.mentorId === session.user.id;
+    const isCreator = meeting.creatorId === session.user.id;
+    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager") {
+        throw new Error("Bạn không có quyền chỉnh sửa cuộc họp này");
+    }
+
+    const updateData: any = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.location !== undefined) updateData.location = data.location;
+    if (data.meetingUrl !== undefined) updateData.meetingUrl = data.meetingUrl;
+    if (data.type !== undefined) updateData.type = data.type;
+    if (data.meetingType !== undefined) updateData.meetingType = data.meetingType;
+    if (data.duration !== undefined) updateData.duration = data.duration;
+
+    if (data.scheduledAt !== undefined) {
+        const newDate = typeof data.scheduledAt === "string" ? new Date(data.scheduledAt) : data.scheduledAt;
+        updateData.scheduledAt = newDate;
+        // Re-calculate QR expiry based on new time
+        const duration = data.duration ?? meeting.duration;
+        updateData.qrExpiresAt = addMinutes(newDate, duration + 60);
+    }
+
+    const updated = await prisma.meeting.update({
+        where: { id },
+        data: updateData,
+    });
+
+    // Log activity
+    await logActivity("update_meeting_schedule", id, "meeting", {
+        title: meeting.title,
+        changes: Object.keys(updateData),
+    });
+
+    // Notify participants about schedule change
+    try {
+        if (meeting.mentorship) {
+            const updaterName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim() || "Ai đó";
+            const participantIds = [
+                meeting.mentorship.mentorId,
+                ...meeting.mentorship.mentees.map(m => m.menteeId),
+            ].filter(uid => uid !== session.user.id);
+
+            if (participantIds.length > 0) {
+                const scheduledAtStr = data.scheduledAt
+                    ? format(new Date(data.scheduledAt), "HH:mm - EEEE, dd/MM/yyyy", { locale: vi })
+                    : format(new Date(meeting.scheduledAt), "HH:mm - EEEE, dd/MM/yyyy", { locale: vi });
+
+                await sendNotificationToUsers({
+                    userIds: participantIds,
+                    title: `Lịch họp đã thay đổi: ${updated.title}`,
+                    message: `${updaterName} đã cập nhật lịch họp "${updated.title}" — thời gian: ${scheduledAtStr}`,
+                    type: "meeting",
+                    link: `/meetings/${id}`,
+                });
+            }
+        }
+    } catch (notifError) {
+        console.error("Failed to send meeting schedule update notifications:", notifError);
+    }
+
+    revalidatePath(`/meetings/${id}`);
+    revalidatePath("/calendar");
+    if (meeting.mentorshipId) {
+        revalidatePath(`/admin/mentorships/${meeting.mentorshipId}`);
+    }
+    return JSON.parse(JSON.stringify(updated));
+}
+
+export async function deleteMeeting(id: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+    const role = (session.user as any).role;
+
+    const meeting = await prisma.meeting.findUnique({
+        where: { id },
+        include: {
+            mentorship: {
+                select: {
+                    mentorId: true,
+                    mentees: { select: { menteeId: true } },
+                },
+            },
+        },
+    });
+
+    if (!meeting) throw new Error("Cuộc họp không tồn tại");
+
+    // Only allow delete if meeting is scheduled or cancelled
+    if (meeting.status === "completed" || meeting.status === "ongoing") {
+        throw new Error("Không thể xóa cuộc họp đang diễn ra hoặc đã hoàn thành");
+    }
+
+    // Auth: mentor, creator, or admin/PM
+    const isMentor = meeting.mentorship?.mentorId === session.user.id;
+    const isCreator = meeting.creatorId === session.user.id;
+    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager") {
+        throw new Error("Bạn không có quyền xóa cuộc họp này");
+    }
+
+    // Notify participants before deletion
+    try {
+        if (meeting.mentorship) {
+            const deleterName = `${(session.user as any).firstName || ""} ${(session.user as any).lastName || ""}`.trim() || "Ai đó";
+            const participantIds = [
+                meeting.mentorship.mentorId,
+                ...meeting.mentorship.mentees.map(m => m.menteeId),
+            ].filter(uid => uid !== session.user.id);
+
+            if (participantIds.length > 0) {
+                const scheduledAtStr = format(new Date(meeting.scheduledAt), "HH:mm - EEEE, dd/MM/yyyy", { locale: vi });
+
+                await sendNotificationToUsers({
+                    userIds: participantIds,
+                    title: `Cuộc họp đã bị xóa: ${meeting.title}`,
+                    message: `${deleterName} đã xóa cuộc họp "${meeting.title}" (lịch: ${scheduledAtStr})`,
+                    type: "meeting",
+                    link: "/calendar",
+                });
+            }
+        }
+    } catch (notifError) {
+        console.error("Failed to send meeting deletion notifications:", notifError);
+    }
+
+    // Log activity before deleting
+    await logActivity("delete_meeting", id, "meeting", {
+        title: meeting.title,
+        scheduledAt: meeting.scheduledAt,
+    });
+
+    // Delete the meeting (cascading deletes handle attendances, minutes, reflections)
+    await prisma.meeting.delete({
+        where: { id },
+    });
+
+    revalidatePath("/calendar");
+    if (meeting.mentorshipId) {
+        revalidatePath(`/admin/mentorships/${meeting.mentorshipId}`);
+    }
+    return { success: true };
+}
+
 export async function getMeetings(filters?: {
     role?: string;
     userId?: string;
