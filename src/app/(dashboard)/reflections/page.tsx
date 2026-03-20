@@ -91,7 +91,7 @@ export default async function ReflectionsPage() {
         ]);
 
         return (
-            <div className="space-y-8 pb-20 animate-fade-in">
+            <div className="space-y-6 pb-20 animate-fade-in">
                 <div className="flex flex-col gap-1">
                     <h1 className="text-2xl font-semibold tracking-tight text-foreground">Thu hoạch Mentoring</h1>
                     <p className="text-sm text-muted-foreground/60 font-medium">
@@ -100,22 +100,25 @@ export default async function ReflectionsPage() {
                 </div>
 
                 <Tabs defaultValue={pendingMeetings.length > 0 ? "new" : "history"} className="w-full">
-                    <TabsList className="bg-muted/50 p-1 rounded-lg mb-8 h-auto">
-                        <TabsTrigger value="new" className="rounded-md px-6 py-2.5 data-[state=active]:bg-background shadow-none transition-all">
+                    <TabsList className="bg-muted/50 p-1 rounded-lg mb-6 h-auto">
+                        <TabsTrigger value="new" className="rounded-md px-5 py-2 data-[state=active]:bg-background shadow-none transition-all">
                             <BookOpen className="w-4 h-4 mr-2" />
-                            <span className="font-medium">Viết thu hoạch mới</span>
+                            <span className="font-medium text-sm">Viết thu hoạch mới</span>
+                            {pendingMeetings.length > 0 && (
+                                <span className="ml-1.5 text-[10px] font-bold bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center">{pendingMeetings.length}</span>
+                            )}
                         </TabsTrigger>
-                        <TabsTrigger value="history" className="rounded-md px-6 py-2.5 data-[state=active]:bg-background shadow-none transition-all">
+                        <TabsTrigger value="history" className="rounded-md px-5 py-2 data-[state=active]:bg-background shadow-none transition-all">
                             <History className="w-4 h-4 mr-2" />
-                            <span className="font-medium">Lịch sử thu hoạch</span>
+                            <span className="font-medium text-sm">Lịch sử thu hoạch ({reflections.length})</span>
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="new" className="space-y-8 animate-in fade-in duration-500">
+                    <TabsContent value="new" className="space-y-4 animate-in fade-in duration-500">
                         {pendingMeetings.length > 0 ? (
-                            <div className="space-y-10">
+                            <div className="space-y-4">
                                 {pendingMeetings.map((meeting: any) => (
-                                    <div key={meeting.id} className="space-y-4">
+                                    <div key={meeting.id}>
                                         <ReflectionEditor
                                             meetingId={meeting.id}
                                             meetingTitle={meeting.title}
@@ -125,30 +128,33 @@ export default async function ReflectionsPage() {
                                 ))}
                             </div>
                         ) : (
-                            <Card className="p-12 text-center bg-muted/20 border-border/50 rounded-lg flex flex-col items-center gap-4 shadow-none">
-                                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-muted-foreground shadow-none">
-                                    <MessageSquareText className="w-6 h-6" />
+                            <Card className="p-10 text-center bg-muted/20 border-border/50 rounded-lg flex flex-col items-center gap-3 shadow-none">
+                                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center text-muted-foreground shadow-none">
+                                    <MessageSquareText className="w-5 h-5" />
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-sm font-semibold text-foreground">Không có buổi học mới nào cần viết thu hoạch</p>
-                                    <p className="text-sm text-muted-foreground">Hãy tham gia các buổi mentoring và điểm danh để viết bài thu hoạch tại đây.</p>
+                                    <p className="text-xs text-muted-foreground">Hãy tham gia các buổi mentoring và điểm danh để viết bài thu hoạch tại đây.</p>
                                 </div>
                             </Card>
                         )}
                     </TabsContent>
 
                     <TabsContent value="history" className="animate-in fade-in duration-500">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {reflections.length > 0 ? (
-                                reflections.map((ref: any) => (
-                                    <ReflectionCard key={ref.id} reflection={ref} userRole={role} />
-                                ))
-                            ) : (
-                                <div className="col-span-full py-20 text-center">
-                                    <p className="text-sm text-muted-foreground">Bạn chưa có bài thu hoạch nào.</p>
+                        {reflections.length > 0 ? (
+                            <Card className="p-0 overflow-hidden">
+                                <div className="divide-y divide-border/30">
+                                    {reflections.map((ref: any) => (
+                                        <ReflectionCard key={ref.id} reflection={ref} userRole={role} />
+                                    ))}
                                 </div>
-                            )}
-                        </div>
+                            </Card>
+                        ) : (
+                            <div className="py-16 text-center">
+                                <PenLine className="w-8 h-8 text-muted-foreground/20 mx-auto mb-3" />
+                                <p className="text-sm text-muted-foreground">Bạn chưa có bài thu hoạch nào.</p>
+                            </div>
+                        )}
                     </TabsContent>
                 </Tabs>
             </div>

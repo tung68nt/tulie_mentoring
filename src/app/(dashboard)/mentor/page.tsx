@@ -218,8 +218,8 @@ export default async function MentorDashboard() {
                 {/* Minutes Management */}
                 <MinutesManager meetings={serializedAllMeetings} />
 
-                {/* Reflection / Harvest Tracking */}
-                <div className="space-y-4">
+                {/* Reflection / Harvest Tracking - Compact */}
+                <div className="space-y-3">
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                             <PenLine className="w-4 h-4 text-purple-500" />
@@ -234,106 +234,93 @@ export default async function MentorDashboard() {
                     </div>
 
                     {serializedReflections.length === 0 ? (
-                        <Card className="p-8 text-center">
-                            <PenLine className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+                        <Card className="p-6 text-center">
+                            <PenLine className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
                             <p className="text-sm text-muted-foreground">Chưa có buổi họp nào để theo dõi thu hoạch.</p>
                         </Card>
                     ) : (
-                        <div className="space-y-3">
-                            {serializedReflections.map((meeting: any) => {
-                                const mentees = meeting.mentorship?.mentees || [];
-                                const reflectionMap = new Map<string, any>(
-                                    (meeting.sessionReflections || []).map((r: any) => [r.menteeId, r])
-                                );
-                                // Show all mentees in the mentorship
-                                const relevantMentees = mentees;
-                                if (relevantMentees.length === 0) return null;
+                        <Card className="p-0 overflow-hidden">
+                            <div className="divide-y divide-border/30">
+                                {serializedReflections.slice(0, 8).map((meeting: any) => {
+                                    const mentees = meeting.mentorship?.mentees || [];
+                                    const reflectionMap = new Map<string, any>(
+                                        (meeting.sessionReflections || []).map((r: any) => [r.menteeId, r])
+                                    );
+                                    const relevantMentees = mentees;
+                                    if (relevantMentees.length === 0) return null;
 
-                                const submittedCount = relevantMentees.filter((mt: any) => reflectionMap.has(mt.mentee.id)).length;
-                                const allSubmitted = submittedCount === relevantMentees.length;
-                                const confirmedCount = relevantMentees.filter((mt: any) => {
-                                    const ref = reflectionMap.get(mt.mentee.id);
-                                    return ref?.mentorConfirmed;
-                                }).length;
+                                    const submittedCount = relevantMentees.filter((mt: any) => reflectionMap.has(mt.mentee.id)).length;
+                                    const allSubmitted = submittedCount === relevantMentees.length;
+                                    const confirmedCount = relevantMentees.filter((mt: any) => reflectionMap.get(mt.mentee.id)?.mentorConfirmed).length;
 
-                                return (
-                                    <Card key={meeting.id} className="p-0 overflow-hidden">
-                                        {/* Meeting header */}
-                                        <div className="flex items-center gap-4 px-5 py-3 bg-muted/30 border-b border-border/30">
-                                            <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex flex-col items-center justify-center shrink-0">
-                                                <span className="text-[9px] font-bold text-purple-600 leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
-                                                <span className="text-sm font-bold text-purple-600 leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
+                                    return (
+                                        <div key={meeting.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/20 transition-colors">
+                                            {/* Date badge - compact */}
+                                            <div className="w-9 h-9 rounded-md bg-purple-500/10 flex flex-col items-center justify-center shrink-0">
+                                                <span className="text-[8px] font-bold text-purple-600 leading-none">{formatDate(meeting.scheduledAt, "MMM")}</span>
+                                                <span className="text-xs font-bold text-purple-600 leading-none mt-0.5">{formatDate(meeting.scheduledAt, "dd")}</span>
                                             </div>
+                                            {/* Meeting info */}
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold text-foreground truncate">{meeting.title}</p>
-                                                <p className="text-xs text-muted-foreground mt-0.5">
+                                                <p className="text-sm font-medium text-foreground truncate">{meeting.title}</p>
+                                                <p className="text-[11px] text-muted-foreground">
                                                     {formatDate(meeting.scheduledAt, "HH:mm")} · {submittedCount}/{relevantMentees.length} đã nộp
                                                 </p>
                                             </div>
-                                            <div className="flex items-center gap-1.5">
+                                            {/* Mentee avatars inline */}
+                                            <div className="flex items-center -space-x-1.5 shrink-0">
+                                                {relevantMentees.slice(0, 4).map((mt: any) => {
+                                                    const ref = reflectionMap.get(mt.mentee.id);
+                                                    const hasSubmitted = !!ref;
+                                                    return (
+                                                        <div key={mt.mentee.id} className={`relative ring-2 ring-background rounded-full ${!hasSubmitted ? 'opacity-40' : ''}`}>
+                                                            <Avatar
+                                                                firstName={mt.mentee.firstName}
+                                                                lastName={mt.mentee.lastName}
+                                                                src={mt.mentee.avatar}
+                                                                size="xs"
+                                                            />
+                                                            {ref?.mentorConfirmed && (
+                                                                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border border-background" />
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                                {relevantMentees.length > 4 && (
+                                                    <span className="text-[10px] text-muted-foreground ml-2">+{relevantMentees.length - 4}</span>
+                                                )}
+                                            </div>
+                                            {/* Status badge */}
+                                            <div className="shrink-0">
                                                 {allSubmitted ? (
-                                                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200/50 text-xs">
-                                                        <CheckCircle className="w-3 h-3 mr-1" />
-                                                        Đầy đủ
-                                                    </Badge>
+                                                    confirmedCount === relevantMentees.length ? (
+                                                        <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500/10">
+                                                            <Check className="w-3 h-3" />
+                                                            Xong
+                                                        </span>
+                                                    ) : (
+                                                        <Badge className="bg-purple-500/10 text-purple-600 border-purple-200/50 text-[10px] px-1.5 py-0">
+                                                            Chờ duyệt
+                                                        </Badge>
+                                                    )
                                                 ) : (
-                                                    <Badge className="bg-amber-500/10 text-amber-600 border-amber-200/50 text-xs">
-                                                        <Clock className="w-3 h-3 mr-1" />
+                                                    <Badge className="bg-amber-500/10 text-amber-600 border-amber-200/50 text-[10px] px-1.5 py-0">
                                                         Chờ {relevantMentees.length - submittedCount} bài
                                                     </Badge>
                                                 )}
                                             </div>
                                         </div>
-
-                                        {/* Mentee reflection rows */}
-                                        <div className="divide-y divide-border/20">
-                                            {relevantMentees.map((mt: any) => {
-                                                const reflection = reflectionMap.get(mt.mentee.id);
-                                                const hasSubmitted = !!reflection;
-                                                const isConfirmed = reflection?.mentorConfirmed;
-
-                                                return (
-                                                    <div key={mt.mentee.id} className="flex items-center gap-3 px-5 py-3 hover:bg-muted/20 transition-colors">
-                                                        <Avatar
-                                                            firstName={mt.mentee.firstName}
-                                                            lastName={mt.mentee.lastName}
-                                                            src={mt.mentee.avatar}
-                                                            size="sm"
-                                                        />
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="text-sm font-medium text-foreground truncate">
-                                                                {mt.mentee.firstName} {mt.mentee.lastName}
-                                                            </p>
-                                                            {hasSubmitted && reflection.content && (
-                                                                <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                                                                    {reflection.content.substring(0, 80)}...
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex items-center gap-2 shrink-0">
-                                                            {!hasSubmitted ? (
-                                                                <span className="text-xs text-muted-foreground/50 font-medium px-2 py-1 rounded-md bg-muted/50">
-                                                                    Chưa nộp
-                                                                </span>
-                                                            ) : isConfirmed ? (
-                                                                <span className="text-xs text-emerald-600 font-medium flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-500/10">
-                                                                    <Check className="w-3 h-3" />
-                                                                    Đã xác nhận
-                                                                </span>
-                                                            ) : (
-                                                                <span className="text-xs text-purple-600 font-medium px-2 py-1 rounded-md bg-purple-500/10">
-                                                                    Đã nộp
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </Card>
-                                );
-                            })}
-                        </div>
+                                    );
+                                })}
+                            </div>
+                            {serializedReflections.length > 8 && (
+                                <div className="border-t border-border/30 px-4 py-2 text-center">
+                                    <Link href="/reflections" className="text-xs text-primary font-medium hover:underline">
+                                        Xem thêm {serializedReflections.length - 8} buổi →
+                                    </Link>
+                                </div>
+                            )}
+                        </Card>
                     )}
                 </div>
 

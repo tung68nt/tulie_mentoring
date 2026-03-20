@@ -38,33 +38,32 @@ export function ReflectionEditor({ meetingId, meetingTitle, mentorName, initialC
     };
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card className="p-6 border border-border/60 shadow-none bg-muted/10 rounded-xl">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="bg-background/50 border-border/50 text-[10px] font-medium">Buổi học</Badge>
-                            <span className="text-xs text-muted-foreground/60">{mentorName}</span>
-                        </div>
-                        <h3 className="text-lg font-semibold text-foreground leading-tight">{meetingTitle}</h3>
+        <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Card className="px-4 py-3 border border-border/60 shadow-none bg-muted/10 rounded-lg">
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Badge variant="outline" className="bg-background/50 border-border/50 text-[10px] font-medium shrink-0">Buổi học</Badge>
+                        <span className="text-xs text-muted-foreground/60 shrink-0">{mentorName}</span>
+                        <span className="text-xs text-muted-foreground/30 shrink-0">·</span>
+                        <h3 className="text-sm font-semibold text-foreground truncate">{meetingTitle}</h3>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 shrink-0">
                         {lastSaved && (
-                            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium pr-2">
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
                                 <CheckCircle2 className="w-3 h-3 text-primary" />
-                                Đã lưu lúc {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </div>
                         )}
                         <Button
                             onClick={handleSave}
                             disabled={isSaving || !content}
-                            className="rounded-lg shadow-none transition-all hover:bg-primary/90"
+                            className="rounded-lg shadow-none transition-all hover:bg-primary/90 h-8 text-xs px-3"
                             size="sm"
                         >
                             {isSaving ? (
-                                <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+                                <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
                             ) : (
-                                <Save className="w-3.5 h-3.5 mr-2" />
+                                <Save className="w-3 h-3 mr-1.5" />
                             )}
                             {isSaving ? "Đang lưu..." : "Lưu thu hoạch"}
                         </Button>
@@ -72,7 +71,7 @@ export function ReflectionEditor({ meetingId, meetingTitle, mentorName, initialC
                 </div>
             </Card>
 
-            <div className="min-h-[400px]">
+            <div className="min-h-[300px]">
                 <BlockEditor
                     initialContent={content}
                     onChange={setContent}
