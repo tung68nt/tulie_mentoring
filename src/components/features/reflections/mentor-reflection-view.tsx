@@ -61,14 +61,19 @@ export function MentorReflectionView({ mentorships }: MentorReflectionViewProps)
     const menteesList = Array.from(menteeMap.values());
     const [activeTab, setActiveTab] = useState<string | undefined>(menteesList[0]?.mentee.id);
 
-    // Apply search filter
+    // Calculate session numbers chronologically, then display reversed (newest first)
     const activeMenteeData = menteesList.find(m => m.mentee.id === activeTab);
-    const filteredMeetings = activeMenteeData?.meetings.filter(m => {
+    
+    const processedMeetings = activeMenteeData?.meetings.slice().sort((a, b) => {
+        return new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime();
+    }).map((m, idx) => ({ ...m, sessionNumber: idx + 1 })).reverse() || [];
+
+    const filteredMeetings = processedMeetings.filter(m => {
         if (!search.trim()) return true;
         const q = search.toLowerCase();
         return m.title.toLowerCase().includes(q) || 
                (m.reflection?.content && m.reflection.content.toLowerCase().includes(q));
-    }) || [];
+    });
 
     if (menteesList.length === 0) {
         return (
@@ -211,7 +216,7 @@ function MeetingReflectionCard({
                     <span className="text-[10px] font-bold text-purple-600 leading-none uppercase tracking-wider">
                         {meeting.scheduledAt ? formatDate(meeting.scheduledAt, "MMM") : "—"}
                     </span>
-                    <span className="text-lg font-black text-purple-600 leading-none mt-0.5">
+                    <span className="text-lg font-bold text-purple-600 leading-none mt-0.5">
                         {meeting.scheduledAt ? formatDate(meeting.scheduledAt, "dd") : "—"}
                     </span>
                 </div>
@@ -219,7 +224,10 @@ function MeetingReflectionCard({
                 {/* Meeting Info */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                        <h4 className="text-base font-semibold text-foreground truncate">{meeting.title}</h4>
+                        <h4 className="text-base font-semibold text-foreground truncate">
+                            <span className="text-primary mr-1">Buổi #{meeting.sessionNumber}:</span> 
+                            {meeting.title}
+                        </h4>
                         {StatusBadge}
                     </div>
                     <p className="text-sm text-muted-foreground flex items-center gap-1.5">

@@ -42,7 +42,7 @@ export default async function ReflectionsPage() {
                                 <PenLine className="w-5 h-5 text-purple-500" />
                             </div>
                             <div>
-                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.totalSubmitted}</p>
+                                <p className="text-3xl font-bold tracking-tight text-foreground">{stats.totalSubmitted}</p>
                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Bài đã nộp</p>
                             </div>
                         </Card>
@@ -51,7 +51,7 @@ export default async function ReflectionsPage() {
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                             </div>
                             <div>
-                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.totalConfirmed}</p>
+                                <p className="text-3xl font-bold tracking-tight text-foreground">{stats.totalConfirmed}</p>
                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Đã xác nhận</p>
                             </div>
                         </Card>
@@ -60,7 +60,7 @@ export default async function ReflectionsPage() {
                                 <Clock className="w-5 h-5 text-amber-500" />
                             </div>
                             <div>
-                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.pendingConfirmation}</p>
+                                <p className="text-3xl font-bold tracking-tight text-foreground">{stats.pendingConfirmation}</p>
                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Chờ xác nhận</p>
                             </div>
                         </Card>
@@ -69,7 +69,7 @@ export default async function ReflectionsPage() {
                                 <Users className="w-5 h-5 text-blue-500" />
                             </div>
                             <div>
-                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.submissionRate}%</p>
+                                <p className="text-3xl font-bold tracking-tight text-foreground">{stats.submissionRate}%</p>
                                 <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Tỷ lệ nộp bài</p>
                             </div>
                         </Card>
