@@ -82,7 +82,7 @@ export function MentorReflectionView({ mentorships }: MentorReflectionViewProps)
                             <TabsTrigger 
                                 key={mentee.id} 
                                 value={mentee.id}
-                                className="gap-2.5 px-4 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                                className="gap-2.5 px-5 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg"
                             >
                                 <Avatar 
                                     src={mentee.avatar} 
