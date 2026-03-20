@@ -58,14 +58,16 @@ function GanttItem({
     itemStart, 
     itemEnd, 
     globalStart, 
-    globalEnd 
+    globalEnd,
+    barColorClass 
 }: { 
     label: string, 
     subtitle?: string, 
     itemStart: Date, 
     itemEnd: Date, 
     globalStart: Date, 
-    globalEnd: Date 
+    globalEnd: Date,
+    barColorClass?: string 
 }) {
     const now = new Date();
     
@@ -83,18 +85,17 @@ function GanttItem({
     const daysLeft = Math.max(0, differenceInDays(itemEnd, now));
     const totalDays = Math.max(1, differenceInDays(itemEnd, itemStart));
 
-    // Colors
-    let colorClass = "text-cyan-500";
-    let bgClass = "bg-cyan-500";
+    let colorClass = "text-emerald-500";
     if (daysLeft <= 3) {
-        colorClass = "text-rose-500"; bgClass = "bg-rose-500";
+        colorClass = "text-rose-500";
     } else if (daysLeft <= 7) {
-        colorClass = "text-orange-500"; bgClass = "bg-orange-500";
+        colorClass = "text-orange-500";
     } else if (daysLeft <= 14) {
-        colorClass = "text-amber-400"; bgClass = "bg-amber-400";
-    } else if (daysLeft <= 30) {
-        colorClass = "text-emerald-500"; bgClass = "bg-emerald-500";
+        colorClass = "text-amber-400";
     }
+    
+    // Default fallback for program cycles
+    const finalBarColor = barColorClass || "bg-cyan-500";
 
     return (
         <div className="relative flex items-center gap-6 p-4 rounded-xl border border-border/60 bg-card hover:border-border transition-all">
@@ -105,34 +106,28 @@ function GanttItem({
                 {subtitle && <p className="text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</p>}
 
                 {/* Gantt Track */}
-                <div className="relative mt-4 mb-2 h-1.5 bg-muted/40 rounded-full w-full">
+                <div className="relative mt-7 mb-5 h-2 bg-muted/40 rounded-full w-full">
                     {/* The specific item bar */}
                     <div 
-                        className={cn("absolute top-0 h-full rounded-full opacity-80 backdrop-blur-sm", bgClass)}
+                        className={cn("absolute top-0 h-full rounded-full opacity-80 backdrop-blur-sm", finalBarColor)}
                         style={{ left: `${leftPercent}%`, width: `${Math.max(2, widthPercent)}%` }}
-                    />
+                    >
+                        {/* Edge Dates Markers inside the bar so they track with it */}
+                        <span className="absolute -top-5 left-0 text-[10px] text-muted-foreground font-semibold tabular-nums whitespace-nowrap">
+                            {formatDate(itemStart, "dd/MM")}
+                        </span>
+                        <span className="absolute -top-5 right-0 text-[10px] text-muted-foreground font-semibold tabular-nums whitespace-nowrap">
+                            {formatDate(itemEnd, "dd/MM/yyyy")}
+                        </span>
+                    </div>
                     
                     {/* Today Line */}
                     <div 
-                        className="absolute top-1/2 -translate-y-1/2 w-[2px] h-[16px] bg-rose-500 rounded-full z-10 shadow-[0_0_4px_rgba(244,63,94,0.5)]"
+                        className="absolute top-1/2 -translate-y-1/2 w-[2px] h-[20px] bg-rose-500 rounded-full z-10 shadow-[0_0_4px_rgba(244,63,94,0.5)]"
                         style={{ left: `${todayPercent}%` }}
                     >
-                        <span className="absolute -top-[14px] left-1/2 -translate-x-1/2 text-[8px] font-bold text-rose-500 px-1 bg-background rounded-sm whitespace-nowrap">Hôm nay</span>
+                        <span className="absolute top-[14px] left-1/2 -translate-x-1/2 text-[9px] font-bold text-rose-500 px-1 bg-background rounded-sm whitespace-nowrap">Hôm nay</span>
                     </div>
-
-                    {/* Edge Dates Markers */}
-                    <span 
-                        className="absolute -top-3.5 text-[9px] text-muted-foreground/70 font-semibold tabular-nums"
-                        style={{ left: `${leftPercent}%` }}
-                    >
-                        {formatDate(itemStart, "dd/MM")}
-                    </span>
-                    <span 
-                        className="absolute -bottom-4 text-[9px] text-muted-foreground/70 font-semibold tabular-nums"
-                        style={{ left: `${leftPercent + widthPercent}%`, transform: 'translateX(-100%)' }}
-                    >
-                        {formatDate(itemEnd, "dd/MM/yyyy")}
-                    </span>
                 </div>
             </div>
             
@@ -237,6 +232,9 @@ export function DeadlineTracker({ mentorships }: DeadlineTrackerProps) {
         globalEnd = new Date(globalStart.getTime() + 86400000 * 7);
     }
 
+    // Mentee colors
+    const menteeColors = ["bg-blue-500", "bg-purple-500", "bg-pink-500", "bg-indigo-500", "bg-teal-500"];
+
     return (
         <div className="space-y-4">
             {menteesList.length > 0 && (
@@ -275,19 +273,26 @@ export function DeadlineTracker({ mentorships }: DeadlineTrackerProps) {
                         itemEnd={new Date(cycle.endDate)}
                         globalStart={globalStart}
                         globalEnd={globalEnd}
+                        barColorClass="bg-primary/70"
                     />
                 ))}
-                {displayedGoals.map((goal: any) => (
-                    <GanttItem
-                        key={`goal-${goal.id}`}
-                        label={goal.title}
-                        subtitle={`Mentee: ${goal.menteeName} — Mục tiêu`}
-                        itemStart={new Date(goal.createdAt)}
-                        itemEnd={new Date(goal.dueDate)}
-                        globalStart={globalStart}
-                        globalEnd={globalEnd}
-                    />
-                ))}
+                {displayedGoals.map((goal: any) => {
+                    const menteeIndex = menteesList.findIndex(m => m.mentee.id === goal.menteeId) % menteeColors.length;
+                    const bColor = menteeIndex >= 0 ? menteeColors[menteeIndex] : "bg-cyan-500";
+                    
+                    return (
+                        <GanttItem
+                            key={`goal-${goal.id}`}
+                            label={goal.title}
+                            subtitle={`Mentee: ${goal.menteeName} — Mục tiêu`}
+                            itemStart={new Date(goal.createdAt)}
+                            itemEnd={new Date(goal.dueDate)}
+                            globalStart={globalStart}
+                            globalEnd={globalEnd}
+                            barColorClass={bColor}
+                        />
+                    );
+                })}
             </div>
         </div>
     );

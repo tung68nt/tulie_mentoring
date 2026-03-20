@@ -50,13 +50,13 @@ export function ProgramDialog({ children, mode, program }: ProgramDialogProps) {
         defaultValues: mode === "edit" ? {
             name: program.name,
             description: program.description || "",
-            startDate: new Date(program.startDate),
-            endDate: new Date(program.endDate),
+            startDate: new Date(program.startDate || new Date()).toISOString().split('T')[0],
+            endDate: new Date(program.endDate || new Date()).toISOString().split('T')[0],
             status: program.status as any,
         } : {
             status: "active",
-            startDate: new Date(),
-            endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+            startDate: new Date().toISOString().split('T')[0],
+            endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0],
         },
     });
 
@@ -123,8 +123,7 @@ export function ProgramDialog({ children, mode, program }: ProgramDialogProps) {
                             <Input
                                 id="startDate"
                                 type="date"
-                                defaultValue={watch("startDate") ? new Date(watch("startDate")).toISOString().split('T')[0] : ''}
-                                onChange={(e) => setValue("startDate", new Date(e.target.value))}
+                                {...register("startDate")}
                                 className={errors.startDate ? "border-destructive" : ""}
                             />
                             {errors.startDate && (
@@ -136,8 +135,7 @@ export function ProgramDialog({ children, mode, program }: ProgramDialogProps) {
                             <Input
                                 id="endDate"
                                 type="date"
-                                defaultValue={watch("endDate") ? new Date(watch("endDate")).toISOString().split('T')[0] : ''}
-                                onChange={(e) => setValue("endDate", new Date(e.target.value))}
+                                {...register("endDate")}
                                 className={errors.endDate ? "border-destructive" : ""}
                             />
                             {errors.endDate && (

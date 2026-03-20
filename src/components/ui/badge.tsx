@@ -54,6 +54,7 @@ const statusConfig: Record<
   open: { variant: "secondary", label: "Đang mở" },
   resolved: { variant: "primary", label: "Đã giải quyết" },
   closed: { variant: "outline", label: "Đã đóng" },
+  archived: { variant: "outline", label: "Lưu trữ" },
 };
 
 function Badge({
