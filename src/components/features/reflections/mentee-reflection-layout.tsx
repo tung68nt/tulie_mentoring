@@ -197,7 +197,8 @@ function SidebarItem({ item, isSelected, onClick }: { item: MeetingItem; isSelec
                         {item.meetingTitle}
                     </p>
                     <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
-                        {item.mentorName}
+                        Mentor: {item.mentorName}
+                        {item.scheduledAt && <span className="text-muted-foreground/40"> · {formatDate(item.scheduledAt, "HH:mm")}</span>}
                     </p>
                 </div>
 
@@ -252,7 +253,7 @@ function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt }: {
                             <Badge className="bg-amber-500/10 text-amber-600 border-amber-200/50 text-[10px] px-1.5 py-0">
                                 Chưa nộp
                             </Badge>
-                            <span className="text-[11px] text-muted-foreground">{mentorName}</span>
+                            <span className="text-[11px] text-muted-foreground">Mentor: {mentorName}</span>
                             {scheduledAt && (
                                 <>
                                     <span className="text-muted-foreground/30">·</span>
@@ -341,7 +342,7 @@ function SubmittedView({ item, userRole }: { item: MeetingItem; userRole: string
                                     Chờ xác nhận
                                 </Badge>
                             )}
-                            <span className="text-[11px] text-muted-foreground">{item.mentorName}</span>
+                            <span className="text-[11px] text-muted-foreground">Mentor: {item.mentorName}</span>
                             {item.scheduledAt && (
                                 <>
                                     <span className="text-muted-foreground/30">·</span>
