@@ -249,3 +249,39 @@ export async function deleteReflection(id: string) {
     revalidatePath("/reflections");
     return { success: true };
 }
+
+export async function getMentorMenteeReflections() {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+    const role = (session.user as any).role;
+    const mentorFilter = role === "admin" || role === "program_manager"
+        ? {}
+        : { mentorId: session.user.id! };
+
+    const mentorships = await prisma.mentorship.findMany({
+        where: mentorFilter,
+        include: {
+            mentees: {
+                include: {
+                    mentee: {
+                        select: { id: true, firstName: true, lastName: true, avatar: true }
+                    }
+                }
+            },
+            meetings: {
+                orderBy: { scheduledAt: "desc" },
+                select: {
+                    id: true,
+                    title: true,
+                    scheduledAt: true,
+                    status: true,
+                    sessionReflections: {
+                        select: { id: true, content: true, mentorConfirmed: true, menteeId: true, createdAt: true }
+                    }
+                }
+            }
+        }
+    });
+
+    return JSON.parse(JSON.stringify(mentorships));
+}

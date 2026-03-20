@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getRecentMeetingsForReflection, getReflections, getMentorReflections, getMentorReflectionStats } from "@/lib/actions/reflection";
+import { getRecentMeetingsForReflection, getReflections, getMentorMenteeReflections, getMentorReflectionStats } from "@/lib/actions/reflection";
 import { Card } from "@/components/ui/card";
 import { PenLine, CheckCircle2, Clock, Users } from "lucide-react";
 import { MentorReflectionView } from "@/components/features/reflections/mentor-reflection-view";
@@ -18,8 +18,8 @@ export default async function ReflectionsPage() {
     try {
         // ─── MENTOR / ADMIN VIEW ───
         if (isMentorOrAdmin) {
-            const [reflections, stats] = await Promise.all([
-                getMentorReflections().catch(e => { console.error("Mentor reflections error:", e); return []; }),
+            const [mentorships, stats] = await Promise.all([
+                getMentorMenteeReflections().catch(e => { console.error("Mentor mentorships error:", e); return []; }),
                 getMentorReflectionStats().catch(e => {
                     console.error("Stats error:", e);
                     return { totalExpected: 0, totalSubmitted: 0, totalConfirmed: 0, submissionRate: 0, confirmationRate: 0, pendingConfirmation: 0 };
@@ -36,47 +36,47 @@ export default async function ReflectionsPage() {
                     </div>
 
                     {/* Mentor Stats */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <Card className="p-5 flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <Card className="p-6 flex flex-col items-center justify-center text-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center shrink-0 mb-1">
                                 <PenLine className="w-5 h-5 text-purple-500" />
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-foreground">{stats.totalSubmitted}</p>
-                                <p className="text-xs text-muted-foreground font-medium">Bài đã nộp</p>
+                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.totalSubmitted}</p>
+                                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Bài đã nộp</p>
                             </div>
                         </Card>
-                        <Card className="p-5 flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                        <Card className="p-6 flex flex-col items-center justify-center text-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0 mb-1">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-foreground">{stats.totalConfirmed}</p>
-                                <p className="text-xs text-muted-foreground font-medium">Đã xác nhận</p>
+                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.totalConfirmed}</p>
+                                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Đã xác nhận</p>
                             </div>
                         </Card>
-                        <Card className="p-5 flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                        <Card className="p-6 flex flex-col items-center justify-center text-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0 mb-1">
                                 <Clock className="w-5 h-5 text-amber-500" />
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-foreground">{stats.pendingConfirmation}</p>
-                                <p className="text-xs text-muted-foreground font-medium">Chờ xác nhận</p>
+                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.pendingConfirmation}</p>
+                                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Chờ xác nhận</p>
                             </div>
                         </Card>
-                        <Card className="p-5 flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                        <Card className="p-6 flex flex-col items-center justify-center text-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center shrink-0 mb-1">
                                 <Users className="w-5 h-5 text-blue-500" />
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-foreground">{stats.submissionRate}%</p>
-                                <p className="text-xs text-muted-foreground font-medium">Tỷ lệ nộp bài</p>
+                                <p className="text-3xl font-black tracking-tight text-foreground">{stats.submissionRate}%</p>
+                                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">Tỷ lệ nộp bài</p>
                             </div>
                         </Card>
                     </div>
 
-                    {/* Mentor reflections list */}
-                    <MentorReflectionView reflections={reflections} />
+                    {/* Mentor reflections list by Mentee tab */}
+                    <MentorReflectionView mentorships={mentorships} />
                 </div>
             );
         }
