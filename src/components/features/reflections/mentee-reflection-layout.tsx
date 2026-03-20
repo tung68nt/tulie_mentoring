@@ -208,7 +208,7 @@ function SidebarItem({ item, isSelected, onClick }: { item: MeetingItem; isSelec
                         "text-sm truncate leading-tight",
                         isSelected ? "font-semibold text-foreground" : "font-medium text-foreground/80"
                     )}>
-                        {item.sessionNumber && <span className="text-primary/70 font-bold">#{item.sessionNumber} </span>}
+                        {item.sessionNumber && <span className="text-primary/70 font-bold">Buổi #{item.sessionNumber} </span>}
                         {item.meetingTitle}
                     </p>
                     <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
