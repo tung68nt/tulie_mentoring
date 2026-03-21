@@ -206,7 +206,7 @@ export default async function MentorDashboard() {
                                 {serializedMentorships.flatMap((m: any) => m.mentees).map((mt: any) => (
                                     <Link 
                                         key={mt.id}
-                                        href={`/admin/mentorships/${mt.mentorshipId}`}
+                                        href={`/mentees/${mt.mentorshipId}`}
                                         className="group relative flex flex-col items-center p-5 rounded-xl border border-border/40 bg-card hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                     >
                                         
