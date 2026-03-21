@@ -25,9 +25,11 @@ export default async function MentorDashboard() {
 
     // Admin sees all, mentor sees only theirs
     const mentorFilter = isAdmin ? {} : { mentorId: userId };
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
     const meetingFilter = isAdmin
-        ? { status: "scheduled" }
-        : { mentorship: { mentorId: userId }, status: "scheduled" };
+        ? { status: "scheduled", scheduledAt: { gte: now } }
+        : { mentorship: { mentorId: userId }, status: "scheduled", scheduledAt: { gte: now } };
 
     try {
         const allMeetingFilter = isAdmin
