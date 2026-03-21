@@ -199,49 +199,45 @@ export default async function MentorDashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-10">
+                    <div className="space-y-6">
                         <div className="space-y-4 pt-4">
                             <h3 className="text-lg font-semibold text-foreground">Danh sách Mentees</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="space-y-3">
                                 {serializedMentorships.flatMap((m: any) => m.mentees).map((mt: any) => (
                                     <Link 
                                         key={mt.id}
                                         href={`/mentees/${mt.mentorshipId}`}
-                                        className="group relative flex flex-col items-center p-5 rounded-xl border border-border/40 bg-card hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                        className="group flex items-center gap-4 p-4 rounded-xl border border-border/40 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-300"
                                     >
-                                        
-                                        <div className="relative mb-3">
-                                            <Avatar
-                                                firstName={mt.mentee?.firstName}
-                                                lastName={mt.mentee?.lastName}
-                                                src={mt.mentee?.avatar}
-                                                size="lg"
-                                            />
+                                        <Avatar
+                                            firstName={mt.mentee?.firstName}
+                                            lastName={mt.mentee?.lastName}
+                                            src={mt.mentee?.avatar}
+                                            size="md"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-foreground truncate">
+                                                {mt.mentee?.firstName} {mt.mentee?.lastName}
+                                            </p>
+                                            <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium mt-1 ${
+                                                mt.status === "active"
+                                                    ? "text-emerald-600"
+                                                    : "text-muted-foreground"
+                                            }`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${
+                                                    mt.status === "active" ? "bg-emerald-500" : "bg-muted-foreground/40"
+                                                }`} />
+                                                {mt.status === "active" ? "Đang tham gia" : "Không hoạt động"}
+                                            </span>
                                         </div>
-                                        <p className="text-sm font-semibold text-foreground text-center truncate w-full">
-                                            {mt.mentee?.firstName} {mt.mentee?.lastName}
-                                        </p>
-                                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium mt-1.5 px-2 py-0.5 rounded-full ${
-                                            mt.status === "active"
-                                                ? "text-emerald-600 bg-emerald-500/10"
-                                                : "text-muted-foreground bg-muted"
-                                        }`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full ${
-                                                mt.status === "active" ? "bg-emerald-500" : "bg-muted-foreground/40"
-                                            }`} />
-                                            {mt.status === "active" ? "Đang tham gia" : "Không hoạt động"}
-                                        </span>
-                                        <span className="text-[11px] text-primary font-medium mt-3 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                                            Xem hồ sơ
-                                            <ArrowRight className="w-3 h-3" />
-                                        </span>
+                                        <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
                                     </Link>
                                 ))}
                             </div>
                         </div>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="lg:col-span-2 space-y-6">
                         <h3 className="text-lg font-semibold text-foreground">Lịch họp sắp tới</h3>
                         <div className="space-y-4">
                             {serializedUpcomingMeetings.length === 0 ? (
