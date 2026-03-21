@@ -75,7 +75,7 @@ export default async function DashboardLayout({
                     user={displayUser}
                     notifications={JSON.parse(JSON.stringify(notifications))}
                     unreadCount={unreadCount}
-                    logoUrl={settings.sidebar_logo}
+                    logoUrl={settings.sidebar_logo || "/logo.png"}
                     siteName={settings.site_name}
                 >
                     {children}

@@ -8,7 +8,7 @@ export default async function RegisterPage() {
         <div className="min-h-screen flex items-center justify-center p-4 bg-white">
             <div className="w-full max-w-md">
                 <RegisterForm
-                    logoUrl={settings.auth_logo}
+                    logoUrl={settings.auth_logo || "/logo.png"}
                     siteName={settings.site_name}
                 />
             </div>

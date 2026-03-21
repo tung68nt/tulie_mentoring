@@ -10,7 +10,7 @@ export default async function LoginPage() {
             <div className="w-full max-w-md">
                 <Suspense fallback={<div>Loading...</div>}>
                     <LoginForm
-                        logoUrl={settings.auth_logo}
+                        logoUrl={settings.auth_logo || "/logo.png"}
                         siteName={settings.site_name}
                     />
                 </Suspense>

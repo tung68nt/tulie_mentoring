@@ -21,7 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: settings.site_name || "Tulie Mentoring",
     description: "Tulie TSS Mentoring Management System",
     icons: {
-      icon: settings.favicon || "/favicon.svg",
+      icon: settings.favicon || "/favicon.png",
+      apple: "/apple-touch-icon.png",
     },
   };
 }
