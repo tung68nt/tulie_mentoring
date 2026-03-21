@@ -51,6 +51,17 @@ export default async function MentorDashboard() {
             }),
             prisma.meeting.findMany({
                 where: meetingFilter,
+                include: {
+                    mentorship: {
+                        select: {
+                            mentees: {
+                                include: {
+                                    mentee: { select: { id: true, firstName: true, lastName: true, avatar: true } }
+                                }
+                            }
+                        }
+                    }
+                },
                 orderBy: { scheduledAt: "asc" },
                 take: 5
             }),
@@ -251,6 +262,25 @@ export default async function MentorDashboard() {
                                                 </div>
                                                 <Badge status={meeting.status} size="sm" />
                                             </div>
+                                            {meeting.mentorship?.mentees?.length > 0 && (
+                                                <div className="flex items-center gap-1.5 mt-1">
+                                                    <div className="flex -space-x-1.5">
+                                                        {meeting.mentorship.mentees.slice(0, 3).map((mt: any) => (
+                                                            <Avatar
+                                                                key={mt.mentee?.id}
+                                                                firstName={mt.mentee?.firstName}
+                                                                lastName={mt.mentee?.lastName}
+                                                                src={mt.mentee?.avatar}
+                                                                size="xs"
+                                                                className="ring-2 ring-background"
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                    <span className="text-[11px] text-muted-foreground truncate">
+                                                        {meeting.mentorship.mentees.map((mt: any) => mt.mentee?.firstName).join(", ")}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
