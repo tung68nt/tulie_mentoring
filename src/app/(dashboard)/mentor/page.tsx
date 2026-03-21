@@ -254,7 +254,9 @@ export default async function MentorDashboard() {
                                             <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                         </div>
                                         <div className="flex-1 min-w-0 space-y-2">
-                                            <p className="text-sm font-semibold text-foreground truncate">{meeting.title}</p>
+                                            <p className="text-sm font-semibold text-foreground truncate">
+                                                {meeting.sessionNumber ? `Buổi #${meeting.sessionNumber}: ` : ""}{meeting.title}
+                                            </p>
                                             <div className="flex items-center gap-3 text-[11px] text-muted-foreground font-medium">
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="w-3.5 h-3.5" />
