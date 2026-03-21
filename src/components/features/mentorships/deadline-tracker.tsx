@@ -14,27 +14,27 @@ function SemiCircleGauge({ days, maxDays, colorClass }: { days: number, maxDays:
     const percent = maxDays > 0 ? Math.min(100, Math.max(0, (days / maxDays) * 100)) : 0;
     
     // SVG geometry
-    const r = 40;
-    const cx = 50;
-    const cy = 50;
-    const strokeWidth = 10;
+    const r = 36;
+    const strokeWidth = 8;
     
     const circumference = Math.PI * r;
     const strokeDashoffset = circumference - (percent / 100) * circumference;
 
     return (
-        <div className="relative w-16 h-10 flex flex-col items-center justify-end overflow-visible shrink-0">
-            <svg viewBox="0 0 100 55" className="absolute top-0 w-full overflow-visible drop-shadow-sm">
+        <div className="relative w-20 h-14 flex flex-col items-center shrink-0">
+            <svg viewBox="0 0 100 58" className="w-full h-auto overflow-visible drop-shadow-sm">
+                {/* Background track */}
                 <path 
-                    d={`M 10 50 A ${r} ${r} 0 0 1 90 50`}
+                    d={`M ${50 - r} 50 A ${r} ${r} 0 0 1 ${50 + r} 50`}
                     stroke="currentColor" 
                     strokeWidth={strokeWidth} 
                     fill="none" 
                     strokeLinecap="round" 
                     className="text-muted/60"
                 />
+                {/* Filled arc */}
                 <path 
-                    d={`M 10 50 A ${r} ${r} 0 0 1 90 50`}
+                    d={`M ${50 - r} 50 A ${r} ${r} 0 0 1 ${50 + r} 50`}
                     stroke="currentColor" 
                     strokeWidth={strokeWidth} 
                     fill="none" 
@@ -43,11 +43,11 @@ function SemiCircleGauge({ days, maxDays, colorClass }: { days: number, maxDays:
                     strokeDashoffset={strokeDashoffset}
                     className={cn("transition-all duration-1000 ease-out", colorClass)}
                 />
+                {/* Number inside the arc (centered) */}
+                <text x="50" y="46" textAnchor="middle" className="fill-foreground text-[18px] font-black">{days}</text>
+                {/* Label below the arc */}
+                <text x="50" y="57" textAnchor="middle" className="fill-muted-foreground text-[8px] font-bold uppercase">Ngày</text>
             </svg>
-            <div className="relative z-10 flex flex-col items-center leading-none mt-2">
-                <span className="text-lg font-black tracking-tight text-foreground">{days}</span>
-                <span className="text-[8px] font-bold uppercase text-muted-foreground">Ngày</span>
-            </div>
         </div>
     );
 }
