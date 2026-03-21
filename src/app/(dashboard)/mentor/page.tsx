@@ -221,13 +221,13 @@ export default async function MentorDashboard() {
                                             </p>
                                             <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium mt-1 ${
                                                 mt.status === "active"
-                                                    ? "text-emerald-600"
+                                                    ? "text-blue-600"
                                                     : "text-muted-foreground"
                                             }`}>
                                                 <span className={`w-1.5 h-1.5 rounded-full ${
-                                                    mt.status === "active" ? "bg-emerald-500" : "bg-muted-foreground/40"
+                                                    mt.status === "active" ? "bg-blue-500" : "bg-muted-foreground/40"
                                                 }`} />
-                                                {mt.status === "active" ? "Đang tham gia" : "Không hoạt động"}
+                                                {mt.status === "active" ? "Đang theo học" : "Không hoạt động"}
                                             </span>
                                         </div>
                                         <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
@@ -249,34 +249,35 @@ export default async function MentorDashboard() {
                                             <span className="text-[10px] font-bold leading-none no-uppercase">{formatDate(meeting.scheduledAt, "MMM")}</span>
                                             <span className="text-lg font-bold leading-none mt-1">{formatDate(meeting.scheduledAt, "dd")}</span>
                                         </div>
-                                        <div className="flex-1 min-w-0 space-y-2">
-                                            <p className="text-sm font-semibold text-foreground truncate">
+                                        <div className="flex-1 min-w-0 space-y-1.5">
+                                            <p className="text-sm font-semibold text-foreground">
                                                 {meeting.sessionNumber ? `Buổi #${meeting.sessionNumber}: ` : ""}{meeting.title}
                                             </p>
                                             <div className="flex items-center gap-3 text-[11px] text-muted-foreground font-medium">
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="w-3.5 h-3.5" />
-                                                    {formatDate(meeting.scheduledAt, "HH:mm")}
+                                                    {formatDate(meeting.scheduledAt, "HH:mm")} • {formatDate(meeting.scheduledAt, "EEEE, dd/MM/yyyy")}
                                                 </div>
                                                 <Badge status={meeting.status} size="sm" />
                                             </div>
                                             {meeting.mentorship?.mentees?.length > 0 && (
-                                                <div className="flex items-center gap-1.5 mt-1">
-                                                    <div className="flex -space-x-1.5">
-                                                        {meeting.mentorship.mentees.slice(0, 3).map((mt: any) => (
-                                                            <Avatar
-                                                                key={mt.mentee?.id}
-                                                                firstName={mt.mentee?.firstName}
-                                                                lastName={mt.mentee?.lastName}
-                                                                src={mt.mentee?.avatar}
-                                                                size="xs"
-                                                                className="ring-2 ring-background"
-                                                            />
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <Users className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        {meeting.mentorship.mentees.map((mt: any) => (
+                                                            <div key={mt.mentee?.id} className="flex items-center gap-1.5">
+                                                                <Avatar
+                                                                    firstName={mt.mentee?.firstName}
+                                                                    lastName={mt.mentee?.lastName}
+                                                                    src={mt.mentee?.avatar}
+                                                                    size="xs"
+                                                                />
+                                                                <span className="text-xs font-medium text-foreground">
+                                                                    {mt.mentee?.firstName} {mt.mentee?.lastName}
+                                                                </span>
+                                                            </div>
                                                         ))}
                                                     </div>
-                                                    <span className="text-[11px] text-muted-foreground truncate">
-                                                        {meeting.mentorship.mentees.map((mt: any) => mt.mentee?.firstName).join(", ")}
-                                                    </span>
                                                 </div>
                                             )}
                                         </div>
