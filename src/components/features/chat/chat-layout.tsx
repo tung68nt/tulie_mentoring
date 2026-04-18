@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatWindow } from "./chat-window";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageCircle, Search, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 import { searchUsersForSharing } from "@/lib/actions/wiki";
 import { getOrCreateDirectChat } from "@/lib/actions/chat";
 
@@ -15,7 +16,6 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
     const [selectedRoomData, setSelectedRoomData] = useState<any>(null);
 
-    // Quick start chat state
     const [quickSearch, setQuickSearch] = useState("");
     const [quickResults, setQuickResults] = useState<any[]>([]);
     const [isQuickSearching, setIsQuickSearching] = useState(false);
@@ -62,17 +62,15 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
     const otherUser = selectedRoomData?.participants?.find((p: any) => p.userId !== currentUser.id)?.user;
 
     return (
-        <div className="flex h-full min-h-[500px] overflow-hidden rounded-xl bg-background transition-all duration-300">
+        <div className="flex h-full min-h-[500px] overflow-hidden bg-background">
             <div className="flex w-full h-full relative">
-                {/* Sidebar */}
                 <ChatSidebar 
                     currentUser={currentUser} 
                     selectedRoomId={selectedRoomId!} 
                     onSelectRoom={handleRoomSelect} 
                 />
 
-                {/* Main Content Area */}
-                <div className="flex-1 flex flex-col h-full bg-background relative overflow-hidden group">
+                <div className="flex-1 flex flex-col h-full bg-background relative overflow-hidden">
                     {selectedRoomId ? (
                         <ChatWindow 
                             key={selectedRoomId} 
@@ -86,62 +84,62 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
                             otherUser={otherUser}
                         />
                     ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-6 text-center animate-in fade-in duration-500">
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20 shadow-inner relative z-10 transition-transform group-hover:scale-110 duration-500">
-                                    <MessageCircle className="w-10 h-10 text-primary" />
-                                </div>
+                        <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-6">
+                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+                                <MessageCircle className="w-8 h-8 text-primary" />
                             </div>
-                            <div className="space-y-2 max-w-xs relative z-10">
-                                <h3 className="text-lg font-bold text-foreground">Bắt đầu trò chuyện</h3>
-                                <p className="text-[13px] text-muted-foreground/60 leading-relaxed">
+                            <div className="space-y-2 max-w-sm text-center">
+                                <h3 className="text-lg font-semibold">Bắt đầu trò chuyện</h3>
+                                <p className="text-sm text-muted-foreground leading-relaxed">
                                     Tìm Mentor hoặc Mentee để trao đổi bài học và kinh nghiệm thực tế.
                                 </p>
                             </div>
 
-                            {/* Quick search inline */}
-                            <div className="w-full max-w-sm relative z-10 space-y-2">
+                            <div className="w-full max-w-sm space-y-2">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
                                         value={quickSearch}
                                         onChange={(e) => setQuickSearch(e.target.value)}
                                         placeholder="Tìm người để chat..."
-                                        className="pl-9 rounded-full border-border/40 bg-muted/30 focus:bg-background h-10"
+                                        className="pl-9 rounded-lg bg-muted/50"
                                     />
                                 </div>
 
                                 {(quickResults.length > 0 || isQuickSearching) && (
-                                    <div className="border border-border/40 rounded-xl bg-card shadow-lg overflow-hidden max-h-48 overflow-y-auto">
-                                        {isQuickSearching ? (
-                                            <div className="py-4 text-center text-sm text-muted-foreground">
-                                                <Loader2 className="w-4 h-4 animate-spin mx-auto mb-1.5" />
-                                                Đang tìm...
-                                            </div>
-                                        ) : (
-                                            quickResults.map((user) => (
-                                                <button
-                                                    key={user.id}
-                                                    onClick={() => handleQuickChat(user.id)}
-                                                    disabled={isStarting}
-                                                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-muted/50 transition-colors text-left"
-                                                >
-                                                    <Avatar className="h-8 w-8 border border-border/30">
-                                                        <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
-                                                            {user.firstName?.[0]}{user.lastName?.[0]}
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-medium text-foreground truncate">
-                                                            {user.firstName} {user.lastName}
-                                                        </p>
-                                                        <p className="text-[10px] text-muted-foreground/60 truncate">{user.email}</p>
+                                    <Card className="p-2 overflow-hidden">
+                                        <ScrollArea className="h-[192px]">
+                                            <div className="space-y-1 pr-3">
+                                                {isQuickSearching ? (
+                                                    <div className="py-6 text-center text-sm text-muted-foreground">
+                                                        <Loader2 className="w-4 h-4 animate-spin mx-auto mb-1.5" />
+                                                        Đang tìm...
                                                     </div>
-                                                </button>
-                                            ))
-                                        )}
-                                    </div>
+                                                ) : (
+                                                    quickResults.map((user) => (
+                                                        <button
+                                                            key={user.id}
+                                                            onClick={() => handleQuickChat(user.id)}
+                                                            disabled={isStarting}
+                                                            className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors text-left"
+                                                        >
+                                                            <Avatar className="h-8 w-8">
+                                                                <AvatarFallback className="text-xs font-medium bg-muted">
+                                                                    {user.firstName?.[0]}{user.lastName?.[0]}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-sm font-medium truncate">
+                                                                    {user.firstName} {user.lastName}
+                                                                </p>
+                                                                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                                                            </div>
+                                                        </button>
+                                                    ))
+                                                )}
+                                            </div>
+                                        </ScrollArea>
+                                    </Card>
                                 )}
                             </div>
                         </div>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Send, Paperclip, Smile, Info, MoreVertical, Check, CheckCheck, Users } from "lucide-react";
 import { getMessages, sendMessage } from "@/lib/actions/chat";
 import { cn } from "@/lib/utils";
@@ -65,19 +66,15 @@ export function ChatWindow({
         }
     }, [messages]);
 
-    // Typing indicator logic
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInput(e.target.value);
         
-        // Clear existing timeout
         if (typingTimeoutRef.current) {
             clearTimeout(typingTimeoutRef.current);
         }
         
-        // Show typing state
         setIsTyping(true);
         
-        // Hide typing after 2 seconds of no input
         typingTimeoutRef.current = setTimeout(() => {
             setIsTyping(false);
         }, 2000);
@@ -87,7 +84,6 @@ export function ChatWindow({
         e?.preventDefault();
         if (!input.trim()) return;
 
-        // Clear typing state
         if (typingTimeoutRef.current) {
             clearTimeout(typingTimeoutRef.current);
         }
@@ -97,7 +93,6 @@ export function ChatWindow({
         const tempId = `pending-${Date.now()}`;
         setInput("");
         
-        // Optimistic UI update
         const optimisticMessage = {
             id: tempId,
             content,
@@ -146,7 +141,6 @@ export function ChatWindow({
         return format(date, "EEEE, dd/MM", { locale: vi });
     };
 
-    // Group messages by date
     const groupedMessages: { date: Date; messages: any[] }[] = [];
     messages.forEach((msg, i) => {
         const msgDate = new Date(msg.createdAt);
@@ -166,14 +160,14 @@ export function ChatWindow({
     return (
         <div className="flex flex-col h-full bg-background relative overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 shrink-0 bg-background/80 backdrop-blur-md z-10">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0 bg-muted/30">
                 <div className="flex items-center gap-3">
                     <div className="relative">
-                        <Avatar className="h-10 w-10 border-2 border-primary/10">
+                        <Avatar className="h-10 w-10 border border-border">
                             {otherUser?.avatar ? (
                                 <AvatarImage src={otherUser.avatar} />
                             ) : (
-                                <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                                <AvatarFallback className="bg-muted text-sm font-medium">
                                     {displayName.charAt(0)}
                                 </AvatarFallback>
                             )}
@@ -190,8 +184,8 @@ export function ChatWindow({
                         )}
                     </div>
                     <div>
-                        <h3 className="text-[13px] font-bold text-foreground">{displayName}</h3>
-                        <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
+                        <h3 className="text-sm font-semibold">{displayName}</h3>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
                             {isGroupChat ? (
                                 <>{participantCount} thành viên</>
                             ) : isOnline ? (
@@ -209,37 +203,35 @@ export function ChatWindow({
                     </div>
                 </div>
                 <div className="flex gap-1">
-                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground/40 hover:text-foreground">
+                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground/60 hover:text-foreground">
                         <Info className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground/40 hover:text-foreground">
+                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground/60 hover:text-foreground">
                         <MoreVertical className="w-4 h-4" />
                     </Button>
                 </div>
             </div>
 
             {/* Messages Area */}
-            <ScrollArea className="flex-1 px-4 py-4 scroll-smooth">
+            <ScrollArea className="flex-1 px-4 py-4">
                 <div className="flex flex-col gap-4">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-20 gap-4">
-                            <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                            <div className="w-8 h-8 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
                             <p className="text-sm text-muted-foreground">Đang tải tin nhắn...</p>
                         </div>
                     ) : (
                         <>
                             {groupedMessages.map((group, groupIndex) => (
                                 <div key={groupIndex}>
-                                    {/* Date Separator */}
                                     <div className="flex items-center gap-4 my-4">
-                                        <div className="flex-1 h-px bg-border/40" />
-                                        <span className="text-[10px] font-medium text-muted-foreground/60 bg-background px-2 py-0.5 rounded-full">
+                                        <div className="flex-1 h-px bg-border" />
+                                        <span className="text-xs font-medium text-muted-foreground/60 bg-background px-2 py-0.5 rounded-full">
                                             {formatGroupHeader(group.date)}
                                         </span>
-                                        <div className="flex-1 h-px bg-border/40" />
+                                        <div className="flex-1 h-px bg-border" />
                                     </div>
 
-                                    {/* Messages */}
                                     {group.messages.map((message, msgIndex) => {
                                         const isOwn = message.senderId === currentUser.id;
                                         const prevMessage = group.messages[msgIndex - 1];
@@ -250,13 +242,13 @@ export function ChatWindow({
 
                                         return (
                                             <div key={message.id} className={cn(
-                                                "flex items-end gap-2 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2",
+                                                "flex items-end gap-2",
                                                 isOwn ? "flex-row-reverse" : "flex-row"
                                             )}>
                                                 {!isOwn && (
                                                     <div className="w-7 shrink-0">
                                                         {showAvatar ? (
-                                                            <Avatar className="h-7 w-7 ring-2 ring-primary/10 p-0.5">
+                                                            <Avatar className="h-7 w-7">
                                                                 <AvatarImage src={message.sender.avatar} />
                                                                 <AvatarFallback className="text-[10px] bg-muted">
                                                                     {message.sender.firstName?.charAt(0)}
@@ -266,38 +258,37 @@ export function ChatWindow({
                                                     </div>
                                                 )}
                                                 <div className={cn(
-                                                    "flex flex-col max-w-[80%] group",
+                                                    "flex flex-col max-w-[80%]",
                                                     isOwn ? "items-end" : "items-start"
                                                 )}>
                                                     {!isOwn && showAvatar && (
-                                                        <span className="text-[10px] text-muted-foreground/60 ml-1 mb-0.5 font-semibold no-uppercase">
+                                                        <span className="text-[10px] text-muted-foreground/60 ml-1 mb-1 font-medium">
                                                             {message.sender.firstName}
                                                         </span>
                                                     )}
                                                     <div className={cn(
-                                                        "px-3.5 py-2 rounded-2xl text-[13px] leading-relaxed shadow-sm transition-all duration-200",
+                                                        "px-3 py-2 rounded-2xl text-sm leading-relaxed transition-all",
                                                         isOwn 
                                                             ? "bg-primary text-primary-foreground rounded-br-sm" 
-                                                            : "bg-muted/60 text-foreground rounded-bl-sm border border-border/30",
+                                                            : "bg-muted text-foreground rounded-bl-sm border border-border",
                                                         isPending && "opacity-70",
                                                         isFailed && "opacity-50 ring-1 ring-destructive/30"
                                                     )}>
                                                         {message.content}
                                                     </div>
-                                                    {/* Time + Status */}
                                                     <div className={cn(
-                                                        "flex items-center gap-1.5 mt-0.5 px-1",
+                                                        "flex items-center gap-1 mt-0.5",
                                                         isOwn ? "flex-row-reverse" : "flex-row"
                                                     )}>
-                                                        <span className="text-[9px] text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity font-medium no-uppercase">
+                                                        <span className="text-[10px] text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             {formatMessageDate(new Date(message.createdAt))}
                                                         </span>
                                                         {isOwn && (
                                                             <span className="text-muted-foreground/40">
                                                                 {isPending ? (
-                                                                    <Check className="w-3 h-3 text-muted-foreground/30" />
+                                                                    <Check className="w-3 h-3" />
                                                                 ) : isFailed ? (
-                                                                    <span className="text-[9px] text-destructive font-bold">!</span>
+                                                                    <span className="text-xs text-destructive font-bold">!</span>
                                                                 ) : (
                                                                     <CheckCheck className="w-3 h-3 text-primary/60" />
                                                                 )}
@@ -311,16 +302,15 @@ export function ChatWindow({
                                 </div>
                             ))}
 
-                            {/* Typing Indicator */}
                             {otherUserTyping && (
-                                <div className="flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+                                <div className="flex items-center gap-2">
                                     <Avatar className="h-7 w-7">
                                         {otherUser?.avatar && <AvatarImage src={otherUser.avatar} />}
                                         <AvatarFallback className="text-[10px] bg-muted">
                                             {otherUser?.firstName?.charAt(0) || "?"}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div className="bg-muted/60 rounded-2xl rounded-bl-sm px-3 py-2 border border-border/30">
+                                    <div className="bg-muted rounded-2xl rounded-bl-sm px-3 py-2 border border-border">
                                         <div className="flex gap-1">
                                             <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                                             <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -336,18 +326,17 @@ export function ChatWindow({
             </ScrollArea>
 
             {/* Message Input */}
-            <div className="px-3 py-3 bg-background border-t border-border/40 shrink-0">
+            <div className="px-4 py-3 border-t border-border shrink-0 bg-muted/20">
                 <form 
                     onSubmit={handleSend}
-                    className="flex items-end gap-2 p-1.5 bg-muted/30 border border-border/30 rounded-2xl pr-2 focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-card transition-all"
+                    className="flex items-end gap-2"
                 >
                     <Button 
                         type="button" 
                         variant="ghost" 
                         size="icon-sm" 
-                        className="h-9 w-9 text-muted-foreground/40 hover:text-primary transition-colors cursor-pointer rounded-full shrink-0"
+                        className="h-9 w-9 shrink-0 text-muted-foreground/60 hover:text-primary"
                         onClick={handleAttachClick}
-                        title="Đính kèm tệp"
                     >
                         <Paperclip className="w-4 h-4" />
                     </Button>
@@ -364,7 +353,7 @@ export function ChatWindow({
                         }}
                     />
                     <textarea
-                        className="flex-1 bg-transparent border-none text-[13px] px-1 py-1.5 outline-none placeholder:text-muted-foreground/40 resize-none max-h-32"
+                        className="flex-1 bg-background border border-border rounded-xl text-sm px-3 py-2 outline-none placeholder:text-muted-foreground/40 resize-none max-h-32"
                         placeholder="Nhập tin nhắn..."
                         value={input}
                         onChange={handleInputChange}
@@ -375,34 +364,28 @@ export function ChatWindow({
                                 handleSend();
                             }
                         }}
-                        style={{ height: 'auto', overflow: 'hidden' }}
-                        onInput={(e) => {
-                            const target = e.target as HTMLTextAreaElement;
-                            target.style.height = 'auto';
-                            target.style.height = Math.min(target.scrollHeight, 128) + 'px';
-                        }}
                     />
-                    <div className="flex gap-0.5 items-center shrink-0">
+                    <div className="flex gap-1 items-center shrink-0">
                         <Button 
                             type="button" 
                             variant="ghost" 
                             size="icon-sm" 
-                            className="h-9 w-9 text-muted-foreground/40 hover:text-primary transition-colors cursor-pointer rounded-full"
+                            className="h-9 w-9 text-muted-foreground/60 hover:text-primary"
                         >
                             <Smile className="w-4 h-4" />
                         </Button>
                         <Button 
                             type="submit" 
                             disabled={!input.trim()}
-                            size="icon"
-                            className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-md transition-all active:scale-95 rounded-full"
+                            size="icon-sm"
+                            className="h-9 w-9 rounded-full"
                         >
                             <Send className="w-4 h-4" />
                         </Button>
                     </div>
                 </form>
                 {isTyping && (
-                    <p className="text-[10px] text-muted-foreground/40 mt-1 px-2 animate-pulse">
+                    <p className="text-xs text-muted-foreground/60 mt-1 animate-pulse">
                         Đang nhập...
                     </p>
                 )}

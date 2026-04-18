@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { MessageCircle, X, Maximize2, Send, Minimize2, ArrowLeft, Check, CheckCheck } from "lucide-react";
+import { MessageCircle, X, Send, Minimize2, ArrowLeft, Check, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { getChatRooms, getMessages, sendMessage } from "@/lib/actions/chat";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
@@ -21,18 +22,15 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
     const [rooms, setRooms] = useState<any[]>([]);
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    // Fetch rooms when opened
     useEffect(() => {
         if (isOpen && !selectedRoomId) {
             loadRooms();
         }
     }, [isOpen, selectedRoomId]);
 
-    // Fetch messages when room selected
     useEffect(() => {
         if (selectedRoomId) {
             loadMessages();
@@ -54,10 +52,8 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
         if (!selectedRoomId) return;
         try {
             const data = await getMessages(selectedRoomId, 30);
-            // Merge: keep pending messages, replace confirmed ones
             setMessages(prev => {
                 const pendingMsgs = prev.filter(m => m._pending);
-                // Deduplicate: only keep pending if not yet in server data
                 const serverIds = new Set(data.map((m: any) => m.id));
                 const stillPending = pendingMsgs.filter(m => !serverIds.has(m.id));
                 return [...data, ...stillPending];
@@ -78,7 +74,6 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
         const tempId = `pending-${Date.now()}`;
         setInput("");
 
-        // Optimistic UI
         const optimistic = {
             id: tempId,
             content,
@@ -96,7 +91,6 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
 
         try {
             const result = await sendMessage({ roomId: selectedRoomId, content });
-            // Replace optimistic with real
             setMessages(prev => prev.map(m => m.id === tempId ? { ...result, sender: optimistic.sender, _sent: true } : m));
             setPendingIds(prev => { const s = new Set(prev); s.delete(tempId); return s; });
         } catch (err) {
@@ -122,140 +116,145 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
         return null;
     };
 
+    const getRoomOtherUser = (room: any) => {
+        if (room.type === "direct") {
+            return room.participants.find((p: any) => p.userId !== currentUser.id)?.user;
+        }
+        return null;
+    };
+
     return (
         <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end gap-3 sm:gap-4 pointer-events-none">
-            {/* Chat Window */}
             {isOpen && (
-                <Card className="w-[calc(100vw-2rem)] sm:w-[360px] h-[calc(100dvh-8rem)] sm:h-[500px] max-h-[500px] shadow-2xl overflow-hidden flex flex-col border-border/40 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto bg-card">
+                <Card className="w-[calc(100vw-2rem)] sm:w-[380px] h-[calc(100dvh-8rem)] sm:h-[560px] max-h-[560px] flex flex-col border-border bg-card overflow-hidden animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto">
                     {/* Header */}
-                    <div className="px-3 py-2 border-b border-border/40 flex items-center justify-between bg-background/80 backdrop-blur-md shrink-0">
-                        <div className="flex items-center gap-2">
+                    <div className="px-4 py-3 border-b border-border flex items-center justify-between shrink-0 bg-muted/30">
+                        <div className="flex items-center gap-2 min-w-0">
                             {selectedRoomId ? (
                                 <>
                                     <Button 
                                         variant="ghost" 
-                                        size="icon-sm" 
+                                        size="icon-sm"
                                         onClick={() => setSelectedRoomId(null)}
-                                        className="h-7 w-7 rounded-full"
+                                        className="shrink-0"
                                     >
                                         <ArrowLeft className="w-4 h-4" />
                                     </Button>
-                                    <div className="flex items-center gap-2">
-                                        <Avatar className="h-7 w-7">
-                                            <AvatarImage src={getRoomAvatar(rooms.find(r => r.id === selectedRoomId))!} />
-                                            <AvatarFallback>C</AvatarFallback>
-                                        </Avatar>
-                                        <span className="text-[13px] font-bold truncate max-w-[150px]">
-                                            {getRoomName(rooms.find(r => r.id === selectedRoomId))}
-                                        </span>
-                                    </div>
+                                    <Avatar className="h-8 w-8 shrink-0">
+                                        <AvatarImage src={getRoomAvatar(rooms.find(r => r.id === selectedRoomId))!} />
+                                        <AvatarFallback className="text-xs bg-muted">
+                                            {getRoomName(rooms.find(r => r.id === selectedRoomId))[0]}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-sm font-semibold truncate">
+                                        {getRoomName(rooms.find(r => r.id === selectedRoomId))}
+                                    </span>
                                 </>
                             ) : (
-                                <span className="text-[14px] font-bold ml-1">Tin nhắn</span>
+                                <span className="text-sm font-semibold">Tin nhắn</span>
                             )}
                         </div>
-                        <div className="flex items-center gap-1">
-                            <Button 
-                                variant="ghost" 
-                                size="icon-sm" 
-                                className="h-7 w-7 rounded-full"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                <Minimize2 className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                                variant="ghost" 
-                                size="icon-sm" 
-                                className="h-7 w-7 rounded-full text-destructive hover:bg-destructive/10"
-                                onClick={() => { setIsOpen(false); setSelectedRoomId(null); }}
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
+                        <Button 
+                            variant="ghost" 
+                            size="icon-sm"
+                            onClick={() => setIsOpen(false)}
+                            className="shrink-0"
+                        >
+                            <Minimize2 className="w-4 h-4" />
+                        </Button>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-hidden relative">
+                    <div className="flex-1 overflow-hidden">
                         {!selectedRoomId ? (
-                            /* Rooms List */
-                            <ScrollArea className="h-full px-1">
-                                <div className="py-1 space-y-0.5">
+                            <ScrollArea className="h-full">
+                                <div className="py-2 px-2">
                                     {rooms.length === 0 ? (
-                                        <div className="text-center py-20 text-muted-foreground text-[12px]">
-                                            Chưa có cuộc trò chuyện nào.
+                                        <div className="text-center py-16 text-muted-foreground text-sm">
+                                            Chưa có cuộc trò chuyện nào
                                         </div>
                                     ) : (
-                                        rooms.map((room) => (
-                                            <button
-                                                key={room.id}
-                                                onClick={() => setSelectedRoomId(room.id)}
-                                                className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-muted/50 transition-colors text-left group"
-                                            >
-                                                <div className="relative">
-                                                    <Avatar className="h-9 w-9">
+                                        rooms.map((room) => {
+                                            const otherUser = getRoomOtherUser(room);
+                                            return (
+                                                <button
+                                                    key={room.id}
+                                                    onClick={() => setSelectedRoomId(room.id)}
+                                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-muted transition-colors text-left"
+                                                >
+                                                    <Avatar className="h-10 w-10 shrink-0">
                                                         <AvatarImage src={getRoomAvatar(room)!} />
-                                                        <AvatarFallback>{getRoomName(room)[0]}</AvatarFallback>
+                                                        <AvatarFallback className="text-xs bg-muted">
+                                                            {getRoomName(room)[0]}
+                                                        </AvatarFallback>
                                                     </Avatar>
-                                                    <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border-2 border-background" />
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex justify-between items-center mb-0.5">
-                                                        <span className="text-[12px] font-bold truncate text-foreground">{getRoomName(room)}</span>
-                                                        <span className="text-[10px] text-muted-foreground/60">
-                                                            {room.messages[0] ? format(new Date(room.messages[0].createdAt), "HH:mm") : ""}
-                                                        </span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="text-sm font-medium truncate">{getRoomName(room)}</span>
+                                                            <span className="text-xs text-muted-foreground shrink-0 ml-2">
+                                                                {room.messages[0] ? format(new Date(room.messages[0].createdAt), "HH:mm") : ""}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-xs text-muted-foreground truncate">
+                                                            {otherUser?.role === "mentor" && (
+                                                                <span className="inline-block px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-medium mr-1">
+                                                                    Mentor
+                                                                </span>
+                                                            )}
+                                                            {room.messages[0]?.content || "Bắt đầu trò chuyện..."}
+                                                        </p>
                                                     </div>
-                                                    <p className="text-[11px] text-muted-foreground/60 truncate italic">
-                                                        {room.messages[0]?.content || "Bắt đầu trò chuyện..."}
-                                                    </p>
-                                                </div>
-                                            </button>
-                                        ))
+                                                </button>
+                                            );
+                                        })
                                     )}
                                 </div>
                             </ScrollArea>
                         ) : (
-                            /* Messages Window */
-                            <div className="flex flex-col h-full bg-background">
-                                <ScrollArea className="flex-1 px-2 py-2">
-                                    <div className="space-y-3 pb-1">
-                                        {messages.map((msg, i) => {
+                            <div className="flex flex-col h-full">
+                                <ScrollArea className="flex-1 px-3 py-3">
+                                    <div className="space-y-3">
+                                        {messages.map((msg) => {
                                             const isOwn = msg.senderId === currentUser.id;
                                             const isPending = msg._pending;
                                             const isSent = msg._sent || (!isPending && isOwn);
+                                            const showAvatar = true;
 
                                             return (
                                                 <div key={msg.id} className={cn(
-                                                    "flex items-end gap-1.5",
+                                                    "flex items-end gap-2",
                                                     isOwn ? "flex-row-reverse" : "flex-row"
                                                 )}>
                                                     {!isOwn && (
-                                                        <Avatar className="h-5 w-5 shrink-0">
+                                                        <Avatar className="h-6 w-6 shrink-0">
                                                             <AvatarImage src={msg.sender.avatar} />
-                                                            <AvatarFallback className="text-[8px]">{msg.sender.firstName[0]}</AvatarFallback>
+                                                            <AvatarFallback className="text-[10px] bg-muted">
+                                                                {msg.sender.firstName?.[0]}
+                                                            </AvatarFallback>
                                                         </Avatar>
                                                     )}
                                                     <div className={cn(
-                                                        "flex flex-col",
+                                                        "flex flex-col max-w-[80%]",
                                                         isOwn ? "items-end" : "items-start"
                                                     )}>
                                                         <div className={cn( 
-                                                            "max-w-[85%] rounded-2xl px-2.5 py-1.5 text-[12px] shadow-sm",
-                                                            isOwn ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none",
+                                                            "rounded-2xl px-3 py-2 text-sm",
+                                                            isOwn 
+                                                                ? "bg-primary text-primary-foreground rounded-br-sm" 
+                                                                : "bg-muted rounded-bl-sm",
                                                             isPending && "opacity-70"
                                                         )}>
                                                             {msg.content}
                                                         </div>
-                                                        {/* Status */}
                                                         {isOwn && (
-                                                            <div className="flex items-center gap-0.5 mt-0.5 pr-0.5">
-                                                                <span className="text-[8px] text-muted-foreground/40">
+                                                            <div className="flex items-center gap-1 mt-1">
+                                                                <span className="text-[10px] text-muted-foreground/60">
                                                                     {format(new Date(msg.createdAt), "HH:mm")}
                                                                 </span>
                                                                 {isPending ? (
-                                                                    <Check className="w-2.5 h-2.5 text-muted-foreground/30" />
+                                                                    <Check className="w-3 h-3 text-muted-foreground/40" />
                                                                 ) : (
-                                                                    <CheckCheck className="w-2.5 h-2.5 text-primary/60" />
+                                                                    <CheckCheck className="w-3 h-3 text-primary/60" />
                                                                 )}
                                                             </div>
                                                         )}
@@ -266,25 +265,24 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                                         <div ref={scrollRef} />
                                     </div>
                                 </ScrollArea>
-                                {/* Input */}
-                                <div className="px-2 py-1.5 border-t border-border/40 shrink-0 bg-background">
+                                <div className="p-3 border-t border-border shrink-0 bg-muted/20">
                                     <form 
                                         onSubmit={handleSend}
-                                        className="flex items-center gap-1.5"
+                                        className="flex items-center gap-2"
                                     >
-                                        <input 
-                                            className="flex-1 bg-muted/50 border-none text-[12px] px-3 py-1.5 rounded-full outline-none placeholder:text-muted-foreground/60 focus:bg-background transition-all ring-inset focus:ring-1 ring-border"
+                                        <Input 
+                                            className="flex-1 h-9 rounded-full bg-background"
                                             placeholder="Nhập tin nhắn..."
                                             value={input}
                                             onChange={(e) => setInput(e.target.value)}
                                         />
                                         <Button 
                                             type="submit" 
-                                            size="icon-sm" 
+                                            size="icon"
                                             disabled={!input.trim()}
-                                            className="h-7 w-7 rounded-full bg-primary shrink-0"
+                                            className="h-9 w-9 shrink-0 rounded-full"
                                         >
-                                            <Send className="w-3 h-3" />
+                                            <Send className="w-4 h-4" />
                                         </Button>
                                     </form>
                                 </div>
@@ -294,22 +292,23 @@ export function FloatingChat({ currentUser }: FloatingChatProps) {
                 </Card>
             )}
 
-            {/* Bubble */}
             <div className="pointer-events-auto">
-                <button
+                <Button
                     onClick={() => setIsOpen(!isOpen)}
+                    size="icon"
                     className={cn(
-                        "w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform active:scale-95 group relative",
-                        isOpen ? "bg-background text-foreground border border-border shadow-xl rotate-90" : "bg-primary text-primary-foreground hover:scale-105"
+                        "w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg transition-all active:scale-95",
+                        isOpen 
+                            ? "bg-muted text-foreground hover:bg-muted" 
+                            : "bg-primary text-primary-foreground hover:bg-primary/90"
                     )}
-                    title="Trò chuyện"
                 >
                     {isOpen ? (
-                        <X className="w-6 h-6 animate-in fade-in zoom-in duration-300" />
+                        <X className="w-5 h-5 sm:w-6 sm:h-6" />
                     ) : (
-                        <MessageCircle className="w-6 h-6 animate-in fade-in zoom-in duration-300" />
+                        <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                     )}
-                </button>
+                </Button>
             </div>
         </div>
     );
