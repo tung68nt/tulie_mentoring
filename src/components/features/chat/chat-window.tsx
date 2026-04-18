@@ -66,7 +66,7 @@ export function ChatWindow({
         }
     }, [messages]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value);
         
         if (typingTimeoutRef.current) {
@@ -146,7 +146,7 @@ export function ChatWindow({
         const msgDate = new Date(msg.createdAt);
         const dateKey = msgDate.toDateString();
         
-        if (i === 0 || messages[i-1].createdAt.toDateString() !== dateKey) {
+        if (i === 0 || new Date(messages[i-1].createdAt).toDateString() !== dateKey) {
             groupedMessages.push({ date: msgDate, messages: [msg] });
         } else {
             groupedMessages[groupedMessages.length - 1].messages.push(msg);
@@ -160,31 +160,19 @@ export function ChatWindow({
     return (
         <div className="flex flex-col h-full bg-background relative overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0 bg-muted/30">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <Avatar className="h-10 w-10 border border-border">
-                            {otherUser?.avatar ? (
-                                <AvatarImage src={otherUser.avatar} />
-                            ) : (
-                                <AvatarFallback className="bg-muted text-sm font-medium">
-                                    {displayName.charAt(0)}
-                                </AvatarFallback>
-                            )}
-                        </Avatar>
-                        {isGroupChat ? (
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center border-2 border-background">
-                                <Users className="w-3 h-3 text-primary-foreground" />
-                            </div>
+                    <Avatar className="h-9 w-9">
+                        {otherUser?.avatar ? (
+                            <AvatarImage src={otherUser.avatar} />
                         ) : (
-                            <span className={cn(
-                                "absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-background",
-                                isOnline ? "bg-green-500" : "bg-muted-foreground/40"
-                            )} />
+                            <AvatarFallback className="text-xs font-medium">
+                                {displayName.charAt(0)}
+                            </AvatarFallback>
                         )}
-                    </div>
+                    </Avatar>
                     <div>
-                        <h3 className="text-sm font-semibold">{displayName}</h3>
+                        <h3 className="text-sm font-semibold text-foreground">{displayName}</h3>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                             {isGroupChat ? (
                                 <>{participantCount} thành viên</>
@@ -194,19 +182,16 @@ export function ChatWindow({
                                     Đang hoạt động
                                 </>
                             ) : (
-                                <>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
-                                    Offline
-                                </>
+                                <>Offline</>
                             )}
                         </p>
                     </div>
                 </div>
                 <div className="flex gap-1">
-                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground/60 hover:text-foreground">
+                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
                         <Info className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground/60 hover:text-foreground">
+                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
                         <MoreVertical className="w-4 h-4" />
                     </Button>
                 </div>
@@ -217,84 +202,66 @@ export function ChatWindow({
                 <div className="flex flex-col gap-4">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-20 gap-4">
-                            <div className="w-8 h-8 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
+                            <div className="w-6 h-6 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
                             <p className="text-sm text-muted-foreground">Đang tải tin nhắn...</p>
                         </div>
                     ) : (
                         <>
                             {groupedMessages.map((group, groupIndex) => (
                                 <div key={groupIndex}>
-                                    <div className="flex items-center gap-4 my-4">
+                                    <div className="flex items-center gap-3 my-4">
                                         <div className="flex-1 h-px bg-border" />
-                                        <span className="text-xs font-medium text-muted-foreground/60 bg-background px-2 py-0.5 rounded-full">
+                                        <span className="text-xs font-medium text-muted-foreground bg-background px-2 py-0.5">
                                             {formatGroupHeader(group.date)}
                                         </span>
                                         <div className="flex-1 h-px bg-border" />
                                     </div>
 
-                                    {group.messages.map((message, msgIndex) => {
+                                    {group.messages.map((message) => {
                                         const isOwn = message.senderId === currentUser.id;
-                                        const prevMessage = group.messages[msgIndex - 1];
-                                        const showAvatar = !prevMessage || prevMessage.senderId !== message.senderId;
                                         const isPending = message._pending;
-                                        const isSent = message._sent || (!isPending && isOwn);
                                         const isFailed = message._failed;
 
                                         return (
                                             <div key={message.id} className={cn(
-                                                "flex items-end gap-2",
+                                                "flex items-end gap-2 mb-3",
                                                 isOwn ? "flex-row-reverse" : "flex-row"
                                             )}>
-                                                {!isOwn && (
-                                                    <div className="w-7 shrink-0">
-                                                        {showAvatar ? (
-                                                            <Avatar className="h-7 w-7">
-                                                                <AvatarImage src={message.sender.avatar} />
-                                                                <AvatarFallback className="text-[10px] bg-muted">
-                                                                    {message.sender.firstName?.charAt(0)}
-                                                                </AvatarFallback>
-                                                            </Avatar>
-                                                        ) : <div className="w-7" />}
-                                                    </div>
-                                                )}
+                                                <Avatar className="h-6 w-6 shrink-0">
+                                                    {!isOwn && (
+                                                        <>
+                                                            <AvatarImage src={message.sender.avatar} />
+                                                            <AvatarFallback className="text-[10px]">
+                                                                {message.sender.firstName?.charAt(0)}
+                                                            </AvatarFallback>
+                                                        </>
+                                                    )}
+                                                </Avatar>
                                                 <div className={cn(
-                                                    "flex flex-col max-w-[80%]",
+                                                    "flex flex-col max-w-[75%]",
                                                     isOwn ? "items-end" : "items-start"
                                                 )}>
-                                                    {!isOwn && showAvatar && (
-                                                        <span className="text-[10px] text-muted-foreground/60 ml-1 mb-1 font-medium">
-                                                            {message.sender.firstName}
-                                                        </span>
-                                                    )}
                                                     <div className={cn(
-                                                        "px-3 py-2 rounded-2xl text-sm leading-relaxed transition-all",
+                                                        "px-3 py-2 rounded-2xl text-sm",
                                                         isOwn 
-                                                            ? "bg-primary text-primary-foreground rounded-br-sm" 
-                                                            : "bg-muted text-foreground rounded-bl-sm border border-border",
+                                                            ? "bg-foreground text-background rounded-br-sm" 
+                                                            : "bg-muted rounded-bl-sm",
                                                         isPending && "opacity-70",
-                                                        isFailed && "opacity-50 ring-1 ring-destructive/30"
+                                                        isFailed && "opacity-50"
                                                     )}>
                                                         {message.content}
                                                     </div>
-                                                    <div className={cn(
-                                                        "flex items-center gap-1 mt-0.5",
-                                                        isOwn ? "flex-row-reverse" : "flex-row"
-                                                    )}>
-                                                        <span className="text-[10px] text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            {formatMessageDate(new Date(message.createdAt))}
+                                                    {isOwn && (
+                                                        <span className="text-[10px] text-muted-foreground mt-1">
+                                                            {isPending ? (
+                                                                <Check className="w-3 h-3 inline" />
+                                                            ) : isFailed ? (
+                                                                <span className="text-destructive font-bold">!</span>
+                                                            ) : (
+                                                                <CheckCheck className="w-3 h-3 inline" />
+                                                            )}
                                                         </span>
-                                                        {isOwn && (
-                                                            <span className="text-muted-foreground/40">
-                                                                {isPending ? (
-                                                                    <Check className="w-3 h-3" />
-                                                                ) : isFailed ? (
-                                                                    <span className="text-xs text-destructive font-bold">!</span>
-                                                                ) : (
-                                                                    <CheckCheck className="w-3 h-3 text-primary/60" />
-                                                                )}
-                                                            </span>
-                                                        )}
-                                                    </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         );
@@ -304,38 +271,34 @@ export function ChatWindow({
 
                             {otherUserTyping && (
                                 <div className="flex items-center gap-2">
-                                    <Avatar className="h-7 w-7">
-                                        {otherUser?.avatar && <AvatarImage src={otherUser.avatar} />}
-                                        <AvatarFallback className="text-[10px] bg-muted">
-                                            {otherUser?.firstName?.charAt(0) || "?"}
+                                    <Avatar className="h-6 w-6">
+                                        <AvatarFallback className="text-[10px]">
+                                            {otherUser?.firstName?.charAt(0)}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div className="bg-muted rounded-2xl rounded-bl-sm px-3 py-2 border border-border">
+                                    <div className="bg-muted px-3 py-2 rounded-2xl rounded-bl-sm">
                                         <div className="flex gap-1">
-                                            <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                                            <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                                            <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                                            <span className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                                            <span className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                                            <span className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                                         </div>
                                     </div>
                                 </div>
                             )}
                         </>
                     )}
-                    <div ref={scrollRef} className="h-1 w-full" />
+                    <div ref={scrollRef} />
                 </div>
             </ScrollArea>
 
             {/* Message Input */}
-            <div className="px-4 py-3 border-t border-border shrink-0 bg-muted/20">
-                <form 
-                    onSubmit={handleSend}
-                    className="flex items-end gap-2"
-                >
+            <div className="px-4 py-3 border-t border-border shrink-0 bg-muted/30">
+                <form onSubmit={handleSend} className="flex items-center gap-2">
                     <Button 
                         type="button" 
                         variant="ghost" 
                         size="icon-sm" 
-                        className="h-9 w-9 shrink-0 text-muted-foreground/60 hover:text-primary"
+                        className="text-muted-foreground shrink-0"
                         onClick={handleAttachClick}
                     >
                         <Paperclip className="w-4 h-4" />
@@ -345,50 +308,30 @@ export function ChatWindow({
                         type="file"
                         className="hidden"
                         multiple
-                        onChange={(e) => {
-                            const files = e.target.files;
-                            if (files && files.length > 0) {
-                                console.log("Selected files:", files);
-                            }
-                        }}
                     />
-                    <textarea
-                        className="flex-1 bg-background border border-border rounded-xl text-sm px-3 py-2 outline-none placeholder:text-muted-foreground/40 resize-none max-h-32"
+                    <Input
+                        className="flex-1 h-9 rounded-lg"
                         placeholder="Nhập tin nhắn..."
                         value={input}
                         onChange={handleInputChange}
-                        rows={1}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSend();
-                            }
-                        }}
                     />
-                    <div className="flex gap-1 items-center shrink-0">
-                        <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="icon-sm" 
-                            className="h-9 w-9 text-muted-foreground/60 hover:text-primary"
-                        >
-                            <Smile className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                            type="submit" 
-                            disabled={!input.trim()}
-                            size="icon-sm"
-                            className="h-9 w-9 rounded-full"
-                        >
-                            <Send className="w-4 h-4" />
-                        </Button>
-                    </div>
+                    <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon-sm" 
+                        className="text-muted-foreground shrink-0"
+                    >
+                        <Smile className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                        type="submit" 
+                        size="icon-sm"
+                        disabled={!input.trim()}
+                        className="h-9 w-9 shrink-0 rounded-lg"
+                    >
+                        <Send className="w-4 h-4" />
+                    </Button>
                 </form>
-                {isTyping && (
-                    <p className="text-xs text-muted-foreground/60 mt-1 animate-pulse">
-                        Đang nhập...
-                    </p>
-                )}
             </div>
         </div>
     );
