@@ -9,7 +9,7 @@ import { createPost } from "@/lib/actions/social";
 import { toast } from "sonner";
 import { Image as ImageIcon, Link as LinkIcon, Smile, Send } from "lucide-react";
 
-export function PostForm({ user }: { user: any }) {
+export function PostForm({ user, onSuccess }: { user: any; onSuccess?: () => void }) {
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,6 +25,7 @@ export function PostForm({ user }: { user: any }) {
             });
             setContent("");
             toast.success("Đã đăng bài thành công!");
+            onSuccess?.();
         } catch (error) {
             toast.error("Không thể đăng bài. Vui lòng thử lại.");
         } finally {

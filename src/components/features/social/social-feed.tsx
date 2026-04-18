@@ -31,7 +31,7 @@ export function SocialFeed({ currentUser, programCycleId }: { currentUser: any; 
 
     return (
         <div className="space-y-6 max-w-2xl mx-auto w-full">
-            <PostForm user={currentUser} />
+            <PostForm user={currentUser} onSuccess={loadPosts} />
             
             <div className="flex items-center justify-between py-2 px-1 border-b border-border/10">
                 <h2 className="text-[14px] font-bold text-foreground">Bảng tin cộng đồng</h2>
