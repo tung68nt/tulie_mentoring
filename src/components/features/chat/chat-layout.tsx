@@ -13,6 +13,7 @@ import { getOrCreateDirectChat } from "@/lib/actions/chat";
 
 export function ChatLayout({ currentUser }: { currentUser: any }) {
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+    const [selectedRoomData, setSelectedRoomData] = useState<any>(null);
 
     // Quick start chat state
     const [quickSearch, setQuickSearch] = useState("");
@@ -53,6 +54,13 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
         }
     }
 
+    function handleRoomSelect(roomId: string, roomData?: any) {
+        setSelectedRoomId(roomId);
+        setSelectedRoomData(roomData);
+    }
+
+    const otherUser = selectedRoomData?.participants?.find((p: any) => p.userId !== currentUser.id)?.user;
+
     return (
         <div className="flex h-full min-h-[500px] overflow-hidden rounded-xl bg-background transition-all duration-300">
             <div className="flex w-full h-full relative">
@@ -60,7 +68,7 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
                 <ChatSidebar 
                     currentUser={currentUser} 
                     selectedRoomId={selectedRoomId!} 
-                    onSelectRoom={setSelectedRoomId} 
+                    onSelectRoom={handleRoomSelect} 
                 />
 
                 {/* Main Content Area */}
@@ -70,6 +78,12 @@ export function ChatLayout({ currentUser }: { currentUser: any }) {
                             key={selectedRoomId} 
                             currentUser={currentUser} 
                             roomId={selectedRoomId} 
+                            roomInfo={{
+                                name: selectedRoomData?.name,
+                                type: selectedRoomData?.type,
+                                participants: selectedRoomData?.participants?.map((p: any) => p.user)
+                            }}
+                            otherUser={otherUser}
                         />
                     ) : (
                         <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-6 text-center animate-in fade-in duration-500">

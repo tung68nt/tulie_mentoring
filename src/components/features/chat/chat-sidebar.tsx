@@ -27,7 +27,7 @@ export function ChatSidebar({
 }: { 
     currentUser: any; 
     selectedRoomId?: string;
-    onSelectRoom: (roomId: string) => void;
+    onSelectRoom: (roomId: string, roomData?: any) => void;
 }) {
     const [rooms, setRooms] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -194,7 +194,7 @@ export function ChatSidebar({
                             return (
                                 <button
                                     key={room.id}
-                                    onClick={() => onSelectRoom(room.id)}
+                                    onClick={() => onSelectRoom(room.id, room)}
                                     className={cn(
                                         "w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 group text-left",
                                         isSelected 

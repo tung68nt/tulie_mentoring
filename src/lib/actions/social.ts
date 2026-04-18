@@ -75,11 +75,9 @@ export async function getPosts(options?: {
                 }
             },
             reactions: {
-                where: {
-                    userId: session.user.id
-                },
                 select: {
-                    type: true
+                    type: true,
+                    userId: true
                 }
             }
         },
@@ -150,4 +148,58 @@ export async function toggleReaction(data: {
     }
 
     revalidatePath("/social");
+}
+
+export async function getComments(postId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const comments = await prisma.comment.findMany({
+        where: {
+            postId: postId,
+            parentId: null,
+        },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    avatar: true,
+                    role: true,
+                }
+            },
+            replies: {
+                include: {
+                    author: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            avatar: true,
+                            role: true,
+                        }
+                    },
+                    replies: {
+                        include: {
+                            author: {
+                                select: {
+                                    id: true,
+                                    firstName: true,
+                                    lastName: true,
+                                    avatar: true,
+                                    role: true,
+                                }
+                            }
+                        },
+                        orderBy: { createdAt: "asc" }
+                    }
+                },
+                orderBy: { createdAt: "asc" }
+            }
+        },
+        orderBy: { createdAt: "desc" }
+    });
+
+    return JSON.parse(JSON.stringify(comments));
 }

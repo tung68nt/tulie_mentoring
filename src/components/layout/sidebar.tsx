@@ -23,7 +23,6 @@ import {
     Presentation,
     ListTodo,
     X,
-    Timer,
     Settings2,
     Bell,
     ClipboardList,
@@ -142,7 +141,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                     { id: "reflections", label: "Thu hoạch Mentee", icon: PenLine, href: "/reflections" },
                     { id: "ranking", label: "Bảng xếp hạng", icon: BarChart, href: "/ranking" },
                     { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
-                    { id: "focus", label: "Không gian tập trung", icon: Timer, href: "/focus" },
                 ],
             },
             {
@@ -168,7 +166,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                     { id: "checkin", label: "Check-in / Check-out", icon: QrCode, href: "/checkin" },
                     { id: "tasks", label: "Công việc", icon: CheckSquare, href: "/tasks" },
                     { id: "goals", label: "Mục tiêu", icon: Target, href: "/goals" },
-                    { id: "focus", label: "Không gian tập trung", icon: Timer, href: "/focus" },
                 ],
             },
             {

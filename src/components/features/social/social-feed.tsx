@@ -48,7 +48,12 @@ export function SocialFeed({ currentUser, programCycleId }: { currentUser: any; 
                     </div>
                 ) : posts.length > 0 ? (
                     posts.map((post) => (
-                        <PostCard key={post.id} post={post} currentUser={currentUser} />
+                        <PostCard 
+                            key={post.id} 
+                            post={post} 
+                            currentUser={currentUser}
+                            onUpdate={loadPosts}
+                        />
                     ))
                 ) : (
                     <Card className="p-20 text-center rounded-lg border-dashed bg-muted/5 shadow-none">
