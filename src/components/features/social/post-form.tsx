@@ -9,7 +9,7 @@ import { createPost } from "@/lib/actions/social";
 import { toast } from "sonner";
 import { Image as ImageIcon, Link as LinkIcon, Smile, Send } from "lucide-react";
 
-export function PostForm({ user, onSuccess }: { user: any; onSuccess?: () => void }) {
+export function PostForm({ user, programCycleId, onSuccess }: { user: any; programCycleId?: string; onSuccess?: () => void }) {
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,7 +21,8 @@ export function PostForm({ user, onSuccess }: { user: any; onSuccess?: () => voi
         try {
             await createPost({
                 content,
-                visibility: "program"
+                visibility: "program",
+                programCycleId
             });
             setContent("");
             toast.success("Đã đăng bài thành công!");

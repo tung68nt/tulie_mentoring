@@ -48,11 +48,11 @@ export async function getPosts(options?: {
 
     const posts = await prisma.post.findMany({
         where: {
-            programCycleId: programCycleId,
-            // Logic for visibility:
-            // "public": everyone
-            // "program": same program cycle
-            // "pair": only mentor/mentee pair (needs more complex logic if implemented)
+            ...(programCycleId ? { programCycleId } : {}),
+            OR: [
+                { visibility: "public" },
+                ...(programCycleId ? [{ visibility: "program", programCycleId }] : []),
+            ]
         },
         take: limit,
         skip: cursor ? 1 : 0,
