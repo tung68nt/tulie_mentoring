@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 interface DashboardContainerProps {
     children: React.ReactNode;
     user: {
-        id: string; // Added ID for chat identification
+        id: string;
         firstName: string;
         lastName: string;
         role: "admin" | "mentor" | "mentee" | "manager" | "program_manager" | "facilitator";
@@ -19,8 +19,6 @@ interface DashboardContainerProps {
     logoUrl?: string;
     siteName?: string;
 }
-
-import { FloatingChat } from "../features/chat/floating-chat";
 
 export function DashboardContainer({
     children,
@@ -79,8 +77,6 @@ export function DashboardContainer({
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}
-            {/* Floating Chat Popup */}
-            <FloatingChat currentUser={user} />
         </div>
     );
 }

@@ -5,7 +5,6 @@ import {
     Users,
     Calendar,
     Target,
-    MessageSquare,
     BarChart,
     LogOut,
     User,
@@ -13,7 +12,6 @@ import {
     ChevronLeft,
     ChevronRight,
     FolderOpen,
-    Eye,
     QrCode,
     PenLine,
     CheckSquare,
@@ -69,8 +67,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                     { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
                     { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
                     { id: "programs", label: "Chương trình", icon: Calendar, href: "/admin/programs" },
-                    { id: "social", label: "Cộng đồng", icon: Eye, href: "/social" },
-                    { id: "chat", label: "Tin nhắn", icon: MessageSquare, href: "/chat" },
                 ],
             },
             {
@@ -88,8 +84,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                     { id: "users", label: "Người dùng", icon: User, href: "/admin/users" },
                     { id: "programs", label: "Chương trình", icon: Calendar, href: "/admin/programs" },
                     { id: "mentorships", label: "Mentorship", icon: Users, href: "/admin/mentorships" },
-                    { id: "social", label: "Cộng đồng", icon: Eye, href: "/social" },
-                    { id: "chat", label: "Tin nhắn", icon: MessageSquare, href: "/chat" },
                 ],
             },
             {
@@ -110,8 +104,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/facilitator" },
                     { id: "mentorships", label: "Mentorship được giao", icon: Users, href: "/facilitator/mentorships" },
-                    { id: "social", label: "Cộng đồng", icon: Eye, href: "/social" },
-                    { id: "chat", label: "Tin nhắn", icon: MessageSquare, href: "/chat" },
                 ],
             },
             {
@@ -131,8 +123,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentor" },
                     { id: "calendar", label: "Lịch gặp & QR", icon: Calendar, href: "/calendar" },
-                    { id: "social", label: "Cộng đồng", icon: Eye, href: "/social" },
-                    { id: "chat", label: "Tin nhắn", icon: MessageSquare, href: "/chat" },
                 ],
             },
             {
@@ -157,8 +147,6 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/mentee" },
                     { id: "calendar", label: "Lịch hoạt động", icon: Calendar, href: "/calendar" },
-                    { id: "social", label: "Cộng đồng", icon: Eye, href: "/social" },
-                    { id: "chat", label: "Tin nhắn", icon: MessageSquare, href: "/chat" },
                 ],
             },
             {
