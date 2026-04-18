@@ -16,7 +16,6 @@ export function ChatWindow({
     roomId,
     roomInfo,
     otherUser,
-    isOnline = false
 }: { 
     currentUser: any; 
     roomId: string;
@@ -30,7 +29,6 @@ export function ChatWindow({
         lastName?: string;
         avatar?: string;
     };
-    isOnline?: boolean;
 }) {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
@@ -173,17 +171,8 @@ export function ChatWindow({
                     </Avatar>
                     <div>
                         <h3 className="text-sm font-semibold text-foreground">{displayName}</h3>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            {isGroupChat ? (
-                                <>{participantCount} thành viên</>
-                            ) : isOnline ? (
-                                <>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                                    Đang hoạt động
-                                </>
-                            ) : (
-                                <>Offline</>
-                            )}
+                        <p className="text-xs text-muted-foreground">
+                            {isGroupChat ? `${participantCount} thành viên` : "Nhắn tin"}
                         </p>
                     </div>
                 </div>

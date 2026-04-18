@@ -207,7 +207,6 @@ export function ChatSidebar({
                                                 {name.charAt(0)}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-background" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between">
