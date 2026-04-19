@@ -73,6 +73,9 @@ interface ConfirmState {
     open: boolean;
     title: string;
     description?: string;
+    confirmText?: string;
+    cancelText?: string;
+    variant?: "default" | "destructive";
     onConfirm: () => void;
 }
 
@@ -116,6 +119,8 @@ export function ConfirmDialogContainer() {
                 open: true,
                 title: detail.title,
                 description: detail.description,
+                confirmText: detail.confirmText,
+                cancelText: detail.cancelText,
                 variant: detail.variant,
                 onConfirm: () => {
                     if (confirmCallback) confirmCallback(true);
@@ -148,6 +153,8 @@ export function ConfirmDialogContainer() {
             }}
             title={state.title}
             description={state.description}
+            confirmText={state.confirmText}
+            cancelText={state.cancelText}
             variant={state.variant}
             onConfirm={state.onConfirm}
         />
