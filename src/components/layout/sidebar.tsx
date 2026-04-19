@@ -25,6 +25,7 @@ import {
     Bell,
     ClipboardList,
     Milestone,
+    MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
