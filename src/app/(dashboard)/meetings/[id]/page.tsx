@@ -166,7 +166,9 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                                             <p className="text-sm font-semibold text-foreground">
                                                 {attendance.user.firstName} {attendance.user.lastName}
                                             </p>
-                                            <p className="text-[10px] font-medium text-muted-foreground">Mentee</p>
+                                            <p className="text-[10px] font-medium text-muted-foreground">
+                                                {attendance.user.role === "mentor" ? "Mentor" : "Mentee"}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="text-right">

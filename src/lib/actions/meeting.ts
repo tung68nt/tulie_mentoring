@@ -454,7 +454,7 @@ export async function getMeetingDetail(id: string) {
                 },
                 attendances: {
                     include: {
-                        user: { select: { firstName: true, lastName: true, avatar: true } },
+                        user: { select: { id: true, firstName: true, lastName: true, avatar: true, role: true } },
                     },
                 },
                 minutes: true,
