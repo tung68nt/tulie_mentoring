@@ -12,6 +12,7 @@ import { TaskDetailModal } from "./task-detail-modal";
 import { Task } from "./kanban-board";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { confirm } from "@/components/ui/confirm-dialog";
 
 interface TaskListViewProps {
     initialTasks: Task[];
@@ -48,11 +49,18 @@ export function TaskListView({ initialTasks }: TaskListViewProps) {
     }
 
     async function handleDelete(taskId: string) {
-        if (!confirm("Xác nhận xóa công việc?")) return;
+        const confirmed = await confirm({
+            title: "Xóa công việc",
+            description: "Bạn có chắc chắn muốn xóa công việc này?",
+            confirmText: "Xóa",
+            variant: "destructive",
+        });
+        if (!confirmed) return;
         try {
             await deleteTask(taskId);
             setTasks(tasks.filter(t => t.id !== taskId));
         } catch (error) {
+            toast.error("Đã xảy ra lỗi");
             console.error(error);
         }
     }

@@ -8,6 +8,8 @@ import { deleteReflection } from "@/lib/actions/reflection";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { blocksToText } from "@/components/ui/block-editor";
+import { toast } from "sonner";
+import { confirm } from "@/components/ui/confirm-dialog";
 import {
     Dialog,
     DialogContent,
@@ -25,11 +27,18 @@ export function ReflectionCard({ reflection, userRole }: ReflectionCardProps) {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleDelete = async () => {
-        if (!confirm("Bạn có chắc chắn muốn xóa bài thu hoạch này?")) return;
+        const confirmed = await confirm({
+            title: "Xóa bài thu hoạch",
+            description: "Bạn có chắc chắn muốn xóa bài thu hoạch này?",
+            confirmText: "Xóa",
+            variant: "destructive",
+        });
+        if (!confirmed) return;
         setIsLoading(true);
         try {
             await deleteReflection(reflection.id);
         } catch (error) {
+            toast.error("Đã xảy ra lỗi");
             console.error(error);
         } finally {
             setIsLoading(false);

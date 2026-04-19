@@ -4,6 +4,7 @@ import { useState, useTransition, useRef, useEffect } from "react";
 import { Pencil, Check, X } from "lucide-react";
 import { updateMeeting } from "@/lib/actions/meeting";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface EditableTitleProps {
     meetingId: string;
@@ -37,7 +38,7 @@ export function EditableTitle({ meetingId, title, canEdit }: EditableTitleProps)
                 router.refresh();
                 setIsEditing(false);
             } catch (error: any) {
-                alert(error.message || "Có lỗi xảy ra");
+                toast.error(error.message || "Có lỗi xảy ra");
                 setValue(title);
                 setIsEditing(false);
             }

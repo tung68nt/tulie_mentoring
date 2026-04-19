@@ -18,6 +18,7 @@ import {
 } from "@/lib/actions/daily";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { confirm } from "@/components/ui/confirm-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Habit {
@@ -160,7 +161,13 @@ export function DailyTracker() {
     };
 
     const handleDeleteHabit = async (habitId: string) => {
-        if (!confirm("Bạn có chắc chắn muốn xóa thói quen này?")) return;
+        const confirmed = await confirm({
+            title: "Xóa thói quen",
+            description: "Bạn có chắc chắn muốn xóa thói quen này?",
+            confirmText: "Xóa",
+            variant: "destructive",
+        });
+        if (!confirmed) return;
 
         try {
             await deleteHabit(habitId);

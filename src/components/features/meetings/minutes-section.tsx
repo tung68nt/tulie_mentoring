@@ -7,6 +7,7 @@ import { MinutesForm } from "./minutes-form";
 import { FileText, CheckCircle2, Send, ThumbsUp, RotateCcw } from "lucide-react";
 import { submitMinutes, approveMinutes, rejectMinutes } from "@/lib/actions/minutes";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface MinutesSectionProps {
     meetingId: string;
@@ -32,7 +33,7 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
                 await action(initialMinutes.id);
                 router.refresh();
             } catch (error: any) {
-                alert(error.message || "Có lỗi xảy ra");
+                toast.error(error.message || "Có lỗi xảy ra");
             }
         });
     };

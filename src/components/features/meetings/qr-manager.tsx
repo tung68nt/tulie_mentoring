@@ -7,6 +7,7 @@ import { Clock, RefreshCw, CheckCircle2, StopCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { checkIn, checkOut, updateMeetingStatus } from "@/lib/actions/meeting";
 import { useRouter } from "next/navigation";
+import { confirm } from "@/components/ui/confirm-dialog";
 
 interface QRManagerProps {
     meetingId: string;
@@ -53,7 +54,13 @@ export function QRManager({ meetingId, qrToken, checkInCode, expiresAt, attendan
     }, [expiresAt]);
 
     const handleFinishMeeting = async () => {
-        if (!confirm("Bạn có chắc chắn muốn kết thúc buổi họp này?")) return;
+        const confirmed = await confirm({
+            title: "Kết thúc buổi họp",
+            description: "Bạn có chắc chắn muốn kết thúc buổi họp này?",
+            confirmText: "Kết thúc",
+            variant: "destructive",
+        });
+        if (!confirmed) return;
         setLoading(true);
         try {
             await updateMeetingStatus(meetingId, "completed");

@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from "@/lib/utils";
 import { TaskDetailModal } from "./task-detail-modal";
 import { toast } from "sonner";
+import { confirm } from "@/components/ui/confirm-dialog";
 
 export interface Task {
     id: string;
@@ -76,11 +77,18 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     };
 
     const handleDelete = async (taskId: string) => {
-        if (!confirm("Bạn có chắc chắn muốn xóa công việc này?")) return;
+        const confirmed = await confirm({
+            title: "Xóa công việc",
+            description: "Bạn có chắc chắn muốn xóa công việc này?",
+            confirmText: "Xóa",
+            variant: "destructive",
+        });
+        if (!confirmed) return;
         try {
             await deleteTask(taskId);
             setTasks(tasks.filter(t => t.id !== taskId));
         } catch (error) {
+            toast.error("Đã xảy ra lỗi");
             console.error("Failed to delete task:", error);
         }
     };

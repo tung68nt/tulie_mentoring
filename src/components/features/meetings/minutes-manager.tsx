@@ -20,6 +20,7 @@ import {
     ClipboardList,
     MessageSquare,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface MeetingMinutesData {
     id: string;
@@ -166,7 +167,7 @@ function MeetingList({ meetings }: { meetings: MeetingMinutesData[] }) {
                 await action(minutesId);
                 router.refresh();
             } catch (error: any) {
-                alert(error.message || "Có lỗi xảy ra");
+                toast.error(error.message || "Có lỗi xảy ra");
             } finally {
                 setActionTarget(null);
             }

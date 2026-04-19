@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate, cn } from "@/lib/utils";
 import { BlockEditor, blocksToText } from "@/components/ui/block-editor";
 import { upsertReflection, deleteReflection } from "@/lib/actions/reflection";
+import { toast } from "sonner";
+import { confirm } from "@/components/ui/confirm-dialog";
 import {
     PenLine, Check, CheckCircle2, Clock, Save, Loader2,
     Trash2, BookOpen, Calendar, ChevronRight,
@@ -332,12 +334,19 @@ function SubmittedView({ item, userRole }: { item: MeetingItem; userRole: string
 
     const handleDelete = async () => {
         if (!item.reflectionId) return;
-        if (!confirm("Bạn có chắc chắn muốn xóa bài thu hoạch này?")) return;
+        const confirmed = await confirm({
+            title: "Xóa bài thu hoạch",
+            description: "Bạn có chắc chắn muốn xóa bài thu hoạch này?",
+            confirmText: "Xóa",
+            variant: "destructive",
+        });
+        if (!confirmed) return;
         setIsDeleting(true);
         try {
             await deleteReflection(item.reflectionId);
             router.refresh();
         } catch (error) {
+            toast.error("Đã xảy ra lỗi");
             console.error(error);
         } finally {
             setIsDeleting(false);

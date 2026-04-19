@@ -20,6 +20,8 @@ import {
 import { formatDate } from "@/lib/utils";
 import { confirmGoal } from "@/lib/actions/goal";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { confirm } from "@/components/ui/confirm-dialog";
 
 interface GoalCardProps {
     goal: any;
@@ -41,7 +43,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
             setIsUpdating(null);
             setNote("");
         } catch (err: any) {
-            alert(err.message || "Đã xảy ra lỗi");
+            toast.error(err.message || "Đã xảy ra lỗi");
             console.error(err);
         } finally {
             setIsLoading(false);
@@ -55,7 +57,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
             setIsUpdating(null);
             setNote("");
         } catch (err: any) {
-            alert(err.message || "Đã xảy ra lỗi");
+            toast.error(err.message || "Đã xảy ra lỗi");
             console.error(err);
         } finally {
             setIsLoading(false);
@@ -74,7 +76,13 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
     };
 
     const handleDelete = async () => {
-        if (confirm("Bạn có chắc chắn muốn xóa mục tiêu này?")) {
+        const confirmed = await confirm({
+            title: "Xóa mục tiêu",
+            description: "Bạn có chắc chắn muốn xóa mục tiêu này?",
+            confirmText: "Xóa",
+            variant: "destructive",
+        });
+        if (confirmed) {
             await deleteGoal(goal.id);
         }
     };
