@@ -159,6 +159,7 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
                         </p>
                     )}
                 </div>
+                )}
             </Card>
         );
     }
