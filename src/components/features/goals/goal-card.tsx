@@ -23,6 +23,7 @@ import { confirmGoal } from "@/lib/actions/goal";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { confirm } from "@/components/ui/confirm-dialog";
+import { GoalForm } from "./goal-form";
 
 interface GoalCardProps {
     goal: any;
