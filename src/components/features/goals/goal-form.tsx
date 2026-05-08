@@ -8,16 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { createGoal } from "@/lib/actions/goal";
+import { createGoal, updateGoal } from "@/lib/actions/goal";
 import { Plus, Trash2, ListChecks } from "lucide-react";
 
 interface GoalFormProps {
     mentorshipId: string;
+    initialData?: any;
     onSuccess?: () => void;
     onCancel?: () => void;
 }
 
-export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
+export function GoalForm({ mentorshipId, initialData, onSuccess, onCancel }: GoalFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -29,12 +30,16 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
     } = useForm<GoalInput>({
         resolver: zodResolver(goalSchema) as any,
         defaultValues: {
+            id: initialData?.id,
             mentorshipId,
-            category: "skill",
-            targetValue: 100,
-            currentValue: 0,
-            priority: "medium",
-            subGoals: [],
+            title: initialData?.title || "",
+            description: initialData?.description || "",
+            category: initialData?.category || "skill",
+            targetValue: initialData?.targetValue || 100,
+            currentValue: initialData?.currentValue || 0,
+            priority: initialData?.priority || "medium",
+            dueDate: initialData?.dueDate ? new Date(initialData.dueDate).toISOString().split('T')[0] as any : undefined,
+            subGoals: initialData?.subGoals || [],
         },
     });
 
@@ -48,21 +53,25 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
         setError(null);
 
         try {
-            await createGoal(data);
+            if (initialData?.id) {
+                await updateGoal(initialData.id, data);
+            } else {
+                await createGoal(data);
+            }
             if (onSuccess) onSuccess();
         } catch (err: any) {
-            setError(err.message || "Đã xảy ra lỗi khi tạo mục tiêu");
+            setError(err.message || "Đã xảy ra lỗi khi lưu mục tiêu");
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <Card className="p-6">
+        <Card className="p-6 border-2 border-primary/20 shadow-lg animate-in fade-in zoom-in-95">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                        Thông tin cơ bản
+                    <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
+                        {initialData?.id ? "Cập nhật mục tiêu" : "Thông tin cơ bản"}
                     </h3>
 
                     {error && (
@@ -106,7 +115,7 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
                     <Input
                         label="Hạn chót"
                         type="date"
-                        {...register("dueDate", { valueAsDate: true })}
+                        {...register("dueDate")}
                         error={errors.dueDate?.message}
                     />
 
@@ -122,7 +131,7 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
 
                 <div className="space-y-4 border-t pt-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <h3 className="text-lg font-bold flex items-center gap-2">
                             <ListChecks className="w-5 h-5 text-primary" />
                             Mục tiêu con (OKR Style)
                         </h3>
@@ -199,8 +208,8 @@ export function GoalForm({ mentorshipId, onSuccess, onCancel }: GoalFormProps) {
                     >
                         Hủy
                     </Button>
-                    <Button type="submit" className="flex-1 h-11" isLoading={isLoading}>
-                        Xác nhận tạo mục tiêu
+                    <Button type="submit" className="flex-1 h-11 shadow-md" isLoading={isLoading}>
+                        {initialData?.id ? "Lưu thay đổi" : "Xác nhận tạo mục tiêu"}
                     </Button>
                 </div>
             </form>

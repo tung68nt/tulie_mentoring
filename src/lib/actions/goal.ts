@@ -42,6 +42,42 @@ export async function createGoal(data: GoalInput) {
     return goal;
 }
 
+export async function updateGoal(id: string, data: GoalInput) {
+    const { userId, role } = await requireAuth();
+
+    // Verify access to this goal
+    const { goal: existingGoal } = await requireGoalAccess(id, userId, role);
+
+    const validatedData = goalSchema.parse(data);
+
+    const { subGoals, ...goalData } = validatedData;
+
+    const updatedGoal = await prisma.goal.update({
+        where: { id },
+        data: {
+            ...goalData,
+            subGoals: subGoals ? {
+                deleteMany: {}, // Simple approach: clear and recreation. For production, consider syncing.
+                create: subGoals.map(sg => ({
+                    title: sg.title,
+                    weight: sg.weight,
+                    currentValue: sg.currentValue
+                }))
+            } : undefined
+        },
+        include: { subGoals: true }
+    });
+
+    // Recalculate progress if sub-goals were updated
+    if (subGoals) {
+        await recalculateGoalProgress(id);
+    }
+
+    revalidatePath("/goals");
+    revalidatePath(`/admin/mentorships/${existingGoal.mentorshipId}`);
+    return updatedGoal;
+}
+
 async function recalculateGoalProgress(goalId: string) {
     const goal = await prisma.goal.findUnique({
         where: { id: goalId },

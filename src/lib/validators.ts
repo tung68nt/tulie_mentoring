@@ -49,6 +49,7 @@ export const subGoalSchema = z.object({
 });
 
 export const goalSchema = z.object({
+    id: z.string().optional(),
     title: z.string().min(1, "Tiêu đề không được để trống"),
     description: z.string().optional(),
     category: z.enum(["skill", "knowledge", "network", "project", "career"]),

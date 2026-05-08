@@ -15,7 +15,8 @@ import {
     Calendar,
     ChevronDown,
     ChevronUp,
-    Timer
+    Timer,
+    PenLine
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { confirmGoal } from "@/lib/actions/goal";
@@ -35,6 +36,7 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
     const [showSubGoals, setShowSubGoals] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
 
     const handleUpdate = async () => {
         setIsLoading(true);
@@ -111,6 +113,17 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
 
     const daysRemaining = getDaysRemaining();
     const hasSubGoals = goal.subGoals && goal.subGoals.length > 0;
+
+    if (isEditing) {
+        return (
+            <GoalForm
+                mentorshipId={goal.mentorshipId}
+                initialData={goal}
+                onSuccess={() => setIsEditing(false)}
+                onCancel={() => setIsEditing(false)}
+            />
+        );
+    }
 
     return (
         <Card className="group overflow-hidden rounded-xl border border-border/60 bg-background hover:shadow-md transition-all">
@@ -216,14 +229,24 @@ export function GoalCard({ goal, userRole }: GoalCardProps) {
                                 )}
 
                                 {!(userRole === "mentee" && goal.mentorConfirmed) && (userRole === "admin" || goal.creatorId === goal.creatorId) && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={handleDelete}
-                                        className="h-8 w-8 px-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
+                                    <>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setIsEditing(true)}
+                                            className="h-8 w-8 px-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                        >
+                                            <PenLine className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={handleDelete}
+                                            className="h-8 w-8 px-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </>
                                 )}
                             </div>
                         </div>
