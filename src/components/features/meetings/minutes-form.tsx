@@ -6,15 +6,16 @@ import { minutesSchema, type MinutesInput } from "@/lib/validators";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useState } from "react";
-import { createMinutes } from "@/lib/actions/minutes";
+import { createMinutes, updateMinutes } from "@/lib/actions/minutes";
 import { useRouter } from "next/navigation";
 
 interface MinutesFormProps {
     meetingId: string;
+    initialData?: any;
     onSuccess?: () => void;
 }
 
-export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
+export function MinutesForm({ meetingId, initialData, onSuccess }: MinutesFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,11 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
         resolver: zodResolver(minutesSchema) as any,
         defaultValues: {
             meetingId,
-            outcome: "productive",
+            id: initialData?.id,
+            agenda: initialData?.agenda || "",
+            keyPoints: initialData?.keyPoints || "",
+            actionItems: initialData?.actionItems || "",
+            outcome: initialData?.outcome || "productive",
         },
     });
 
@@ -36,11 +41,15 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
         setError(null);
 
         try {
-            await createMinutes(data);
+            if (initialData?.id) {
+                await updateMinutes(initialData.id, data);
+            } else {
+                await createMinutes(data);
+            }
             router.refresh();
             if (onSuccess) onSuccess();
         } catch (err: any) {
-            setError(err.message || "Đã xảy ra lỗi khi tạo biên bản");
+            setError(err.message || "Đã xảy ra lỗi khi lưu biên bản");
         } finally {
             setIsLoading(false);
         }
@@ -55,6 +64,7 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
             )}
 
             <input type="hidden" {...register("meetingId")} />
+            <input type="hidden" {...register("id")} />
 
             <div className="space-y-1.5">
                 <label className="block text-[12px] font-medium text-muted-foreground">Nội dung chính *</label>
@@ -99,9 +109,16 @@ export function MinutesForm({ meetingId, onSuccess }: MinutesFormProps) {
                 error={errors.outcome?.message}
             />
 
-            <Button type="submit" className="w-full" isLoading={isLoading}>
-                Lưu biên bản
-            </Button>
+            <div className="flex gap-2">
+                {initialData?.id && onSuccess && (
+                    <Button type="button" variant="ghost" className="flex-1" onClick={onSuccess}>
+                        Hủy
+                    </Button>
+                )}
+                <Button type="submit" className="flex-1" isLoading={isLoading}>
+                    {initialData?.id ? "Cập nhật biên bản" : "Lưu biên bản"}
+                </Button>
+            </div>
         </form>
     );
 }

@@ -72,6 +72,38 @@ export async function createMinutes(data: {
     return minutes;
 }
 
+export async function updateMinutes(id: string, data: {
+    agenda?: string;
+    keyPoints: string;
+    actionItems?: string;
+    outcome: "productive" | "average" | "needs_improvement";
+}) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const minutes = await prisma.meetingMinutes.findUnique({
+        where: { id },
+    });
+
+    if (!minutes) throw new Error("Biên bản không tồn tại");
+    if (minutes.authorId !== session.user.id) throw new Error("Chỉ tác giả mới có thể sửa biên bản");
+    if (minutes.status !== "draft") throw new Error("Chỉ có thể sửa biên bản ở trạng thái nháp");
+
+    const updated = await prisma.meetingMinutes.update({
+        where: { id },
+        data: {
+            agenda: data.agenda,
+            keyPoints: data.keyPoints,
+            actionItems: data.actionItems,
+            outcome: data.outcome,
+            updatedAt: new Date(),
+        },
+    });
+
+    revalidatePath(`/meetings/${minutes.meetingId}`);
+    return updated;
+}
+
 export async function getMinutes(meetingId: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");

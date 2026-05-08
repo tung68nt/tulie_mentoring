@@ -25,7 +25,7 @@ import {
 import { EmptyState } from "@/components/ui/empty-state";
 import {
     FileText, Link2, FormInput, Plus, Upload, CheckCircle2,
-    Clock, XCircle, AlertCircle, ExternalLink, Trash2
+    Clock, XCircle, AlertCircle, ExternalLink, Trash2, PenLine
 } from "lucide-react";
 import { toast } from "sonner";
 import { createProcedure, submitProcedure, reviewSubmission, deleteProcedure } from "@/lib/actions/procedure";
@@ -164,9 +164,9 @@ function SubmitDialog({ procedure, existingSubmission }: { procedure: any; exist
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" variant={existingSubmission?.status === "submitted" ? "outline" : "default"} className="gap-1.5">
-                    <Upload className="w-3.5 h-3.5" />
-                    {existingSubmission?.status === "submitted" ? "Nộp lại" : "Nộp"}
+                <Button size="sm" variant={existingSubmission ? "outline" : "default"} className="gap-1.5">
+                    {existingSubmission ? <PenLine className="w-3.5 h-3.5" /> : <Upload className="w-3.5 h-3.5" />}
+                    {existingSubmission ? (existingSubmission.status === "submitted" ? "Sửa bài nộp" : "Sửa bản nháp") : "Nộp bài"}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md rounded-2xl">

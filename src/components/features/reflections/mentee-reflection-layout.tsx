@@ -78,8 +78,14 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
     }, [pendingMeetings, reflections]);
 
     const [selectedId, setSelectedId] = useState<string | null>(meetings[0]?.id || null);
+    const [isEditing, setIsEditing] = useState(false);
 
     const selected = meetings.find(m => m.id === selectedId) || null;
+
+    const handleSelect = (id: string) => {
+        setSelectedId(id);
+        setIsEditing(false);
+    };
 
     const pendingCount = meetings.filter(m => m.type === "pending").length;
     const submittedCount = meetings.filter(m => m.type === "submitted").length;
@@ -111,7 +117,7 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
                                     key={item.id}
                                     item={item}
                                     isSelected={selectedId === item.id}
-                                    onClick={() => setSelectedId(item.id)}
+                                    onClick={() => handleSelect(item.id)}
                                 />
                             ))}
                         </div>
@@ -128,7 +134,7 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
                                     key={item.id}
                                     item={item}
                                     isSelected={selectedId === item.id}
-                                    onClick={() => setSelectedId(item.id)}
+                                    onClick={() => handleSelect(item.id)}
                                 />
                             ))}
                         </div>
@@ -146,20 +152,23 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
             {/* ─── RIGHT DETAIL PANEL ─── */}
             <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
                 {selected ? (
-                    selected.type === "pending" ? (
+                    selected.type === "pending" || isEditing ? (
                         <PendingEditor
-                            key={selected.meetingId}
+                            key={selected.id}
                             meetingId={selected.meetingId}
                             meetingTitle={selected.meetingTitle}
                             mentorName={selected.mentorName}
                             scheduledAt={selected.scheduledAt}
                             sessionNumber={selected.sessionNumber}
+                            initialContent={selected.content}
+                            onCancel={isEditing ? () => setIsEditing(false) : undefined}
                         />
                     ) : (
                         <SubmittedView
                             key={selected.reflectionId}
                             item={selected}
                             userRole={userRole}
+                            onEdit={() => setIsEditing(true)}
                         />
                     )
                 ) : (
@@ -235,14 +244,16 @@ function SidebarItem({ item, isSelected, onClick }: { item: MeetingItem; isSelec
 }
 
 // ─── Editor for Pending Meetings ───
-function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessionNumber }: {
+function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessionNumber, initialContent, onCancel }: {
     meetingId: string;
     meetingTitle: string;
     mentorName: string;
     scheduledAt?: string;
     sessionNumber?: number;
+    initialContent?: string;
+    onCancel?: () => void;
 }) {
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(initialContent || "");
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const router = useRouter();
@@ -296,7 +307,7 @@ function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessi
                         )}
                         <Button
                             onClick={handleSave}
-                            disabled={isSaving || !content}
+                            disabled={isSaving || !content || content === initialContent}
                             size="sm"
                             className="rounded-lg shadow-none h-8 text-xs px-3"
                         >
@@ -305,8 +316,18 @@ function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessi
                             ) : (
                                 <Save className="w-3 h-3 mr-1.5" />
                             )}
-                            {isSaving ? "Đang lưu..." : "Lưu thu hoạch"}
+                            {isSaving ? "Đang lưu..." : (initialContent ? "Cập nhật" : "Lưu thu hoạch")}
                         </Button>
+                        {onCancel && (
+                            <Button
+                                onClick={onCancel}
+                                variant="ghost"
+                                size="sm"
+                                className="rounded-lg h-8 text-xs px-3"
+                            >
+                                Hủy
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -324,7 +345,7 @@ function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessi
 }
 
 // ─── View for Submitted Reflections ───
-function SubmittedView({ item, userRole }: { item: MeetingItem; userRole: string }) {
+function SubmittedView({ item, userRole, onEdit }: { item: MeetingItem; userRole: string; onEdit: () => void }) {
     const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 
@@ -388,16 +409,27 @@ function SubmittedView({ item, userRole }: { item: MeetingItem; userRole: string
                     </div>
                     <div className="shrink-0">
                         {!(userRole === "mentee" && item.mentorConfirmed) && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/5 rounded-lg"
-                                onClick={handleDelete}
-                                disabled={isDeleting}
-                            >
-                                <Trash2 className="w-3.5 h-3.5 mr-1" />
-                                Xóa
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 text-xs text-primary hover:text-primary hover:bg-primary/5 rounded-lg"
+                                    onClick={onEdit}
+                                >
+                                    <PenLine className="w-3.5 h-3.5 mr-1" />
+                                    Sửa
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/5 rounded-lg"
+                                    onClick={handleDelete}
+                                    disabled={isDeleting}
+                                >
+                                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                                    Xóa
+                                </Button>
+                            </div>
                         )}
                     </div>
                 </div>

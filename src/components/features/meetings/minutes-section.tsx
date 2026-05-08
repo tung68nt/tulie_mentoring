@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MinutesForm } from "./minutes-form";
-import { FileText, CheckCircle2, Send, ThumbsUp, RotateCcw } from "lucide-react";
+import { FileText, CheckCircle2, Send, ThumbsUp, RotateCcw, PenLine } from "lucide-react";
 import { submitMinutes, approveMinutes, rejectMinutes } from "@/lib/actions/minutes";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -60,7 +60,15 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
                         {statusLabel}
                     </span>
                 </div>
-                <div className="space-y-4">
+
+                {showForm ? (
+                    <MinutesForm
+                        meetingId={meetingId}
+                        initialData={initialMinutes}
+                        onSuccess={() => setShowForm(false)}
+                    />
+                ) : (
+                    <div className="space-y-4">
                     {initialMinutes.keyPoints && (
                         <div className="space-y-1">
                             <p className="text-[11px] font-medium text-muted-foreground">Nội dung chính</p>
@@ -92,15 +100,27 @@ export function MinutesSection({ meetingId, minutes: initialMinutes, isMentor }:
 
                     {/* Action buttons based on role and status */}
                     {status === "draft" && !isMentor && (
-                        <Button
-                            size="sm"
-                            className="w-full"
-                            onClick={() => handleAction(submitMinutes)}
-                            disabled={isPending}
-                        >
-                            <Send className="w-3.5 h-3.5 mr-1.5" />
-                            {isPending ? "Đang nộp..." : "Nộp biên bản để duyệt"}
-                        </Button>
+                        <div className="flex gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => setShowForm(true)}
+                                disabled={isPending}
+                            >
+                                <PenLine className="w-3.5 h-3.5 mr-1.5" />
+                                Sửa
+                            </Button>
+                            <Button
+                                size="sm"
+                                className="flex-1"
+                                onClick={() => handleAction(submitMinutes)}
+                                disabled={isPending}
+                            >
+                                <Send className="w-3.5 h-3.5 mr-1.5" />
+                                {isPending ? "..." : "Nộp bài"}
+                            </Button>
+                        </div>
                     )}
 
                     {status === "draft" && isMentor && (

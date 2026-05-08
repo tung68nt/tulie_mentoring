@@ -77,6 +77,7 @@ export const feedbackSchema = z.object({
 
 // ─── Meeting Minutes ─────────────────────────────────────────────
 export const minutesSchema = z.object({
+    id: z.string().optional(),
     agenda: z.string().optional(),
     keyPoints: z.string().min(1, "Nội dung chính không được để trống"),
     actionItems: z.string().optional(),
