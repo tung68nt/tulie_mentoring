@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+A level-1 auxiliary file: chapters/dm_viettat.aux
+A level-1 auxiliary file: chapters/tomtat.aux
+A level-1 auxiliary file: chapters/ch1_lydo.aux
+A level-1 auxiliary file: chapters/ch2_cosolyluan.aux
+A level-1 auxiliary file: chapters/ch3_phanhe.aux
+A level-1 auxiliary file: chapters/ch4_uuviet.aux
+A level-1 auxiliary file: chapters/ch5_ketluan.aux
+The style file: apalike.bst
+A level-1 auxiliary file: chapters/phuluc.aux
+Database file #1: references.bib
+You've used 15 entries,
+            1935 wiz_defined-function locations,
+            553 strings with 5531 characters,
+and the built_in function-call counts, 4520 in all, are:
+= -- 421
+> -- 134
+< -- 14
++ -- 50
+- -- 40
+* -- 313
+:= -- 825
+add.period$ -- 45
+call.type$ -- 15
+change.case$ -- 85
+chr.to.int$ -- 15
+cite$ -- 15
+duplicate$ -- 209
+empty$ -- 355
+format.name$ -- 61
+if$ -- 877
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 27
+newline$ -- 78
+num.names$ -- 45
+pop$ -- 111
+preamble$ -- 1
+purify$ -- 95
+quote$ -- 0
+skip$ -- 153
+stack$ -- 0
+substring$ -- 234
+swap$ -- 15
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 66
+warning$ -- 0
+while$ -- 34
+width$ -- 0
+write$ -- 186

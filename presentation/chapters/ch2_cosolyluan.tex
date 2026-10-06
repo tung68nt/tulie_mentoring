@@ -1,0 +1,160 @@
+\chapter{CƠ SỞ LÝ LUẬN QUẢN TRỊ}
+
+Chương này trình bày các nền tảng lý thuyết quản trị khoa học được sử dụng làm cơ sở thiết kế hệ thống WebApp Mentoring IMP. Mỗi lý thuyết tương ứng với một hoặc nhiều phân hệ cốt lõi (sẽ trình bày chi tiết tại Chương~3).
+
+%% ────────────────────────────────────────────
+\section{Atomic Habits và Khoa học thay đổi hành vi}
+
+\subsection{Nguyên lý tích lũy 1\%}
+James Clear trong \textit{Atomic Habits} \citep{atomichabits2018} chứng minh rằng thay đổi nhỏ 1\% mỗi ngày, khi tích lũy qua 365 ngày, sẽ tạo ra kết quả gấp gần 38 lần so với xuất phát điểm:
+
+\begin{equation}
+  1.01^{365} \approx 37.78
+\end{equation}
+
+Ngược lại, sự suy giảm 1\% mỗi ngày sẽ khiến kết quả tiến gần về 0:
+
+\begin{equation}
+  0.99^{365} \approx 0.03
+\end{equation}
+
+Đây là nền tảng toán học cho triết lý ``rèn luyện mỗi ngày'' của IMP. Vấn đề là: làm sao để \textbf{nhìn thấy} sự tích lũy này? Nếu không trực quan hóa, Mentee rất dễ bỏ cuộc vì cảm giác ``làm mãi mà chẳng thấy kết quả''.
+
+\subsection{Bốn quy luật thay đổi hành vi}
+Clear đề xuất 4 quy luật để xây dựng thói quen tốt:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|c|L|L|L|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} STT} & \textbf{\color{white} Quy luật} & \textbf{\color{white} Giải thích} & \textbf{\color{white} Ứng dụng trong WebApp} \\ \hline
+    1 & Make it Obvious & Tín hiệu kích hoạt phải rõ ràng & Program Grid luôn hiển thị trên Dashboard \\ \hline
+    2 & Make it Attractive & Liên kết thói quen với phần thưởng & Chuỗi ngày xanh tạo cảm giác thành tựu \\ \hline
+    3 & Make it Easy & Giảm ma sát đến mức tối thiểu & Chỉ cần 30 giây tick ``Hoàn thành'' \\ \hline
+    4 & Make it Satisfying & Phần thưởng tức thì & Dopamine khi thấy ô vuông chuyển xanh \\ \hline
+  \end{tabularx}
+  \caption{Bốn quy luật Atomic Habits và ứng dụng trong WebApp IMP}
+  \captionsource{Tổng hợp từ \citet{atomichabits2018}}
+\end{table}
+
+Charles Duhigg bổ sung thêm góc nhìn về ``Vòng lặp thói quen'' (\textit{Habit Loop}): Tín hiệu (Cue) $\to$ Thói quen (Routine) $\to$ Phần thưởng (Reward) \citep{duhigg2012}. WebApp được thiết kế để mỗi ngày Mentee nhận được ``Tín hiệu'' (Dashboard nhắc nhở), thực hiện ``Thói quen'' (tick Grid, viết Diary), và nhận ``Phần thưởng'' (ô xanh, streak counter).
+
+%% ────────────────────────────────────────────
+\section{Khung 4DX -- 4 Disciplines of Execution}
+
+\subsection{Lead Measures vs. Lag Measures}
+\citet{4dx2012} phân biệt hai loại chỉ số quan trọng:
+
+\begin{itemize}
+  \item \textbf{Lag Measures} (Chỉ số kết quả): Điểm số cuối kỳ, hoàn thành mục tiêu tổng thể -- chỉ biết \textbf{kết quả} khi đã quá muộn để can thiệp.
+  \item \textbf{Lead Measures} (Chỉ số dẫn dắt): Hành động cụ thể hằng ngày/tuần -- có thể \textbf{tác động} ngay để thay đổi kết quả.
+\end{itemize}
+
+Trong bối cảnh IMP:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|L|L|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} Lag Measures (Biết muộn)} & \textbf{\color{white} Lead Measures (Biết sớm)} \\ \hline
+    Mentee hoàn thành mục tiêu cuối đợt & Mentee có tick Daily Grid hôm nay không? \\ \hline
+    Điểm đánh giá tổng kết & Mentee đã hoàn thành task tuần này chưa? \\ \hline
+    Mức độ hài lòng cuối chương trình & Mentee có viết Diary/Reflection sau họp không? \\ \hline
+  \end{tabularx}
+  \caption{Phân biệt Lead vs. Lag Measures trong IMP}
+  \captionsource{Tổng hợp từ \citet{4dx2012}}
+\end{table}
+
+WebApp tập trung đo \textbf{Lead Measures} -- cho phép Mentor can thiệp \textbf{kịp thời} trước khi vấn đề trở nên nghiêm trọng.
+
+%% ────────────────────────────────────────────
+\section{Mô hình GROW và Coaching chuyên sâu}
+
+Mô hình GROW của \citet{grow2009} cấu trúc hóa cuộc đối thoại Mentoring thành 4 giai đoạn:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|c|l|L|L|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} Bước} & \textbf{\color{white} Tên} & \textbf{\color{white} Câu hỏi cốt lõi} & \textbf{\color{white} Công cụ WebApp} \\ \hline
+    G & Goal & ``Mục tiêu của em là gì?'' & Goal Management \\ \hline
+    R & Reality & ``Hiện tại em đang ở đâu?'' & Automated Report, Program Grid \\ \hline
+    O & Options & ``Có những cách nào để đạt được?'' & Meeting Lab + Wiki Resources \\ \hline
+    W & Will & ``Em cam kết sẽ làm gì?'' & Reflection Studio \\ \hline
+  \end{tabularx}
+  \caption{Ánh xạ mô hình GROW với công cụ trên WebApp IMP}
+  \captionsource{Tổng hợp từ \citet{grow2009}}
+\end{table}
+
+%% ────────────────────────────────────────────
+\section{Tự chủ, Thành thạo và Mục đích (Pink, 2009)}
+
+Daniel Pink trong \textit{Drive} \citep{pink2009} chỉ ra rằng động lực nội tại được thúc đẩy bởi 3 yếu tố:
+\begin{itemize}
+    \item \textbf{Autonomy} (Tự chủ): Mặc dù có quy trình, Mentee vẫn được tự chủ trong việc đặt Goal và chọn Task.
+    \item \textbf{Mastery} (Thành thạo): Thanh tiến độ Goal và Heatmap là bằng chứng rõ nhất cho sự thành thạo dần dần.
+    \item \textbf{Purpose} (Mục đích): Việc liên kết Task hằng ngày với Goal lớn giúp Mentee thấy được ý nghĩa (Why) của từng hành động nhỏ.
+\end{itemize}
+
+%% ────────────────────────────────────────────
+\section{Học tập trải nghiệm (Kolb) và Phản tư (Reflection)}
+
+David Kolb \citep{kolb1984} đề xuất chu kỳ 4 bước:
+
+\begin{enumerate}
+  \item \textbf{Concrete Experience} (Trải nghiệm thực tế): Mentee thực hiện Task.
+  \item \textbf{Reflective Observation} (Quan sát phản tư): Mentee viết Diary/Reflection.
+  \item \textbf{Abstract Conceptualization} (Đúc kết khái quát): Mentor hướng dẫn rút ra bài học.
+  \item \textbf{Active Experimentation} (Thử nghiệm tích cực): Áp dụng bài học cho Task tiếp theo.
+\end{enumerate}
+
+Thiếu bước 2 (Reflection), tri thức sẽ không được ``đóng gói'' và dễ dàng trôi đi. WebApp IMP đóng vai trò là một \textbf{Reflection Studio} buộc Mentee phải dừng lại và suy ngẫm sau mỗi cột mốc.
+
+%% ────────────────────────────────────────────
+\section{Management by Exception (Quản trị theo ngoại lệ)}
+
+Theo \citet{mbe1961}, nhà quản lý hay Mentor hiệu quả chỉ nên can thiệp khi có sự sai lệch so với kế hoạch (đèn đỏ). WebApp hiện thực hóa điều này thông qua:
+\begin{itemize}
+    \item \textbf{Automatic Alerts}: Hệ thống tự gắn cờ các Mentees đang trì trệ.
+    \item \textbf{Visual Heatmap}: Mentor chỉ cần lướt mắt qua là biết ai đang ổn, ai đang cần hỗ trợ.
+\end{itemize}
+
+%% ────────────────────────────────────────────
+\section{Tổng hợp khung lý luận -- Ánh xạ Lý thuyết vào Phân hệ}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    theory/.style={draw=pcyan!60, fill=pcyan!4, rounded corners=12pt,
+                   text width=4.5cm, minimum height=2.2cm, align=center,
+                   font=\scriptsize},
+    pillar/.style={draw=pblue, fill=pblue, text=white, rounded corners=12pt,
+                   text width=3.5cm, minimum height=1.8cm, align=center,
+                   font=\scriptsize\bfseries},
+    mapline/.style={arrow, shorten >=12pt, shorten <=12pt}
+  ]
+    %% Theories (left)
+    \node[theory] (T1) at (0, 4.5) {\textbf{Atomic Habits / Habit Loop}\\James Clear, Charles Duhigg\\Tập trung vào sự thay đổi 1\%\\và vòng lặp Cue-Routine-Reward};
+    \node[theory] (T2) at (0, 1.5) {\textbf{OKRs / 4DX / Drive}\\John Doerr, Daniel Pink\\Quản trị mục tiêu quan trọng\\và động lực nội tại};
+    \node[theory] (T3) at (0,-1.5) {\textbf{GROW / Kolb / SDT}\\John Whitmore, David Kolb\\Chu kỳ học tập trải nghiệm\\và phương pháp coaching};
+    \node[theory] (T4) at (0,-4.5) {\textbf{MBE / Senge}\\Lester Bittel, Peter Senge\\Quản trị theo ngoại lệ\\trong tổ chức học tập};
+
+    %% Pillars (right)
+    \node[pillar] (P1) at (8, 4.5) {Phân hệ 1\\Kỷ luật tự thân\\(Habit Engine)};
+    \node[pillar] (P2) at (8, 1.5) {Phân hệ 2\\Thực thi mục tiêu\\(Execution Pillar)};
+    \node[pillar] (P3) at (8,-1.5) {Phân hệ 3\\Kết nối và Đồng hành\\(Connection Layer)};
+    \node[pillar] (P4) at (8,-4.5) {Phân hệ 4\\Trí tuệ hệ thống\\(Insight Hub)};
+
+    %% Arrows
+    \draw[mapline] (T1.east) -- (P1.west);
+    \draw[mapline] (T2.east) -- (P2.west);
+    \draw[mapline] (T3.east) -- (P3.west);
+    \draw[mapline] (T4.east) -- (P4.west);
+
+    %% Labels
+    \node[font=\footnotesize\bfseries, text=pgray] at (0,6.5) {LÝ THUYẾT QUẢN TRỊ KINH ĐIỂN};
+    \node[font=\footnotesize\bfseries, text=pgray] at (8,6.5) {PHÂN HỆ HỆ THỐNG KỸ THUẬT SỐ};
+  \end{tikzpicture}
+  \caption{Mô hình ánh xạ Cơ sở lý luận Quản trị vào Kiến trúc WebApp IMP}
+  \captionsource{Tulie Tech Research, 2026}
+\end{figure}

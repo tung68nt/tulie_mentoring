@@ -1,0 +1,96 @@
+\babel@toc {vietnamese}{}\relax 
+\contentsline {chapter}{Danh mục các từ viết tắt}{iv}{chapter*.2}%
+\contentsline {chapter}{DANH MỤC HÌNH}{v}{section*.3}%
+\contentsline {chapter}{DANH MỤC BẢNG}{v}{section*.5}%
+\contentsline {chapter}{Tóm tắt dự án}{vii}{chapter*.7}%
+\contentsline {chapter}{\numberline {1}LÝ DO XÂY DỰNG HỆ THỐNG}{1}{chapter.12}%
+\contentsline {section}{\numberline {1.1}Bối cảnh chương trình IMP}{1}{section.13}%
+\contentsline {section}{\numberline {1.2}Nhóm vấn đề 1: Phân mảnh công cụ (Tool Fragmentation)}{1}{section.15}%
+\contentsline {subsection}{\numberline {1.2.1}Hiện trạng}{1}{subsection.16}%
+\contentsline {subsection}{\numberline {1.2.2}Hệ quả của sự phân mảnh}{2}{subsection.18}%
+\contentsline {section}{\numberline {1.3}Nhóm vấn đề 2: Mentor thiếu dữ liệu để ra quyết định}{2}{section.19}%
+\contentsline {subsection}{\numberline {1.3.1}Pain Point cụ thể}{2}{subsection.20}%
+\contentsline {subsection}{\numberline {1.3.2}Phân tích gốc rễ}{3}{subsection.22}%
+\contentsline {section}{\numberline {1.4}Nhóm vấn đề 3: Chi phí và sự không phù hợp của SaaS}{3}{section.23}%
+\contentsline {subsection}{\numberline {1.4.1}Chi phí license}{3}{subsection.24}%
+\contentsline {subsection}{\numberline {1.4.2}Sự không phù hợp về quy trình}{4}{subsection.26}%
+\contentsline {section}{\numberline {1.5}Giải pháp: WebApp tự xây dựng (Home-grown Solution)}{4}{section.27}%
+\contentsline {chapter}{\numberline {2}CƠ SỞ LÝ LUẬN QUẢN TRỊ}{5}{chapter.29}%
+\contentsline {section}{\numberline {2.1}Atomic Habits và Khoa học thay đổi hành vi}{5}{section.30}%
+\contentsline {subsection}{\numberline {2.1.1}Nguyên lý tích lũy 1\%}{5}{subsection.31}%
+\contentsline {subsection}{\numberline {2.1.2}Bốn quy luật thay đổi hành vi}{5}{subsection.34}%
+\contentsline {section}{\numberline {2.2}Khung 4DX -- 4 Disciplines of Execution}{6}{section.36}%
+\contentsline {subsection}{\numberline {2.2.1}Lead Measures vs. Lag Measures}{6}{subsection.37}%
+\contentsline {section}{\numberline {2.3}Mô hình GROW và Coaching chuyên sâu}{7}{section.39}%
+\contentsline {section}{\numberline {2.4}Tự chủ, Thành thạo và Mục đích (Pink, 2009)}{7}{section.41}%
+\contentsline {section}{\numberline {2.5}Học tập trải nghiệm (Kolb) và Phản tư (Reflection)}{8}{section.42}%
+\contentsline {section}{\numberline {2.6}Management by Exception (Quản trị theo ngoại lệ)}{8}{section.47}%
+\contentsline {section}{\numberline {2.7}Tổng hợp khung lý luận -- Ánh xạ Lý thuyết vào Phân hệ}{9}{section.48}%
+\contentsline {chapter}{\numberline {3}CÁC PHÂN HỆ CỦA HỆ THỐNG}{10}{chapter.50}%
+\contentsline {section}{\numberline {3.1}Phân hệ 1: Kỷ luật tự thân (The Habit Engine)}{10}{section.51}%
+\contentsline {subsection}{\numberline {3.1.1}Cơ sở lý thuyết}{10}{subsection.52}%
+\contentsline {subsection}{\numberline {3.1.2}Pain Point sâu sắc tại IMP}{10}{subsection.53}%
+\contentsline {subsection}{\numberline {3.1.3}Giải pháp: Công cụ trong phân hệ}{11}{subsection.54}%
+\contentsline {subsection}{\numberline {3.1.4}Gợi ý sử dụng để đạt hiệu quả tối đa}{11}{subsection.56}%
+\contentsline {section}{\numberline {3.2}Phân hệ 2: Thực thi mục tiêu (The Execution Pillar)}{11}{section.59}%
+\contentsline {subsection}{\numberline {3.2.1}Cơ sở lý thuyết}{11}{subsection.60}%
+\contentsline {subsection}{\numberline {3.2.2}Pain Point sâu sắc tại IMP}{11}{subsection.61}%
+\contentsline {subsection}{\numberline {3.2.3}Giải pháp: Công cụ trong phân hệ}{12}{subsection.62}%
+\contentsline {subsection}{\numberline {3.2.4}Gợi ý sử dụng để đạt hiệu quả tối đa}{12}{subsection.64}%
+\contentsline {section}{\numberline {3.3}Phân hệ 3: Kết nối và Đồng hành (The Connection Layer)}{12}{section.68}%
+\contentsline {subsection}{\numberline {3.3.1}Cơ sở lý thuyết}{12}{subsection.69}%
+\contentsline {subsection}{\numberline {3.3.2}Pain Point sâu sắc tại IMP}{13}{subsection.70}%
+\contentsline {subsection}{\numberline {3.3.3}Giải pháp: Công cụ trong phân hệ}{13}{subsection.71}%
+\contentsline {subsection}{\numberline {3.3.4}Gợi ý sử dụng để đạt hiệu quả tối đa}{13}{subsection.73}%
+\contentsline {section}{\numberline {3.4}Phân hệ 4: Trí tuệ hệ thống (The Insight Hub)}{13}{section.74}%
+\contentsline {subsection}{\numberline {3.4.1}Cơ sở lý thuyết}{13}{subsection.75}%
+\contentsline {subsection}{\numberline {3.4.2}Pain Point sâu sắc tại IMP}{13}{subsection.76}%
+\contentsline {subsection}{\numberline {3.4.3}Giải pháp: Công cụ trong phân hệ}{14}{subsection.77}%
+\contentsline {section}{\numberline {3.5}Kiến trúc tổng quan và Luồng dữ liệu}{15}{section.79}%
+\contentsline {section}{\numberline {3.6}Kịch bản ví dụ: Một tuần rèn luyện rực rỡ}{15}{section.81}%
+\contentsline {chapter}{\numberline {4}HƯỚNG DẪN SỬ DỤNG HỆ THỐNG (USER GUIDE)}{17}{chapter.87}%
+\contentsline {section}{\numberline {4.1}Tổng quan luồng tương tác (The IMP Workflow)}{17}{section.88}%
+\contentsline {section}{\numberline {4.2}Dành cho Mentee: Quy trình rèn luyện kỷ luật}{17}{section.95}%
+\contentsline {subsection}{\numberline {4.2.1}Bảng điều khiển cá nhân (Personal Dashboard)}{17}{subsection.96}%
+\contentsline {subsection}{\numberline {4.2.2}Quản lý Thực thi (Goal \& Task Management)}{18}{subsection.97}%
+\contentsline {subsection}{\numberline {4.2.3}Phản tư hằng ngày và hằng tuần}{18}{subsection.98}%
+\contentsline {section}{\numberline {4.3}Dành cho Mentor: Quản trị theo dữ liệu (Data-Driven)}{18}{section.99}%
+\contentsline {subsection}{\numberline {4.3.1}Giám sát tiến độ (Mentee Tracking)}{18}{subsection.100}%
+\contentsline {subsection}{\numberline {4.3.2}Điều phối buổi họp (Meeting Management)}{18}{subsection.101}%
+\contentsline {section}{\numberline {4.4}Kết nối Cộng đồng (Social Hub \& Chat Center)}{18}{section.102}%
+\contentsline {section}{\numberline {4.5}Đánh giá, Xếp hạng và Lưu trữ (Ranking \& Storage)}{19}{section.103}%
+\contentsline {chapter}{\numberline {5}SỰ ƯU VIỆT SO VỚI CÁC CÔNG CỤ HIỆN CÓ}{20}{chapter.104}%
+\contentsline {section}{\numberline {5.1}Bảng so sánh tổng quan}{20}{section.105}%
+\contentsline {section}{\numberline {5.2}Phân tích sâu: Notion}{20}{section.107}%
+\contentsline {subsection}{\numberline {5.2.1}Ưu điểm}{20}{subsection.108}%
+\contentsline {subsection}{\numberline {5.2.2}Hạn chế khi áp dụng cho IMP}{20}{subsection.109}%
+\contentsline {section}{\numberline {5.3}Phân tích sâu: Trello}{21}{section.110}%
+\contentsline {subsection}{\numberline {5.3.1}Ưu điểm}{21}{subsection.111}%
+\contentsline {subsection}{\numberline {5.3.2}Hạn chế khi áp dụng cho IMP}{21}{subsection.112}%
+\contentsline {section}{\numberline {5.4}Phân tích sâu: Google Sheets/Excel}{21}{section.113}%
+\contentsline {subsection}{\numberline {5.4.1}Ưu điểm}{21}{subsection.114}%
+\contentsline {subsection}{\numberline {5.4.2}Hạn chế khi áp dụng cho IMP}{21}{subsection.115}%
+\contentsline {section}{\numberline {5.5}Điểm khác biệt cốt lõi: ``Opinionated Design''}{21}{section.116}%
+\contentsline {section}{\numberline {5.6}Bốn giá trị gia tăng cốt lõi}{22}{section.118}%
+\contentsline {chapter}{\numberline {6}CHIA SẺ: MENTORING TRONG KỶ NGUYÊN AI \& VIBE CODE}{23}{chapter.120}%
+\contentsline {section}{\numberline {6.1}Lời tự sự của ``Mentor trẻ nhất'' sau 3 mùa đồng hành}{23}{section.121}%
+\contentsline {section}{\numberline {6.2}``Trending Vibe Code'': Khi tư duy quan trọng hơn cú pháp}{23}{section.122}%
+\contentsline {section}{\numberline {6.3}Hệ sinh thái AI trong vận hành và phát triển}{23}{section.123}%
+\contentsline {subsection}{\numberline {6.3.1}AI trong Marketing (Làm nhiều hơn với ít hơn)}{23}{subsection.124}%
+\contentsline {subsection}{\numberline {6.3.2}AI trong Quản trị dự án (Chuyên nghiệp hóa dòng chảy)}{24}{subsection.125}%
+\contentsline {subsection}{\numberline {6.3.3}AI trong Phát triển bản thân (Tư duy của một ``Trainee'')}{24}{subsection.126}%
+\contentsline {section}{\numberline {6.4}Chiến lược Mentoring dành cho Mentor trẻ}{24}{section.127}%
+\contentsline {chapter}{\numberline {7}KẾT LUẬN VÀ KIẾN NGHỊ}{25}{chapter.131}%
+\contentsline {section}{\numberline {7.1}Tổng kết dự án}{25}{section.132}%
+\contentsline {subsection}{\numberline {7.1.1}Tóm tắt vấn đề}{25}{subsection.133}%
+\contentsline {subsection}{\numberline {7.1.2}Cơ sở lý luận}{25}{subsection.137}%
+\contentsline {subsection}{\numberline {7.1.3}Giải pháp}{26}{subsection.138}%
+\contentsline {section}{\numberline {7.2}Kết quả đạt được}{26}{section.140}%
+\contentsline {section}{\numberline {7.3}Tầm nhìn phát triển giai đoạn tiếp theo}{26}{section.142}%
+\contentsline {section}{\numberline {7.4}Kiến nghị triển khai}{27}{section.149}%
+\contentsline {subsection}{\numberline {7.4.1}Đối với dàn Mentor}{27}{subsection.150}%
+\contentsline {subsection}{\numberline {7.4.2}Đối với Mentee}{27}{subsection.155}%
+\contentsline {subsection}{\numberline {7.4.3}Đối với Ban điều hành chương trình IMP}{27}{subsection.161}%
+\contentsline {section}{\numberline {7.5}Lời kết}{28}{section.166}%
+\contentsline {chapter}{Tài liệu tham khảo}{29}{section.166}%
+\contentsline {chapter}{Phụ lục}{30}{chapter*.168}%

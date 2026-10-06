@@ -1,0 +1,121 @@
+\chapter{KẾT LUẬN VÀ KIẾN NGHỊ}
+
+\section{Tổng kết dự án}
+Tài liệu này đã trình bày quá trình nghiên cứu, thiết kế và triển khai WebApp quản trị Mentoring cho chương trình IMP (ISME Mentoring Program) thuộc Viện Đào tạo Quốc tế -- Đại học Kinh tế Quốc dân.
+
+\subsection{Tóm tắt vấn đề}
+Chương trình IMP đã gặp phải 3 nhóm vấn đề lớn:
+\begin{enumerate}
+  \item \textbf{Phân mảnh công cụ}: Mentee phải sử dụng 4--6 nền tảng rời rạc, gây mệt mỏi và mất dữ liệu.
+  \item \textbf{Mentor thiếu insight}: Không có ``bức tranh toàn cảnh'', mất thời gian cho ``hỏi bài''.
+  \item \textbf{Chi phí và sự không phù hợp}: Các SaaS quốc tế tốn phí và không tối ưu cho quy trình IMP.
+\end{enumerate}
+
+\subsection{Cơ sở lý luận}
+Hệ thống được thiết kế dựa trên nền tảng khoa học quản trị vững chắc:
+\begin{itemize}
+  \item Atomic Habits và Habit Loop \citep{atomichabits2018, duhigg2012}
+  \item 4 Disciplines of Execution \citep{4dx2012}
+  \item OKRs \citep{okrs2018}
+  \item Mô hình GROW \citep{grow2009}
+  \item Self-Determination Theory \citep{ryan2000}
+  \item Experiential Learning Cycle \citep{kolb1984}
+  \item Loss Aversion \citep{kahneman1979}
+  \item Deliberate Practice \citep{ericsson2016}
+  \item Management by Exception \citep{mbe1961}
+  \item Learning Organization \citep{senge2006}
+\end{itemize}
+
+\subsection{Giải pháp}
+WebApp IMP được cấu trúc thành \textbf{4 phân hệ cốt lõi}:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|c|l|X|X|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} PH} & \textbf{\color{white} Tên} & \textbf{\color{white} Công cụ chính} & \textbf{\color{white} Giá trị} \\ \hline
+    1 & Kỷ luật & Program Grid, Daily Diary, Streak & Trực quan hóa sự rèn luyện \\ \hline
+    2 & Thực thi & Goals, Tasks, OKRs & Biến tầm nhìn thành hành động \\ \hline
+    3 & Kết nối & Calendar, Check-in, Reflection & Tối ưu đối thoại Mentoring \\ \hline
+    4 & Trí tuệ & Dashboard, Reports, Wiki & Ra quyết định dựa trên dữ liệu \\ \hline
+  \end{tabularx}
+  \caption{Tóm tắt 4 phân hệ và giá trị cốt lõi}
+  \captionsource{Tulie Tech Research, 2026}
+\end{table}
+
+%% ────────────────────────────────────────────
+\section{Kết quả đạt được}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|l|X|X|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} Tiêu chí} & \textbf{\color{white} Trước WebApp} & \textbf{\color{white} Sau WebApp} \\ \hline
+    Thời gian ``hỏi bài'' & 30--50\% buổi họp & 0\% (Report có sẵn) \\ \hline
+    Mentor đánh giá kỷ luật & Hỏi miệng, cảm tính & 5 giây nhìn Heatmap \\ \hline
+    Chi phí license & 36--108 triệu/năm (SaaS) & 0 đồng \\ \hline
+    Số công cụ phải dùng & 4--6 nền tảng rời rạc & 1 WebApp duy nhất \\ \hline
+    Tri thức buổi họp & Mất theo thời gian & Lưu trữ vĩnh viễn (Portfolio) \\ \hline
+    Ngôn ngữ giao diện & Tiếng Anh (SaaS quốc tế) & Tiếng Việt 100\% \\ \hline
+  \end{tabularx}
+  \caption{So sánh kết quả trước và sau khi triển khai WebApp}
+  \captionsource{Tulie Tech Research, 2026}
+\end{table}
+
+%% ────────────────────────────────────────────
+\section{Tầm nhìn phát triển giai đoạn tiếp theo}
+
+\begin{enumerate}
+  \item \textbf{AI-Powered Insights}: Phân tích tự động ``điểm rơi năng lượng'' của Mentee dựa trên dữ liệu Daily Grid và Diary. Tự động cảnh báo Mentor trước khi Mentee ``đuối''.
+  \item \textbf{Mobile-First Optimization}: Tối ưu giao diện cho điện thoại, để Mentor có thể check Dashboard bất kỳ lúc nào.
+  \item \textbf{Whiteboard Integration}: Bảng trắng cộng tác trực tuyến trong buổi họp.
+  \item \textbf{Wiki mở rộng}: Kho tri thức ``vĩnh cửu'' (Evergreen Knowledge). Mentor mới tự onboard từ Wiki.
+  \item \textbf{Gamification}: Thêm badges, leaderboard, và challenges để tăng tính cạnh tranh lành mạnh giữa Mentees.
+  \item \textbf{Cross-Cycle Analytics}: So sánh hiệu quả giữa các đợt Mentoring để cải tiến chương trình liên tục.
+\end{enumerate}
+
+%% ────────────────────────────────────────────
+\section{Kiến nghị triển khai}
+
+\subsection{Đối với dàn Mentor}
+\begin{enumerate}
+  \item Dành 15 phút trải nghiệm Dashboard và Reports trước buổi họp đầu tiên.
+  \item Thay đổi thói quen: mở WebApp Reports \textit{trước khi} bước vào buổi họp, thay vì hỏi ``Em tuần qua làm gì?''
+  \item Gửi phản hồi cụ thể qua hệ thống Ticket/Feedback để đội kỹ thuật cải tiến liên tục.
+  \item Khuyến khích (hoặc yêu cầu) Mentee viết Reflection sau \textit{mỗi} buổi họp.
+\end{enumerate}
+
+\subsection{Đối với Mentee}
+\begin{enumerate}
+  \item Tick Daily Grid mỗi ngày -- ``Don't break the chain''. Set alarm 21:00.
+  \item Viết Daily Diary tối thiểu 2--3 dòng -- không cần dài, cần \textbf{đều}.
+  \item Cập nhật Task progress \textit{ngay khi hoàn thành}, không hẹn cuối tuần.
+  \item Viết Reflection \textit{trong vòng 24 giờ} sau buổi họp (khi ký ức còn tươi).
+  \item Tận hưởng cảm giác ``thanh tiến độ nhảy lên'' -- đó là bằng chứng sự nỗ lực.
+\end{enumerate}
+
+\subsection{Đối với Ban điều hành chương trình IMP}
+\begin{enumerate}
+  \item Tổ chức buổi onboarding (30 phút) hướng dẫn sử dụng WebApp cho toàn bộ Mentor và Mentee.
+  \item Thiết lập quy tắc: ``Không có Reflection, không có buổi họp kế tiếp.''
+  \item Sử dụng Report cuối đợt để đánh giá hiệu quả chương trình một cách minh bạch, dựa trên dữ liệu.
+  \item Xem xét mở rộng áp dụng cho các khóa Mentoring tiếp theo.
+\end{enumerate}
+
+%% ────────────────────────────────────────────
+\section{Lời kết}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node[draw=pblue!30, fill=pblue!3, rounded corners=12pt, 
+          text width=12cm, align=center, inner sep=16pt,
+          font=\normalsize] {
+      \textit{``Chúng ta không xây dựng thêm một công cụ\\
+      để mọi người bận rộn hơn.\\[6pt]
+      Chúng ta xây dựng một trợ lý số để Mentor\\
+      \textbf{nhàn hơn} trong quản lý\\
+      và \textbf{sâu sắc hơn} trong đồng hành.''}\\[8pt]
+      --- Dàn Kỹ thuật IMP, 2026
+    };
+  \end{tikzpicture}
+\end{center}

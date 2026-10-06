@@ -1,0 +1,188 @@
+\chapter{CÁC PHÂN HỆ CỦA HỆ THỐNG}
+WebApp Mentoring IMP được cấu trúc thành 4 phân hệ (Pillars), mỗi phân hệ giải quyết một nhóm nhu cầu cốt lõi. Cụm phân hệ hoạt động như một hệ điều hành (OS) rèn luyện con người, nơi dữ liệu tự động chảy từ hành động hằng ngày đến báo cáo tổng hợp.
+
+%% ════════════════════════════════════════════
+\section{Phân hệ 1: Kỷ luật tự thân (The Habit Engine)}
+
+\subsection{Cơ sở lý thuyết}
+\begin{itemize}
+  \item \textbf{Atomic Habits} \citep{atomichabits2018}: Tích lũy 1\% mỗi ngày.
+  \item \textbf{Habit Loop} \citep{duhigg2012}: Tín hiệu (Cue) $\to$ Thói quen (Routine) $\to$ Phần thưởng (Reward).
+  \item \textbf{Loss Aversion} \citep{kahneman1979}: Con người sợ mất đi thành quả hiện tại hơn là mong muốn đạt được thành quả mới.
+  \item \textbf{Peak-End Rule}: Trải nghiệm được đánh giá dựa trên thời điểm đỉnh cao và thời điểm kết thúc.
+\end{itemize}
+
+\subsection{Pain Point sâu sắc tại IMP}
+Trong các chương trình Mentoring truyền thống, việc duy trì động lực (momentum) là khó khăn lớn nhất. Mentee thường rơi vào trạng thái ``nguội lạnh'' sau giai đoạn trăng mật ( honeymoon phase). Mentor không có cách nào biết Mentee đang dừng bước cho đến khi quá muộn.
+\textit{Hậu quả}: Buổi gặp mặt trở nên gượng gạo vì Mentee không có gì để báo cáo, và Mentor cảm thấy mình đang bị lãng phí thời gian.
+
+\subsection{Giải pháp: Công cụ trong phân hệ}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|L|L|L|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} Công cụ} & \textbf{\color{white} Mô tả} & \textbf{\color{white} Nguyên lý thiết kế} \\ \hline
+    \textbf{Program Grid} & Ma trận ô vuông 7x4 hoặc 30x12, tick xanh/xám & Trực quan hóa tiến độ (Visual cues) \\ \hline
+    \textbf{Daily Diary} & Nhật ký ngắn (micro-journaling) mỗi ngày & Phản tư sâu (Deep reflection) \\ \hline
+    \textbf{Streak Counter} & Hiển thị số ngày liên tiếp & Hiệu ứng ``Đừng làm đứt xích'' (Seinfeld Strategy) \\ \hline
+    \textbf{Morning Brief} & Thông báo nhắc nhở đầu ngày & Cue (Tín hiệu) trong vòng lặp thói quen \\ \hline
+  \end{tabularx}
+  \caption{Bộ công cụ Phân hệ 1 và nguyên lý thiết kế hành vi}
+  \captionsource{Tulie Tech Research, 2026}
+\end{table}
+
+\subsection{Gợi ý sử dụng để đạt hiệu quả tối đa}
+\begin{enumerate}
+    \item \textbf{Dành cho Mentee}: Đừng cố gắng viết Diary quá dài. Hãy áp dụng quy tắc 2 phút: nếu hành động tốn dưới 2 phút, hãy làm ngay. Việc tick Grid chỉ tốn 5 giây, hãy làm nó ngay sau khi thức dậy hoặc trước khi đi ngủ để neo (anchor) thói quen.
+    \item \textbf{Dành cho Mentor}: Đừng chỉ dùng Grid để kiểm soát. Hãy dùng nó để \textbf{thấu cảm}. Nếu thấy Mentee có chuỗi ngày xám, hãy bắt đầu buổi họp bằng: ``Anh thấy em có một tuần hơi khó khăn đúng không? Có chuyện gì đang xảy ra làm cản trở em vậy?''. Điều này tạo ra sự kết nối (Relatedness) \citep{ryan2000}.
+\end{enumerate}
+
+%% ════════════════════════════════════════════
+\section{Phân hệ 2: Thực thi mục tiêu (The Execution Pillar)}
+
+\subsection{Cơ sở lý thuyết}
+\begin{itemize}
+  \item \textbf{OKRs} \citep{okrs2018}: Objectives and Key Results.
+  \item \textbf{4DX} \citep{4dx2012}: The 4 Disciplines of Execution.
+  \item \textbf{Eisenhower Matrix}: Phân loại ưu tiên Quan trọng/Khẩn cấp.
+\end{itemize}
+
+\subsection{Pain Point sâu sắc tại IMP}
+Mentee thường bị sa lầy vào các việc vặt (urgent but not important) và bỏ quên các mục tiêu chiến lược (WIGs). Dữ liệu mục tiêu thường nằm trong file Excel/PDF tĩnh, không có sự liên kết sống với hành động hằng ngày.
+
+\subsection{Giải pháp: Công cụ trong phân hệ}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|L|L|L|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} Công cụ} & \textbf{\color{white} Mô tả} & \textbf{\color{white} Giá trị} \\ \hline
+    \textbf{Goal Board} & Hiển thị các mục tiêu lớn với thanh tiến độ \% & Giữ sự tập trung (Focus) \\ \hline
+    \textbf{Gantt Chart} & Trực quan hóa lộ trình thực hiện theo thời gian & Quản trị tiến độ chuyên nghiệp \\ \hline
+    \textbf{Task Master} & Danh sách nhiệm vụ tuần gắn liền với Goal & Chuyển hóa chiến lược thành thực thi \\ \hline
+    \textbf{Priority Tags} & Gắn nhãn mức độ ưu tiên & Áp dụng nguyên lý Pareto 80/20 \\ \hline
+    \textbf{Progress Auto-Sync} & Tự động cập nhật Goal \% khi hoàn thành Task & Phần thưởng tức thì (Immediate Reward) \\ \hline
+  \end{tabularx}
+  \caption{Bộ công cụ Phân hệ 2 và cơ chế thực thi (Cập nhật tính năng Gantt)}
+  \captionsource{Tulie Tech Research, 2026}
+\end{table}
+
+\subsection{Gợi ý sử dụng để đạt hiệu quả tối đa}
+\begin{enumerate}
+    \item \textbf{Xác định WIG}: Chỉ nên có tối đa 2--3 mục tiêu cực kỳ quan trọng mỗi đợt.
+    \item \textbf{Break-down}: Mỗi Goal phải được chia nhỏ thành ít nhất 5--10 tasks cụ thể. Một task không nên kéo dài quá 3 ngày.
+    \item \textbf{Review kỹ thuật}: Mentor nên kiểm tra xem các task của Mentee có thực sự là ``Lead Measures'' (những việc tác động đến kết quả) hay chỉ là ``Lag Measures'' (kết quả mong muốn).
+\end{enumerate}
+
+%% ════════════════════════════════════════════
+\section{Phân hệ 3: Kết nối và Đồng hành (The Connection Layer)}
+
+\subsection{Cơ sở lý thuyết}
+\begin{itemize}
+  \item \textbf{Mô hình GROW} \citep{grow2009}.
+  \item \textbf{Psychological Safety}: Niềm tin rằng mình sẽ không bị trừng phạt khi thừa nhận sai lầm.
+  \item \textbf{Active Listening}: Lắng nghe chủ động.
+\end{itemize}
+
+\subsection{Pain Point sâu sắc tại IMP}
+Sự kết nối giữa Mentor và Mentee thường bị đứt quãng giữa các buổi họp. Mentee cảm thấy cô đơn trên hành trình rèn luyện, còn Mentor cảm thấy mình chỉ là người ``kiểm tra bài cũ''. Tri thức từ các buổi đối thoại không được đúc kết (harvesting).
+
+\subsection{Giải pháp: Công cụ trong phân hệ}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|L|L|L|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} Công cụ} & \textbf{\color{white} Mô tả} & \textbf{\color{white} Vai trò} \\ \hline
+    \textbf{Social Hub} & Bảng tin nội bộ chia sẻ tri thức và cảm hứng & Gắn kết cộng đồng \\ \hline
+    \textbf{Chat Center} & Nhắn tin tức thời 1-1 và Group Mentorship & Trao đổi real-time \\ \hline
+    \textbf{Meeting Lab} & Đặt lịch, ghi biên bản cuộc họp chuyên nghiệp & Chuẩn hóa tương tác \\ \hline
+    \textbf{Check-in 360} & Mentee cập nhật trạng thái trước họp & Tiết kiệm 30 phút ``hỏi bài'' \\ \hline
+    \textbf{Reflection Studio} & Nơi viết thu hoạch bài học sau họp & Đóng gói tri thức \\ \hline
+  \end{tabularx}
+  \caption{Bộ công cụ Phân hệ 3 - Kết nối \& Tương tác (Cập nhật Social \& Chat)}
+  \captionsource{Tulie Tech Research, 2026}
+\end{table}
+
+\subsection{Gợi ý sử dụng để đạt hiệu quả tối đa}
+\textit{Quy tắc Vàng}: Mentee phải điền Check-in ít nhất 12 giờ trước khi họp. Mentor dành 5 phút đọc Check-in để bước vào buổi họp với tư thế của một người dẫn dắt (Coach) chứ không phải người điều tra. Sau họp, Mentee có 24 giờ vàng để viết Reflection trước khi kiến thức bị mai một.
+
+%% ════════════════════════════════════════════
+\section{Phân hệ 4: Trí tuệ hệ thống (The Insight Hub)}
+
+\subsection{Cơ sở lý thuyết}
+\begin{itemize}
+  \item \textbf{Management by Exception} \citep{mbe1961}.
+  \item \textbf{Big Data for Small Groups}: Dùng dữ liệu để cá nhân hóa lộ trình phát triển.
+\end{itemize}
+
+\subsection{Pain Point sâu sắc tại IMP}
+Dữ liệu rải rác làm cho việc đánh giá cuối đợt trở nên cảm quan. Ban điều hành chương trình khó có cái nhìn tổng quan về sức mạnh của toàn bộ dàn Mentors/Mentees.
+
+\subsection{Giải pháp: Công cụ trong phân hệ}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|L|L|L|}
+    \hline
+    \rowcolor{pblue} \textbf{\color{white} Công cụ} & \textbf{\color{white} Mô tả} & \textbf{\color{white} Lợi ích} \\ \hline
+    \textbf{Command Center} & Dashboard tổng quan cho Mentor/BĐH & Nhận diện ``đèn đỏ'' tức thì \\ \hline
+    \textbf{Studio (B2C)} & Hệ thống quản lý đơn hàng và QR Payment & Mở rộng hệ sinh thái kinh doanh \\ \hline
+    \textbf{Growth Analytics} & Biểu đồ tăng trưởng năng lực của Mentee & Minh chứng cho sự thay đổi \\ \hline
+    \textbf{Knowledge Base} & Thư viện tài liệu chia sẻ (Wiki) & Tích lũy tài sản tri thức \\ \hline
+  \end{tabularx}
+  \caption{Bộ công cụ Phân hệ 4 và cơ chế trí tuệ (Mở rộng phân hệ Studio)}
+  \captionsource{Tulie Tech Research, 2026}
+\end{table}
+
+%% ════════════════════════════════════════════
+\section{Kiến trúc tổng quan và Luồng dữ liệu}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    actor/.style={draw=pblue, fill=pblue, text=white, rounded corners=12pt,
+                  text width=3.2cm, minimum height=1.8cm, align=center,
+                  font=\setstretch{1.0}\small\bfseries},
+    pillar/.style={draw=pcyan!60, fill=pcyan!4, rounded corners=12pt,
+                   text width=3.8cm, minimum height=2.8cm, align=center,
+                   font=\setstretch{1.0}\scriptsize},
+    dataflow/.style={arrow, shorten >=12pt, shorten <=12pt},
+    node distance=2.5cm and 3.5cm
+  ]
+    %% Actors
+    \node[actor] (mentee) at (0, 6.5) {MENTEE\\[2pt]\normalfont\tiny Động lực \& Hành động};
+    \node[actor] (mentor) at (0, -6.5) {MENTOR\\[2pt]\normalfont\tiny Định hướng \& Coaching};
+
+    %% Pillars
+    \node[pillar] (P1) at (-4.5, 3.2) {\textbf{PHÂN HỆ 1}\\[2pt]Kỷ luật \& Thói quen\\[2pt]\tiny Program Grid\\Daily Diary\\Streak Counter};
+    \node[pillar] (P2) at ( 4.5, 3.2) {\textbf{PHÂN HỆ 2}\\[2pt]Thực thi mục tiêu\\[2pt]\tiny Goal Board\\Gantt Chart\\Task Master};
+    \node[pillar] (P3) at (-4.5, -3.2) {\textbf{PHÂN HỆ 3}\\[2pt]Kết nối \& AI\\[2pt]\tiny Meeting Lab\\Telegram Bot\\Reflection Studio};
+    \node[pillar] (P4) at ( 4.5, -3.2) {\textbf{PHÂN HỆ 4}\\[2pt]Trí tuệ hệ thống\\[2pt]\tiny Command Center\\Studio (B2C)\\Growth Analytics};
+
+    %% Flow Arrows
+    \draw[dataflow] (mentee.south west) -- (P1.north);
+    \draw[dataflow] (mentee.south east) -- (P2.north);
+
+    \draw[dataflow] (P1.east) -- node[above=4pt, font=\tiny, text=pgray]{Habit Data} (P2.west);
+    \draw[dataflow] (P2.south) -- node[right=4pt, font=\tiny, text=pgray]{Goal Progress} (P4.north);
+    \draw[dataflow] (P1.south) -- node[left=4pt, font=\tiny, text=pgray]{Behavior Patterns} (P3.north);
+    \draw[dataflow] (P3.east) -- node[below=4pt, font=\tiny, text=pgray]{Insights} (P4.west);
+
+    \draw[dataflow] (P3.south) -- (mentor.north west);
+    \draw[dataflow] (P4.south) -- (mentor.north east);
+
+  \end{tikzpicture}
+  \caption{Kiến trúc tổng thể và luồng tương tác dữ liệu liên phân hệ}
+  \captionsource{Tulie Tech Research, 2026}
+\end{figure}
+
+\section{Kịch bản ví dụ: Một tuần rèn luyện rực rỡ}
+\begin{enumerate}
+    \item \textbf{Thứ 2 - Thứ 6}: Mentee thực hiện 3 thói quen buổi sáng, tick Grid (PH1). Hoàn thành 2 task chuyên môn, Goal \% tăng từ 45\% lên 52\% (PH2).
+    \item \textbf{Thứ 7}: Mentee điền Check-in form giải thích lý do thanh tiến độ tăng nhanh (PH3).
+    \item \textbf{Chủ nhật (Sáng)}: Mentor mở Dashboard (PH4), thấy heatmap của Mentee xanh ngắt và Goal đang bứt phá.
+    \item \textbf{Chủ nhật (Chiều)}: Buổi họp 1:1 diễn ra. Mentor không hỏi về task nữa mà dành trọn 1 giờ để chỉ dạy về tư duy quản trị (PH3).
+    \item \textbf{Chủ nhật (Tối)}: Mentee viết bài Reflection dài 500 chữ đúc kết bài học đắt giá nhất (PH3). Hệ thống lưu vào Portfolio.
+\end{enumerate}
