@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate, cn } from "@/lib/utils";
 import { BlockEditor, blocksToText } from "@/components/ui/block-editor";
 import { upsertReflection, deleteReflection } from "@/lib/actions/reflection";
+import { AttachmentPicker, type PickedFile } from "@/components/features/files/attachment-picker";
+import { FileChips, type FileInfo } from "@/components/features/files/file-chips";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { confirm } from "@/components/ui/confirm-dialog";
 import {
@@ -27,6 +30,10 @@ interface MeetingItem {
     mentorConfirmed?: boolean;
     reflectionId?: string;
     sessionNumber?: number;
+    status?: string;
+    linkUrl?: string | null;
+    mentorFeedback?: string | null;
+    files?: FileInfo[];
 }
 
 interface MenteeReflectionLayoutProps {
@@ -60,6 +67,10 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
             content: r.content,
             mentorConfirmed: r.mentorConfirmed,
             reflectionId: r.id,
+            status: r.status,
+            linkUrl: r.linkUrl,
+            mentorFeedback: r.mentorFeedback,
+            files: r.files ?? [],
         }));
 
         const all = [...pending, ...submitted];
@@ -161,6 +172,9 @@ export function MenteeReflectionLayout({ pendingMeetings, reflections, userRole 
                             scheduledAt={selected.scheduledAt}
                             sessionNumber={selected.sessionNumber}
                             initialContent={selected.content}
+                            initialLink={selected.linkUrl ?? ""}
+                            existingFiles={selected.files ?? []}
+                            isSubmitted={selected.status === "submitted" || selected.status === "reviewed"}
                             onCancel={isEditing ? () => setIsEditing(false) : undefined}
                         />
                     ) : (
@@ -244,29 +258,41 @@ function SidebarItem({ item, isSelected, onClick }: { item: MeetingItem; isSelec
 }
 
 // ─── Editor for Pending Meetings ───
-function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessionNumber, initialContent, onCancel }: {
+function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessionNumber, initialContent, initialLink = "", existingFiles = [], isSubmitted = false, onCancel }: {
     meetingId: string;
     meetingTitle: string;
     mentorName: string;
     scheduledAt?: string;
     sessionNumber?: number;
     initialContent?: string;
+    initialLink?: string;
+    existingFiles?: FileInfo[];
+    isSubmitted?: boolean;
     onCancel?: () => void;
 }) {
     const [content, setContent] = useState(initialContent || "");
+    const [link, setLink] = useState(initialLink);
+    const [files, setFiles] = useState<PickedFile[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const router = useRouter();
 
-    const handleSave = async () => {
-        if (!content || isSaving) return;
+    const handleSave = async (submit: boolean) => {
+        if (isSaving) return;
         setIsSaving(true);
         try {
-            await upsertReflection(meetingId, content);
+            await upsertReflection(meetingId, content, {
+                linkUrl: link.trim(),
+                fileIds: files.map((f) => f.fileId),
+                submit,
+            });
             setLastSaved(new Date());
+            setFiles([]);
+            toast.success(submit ? "Đã nộp thu hoạch" : "Đã lưu nháp");
+            if (submit) onCancel?.();
             router.refresh();
-        } catch (error) {
-            console.error("Failed to save reflection:", error);
+        } catch (error: any) {
+            toast.error(error?.message || "Không lưu được thu hoạch");
         } finally {
             setIsSaving(false);
         }
@@ -306,17 +332,22 @@ function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessi
                             </div>
                         )}
                         <Button
-                            onClick={handleSave}
-                            disabled={isSaving || !content || content === initialContent}
+                            onClick={() => handleSave(false)}
+                            disabled={isSaving}
+                            variant="outline"
                             size="sm"
-                            className="rounded-lg shadow-none h-8 text-xs px-3"
+                            className="h-8 text-xs px-3"
                         >
-                            {isSaving ? (
-                                <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
-                            ) : (
-                                <Save className="w-3 h-3 mr-1.5" />
-                            )}
-                            {isSaving ? "Đang lưu..." : (initialContent ? "Cập nhật" : "Lưu thu hoạch")}
+                            {isSaving ? <Loader2 className="w-3 h-3 mr-1.5 animate-spin" /> : <Save className="w-3 h-3 mr-1.5" />}
+                            Lưu nháp
+                        </Button>
+                        <Button
+                            onClick={() => handleSave(true)}
+                            disabled={isSaving}
+                            size="sm"
+                            className="h-8 text-xs px-3"
+                        >
+                            {isSubmitted ? "Cập nhật bài nộp" : "Nộp thu hoạch"}
                         </Button>
                         {onCancel && (
                             <Button
@@ -339,6 +370,17 @@ function PendingEditor({ meetingId, meetingTitle, mentorName, scheduledAt, sessi
                     onChange={setContent}
                     placeholder="Viết những gì bạn đã học được và những cảm nhận sau buổi học..."
                 />
+                <div className="mt-6 space-y-4 border-t border-border pt-6">
+                    <div className="space-y-2">
+                        <h3 className="text-sm font-semibold text-foreground">Tệp nội dung / thu hoạch</h3>
+                        <FileChips files={existingFiles} />
+                        <AttachmentPicker purpose="reflection" value={files} onChange={setFiles} max={5 - existingFiles.length} />
+                    </div>
+                    <div className="space-y-2">
+                        <h3 className="text-sm font-semibold text-foreground">Liên kết (Google Drive, Notion...)</h3>
+                        <Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://..." maxLength={500} inputMode="url" />
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -455,6 +497,21 @@ function SubmittedView({ item, userRole, onEdit }: { item: MeetingItem; userRole
                         )}
                     </div>
                 </div>
+                {(item.files?.length || item.linkUrl) ? (
+                    <div className="mt-6 space-y-2 border-t border-border pt-6">
+                        <h3 className="text-sm font-semibold text-foreground">Đính kèm</h3>
+                        <FileChips files={item.files ?? []} />
+                        {item.linkUrl && (
+                            <a href={item.linkUrl} target="_blank" rel="noopener noreferrer nofollow" className="text-sm text-foreground underline underline-offset-4 break-all">{item.linkUrl}</a>
+                        )}
+                    </div>
+                ) : null}
+                {item.mentorFeedback && (
+                    <div className="mt-6 space-y-2 rounded-lg border border-border bg-muted/40 p-4">
+                        <h3 className="text-sm font-semibold text-foreground">Nhận xét của mentor</h3>
+                        <p className="whitespace-pre-wrap text-sm text-foreground/90">{item.mentorFeedback}</p>
+                    </div>
+                )}
             </div>
         </div>
     );

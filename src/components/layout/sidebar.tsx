@@ -16,6 +16,7 @@ import {
     PenLine,
     CheckSquare,
     FileText,
+    Upload,
     LifeBuoy,
     BookMarked,
     Presentation,
@@ -104,11 +105,13 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             {
                 items: [
                     { id: "dash", label: "Tổng quan", icon: LayoutDashboard, href: "/facilitator" },
-                    { id: "mentorships", label: "Mentorship được giao", icon: Users, href: "/facilitator/mentorships" },
+                    { id: "mentees", label: "Theo dõi Mentee", icon: Users, href: "/mentees/overview" },
+                    { id: "calendar", label: "Lịch họp", icon: Calendar, href: "/calendar" },
                 ],
             },
             {
                 items: [
+                    { id: "submissions", label: "Bài nộp của Mentee", icon: Upload, href: "/submissions" },
                     { id: "forms", label: "Forms đánh giá", icon: PenLine, href: "/facilitator/forms" },
                     { id: "ranking", label: "Bảng xếp hạng", icon: BarChart, href: "/ranking" },
                 ],
@@ -129,7 +132,9 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
             {
                 items: [
                     { id: "mentees", label: "Mentees", icon: Users, href: "/mentees" },
+                    { id: "mentee-tracking", label: "Theo dõi chuyên cần", icon: BarChart, href: "/mentees/overview" },
                     { id: "reflections", label: "Thu hoạch Mentee", icon: PenLine, href: "/reflections" },
+                    { id: "submissions", label: "Bài nộp của Mentee", icon: Upload, href: "/submissions" },
                     { id: "ranking", label: "Bảng xếp hạng", icon: BarChart, href: "/ranking" },
                     { id: "feedback", label: "Phản hồi & Đánh giá", icon: MessageSquare, href: "/feedback" },
                 ],
@@ -161,6 +166,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
                 items: [
                     { id: "daily", label: "Sổ tay hằng ngày", icon: ListTodo, href: "/daily" },
                     { id: "reflections", label: "Thu hoạch Mentoring", icon: PenLine, href: "/reflections" },
+                    { id: "submissions", label: "Bài tập & Thực hành", icon: Upload, href: "/submissions" },
                     { id: "portfolio", label: "Hồ sơ phát triển", icon: FolderOpen, href: "/portfolio" },
                 ],
             },

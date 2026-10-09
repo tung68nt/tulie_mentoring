@@ -49,8 +49,8 @@ export async function markAsRead(id: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
-    await prisma.notification.update({
-        where: { id },
+    await prisma.notification.updateMany({
+        where: { id, userId: session.user.id! },
         data: { isRead: true, readAt: new Date() },
     });
 

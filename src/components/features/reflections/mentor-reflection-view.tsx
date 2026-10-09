@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { formatDate, cn } from "@/lib/utils";
 import { confirmReflection } from "@/lib/actions/reflection";
+import { ReflectionReviewPanel } from "./review-panel";
 import { Check, PenLine, ChevronDown, ChevronUp, Search, Clock, Calendar, CheckCircle2, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { blocksToText } from "@/components/ui/block-editor";
@@ -46,7 +47,7 @@ export function MentorReflectionView({ mentorships }: MentorReflectionViewProps)
             // Add all meetings of this mentorship
             for (const meeting of ms.meetings || []) {
                 // Find reflection submitted by this mentee
-                const ref = meeting.sessionReflections?.find((r: any) => r.menteeId === mentee.id);
+                const ref = meeting.sessionReflections?.find((r: any) => r.menteeId === mentee.id && r.status !== "draft");
                 // Avoid duplicates
                 if (!menteeMap.get(mentee.id)!.meetings.some((m: any) => m.id === meeting.id)) {
                     menteeMap.get(mentee.id)!.meetings.push({
@@ -421,6 +422,7 @@ function MeetingDetail({ meeting, mentee, onConfirm, isLoading }: { meeting: any
                                 <div className="whitespace-pre-wrap">{contentText}</div>
                             )}
                         </div>
+                        <ReflectionReviewPanel reflection={meeting.reflection} />
                     </div>
                 )}
             </div>

@@ -12,7 +12,10 @@ export default auth((req) => {
     const isPublicRoute = ["/login", "/register", "/"].includes(nextUrl.pathname) || nextUrl.pathname.startsWith("/.well-known");
     const isAuthRoute = ["/login", "/register"].includes(nextUrl.pathname);
 
-    if (isApiAuthRoute) {
+    // Cron endpoints tự xác thực bằng CRON_SECRET (Bearer), không có session
+    const isCronRoute = nextUrl.pathname.startsWith("/api/cron/");
+
+    if (isApiAuthRoute || isCronRoute) {
         return NextResponse.next();
     }
 
@@ -65,7 +68,7 @@ export default auth((req) => {
         }
 
         // Manager access control
-        const managerAllowedRoutes = ["/reports", "/mentees", "/calendar", "/wiki", "/whiteboard", "/slides", "/tickets", "/portfolio", "/admin", "/manager"];
+        const managerAllowedRoutes = ["/reports", "/mentees", "/calendar", "/wiki", "/whiteboard", "/slides", "/tickets", "/submissions", "/portfolio", "/admin", "/manager"];
         const isManagerTargetRoute = managerAllowedRoutes.some(route => nextUrl.pathname === route || nextUrl.pathname.startsWith(route + "/"));
 
         if (role === "manager") {

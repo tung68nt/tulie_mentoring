@@ -21,6 +21,10 @@ RUN npx prisma generate
 RUN ls -la prisma/generated/client || echo "Prisma client not found in prisma/generated/client"
 
 # Build Next.js
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/mentoring_db"
 ENV AUTH_SECRET="build_secret_for_build_step"

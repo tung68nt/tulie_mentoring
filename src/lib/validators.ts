@@ -28,6 +28,14 @@ export const registerSchema = z.object({
 });
 
 // ─── Meeting ─────────────────────────────────────────────────────
+/** Chỉ chấp nhận http(s) để tránh javascript:/data: URL khi render thành link. */
+export const httpUrlSchema = z
+    .string()
+    .trim()
+    .max(500)
+    .url()
+    .refine((u) => /^https?:\/\//i.test(u), "Chỉ chấp nhận liên kết http(s)");
+
 export const meetingSchema = z.object({
     title: z.string().min(1, "Tiêu đề không được để trống"),
     description: z.string().optional(),
@@ -35,8 +43,8 @@ export const meetingSchema = z.object({
     meetingType: z.enum(["session", "checkin"]),
     scheduledAt: z.preprocess((arg) => (typeof arg === "string" ? new Date(arg) : arg), z.date({ message: "Vui lòng chọn thời gian" })),
     duration: z.coerce.number().min(15).max(180),
-    location: z.string().optional(),
-    meetingUrl: z.string().url().optional().or(z.literal("")),
+    location: z.string().max(300).optional(),
+    meetingUrl: httpUrlSchema.optional().or(z.literal("")),
     mentorshipId: z.string().optional().or(z.literal("")),
 });
 
@@ -117,21 +125,26 @@ export const mentorshipSchema = z.object({
 });
 
 // ─── Mentee Onboarding ───────────────────────────────────────────
+const longText = z.string().max(3000, "Tối đa 3000 ký tự").optional();
+
 export const menteeOnboardingSchema = z.object({
-    studentId: z.string().optional(),
-    major: z.string().min(1, "Vui lòng nhập ngành học"),
+    studentId: z.string().max(40).optional(),
+    phone: z.string().trim().regex(/^[0-9+().\s-]{8,20}$/, "Số điện thoại không hợp lệ").optional().or(z.literal("")),
+    contactLink: z.string().trim().max(300).optional().or(z.literal("")).refine((v) => !v || /^https?:\/\//i.test(v), "Chỉ chấp nhận liên kết http(s)"),
+    major: z.string().min(1, "Vui lòng nhập ngành học").max(200),
     year: z.coerce.number().min(1).max(6).optional(),
-    background: z.string().optional(),
-    experience: z.string().optional(),
-    skills: z.string().optional(),
-    strengths: z.string().optional(),
-    weaknesses: z.string().optional(),
-    currentChallenges: z.string().optional(),
-    careerGoals: z.string().min(1, "Vui lòng nhập mục tiêu nghề nghiệp"),
-    endGoals: z.string().optional(),
-    expectations: z.string().optional(),
-    startupIdeas: z.string().optional(),
-    personalNotes: z.string().optional(),
+    background: longText,
+    experience: longText,
+    skills: longText,
+    softSkills: longText,
+    strengths: longText,
+    weaknesses: longText,
+    currentChallenges: longText,
+    careerGoals: z.string().min(1, "Vui lòng nhập mục tiêu nghề nghiệp").max(3000),
+    endGoals: longText,
+    expectations: longText,
+    startupIdeas: longText,
+    personalNotes: longText,
 });
 
 // ─── Availability ────────────────────────────────────────────────

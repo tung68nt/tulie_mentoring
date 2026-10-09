@@ -136,6 +136,20 @@ export function OnboardingForm() {
                                 {...register("major")}
                                 error={errors.major?.message}
                             />
+                            <Input
+                                label="Số điện thoại"
+                                placeholder="VD: 0901234567"
+                                inputMode="tel"
+                                {...register("phone")}
+                                error={errors.phone?.message}
+                            />
+                            <Input
+                                label="Liên kết liên hệ (Facebook, Zalo, LinkedIn)"
+                                placeholder="https://..."
+                                inputMode="url"
+                                {...register("contactLink")}
+                                error={errors.contactLink?.message}
+                            />
                             <Select
                                 label="Năm học"
                                 options={[
@@ -177,6 +191,15 @@ export function OnboardingForm() {
                                 <textarea
                                     {...register("skills")}
                                     placeholder="VD: Excel, Python, thuyết trình, teamwork..."
+                                    rows={2}
+                                    className="w-full px-3 py-2.5 rounded-lg border border-input bg-transparent text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-ring focus:ring-3 focus:ring-ring/50 hover:border-accent resize-none"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="block text-[12px] font-medium text-muted-foreground">Kỹ năng mềm (giao tiếp, làm việc nhóm, quản lý thời gian...)</label>
+                                <textarea
+                                    {...register("softSkills")}
+                                    placeholder="Kỹ năng mềm bạn đang có hoặc muốn cải thiện..."
                                     rows={2}
                                     className="w-full px-3 py-2.5 rounded-lg border border-input bg-transparent text-foreground text-sm placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-ring focus:ring-3 focus:ring-ring/50 hover:border-accent resize-none"
                                 />

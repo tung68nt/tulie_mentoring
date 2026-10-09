@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import { canAccessMeeting } from "@/lib/access";
 import { sendNotificationToUsers } from "@/lib/notifications/service";
 import { minutesCreatedTemplate } from "@/lib/email/templates";
 
@@ -15,6 +16,9 @@ export async function createMinutes(data: {
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    if (!(await canAccessMeeting(session.user.id!, (session.user as any).role, data.meetingId, true))) {
+        throw new Error("Bạn không có quyền tạo biên bản cho cuộc họp này");
+    }
 
     const minutes = await prisma.meetingMinutes.create({
         data: {
@@ -107,6 +111,7 @@ export async function updateMinutes(id: string, data: {
 export async function getMinutes(meetingId: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    if (!(await canAccessMeeting(session.user.id!, (session.user as any).role, meetingId))) return null;
 
     return await prisma.meetingMinutes.findFirst({
         where: { meetingId },

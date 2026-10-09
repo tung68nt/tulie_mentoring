@@ -12,14 +12,17 @@ export async function getMenteeRankings(filters?: {
     if (!session) throw new Error("Unauthorized");
 
     const role = (session.user as any).role;
+    if (!["admin", "program_manager", "manager", "facilitator", "mentor"].includes(role)) {
+        throw new Error("Permission denied");
+    }
 
-    // Security check by role
-    let effectiveFilters = { ...filters };
+    // Security check by role: mentor/facilitator chỉ thấy mentee thuộc phạm vi của mình
+    const effectiveFilters = { ...filters };
     if (role === "mentor") {
         effectiveFilters.mentorId = session.user.id;
+        delete effectiveFilters.facilitatorId;
     } else if (role === "facilitator") {
-        // Assume facilitator manages specific mentorships
-        // effectiveFilters.facilitatorId = session.user.id;
+        effectiveFilters.facilitatorId = session.user.id;
     }
 
     // Build where clause — only include filters that are defined
@@ -101,6 +104,10 @@ export async function getMenteeRankings(filters?: {
 }
 
 export async function computeRankings(programCycleId: string) {
+    const session = await auth();
+    const role = (session?.user as any)?.role;
+    if (role !== "admin" && role !== "program_manager") throw new Error("Permission denied");
+
     // 1. Get all mentees in the cycle
     const mentees = await prisma.user.findMany({
         where: {

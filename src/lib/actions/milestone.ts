@@ -48,7 +48,7 @@ export async function createMilestone(data: {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
     const role = (session.user as any).role;
-    if (!["admin", "manager", "program_manager"].includes(role)) {
+    if (!["admin", "program_manager"].includes(role)) {
         throw new Error("Unauthorized");
     }
 
@@ -71,7 +71,7 @@ export async function deleteMilestone(id: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
     const role = (session.user as any).role;
-    if (!["admin", "manager", "program_manager"].includes(role)) {
+    if (!["admin", "program_manager"].includes(role)) {
         throw new Error("Unauthorized");
     }
 

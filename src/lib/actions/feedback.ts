@@ -26,6 +26,11 @@ export async function submitFeedback(data: FeedbackInput) {
         throw new Error("Unauthorized: You are not a participant of this mentorship");
     }
 
+    const memberIds = [mentorship.mentorId, ...mentorship.mentees.map(m => m.menteeId)];
+    if (!memberIds.includes(validatedData.toUserId) || validatedData.toUserId === session.user.id) {
+        throw new Error("Người nhận phản hồi không hợp lệ");
+    }
+
     const feedback = await prisma.feedback.create({
         data: {
             ...validatedData,

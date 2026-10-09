@@ -27,6 +27,7 @@ export async function startImpersonation(targetUserId: string) {
     });
 
     if (!targetUser) throw new Error("User not found");
+    if (targetUser.role === "admin" && role !== "admin") throw new Error("Permission denied");
 
     // Don't impersonate yourself
     if (targetUser.id === session.user.id) {

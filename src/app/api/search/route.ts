@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         prisma.meeting.findMany({
             where: {
                 title: { contains: q, mode: "insensitive" },
-                ...(role !== "admin" ? {
+                ...(role !== "admin" && role !== "program_manager" && role !== "manager" ? {
                     mentorship: {
                         OR: [
                             { mentorId: userId },
@@ -55,9 +55,10 @@ export async function GET(request: NextRequest) {
         // Search resources
         prisma.resource.findMany({
             where: {
-                OR: [
-                    { title: { contains: q, mode: "insensitive" } },
-                    { description: { contains: q, mode: "insensitive" } },
+                AND: [
+                    { OR: [{ title: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }] },
+                    // Chỉ tài nguyên công khai hoặc do chính mình tải lên (admin thấy tất cả)
+                    ...(role === "admin" ? [] : [{ OR: [{ visibility: "public" }, { uploadedById: userId }] }]),
                 ],
             },
             select: { id: true, title: true, type: true },

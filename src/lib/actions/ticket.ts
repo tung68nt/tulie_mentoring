@@ -231,6 +231,19 @@ export async function getTicketDetail(id: string) {
     return JSON.parse(JSON.stringify(ticket));
 }
 
+/** Cùng quy tắc với getTicketDetail: chủ ticket, admin/PM, hoặc mentor của chính mentee gửi ticket loại "mentor". */
+async function canAccessTicket(t: { userId: string; category: string }, userId: string, role: string) {
+    if (t.userId === userId || role === "admin" || role === "program_manager") return true;
+    if (role === "mentor" && t.category === "mentor") {
+        const m = await prisma.mentorship.findFirst({
+            where: { mentorId: userId, mentees: { some: { menteeId: t.userId } }, status: "active" },
+            select: { id: true },
+        });
+        return !!m;
+    }
+    return false;
+}
+
 export async function addTicketComment(ticketId: string, content: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
@@ -242,16 +255,15 @@ export async function addTicketComment(ticketId: string, content: string) {
     // Security check: Check if user has access to the ticket
     const ticket = await prisma.supportTicket.findUnique({
         where: { id: ticketId },
-        select: { userId: true, title: true }
+        select: { userId: true, title: true, category: true }
     });
 
     if (!ticket) throw new Error("Ticket not found");
 
-    // Re-use same access logic as getTicketDetail check
-    // For simplicity here, we assume if they can see it, they can comment, but we'll add basic check
-    if (role === "mentee" && ticket.userId !== userId) {
+    if (!(await canAccessTicket(ticket, userId, role))) {
         throw new Error("Unauthorized: You do not have permission to comment on this ticket");
     }
+    if (typeof content !== "string" || !content.trim() || content.length > 5000) throw new Error("Nội dung không hợp lệ");
 
     const comment = await prisma.ticketComment.create({
         data: {
@@ -308,6 +320,10 @@ export async function updateTicketStatus(id: string, status: string) {
 
     const role = (session.user as any).role;
     if (role === "mentee") throw new Error("Permission denied");
+    if (!["open", "in_progress", "resolved", "closed"].includes(status)) throw new Error("Trạng thái không hợp lệ");
+
+    const existing = await prisma.supportTicket.findUnique({ where: { id }, select: { userId: true, category: true } });
+    if (!existing || !(await canAccessTicket(existing, session.user.id!, role))) throw new Error("Permission denied");
 
     const ticket = await prisma.supportTicket.update({
         where: { id },

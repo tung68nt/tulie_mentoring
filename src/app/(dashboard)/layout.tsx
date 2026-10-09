@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getNotifications, getUnreadCount } from "@/lib/actions/notification";
 import { DashboardContainer } from "@/components/layout/dashboard-container";
+import { PageViewTracker } from "@/components/layout/page-view-tracker";
 import { getSystemSettings } from "@/lib/actions/settings";
 import { getImpersonatedUser } from "@/lib/actions/impersonation";
 import { ImpersonationBanner } from "@/components/layout/impersonation-banner";
@@ -70,6 +71,7 @@ export default async function DashboardLayout({
                     realAdmin={realAdmin}
                 />
             )}
+            {!isImpersonating && <PageViewTracker />}
             <div className={isImpersonating ? "pt-10" : ""}>
                 <DashboardContainer
                     user={displayUser}

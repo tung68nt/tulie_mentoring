@@ -12,11 +12,11 @@ export default async function NewMeetingPage() {
 
     // Fetch mentorships the user is allowed to create meetings for
     const allMentorships = await getMentorships();
-    const filteredMentorships = role === "admin"
+    // getMentorships đã giới hạn theo vai trò (facilitator chỉ thấy phần được giao); mentee không tạo họp
+    if (role === "mentee") redirect("/calendar");
+    const filteredMentorships = role !== "mentor"
         ? allMentorships
-        : role === "mentor"
-            ? allMentorships.filter((m: any) => m.mentorId === session?.user?.id)
-            : allMentorships.filter((m: any) => m.mentees.some((mentee: any) => mentee.menteeId === session?.user?.id));
+        : allMentorships.filter((m: any) => m.mentorId === session?.user?.id);
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">

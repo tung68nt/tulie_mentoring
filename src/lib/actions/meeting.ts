@@ -1,7 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { meetingSchema, type MeetingInput } from "@/lib/validators";
+import { meetingSchema, httpUrlSchema, type MeetingInput } from "@/lib/validators";
+import { isFacilitatorOfMentorship } from "@/lib/access";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { v4 as uuidv4 } from "uuid";
@@ -28,9 +29,17 @@ export async function createMeeting(data: MeetingInput) {
     // Normalize empty mentorshipId to null
     const mentorshipId = validatedData.mentorshipId || null;
 
+    if ((session.user as any).role === "mentee") {
+        throw new Error("Mentee không thể tạo buổi họp");
+    }
+
     // Authorization check only if mentorship is selected
     if (mentorshipId) {
-        if ((session.user as any).role === "mentor") {
+        if ((session.user as any).role === "facilitator") {
+            if (!(await isFacilitatorOfMentorship(session.user.id!, mentorshipId))) {
+                throw new Error("Unauthorized: Bạn không được giao phụ trách mentorship này");
+            }
+        } else if ((session.user as any).role === "mentor") {
             const mentorship = await prisma.mentorship.findUnique({
                 where: { id: mentorshipId },
             });
@@ -163,9 +172,11 @@ export async function updateMeeting(id: string, data: {
     // Auth: mentor, creator, or admin
     const isMentor = meeting.mentorship?.mentorId === session.user.id;
     const isCreator = meeting.creatorId === session.user.id;
-    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager") {
+    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager" && !(role === "facilitator" && (await isFacilitatorOfMentorship(session.user.id!, meeting.mentorshipId)))) {
         throw new Error("Bạn không có quyền chỉnh sửa cuộc họp này");
     }
+
+    if (data.meetingUrl) httpUrlSchema.parse(data.meetingUrl);
 
     const updated = await prisma.meeting.update({
         where: { id },
@@ -219,9 +230,11 @@ export async function updateMeetingSchedule(id: string, data: {
     // Auth: mentor, creator, or admin/PM
     const isMentor = meeting.mentorship?.mentorId === session.user.id;
     const isCreator = meeting.creatorId === session.user.id;
-    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager") {
+    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager" && !(role === "facilitator" && (await isFacilitatorOfMentorship(session.user.id!, meeting.mentorshipId)))) {
         throw new Error("Bạn không có quyền chỉnh sửa cuộc họp này");
     }
+
+    if (data.meetingUrl) httpUrlSchema.parse(data.meetingUrl);
 
     const updateData: any = {};
     if (data.title !== undefined) updateData.title = data.title;
@@ -313,7 +326,7 @@ export async function deleteMeeting(id: string) {
     // Auth: mentor, creator, or admin/PM
     const isMentor = meeting.mentorship?.mentorId === session.user.id;
     const isCreator = meeting.creatorId === session.user.id;
-    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager") {
+    if (!isMentor && !isCreator && role !== "admin" && role !== "program_manager" && !(role === "facilitator" && (await isFacilitatorOfMentorship(session.user.id!, meeting.mentorshipId)))) {
         throw new Error("Bạn không có quyền xóa cuộc họp này");
     }
 
@@ -465,11 +478,12 @@ export async function getMeetingDetail(id: string) {
 
         // Security check: Only members, creator, or admin
         const role = (session.user as any).role;
-        if (role !== "admin") {
+        if (role !== "admin" && role !== "program_manager" && role !== "manager") {
             const isCreator = meeting.creatorId === session.user.id;
             const isMentor = meeting.mentorship?.mentorId === session.user.id;
             const isMentee = meeting.mentorship?.mentees.some(m => m.menteeId === session.user.id) ?? false;
-            if (!isCreator && !isMentor && !isMentee) {
+            const isFacilitator = role === "facilitator" && (await isFacilitatorOfMentorship(session.user.id!, meeting.mentorshipId));
+            if (!isCreator && !isMentor && !isMentee && !isFacilitator) {
                 throw new Error("Unauthorized: You do not have access to this meeting");
             }
         }
@@ -481,9 +495,31 @@ export async function getMeetingDetail(id: string) {
     }
 }
 
+/** Chặn check-in vào buổi họp của cặp/nhóm khác: phải là mentor/mentee của mentorship, người tạo, hoặc đã có sẵn bản ghi điểm danh. */
+async function assertMeetingParticipant(meetingId: string, userId: string) {
+    const m = await prisma.meeting.findUnique({
+        where: { id: meetingId },
+        select: {
+            creatorId: true,
+            mentorship: { select: { mentorId: true, mentees: { select: { menteeId: true } } } },
+            attendances: { where: { userId }, select: { id: true } },
+        },
+    });
+    if (!m) throw new Error("Cuộc họp không tồn tại");
+    const ok =
+        m.creatorId === userId ||
+        m.mentorship?.mentorId === userId ||
+        !!m.mentorship?.mentees.some((x) => x.menteeId === userId) ||
+        m.attendances.length > 0;
+    if (!ok) throw new Error("Bạn không thuộc cuộc họp này");
+}
+
 export async function checkIn(meetingIdOrCode: string, token?: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    if ((session.user as any).role === "mentee") {
+        throw new Error("Mentee vui lòng check-in bằng selfie tại trang Check-in.");
+    }
 
     let meeting;
 
@@ -537,6 +573,7 @@ export async function checkIn(meetingIdOrCode: string, token?: string) {
     }
 
     const meetingId = meeting.id;
+    await assertMeetingParticipant(meetingId, session.user.id!);
 
     const attendance = await prisma.attendance.upsert({
         where: {
@@ -688,6 +725,9 @@ export async function updateMeetingStatus(id: string, status: string) {
 export async function quickCheckIn(meetingId: string, token: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    if ((session.user as any).role === "mentee") {
+        throw new Error("Mentee vui lòng check-in bằng selfie tại trang Check-in.");
+    }
 
     // 1. Find the meeting
     const meeting = await prisma.meeting.findUnique({

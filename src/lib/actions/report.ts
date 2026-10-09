@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { canViewMentee } from "@/lib/access";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { isAdminLevel } from "@/lib/role-helpers";
@@ -150,6 +151,10 @@ export async function getProgramProgress(specificUserId?: string) {
     const role = (session.user as any).role;
     const isAdmin = isAdminLevel(role);
     const targetUserId = specificUserId || userId;
+
+    if (specificUserId && specificUserId !== userId && !(await canViewMentee(userId, role, specificUserId))) {
+        throw new Error("Permission denied");
+    }
 
     let mentorship = null;
     let cycle = null;

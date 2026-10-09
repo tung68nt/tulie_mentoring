@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { canViewMentee, visibleMenteeIds } from "@/lib/access";
 import { CheckCircle2, Clock, ListTodo, Target, Activity } from "lucide-react";
 
 export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ menteeId?: string }> }) {
@@ -25,7 +26,10 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
     const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
 
     // If admin selects a mentee, targetUserId is that mentee. Otherwise its the current user.
-    const targetUserId = (isAdmin && menteeId) ? menteeId : (role === "mentee" ? userId : null);
+    // Phạm vi mentee được xem: null = tất cả (admin-level); mentor/facilitator chỉ mentee thuộc mình
+    const scope = await visibleMenteeIds(userId, role);
+    const requested = menteeId && role !== "mentee" && (await canViewMentee(userId, role, menteeId)) ? menteeId : null;
+    const targetUserId = role === "mentee" ? userId : requested;
 
     try {
         const [logs, goals, tasks, programData, allMentees] = await Promise.all([
@@ -35,7 +39,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                     mentorship: {
                         mentees: { some: { menteeId: targetUserId } }
                     }
-                } : {},
+                } : scope ? { mentorship: { mentees: { some: { menteeId: { in: scope } } } } } : {},
                 include: {
                     mentorship: {
                         include: {
@@ -48,7 +52,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                 take: 8,
             }).catch(e => { console.error("Goals fetch error:", e); return []; }),
             prisma.todoItem.findMany({
-                where: targetUserId ? { menteeId: targetUserId } : {},
+                where: targetUserId ? { menteeId: targetUserId } : scope ? { menteeId: { in: scope } } : {},
                 include: {
                     mentee: { select: { firstName: true, lastName: true } }
                 },
@@ -56,8 +60,8 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                 take: 10,
             }).catch(e => { console.error("Tasks fetch error:", e); return []; }),
             getProgramProgress(targetUserId || undefined).catch(e => { console.error("Program progress error:", e); return null; }),
-            isAdmin ? prisma.user.findMany({
-                where: { role: "mentee", isActive: true },
+            role !== "mentee" ? prisma.user.findMany({
+                where: { role: "mentee", isActive: true, ...(scope ? { id: { in: scope } } : {}) },
                 select: { id: true, firstName: true, lastName: true, avatar: true },
                 orderBy: { firstName: 'asc' }
             }) : Promise.resolve([])

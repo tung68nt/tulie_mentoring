@@ -70,6 +70,11 @@ model User {
   // Audit
   auditLogs              AuditLog[]
 
+  // Files & submissions
+  fileAssets             FileAsset[]
+  submissions            Submission[]            @relation("SubmissionOwner")
+  submissionsReviewed    Submission[]            @relation("SubmissionReviewer")
+
   @@index([role])
   @@index([email])
 }
@@ -129,6 +134,8 @@ model MenteeProfile {
   onboardingCompletedAt DateTime?
   personalNotes         String?
   startupIdeas          String?
+  softSkills            String?
+  contactLink           String?
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -178,7 +185,7 @@ model Mentorship {
 
   // Mentor notes
   mentorNotes    MentorNote[]
-
+  submissions    Submission[]
 
   @@index([mentorId])
   @@index([programCycleId])
@@ -240,8 +247,13 @@ model Attendance {
   verifiedAt   DateTime?
   createdAt    DateTime  @default(now())
   checkOutTime DateTime?
+  selfieFileId String?   @unique
+  checkInIp    String?
+  checkInUa    String?
+  lateMinutes  Int?
   meeting      Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  selfieFile   FileAsset? @relation("AttendanceSelfie", fields: [selfieFileId], references: [id], onDelete: SetNull)
 
   @@unique([meetingId, userId])
   @@index([userId])
@@ -450,9 +462,16 @@ model SessionReflection {
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   mentorConfirmed Boolean    @default(false)
+  status          String     @default("draft") // draft, submitted, reviewed
+  submittedAt     DateTime?
+  linkUrl         String?
+  mentorFeedback  String?    @db.Text
+  reviewedAt      DateTime?
+  reviewedById    String?
   meeting         Meeting    @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   mentee          User       @relation(fields: [menteeId], references: [id], onDelete: Cascade)
   todoItems       TodoItem[]
+  files           FileAsset[]
 
   @@unique([meetingId, menteeId])
   @@index([menteeId])
@@ -1020,4 +1039,56 @@ model AuditLog {
   @@index([severity])
   @@index([entityType, entityId])
   @@index([createdAt])
+}
+
+// ─── File storage (Supabase Storage, private bucket) ─────
+
+model FileAsset {
+  id           String    @id @default(cuid())
+  ownerId      String
+  purpose      String    // selfie, reflection, submission
+  path         String    @unique // object path inside the bucket
+  fileName     String
+  mimeType     String
+  size         Int
+  status       String    @default("pending") // pending (signed URL issued), ready (object verified)
+  reflectionId String?
+  submissionId String?
+  createdAt    DateTime  @default(now())
+
+  owner        User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  reflection   SessionReflection? @relation(fields: [reflectionId], references: [id], onDelete: SetNull)
+  submission   Submission?        @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+  attendance   Attendance?        @relation("AttendanceSelfie")
+
+  @@index([ownerId])
+  @@index([reflectionId])
+  @@index([submissionId])
+  @@index([status, createdAt])
+}
+
+// ─── Mentee submissions: bài tập / thực hành / tài liệu ──
+
+model Submission {
+  id            String    @id @default(cuid())
+  menteeId      String
+  mentorshipId  String
+  kind          String    @default("assignment") // assignment, practice, other
+  title         String
+  note          String?   @db.Text
+  linkUrl       String?
+  status        String    @default("submitted") // submitted, reviewed, needs_revision
+  feedback      String?   @db.Text
+  reviewedById  String?
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  mentee        User       @relation("SubmissionOwner", fields: [menteeId], references: [id], onDelete: Cascade)
+  reviewer      User?      @relation("SubmissionReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  mentorship    Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  files         FileAsset[]
+
+  @@index([menteeId])
+  @@index([mentorshipId, status])
 }

@@ -460,7 +460,13 @@ export async function getWikiPageDetail(slug: string, isPublic: boolean = false)
 
     if (!page) throw new Error("Page not found");
 
-    if (!isPublic) {
+    // isPublic do client truyền nên không đáng tin: chỉ cho xem ẩn danh khi trang thật sự public
+    if (isPublic && page.visibility !== "public" && !session?.user) {
+        throw new Error("Truy cập bị từ chối");
+    }
+
+    if (!isPublic || page.visibility !== "public") {
+        if (!session?.user) throw new Error("Unauthorized");
         const role = (session?.user as any)?.role;
         const isAdmin = role === "admin" || role === "manager";
         const userId = session?.user?.id;
@@ -470,7 +476,8 @@ export async function getWikiPageDetail(slug: string, isPublic: boolean = false)
                 throw new Error("Truy cập bị từ chối: Tài liệu riêng tư");
             }
 
-            if (page.visibility === "mentorship" && page.mentorshipId) {
+            if (page.visibility === "mentorship") {
+                if (!page.mentorshipId) throw new Error("Truy cập bị từ chối");
                 const mentorship = await prisma.mentorship.findFirst({
                     where: {
                         id: page.mentorshipId,

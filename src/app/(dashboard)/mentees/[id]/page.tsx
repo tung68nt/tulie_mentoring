@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isFacilitatorOfMentorship } from "@/lib/access";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
@@ -55,7 +56,11 @@ export default async function MenteeDetailPage({ params }: { params: Promise<{ i
         }
 
         // Security: mentor can only see their own mentorships
-        if (role === "mentor" && mentorship.mentorId !== userId) {
+        const allowed =
+            role === "admin" || role === "program_manager" || role === "manager" ||
+            (role === "mentor" && mentorship.mentorId === userId) ||
+            (role === "facilitator" && (await isFacilitatorOfMentorship(userId!, mentorship.id)));
+        if (!allowed) {
             redirect("/mentees");
         }
 

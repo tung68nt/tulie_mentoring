@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { canViewMentee } from "@/lib/access";
+import { isAdminLevel } from "@/lib/role-helpers";
 
 // SECURITY: Whitelist of valid roles to prevent privilege escalation
 const VALID_ROLES = ["admin", "program_manager", "facilitator", "mentor", "mentee", "manager"] as const;
@@ -41,13 +43,40 @@ export async function updateProfile(data: {
     return JSON.parse(JSON.stringify(user));
 }
 
+/** Chỉ admin / program_manager được thay đổi tài khoản; PM không được đụng tới admin. manager chỉ đọc. */
+async function assertCanManageUser(actorRole: string | undefined, targetId: string) {
+    if (actorRole !== "admin" && actorRole !== "program_manager") throw new Error("Unauthorized");
+    const target = await prisma.user.findUnique({ where: { id: targetId }, select: { role: true } });
+    if (!target) throw new Error("User not found");
+    if (actorRole === "program_manager" && target.role === "admin") throw new Error("Unauthorized");
+}
+
 export async function getUserProfile(userId: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
     try {
+        const viewerId = session.user.id!;
+        const viewerRole = (session.user as any).role as string;
+        let allowed = viewerId === userId || isAdminLevel(viewerRole) || (await canViewMentee(viewerId, viewerRole, userId));
+        if (!allowed) {
+            // Cùng một mentorship (ví dụ mentee xem mentor của mình)
+            const shared = await prisma.mentorship.findFirst({
+                where: {
+                    AND: [
+                        { OR: [{ mentorId: viewerId }, { mentees: { some: { menteeId: viewerId } } }] },
+                        { OR: [{ mentorId: userId }, { mentees: { some: { menteeId: userId } } }] },
+                    ],
+                },
+                select: { id: true },
+            });
+            allowed = !!shared;
+        }
+        if (!allowed) return null;
+
         const user = await prisma.user.findUnique({
             where: { id: userId },
+            omit: { passwordHash: true },
             include: {
                 mentorProfile: true,
                 menteeProfile: true,
@@ -66,6 +95,7 @@ export async function getAllUsers() {
     if (!role || (role !== "admin" && role !== "program_manager" && role !== "manager")) return [];
 
     return await prisma.user.findMany({
+        omit: { passwordHash: true },
         orderBy: { createdAt: "desc" },
     });
 }
@@ -78,6 +108,7 @@ export async function getUserDetail(userId: string) {
     try {
         const user = await prisma.user.findUnique({
             where: { id: userId },
+            omit: { passwordHash: true },
             include: {
                 mentorProfile: true,
                 menteeProfile: true,
@@ -120,9 +151,8 @@ export async function getUserDetail(userId: string) {
 export async function deleteUser(userId: string) {
     const session = await auth();
     const role = session?.user && (session.user as any).role;
-    if (!role || (role !== "admin" && role !== "program_manager")) {
-        throw new Error("Unauthorized");
-    }
+    await assertCanManageUser(role, userId);
+    if (userId === session?.user?.id) throw new Error("Cannot delete yourself");
 
     await prisma.user.delete({
         where: { id: userId },
@@ -134,9 +164,7 @@ export async function deleteUser(userId: string) {
 export async function updateUserRole(userId: string, newRole: string) {
     const session = await auth();
     const role = session?.user && (session.user as any).role;
-    if (!role || (role !== "admin" && role !== "program_manager" && role !== "manager")) {
-        throw new Error("Unauthorized");
-    }
+    await assertCanManageUser(role, userId);
 
     // SECURITY: Validate role against whitelist
     if (!isValidRole(newRole)) {
@@ -144,7 +172,7 @@ export async function updateUserRole(userId: string, newRole: string) {
     }
 
     // Prevent changing own role
-    if (userId === session.user.id) {
+    if (userId === session?.user?.id) {
         throw new Error("Cannot change your own role");
     }
 
@@ -281,11 +309,11 @@ export async function createSingleUser(data: {
 export async function adminResetPassword(userId: string, newPassword: string) {
     const session = await auth();
     const role = session?.user && (session.user as any).role;
-    if (!role || (role !== "admin" && role !== "program_manager" && role !== "manager")) {
-        return { success: false, error: "Unauthorized" };
-    }
-
     try {
+        await assertCanManageUser(role, userId);
+        if (typeof newPassword !== "string" || newPassword.length < 8) {
+            return { success: false, error: "Mật khẩu tối thiểu 8 ký tự" };
+        }
         const passwordHash = await bcrypt.hash(newPassword, 10);
         await prisma.user.update({
             where: { id: userId },
@@ -302,11 +330,9 @@ export async function adminResetPassword(userId: string, newPassword: string) {
 export async function toggleUserActive(userId: string) {
     const session = await auth();
     const role = session?.user && (session.user as any).role;
-    if (!role || (role !== "admin" && role !== "program_manager" && role !== "manager")) {
-        return { success: false, error: "Unauthorized" };
-    }
-
     try {
+        await assertCanManageUser(role, userId);
+        if (userId === session?.user?.id) return { success: false, error: "Không thể tự vô hiệu hóa" };
         const user = await prisma.user.findUnique({ where: { id: userId }, select: { isActive: true } });
         if (!user) return { success: false, error: "User not found" };
 

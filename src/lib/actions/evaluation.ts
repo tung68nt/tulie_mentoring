@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { requireAuth, requireEvaluationSubmitAccess } from "@/lib/permissions";
 import { isAdminLevel } from "@/lib/role-helpers";
+import { canViewMentee, visibleMenteeIds } from "@/lib/access";
 
 // ─── Helpers ──────────────────────────────────────────
 async function requireFormAccess() {
@@ -147,6 +148,7 @@ export async function reorderQuestions(formId: string, orderedIds: string[]) {
 
 // ─── Form Data Fetching ───────────────────────────────
 export async function getEvaluationForms() {
+    await requireFormAccess();
     return await prisma.evaluationForm.findMany({
         orderBy: { createdAt: "desc" },
         include: { _count: { select: { questions: true, responses: true } } },
@@ -154,6 +156,9 @@ export async function getEvaluationForms() {
 }
 
 export async function getFormWithQuestions(id: string) {
+    const { userId, role } = await requireAuth();
+    if (role === "mentee") throw new Error("Unauthorized");
+    void userId;
     return await prisma.evaluationForm.findUnique({
         where: { id },
         include: {
@@ -175,6 +180,9 @@ export async function submitFormResponse(formId: string, answers: {
 
     // Only admin, facilitator, program_manager, and mentor can submit evaluations
     await requireEvaluationSubmitAccess(userId, role);
+    if (targetMenteeId && !(await canViewMentee(userId, role, targetMenteeId))) {
+        throw new Error("Bạn không được đánh giá mentee này");
+    }
 
     const response = await prisma.evaluationResponse.create({
         data: {
@@ -199,10 +207,11 @@ export async function submitFormResponse(formId: string, answers: {
 
 // ─── Response Fetching ────────────────────────────────
 export async function getFormResponses(formId: string) {
-    await requireFormAccess();
+    const session = await requireFormAccess();
+    const scope = await visibleMenteeIds(session.user!.id!, (session.user as any).role);
 
     return await prisma.evaluationResponse.findMany({
-        where: { formId },
+        where: { formId, ...(scope ? { targetMenteeId: { in: scope } } : {}) },
         include: {
             submitter: { select: { id: true, firstName: true, lastName: true, email: true, image: true } },
             targetMentee: { select: { id: true, firstName: true, lastName: true, email: true, image: true } },
@@ -217,13 +226,15 @@ export async function getFormResponses(formId: string) {
 }
 
 export async function getFormAnalytics(formId: string) {
-    await requireFormAccess();
+    const session = await requireFormAccess();
+    const scope = await visibleMenteeIds(session.user!.id!, (session.user as any).role);
 
     const form = await prisma.evaluationForm.findUnique({
         where: { id: formId },
         include: {
             questions: { orderBy: { order: "asc" } },
             responses: {
+                where: scope ? { targetMenteeId: { in: scope } } : undefined,
                 include: {
                     answers: true,
                     submitter: { select: { firstName: true, lastName: true } },

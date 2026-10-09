@@ -26,6 +26,7 @@ export async function saveMenteeOnboarding(data: unknown) {
     const d = validated.data;
 
     try {
+        if (d.phone) await prisma.user.update({ where: { id: userId }, data: { phone: d.phone } });
         await prisma.menteeProfile.upsert({
             where: { userId },
             create: {
@@ -43,6 +44,8 @@ export async function saveMenteeOnboarding(data: unknown) {
                 endGoals: d.endGoals,
                 expectations: d.expectations,
                 startupIdeas: d.startupIdeas,
+                softSkills: d.softSkills,
+                contactLink: d.contactLink || null,
                 personalNotes: d.personalNotes,
                 isOnboardingComplete: true,
                 onboardingCompletedAt: new Date(),
@@ -61,6 +64,8 @@ export async function saveMenteeOnboarding(data: unknown) {
                 endGoals: d.endGoals,
                 expectations: d.expectations,
                 startupIdeas: d.startupIdeas,
+                softSkills: d.softSkills,
+                contactLink: d.contactLink || null,
                 personalNotes: d.personalNotes,
                 isOnboardingComplete: true,
                 onboardingCompletedAt: new Date(),

@@ -40,6 +40,7 @@
     "@slidev/cli": "^52.12.0",
     "@slidev/theme-default": "^0.25.0",
     "@slidev/theme-seriph": "^0.25.0",
+    "@supabase/supabase-js": "^2.117.3",
     "@tanstack/react-query": "^5.90.21",
     "@types/react-google-recaptcha": "^2.1.9",
     "@yudiel/react-qr-scanner": "^2.5.1",

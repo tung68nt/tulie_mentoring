@@ -6,6 +6,7 @@ import { prisma } from "./db";
 import { loginSchema } from "./validators";
 import bcrypt from "bcryptjs";
 import { verifyCaptcha } from "./captcha";
+import { rateLimit } from "./rate-limit";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -16,13 +17,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             clientSecret: process.env.AUTH_GOOGLE_SECRET,
         }),
         Credentials({
-            async authorize(credentials) {
+            async authorize(credentials, request) {
                 const validatedData = loginSchema.safeParse(credentials);
 
                 if (!validatedData.success) return null;
 
                 const { email: rawEmail, password, captchaToken } = validatedData.data;
-                const email = rawEmail.trim();
+                const email = rawEmail.trim().toLowerCase();
+
+                // Chống dò mật khẩu: 8 lần/10 phút cho mỗi email, 30 lần/10 phút cho mỗi IP
+                const ip = (request?.headers?.get("x-forwarded-for")?.split(",")[0] || "unknown").trim();
+                if (!rateLimit(`login:email:${email}`, 8, 600_000).ok || !rateLimit(`login:ip:${ip}`, 30, 600_000).ok) {
+                    throw new Error("Too many attempts");
+                }
 
                 // Verify Captcha
                 const captchaResult = await verifyCaptcha(captchaToken);
@@ -30,25 +37,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     console.log(`[AUTH] Captcha verification failed for: ${email}`);
                     throw new Error("Captcha verification failed");
                 }
-                console.log(`[AUTH] Attempting login for: [${email}]`);
-                const user = await prisma.user.findUnique({
-                    where: { email },
+                const user = await prisma.user.findFirst({
+                    where: { email: { equals: email, mode: "insensitive" } },
                 });
 
-                if (!user) {
-                    console.log(`[AUTH] User not found: ${email}`);
-                    return null;
-                }
+                // Luôn chạy bcrypt để thời gian phản hồi không lộ email có tồn tại hay không
+                const DUMMY_HASH = "$2b$10$tMjragACSKkGXb2S/ni0r.ww5XRqKObALK748hVvmBliTZ7zCqchq";
+                const passwordMatch = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
 
-                if (!user.passwordHash) {
-                    console.log(`[AUTH] User has no password hash: ${email}`);
-                    return null;
-                }
-
-                const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-                console.log(`[AUTH] Password match for ${email}: ${passwordMatch}`);
-
-                if (!passwordMatch) return null;
+                if (!user || !user.passwordHash || !passwordMatch) return null;
+                if (!user.isActive) return null;
 
                 return {
                     id: user.id,
@@ -67,6 +65,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 const existingUser = await prisma.user.findUnique({
                     where: { email: profile.email },
                 });
+
+                if (existingUser && !existingUser.isActive) return false;
+                if ((profile as any).email_verified === false) return false;
 
                 if (existingUser) {
                     await prisma.account.upsert({
