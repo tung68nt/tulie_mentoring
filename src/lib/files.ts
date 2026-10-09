@@ -11,7 +11,7 @@ export async function attachFiles(opts: {
     ownerId: string;
     purpose: Exclude<FilePurpose, "selfie">;
     fileIds: string[];
-    target: { reflectionId: string } | { submissionId: string };
+    target: { reflectionId: string } | { submissionId: string } | { resourceId: string };
 }) {
     const ids = [...new Set(opts.fileIds)];
     if (ids.length === 0) return;

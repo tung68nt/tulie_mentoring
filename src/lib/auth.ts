@@ -101,6 +101,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     user.firstName = existingUser.firstName || undefined;
                     user.lastName = existingUser.lastName || undefined;
                 } else {
+                    // Chương trình đóng: đặt GOOGLE_AUTO_CREATE=false để chỉ cho email đã được admin tạo trước
+                    if (process.env.GOOGLE_AUTO_CREATE === "false") return false;
                     const firstName = (profile as any).given_name || profile.name?.split(" ")[0] || "";
                     const lastName = (profile as any).family_name || profile.name?.split(" ").slice(1).join(" ") || "";
 

@@ -4,15 +4,30 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "./activity";
+import { rateLimit } from "@/lib/rate-limit";
+import { z } from "zod";
+import { canReviewMentee } from "@/lib/access";
 
 export async function createTicket(data: {
     title: string;
     description: string;
     priority?: "low" | "medium" | "high";
     category?: "system" | "mentor" | "admin_help";
+    meetingId?: string;
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+
+    const parsed = z.object({
+        title: z.string().trim().min(3).max(200),
+        description: z.string().trim().min(1).max(10000),
+        priority: z.enum(["low", "medium", "high"]).optional(),
+        category: z.enum(["system", "mentor", "admin_help"]).optional(),
+        meetingId: z.string().max(64).optional(),
+    }).safeParse(data);
+    if (!parsed.success) throw new Error("Nội dung câu hỏi không hợp lệ");
+    data = parsed.data;
+    if (!rateLimit(`ticket:${session.user.id}`, 10, 3600_000).ok) throw new Error("Bạn gửi quá nhiều yêu cầu, vui lòng thử lại sau");
 
     const role = (session.user as any).role;
     const userId = session.user.id!;
@@ -26,8 +41,26 @@ export async function createTicket(data: {
         finalCategory = "admin_help";
     }
 
+    // Câu hỏi cho mentor: giao thẳng cho mentor của mentee, gắn buổi họp (nếu có và hợp lệ)
+    let assignedToId: string | undefined;
+    let meetingId: string | undefined;
+    if (finalCategory === "mentor" && role === "mentee") {
+        const ms = await prisma.mentorship.findFirst({
+            where: { mentees: { some: { menteeId: userId } }, status: "active" },
+            select: { mentorId: true, id: true },
+        });
+        if (!ms) throw new Error("Bạn chưa có mentor để đặt câu hỏi");
+        assignedToId = ms.mentorId;
+        if (data.meetingId) {
+            const m = await prisma.meeting.findFirst({ where: { id: data.meetingId, mentorshipId: ms.id }, select: { id: true } });
+            if (m) meetingId = m.id;
+        }
+    }
+
     const ticket = await prisma.supportTicket.create({
         data: {
+            assignedToId,
+            meetingId,
             title: data.title,
             description: data.description,
             priority: data.priority || "medium",
@@ -273,6 +306,22 @@ export async function addTicketComment(ticketId: string, content: string) {
         }
     });
 
+    // Cập nhật trạng thái theo luồng hỏi đáp
+    const current = await prisma.supportTicket.findUnique({ where: { id: ticketId }, select: { status: true, firstResponseAt: true, category: true } });
+    if (current) {
+        if (userId !== ticket.userId) {
+            await prisma.supportTicket.update({
+                where: { id: ticketId },
+                data: {
+                    firstResponseAt: current.firstResponseAt ?? new Date(),
+                    ...(current.category === "mentor" && ["open", "in_progress"].includes(current.status) ? { status: "answered" } : {}),
+                },
+            });
+        } else if (["answered", "resolved"].includes(current.status)) {
+            await prisma.supportTicket.update({ where: { id: ticketId }, data: { status: "in_progress" } });
+        }
+    }
+
     // Notify the other party
     try {
         const { sendNotification } = await import("@/lib/notifications/service");
@@ -320,7 +369,7 @@ export async function updateTicketStatus(id: string, status: string) {
 
     const role = (session.user as any).role;
     if (role === "mentee") throw new Error("Permission denied");
-    if (!["open", "in_progress", "resolved", "closed"].includes(status)) throw new Error("Trạng thái không hợp lệ");
+    if (!["open", "in_progress", "answered", "resolved", "closed"].includes(status)) throw new Error("Trạng thái không hợp lệ");
 
     const existing = await prisma.supportTicket.findUnique({ where: { id }, select: { userId: true, category: true } });
     if (!existing || !(await canAccessTicket(existing, session.user.id!, role))) throw new Error("Permission denied");
@@ -355,3 +404,67 @@ export async function updateTicketStatus(id: string, status: string) {
     return JSON.parse(JSON.stringify(ticket));
 }
 
+
+
+/** Mentee xác nhận đã được giải đáp (resolved) hoặc hỏi tiếp (reopen). */
+export async function setMyTicketState(id: string, state: "resolved" | "reopen") {
+    const session = await auth();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+    const t = await prisma.supportTicket.findUnique({ where: { id }, select: { userId: true, status: true, assignedToId: true, title: true } });
+    if (!t || t.userId !== session.user.id) throw new Error("Không tìm thấy yêu cầu");
+    if (t.status === "closed") throw new Error("Yêu cầu đã đóng");
+
+    await prisma.supportTicket.update({ where: { id }, data: { status: state === "resolved" ? "resolved" : "in_progress" } });
+    if (state === "reopen" && t.assignedToId) {
+        const { sendNotification } = await import("@/lib/notifications/service");
+        await sendNotification({ userId: t.assignedToId, title: "Mentee hỏi thêm", message: `Câu hỏi "${t.title}" được mở lại`, type: "ticket", link: `/tickets/${id}` }).catch(() => {});
+    }
+    revalidatePath(`/tickets/${id}`);
+    revalidatePath("/tickets");
+}
+
+function toBlocks(text: string) {
+    return text.split(/\n+/).filter((l) => l.trim()).map((l) => ({ type: "paragraph", content: l.slice(0, 2000) }));
+}
+
+/** Mentor (hoặc admin) đăng câu hỏi + câu trả lời lên wiki của cặp để mentee tra cứu về sau. */
+export async function publishTicketToWiki(id: string) {
+    const session = await auth();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+    const role = (session.user as any).role as string;
+
+    const t = await prisma.supportTicket.findUnique({
+        where: { id },
+        include: { comments: { include: { user: { select: { firstName: true, lastName: true } } }, orderBy: { createdAt: "asc" } } },
+    });
+    if (!t || t.category !== "mentor" || !(await canReviewMentee(session.user.id, role, t.userId))) throw new Error("Không có quyền");
+    if (t.wikiPageId) return { pageId: t.wikiPageId };
+
+    const ms = await prisma.mentorshipMentee.findFirst({ where: { menteeId: t.userId, mentorship: { status: "active" } }, select: { mentorshipId: true } });
+    if (!ms) throw new Error("Không tìm thấy mentorship");
+
+    const answers = t.comments.filter((c) => c.userId !== t.userId);
+    if (answers.length === 0) throw new Error("Chưa có câu trả lời để đăng");
+
+    const blocks = [
+        { type: "heading", props: { level: 2 }, content: "Câu hỏi" },
+        ...toBlocks(t.description),
+        { type: "heading", props: { level: 2 }, content: "Trả lời" },
+        ...answers.flatMap((c) => toBlocks(c.content)),
+    ];
+    const slug = `hoi-dap-${id.slice(-6)}-${Math.random().toString(36).slice(2, 7)}`;
+    const page = await prisma.wikiPage.create({
+        data: {
+            title: `Hỏi đáp: ${t.title}`.slice(0, 200),
+            slug,
+            content: JSON.stringify(blocks),
+            visibility: "mentorship",
+            mentorshipId: ms.mentorshipId,
+            authorId: session.user.id,
+        },
+    });
+    await prisma.supportTicket.update({ where: { id }, data: { wikiPageId: page.id, status: "resolved" } });
+    revalidatePath("/wiki");
+    revalidatePath(`/tickets/${id}`);
+    return { pageId: page.id, slug };
+}

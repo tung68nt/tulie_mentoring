@@ -186,6 +186,7 @@ model Mentorship {
   // Mentor notes
   mentorNotes    MentorNote[]
   submissions    Submission[]
+  resources      Resource[]
 
   @@index([mentorId])
   @@index([programCycleId])
@@ -365,12 +366,17 @@ model Resource {
   mimeType     String?
   category     String?
   tags         String?
-  visibility   String   @default("public")
+  visibility   String   @default("public") // public, group, private
   uploadedById String
+  mentorshipId String?
+  pinned       Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id], onDelete: SetNull)
+  files        FileAsset[]
 
+  @@index([mentorshipId])
   @@index([category])
   @@index([uploadedById])
 }
@@ -531,6 +537,9 @@ model SupportTicket {
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   category     String          @default("system")
+  firstResponseAt DateTime?
+  meetingId    String?
+  wikiPageId   String?
   assignedTo   User?           @relation("TicketAssignee", fields: [assignedToId], references: [id])
   user         User            @relation("TicketCreator", fields: [userId], references: [id], onDelete: Cascade)
   comments     TicketComment[]
@@ -1054,8 +1063,10 @@ model FileAsset {
   status       String    @default("pending") // pending (signed URL issued), ready (object verified)
   reflectionId String?
   submissionId String?
+  resourceId   String?
   createdAt    DateTime  @default(now())
 
+  resource     Resource?          @relation(fields: [resourceId], references: [id], onDelete: SetNull)
   owner        User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   reflection   SessionReflection? @relation(fields: [reflectionId], references: [id], onDelete: SetNull)
   submission   Submission?        @relation(fields: [submissionId], references: [id], onDelete: SetNull)

@@ -30,7 +30,7 @@ export async function createWikiCategory(data: {
     if (!session?.user) throw new Error("Unauthorized");
 
     const role = (session.user as any).role;
-    if (!["admin", "manager", "program_manager", "mentor"].includes(role)) {
+    if (!["admin", "program_manager"].includes(role)) {
         throw new Error("Permission denied");
     }
 
@@ -93,6 +93,7 @@ export async function deleteWikiCategory(id: string) {
 export async function reorderCategories(orderedIds: string[]) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    if (!["admin", "program_manager"].includes((session.user as any).role)) throw new Error("Permission denied");
 
     await Promise.all(
         orderedIds.map((id, index) =>
@@ -159,7 +160,7 @@ export async function updateWiki(id: string, data: {
     if (!wiki) throw new Error("Wiki not found");
 
     const role = (session.user as any).role;
-    const isAdmin = ["admin", "manager", "program_manager"].includes(role);
+    const isAdmin = ["admin", "program_manager"].includes(role);
     if (!isAdmin && wiki.authorId !== session.user.id) {
         throw new Error("Permission denied");
     }
@@ -187,7 +188,7 @@ export async function deleteWiki(id: string) {
     if (!wiki) throw new Error("Wiki not found");
 
     const role = (session.user as any).role;
-    const isAdmin = ["admin", "manager", "program_manager"].includes(role);
+    const isAdmin = ["admin", "program_manager"].includes(role);
     if (!isAdmin && wiki.authorId !== session.user.id) {
         throw new Error("Permission denied");
     }
@@ -199,6 +200,10 @@ export async function deleteWiki(id: string) {
 export async function reorderWikis(categoryId: string, orderedIds: string[]) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    if (!["admin", "program_manager"].includes((session.user as any).role)) {
+        const count = await prisma.wiki.count({ where: { id: { in: orderedIds }, authorId: session.user.id! } });
+        if (count !== orderedIds.length) throw new Error("Permission denied");
+    }
 
     await Promise.all(
         orderedIds.map((id, index) =>
@@ -347,7 +352,7 @@ export async function getWikiPages(wikiId?: string) {
 
     const role = (session.user as any).role;
     const userId = session.user.id!;
-    const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
+    const isAdmin = role === "admin" || role === "program_manager";
 
     const wikiFilter = wikiId ? { wikiId } : {};
 
@@ -368,7 +373,14 @@ export async function getWikiPages(wikiId?: string) {
         const mentorships = await prisma.mentorship.findMany({
             where: role === "mentee"
                 ? { mentees: { some: { menteeId: userId } } }
-                : role === "mentor" ? { mentorId: userId } : {},
+                : role === "mentor" ? { mentorId: userId }
+                : role === "facilitator" ? {
+                    OR: [
+                        { facilitatorAssignments: { some: { facilitatorId: userId } } },
+                        { programCycle: { facilitatorAssignments: { some: { facilitatorId: userId, mentorshipId: null } } } },
+                    ],
+                }
+                : role === "manager" ? {} : { id: "none" },
             select: { id: true },
         });
         const mentorshipIds = mentorships.map(m => m.id);
@@ -516,7 +528,7 @@ export async function updateWikiPage(id: string, data: any) {
     if (!page) throw new Error("Page not found");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
+    const isAdmin = role === "admin" || role === "program_manager";
     if (!isAdmin && page.authorId !== session.user.id) {
         throw new Error("Permission denied: Only the author or admin can update this page");
     }
@@ -569,7 +581,7 @@ export async function deleteWikiPage(id: string) {
     if (!page) throw new Error("Page not found");
 
     const role = (session.user as any).role;
-    const isAdmin = role === "admin" || role === "manager" || role === "program_manager";
+    const isAdmin = role === "admin" || role === "program_manager";
     if (!isAdmin && page.authorId !== session.user.id) {
         throw new Error("Permission denied: Only the author or admin can delete this page");
     }
@@ -581,6 +593,10 @@ export async function deleteWikiPage(id: string) {
 export async function reorderPages(wikiId: string, orderedIds: string[]) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    if (!["admin", "program_manager"].includes((session.user as any).role)) {
+        const count = await prisma.wikiPage.count({ where: { id: { in: orderedIds }, authorId: session.user.id! } });
+        if (count !== orderedIds.length) throw new Error("Permission denied");
+    }
 
     await Promise.all(
         orderedIds.map((id, index) =>
@@ -595,9 +611,25 @@ export async function searchUsersForSharing(query: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
 
+    if (typeof query !== "string" || query.trim().length < 2) return [];
+    const uid = session.user.id!;
+    const role = (session.user as any).role as string;
+    // Chỉ tìm trong những người cùng mentorship (admin/PM tìm được tất cả)
+    let memberFilter: any = {};
+    if (role !== "admin" && role !== "program_manager") {
+        const ms = await prisma.mentorship.findMany({
+            where: { OR: [{ mentorId: uid }, { mentees: { some: { menteeId: uid } } }, { facilitatorAssignments: { some: { facilitatorId: uid } } }] },
+            select: { mentorId: true, mentees: { select: { menteeId: true } } },
+        });
+        const ids = new Set<string>();
+        ms.forEach((m) => { ids.add(m.mentorId); m.mentees.forEach((x) => ids.add(x.menteeId)); });
+        memberFilter = { id: { in: [...ids] } };
+    }
+
     const users = await prisma.user.findMany({
         where: {
-            id: { not: session.user.id! },
+            ...memberFilter,
+            NOT: { id: uid },
             isActive: true,
             OR: [
                 { firstName: { contains: query, mode: "insensitive" } },

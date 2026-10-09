@@ -19,6 +19,7 @@ export async function createMentorNote(data: {
     category?: NoteCategory;
 }) {
     const { userId, role } = await requireAuth();
+    if (role === "manager") throw new Error("Unauthorized: manager chỉ được xem");
 
     // Only mentor of this match, assigned facilitator, or admin can create notes
     const { memberRole } = await requireMentorshipAccess(data.mentorshipId, userId, role);
@@ -80,7 +81,7 @@ export async function updateMentorNote(
     if (!note) throw new Error("Note not found");
 
     // Only the author or admin can edit
-    if (note.authorId !== userId && !isAdminLevel(role)) {
+    if (note.authorId !== userId && role !== "admin" && role !== "program_manager") {
         throw new Error("Unauthorized: Only the author can edit this note");
     }
 
@@ -112,7 +113,7 @@ export async function deleteMentorNote(id: string) {
     if (!note) throw new Error("Note not found");
 
     // Only the author or admin can delete
-    if (note.authorId !== userId && !isAdminLevel(role)) {
+    if (note.authorId !== userId && role !== "admin" && role !== "program_manager") {
         throw new Error("Unauthorized: Only the author can delete this note");
     }
 

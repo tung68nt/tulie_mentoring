@@ -4,7 +4,7 @@ import { randomUUID } from "crypto";
 // Server-only: dùng service role key, KHÔNG import từ client component.
 // Không đặt "use server" ở đây để các hàm không bị lộ thành endpoint.
 
-export type FilePurpose = "selfie" | "reflection" | "submission";
+export type FilePurpose = "selfie" | "reflection" | "submission" | "resource";
 
 const MB = 1024 * 1024;
 
@@ -26,6 +26,7 @@ export const FILE_RULES: Record<FilePurpose, { maxSize: number; types: Record<st
     selfie: { maxSize: 2 * MB, types: { "image/jpeg": "jpg" } },
     reflection: { maxSize: 10 * MB, types: DOC_TYPES },
     submission: { maxSize: 10 * MB, types: DOC_TYPES },
+    resource: { maxSize: 15 * MB, types: DOC_TYPES },
 };
 
 export const MAX_FILES_PER_ITEM = 5;

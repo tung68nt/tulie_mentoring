@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { canViewMentee } from "@/lib/access";
+import { canViewMentee, canViewResource } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import {
     FILE_RULES,
@@ -15,7 +15,7 @@ import {
 } from "@/lib/storage";
 
 const requestSchema = z.object({
-    purpose: z.enum(["selfie", "reflection", "submission"]),
+    purpose: z.enum(["selfie", "reflection", "submission", "resource"]),
     fileName: z.string().min(1).max(255),
     mimeType: z.string().min(1).max(120),
     size: z.number().int().positive(),
@@ -70,7 +70,10 @@ export async function getFileDownloadUrl(fileId: string) {
     const file = await prisma.fileAsset.findUnique({ where: { id: fileId } });
     if (!file || file.status !== "ready") return { error: "Không tìm thấy tệp." };
 
-    const allowed = await canViewMentee(session.user.id, (session.user as any).role, file.ownerId);
+    const viewerRole = (session.user as any).role as string;
+    const allowed = file.resourceId
+        ? await canViewResource(session.user.id, viewerRole, file.resourceId)
+        : await canViewMentee(session.user.id, viewerRole, file.ownerId);
     if (!allowed) return { error: "Bạn không có quyền xem tệp này." };
 
     try {

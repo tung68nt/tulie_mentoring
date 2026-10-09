@@ -42,3 +42,8 @@ GitHub sẽ tắt workflow theo lịch nếu repo không có commit nào trong 6
 - Mentor: chỉ thấy mentee thuộc mentorship của mình; nhận xét thu hoạch và bài nộp.
 - Facilitator: xem mentee trong mentorship / program được giao (`FacilitatorAssignment`); tạo và sửa buổi họp trong phạm vi đó.
 - Admin, program_manager, manager: xem toàn bộ (manager chỉ đọc).
+
+## 6. Đăng nhập Google
+
+Mặc định bất kỳ tài khoản Google nào cũng được tự tạo thành mentee. Nếu chương trình đóng, đặt `GOOGLE_AUTO_CREATE=false`
+(thêm vào docker-compose.prod.yml) để chỉ cho email đã được admin tạo trước.

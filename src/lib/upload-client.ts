@@ -3,7 +3,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { requestUpload } from "@/lib/actions/files";
 
-type Purpose = "selfie" | "reflection" | "submission";
+type Purpose = "selfie" | "reflection" | "submission" | "resource";
 
 /** Thu nhỏ ảnh về tối đa 960px, JPEG 0.8, để selfie nhẹ (~100-200KB). */
 export async function compressImage(blob: Blob, maxSide = 960, quality = 0.8): Promise<Blob> {

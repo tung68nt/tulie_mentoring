@@ -115,3 +115,81 @@ export async function canAccessMeeting(userId: string, role: string, meetingId: 
     if (write) return false; // mentee chỉ đọc
     return !!m.mentorship?.mentees.some((x) => x.menteeId === userId);
 }
+
+/** User có thuộc program cycle (qua mentorship) không? admin-level luôn có. */
+export async function isInProgramCycle(userId: string, role: string, programCycleId: string): Promise<boolean> {
+    if (isAdminLevel(role)) return true;
+    const row = await prisma.mentorship.findFirst({
+        where: {
+            programCycleId,
+            OR: [
+                { mentorId: userId },
+                { mentees: { some: { menteeId: userId } } },
+                { facilitatorAssignments: { some: { facilitatorId: userId } } },
+                { programCycle: { facilitatorAssignments: { some: { facilitatorId: userId } } } },
+            ],
+        },
+        select: { id: true },
+    });
+    return !!row;
+}
+
+/** User có xem được bài đăng không (public / program / pair). */
+export async function canSeePost(userId: string, role: string, postId: string): Promise<boolean> {
+    const post = await prisma.post.findUnique({
+        where: { id: postId },
+        select: { authorId: true, visibility: true, programCycleId: true, mentorshipId: true },
+    });
+    if (!post) return false;
+    if (post.authorId === userId || isAdminLevel(role) || post.visibility === "public") return true;
+    if (post.visibility === "program") return !!post.programCycleId && isInProgramCycle(userId, role, post.programCycleId);
+    if (post.visibility === "pair") {
+        if (!post.mentorshipId) return false;
+        const row = await prisma.mentorship.findFirst({
+            where: {
+                id: post.mentorshipId,
+                OR: [{ mentorId: userId }, { mentees: { some: { menteeId: userId } } }, { facilitatorAssignments: { some: { facilitatorId: userId } } }],
+            },
+            select: { id: true },
+        });
+        return !!row;
+    }
+    return false;
+}
+
+/** Mentorship id mà user là thành viên (mentor, mentee, facilitator được giao). */
+export async function myMentorshipIds(userId: string, role: string): Promise<string[]> {
+    const rows = await prisma.mentorship.findMany({
+        where: {
+            OR: [
+                { mentorId: userId },
+                { mentees: { some: { menteeId: userId } } },
+                ...(role === "facilitator"
+                    ? [
+                          { facilitatorAssignments: { some: { facilitatorId: userId } } },
+                          { programCycle: { facilitatorAssignments: { some: { facilitatorId: userId, mentorshipId: null } } } },
+                      ]
+                    : []),
+            ],
+        },
+        select: { id: true },
+    });
+    return rows.map((r) => r.id);
+}
+
+/** Xem được tài nguyên? public / của mình / group thuộc mentorship của mình / admin-level (trừ private của người khác). */
+export async function canViewResource(userId: string, role: string, resourceId: string): Promise<boolean> {
+    const r = await prisma.resource.findUnique({
+        where: { id: resourceId },
+        select: { uploadedById: true, visibility: true, mentorshipId: true },
+    });
+    if (!r) return false;
+    if (r.uploadedById === userId || r.visibility === "public") return true;
+    if (r.visibility === "private") return role === "admin";
+    if (r.visibility === "group") {
+        if (role === "admin" || role === "program_manager" || role === "manager") return true;
+        if (!r.mentorshipId) return false;
+        return (await myMentorshipIds(userId, role)).includes(r.mentorshipId);
+    }
+    return false;
+}

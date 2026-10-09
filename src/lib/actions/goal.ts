@@ -8,6 +8,7 @@ import { logActivity } from "./activity";
 
 export async function createGoal(data: GoalInput) {
     const { userId, role } = await requireAuth();
+    if (role === "manager" || role === "facilitator") throw new Error("Unauthorized: chỉ được xem mục tiêu");
 
     const validatedData = goalSchema.parse(data);
 
@@ -44,9 +45,11 @@ export async function createGoal(data: GoalInput) {
 
 export async function updateGoal(id: string, data: GoalInput) {
     const { userId, role } = await requireAuth();
+    if (role === "manager" || role === "facilitator") throw new Error("Unauthorized: chỉ được xem mục tiêu");
 
     // Verify access to this goal
-    const { goal: existingGoal } = await requireGoalAccess(id, userId, role);
+    const { goal: existingGoal, memberRole: editorRole } = await requireGoalAccess(id, userId, role);
+    if (editorRole === "mentee" && existingGoal.mentorConfirmed) throw new Error("Mục tiêu đã được xác nhận, không thể chỉnh sửa");
 
     const validatedData = goalSchema.parse(data);
 
@@ -106,6 +109,7 @@ async function recalculateGoalProgress(goalId: string) {
 
 export async function updateSubGoalProgress(subGoalId: string, value: number, note?: string) {
     const { userId, role } = await requireAuth();
+    if (role === "manager" || role === "facilitator") throw new Error("Unauthorized: chỉ được xem mục tiêu");
 
     // Fetch sub-goal with its parent goal to verify access
     const subGoal = await prisma.subGoal.findUnique({
@@ -143,9 +147,11 @@ export async function updateSubGoalProgress(subGoalId: string, value: number, no
 
 export async function updateGoalProgress(id: string, value: number, note?: string) {
     const { userId, role } = await requireAuth();
+    if (role === "manager" || role === "facilitator") throw new Error("Unauthorized: chỉ được xem mục tiêu");
 
     // Verify access to this goal's mentorship
-    const { goal: goalMeta } = await requireGoalAccess(id, userId, role);
+    const { goal: goalMeta, memberRole: progressRole } = await requireGoalAccess(id, userId, role);
+    if (progressRole === "mentee" && goalMeta.mentorConfirmed) throw new Error("Mục tiêu đã được xác nhận, không thể chỉnh sửa");
 
     // Check if goal has subgoals
     const goalWithSubGoals = await prisma.goal.findUnique({
@@ -238,6 +244,7 @@ export async function confirmGoal(id: string) {
 
 export async function deleteGoal(id: string) {
     const { userId, role } = await requireAuth();
+    if (role === "manager" || role === "facilitator") throw new Error("Unauthorized: chỉ được xem mục tiêu");
 
     // Verify access to this goal
     const { goal, memberRole } = await requireGoalAccess(id, userId, role);

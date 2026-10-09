@@ -3,6 +3,10 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { canViewMentee, visibleMenteeIds } from "@/lib/access";
+
+const WRITE_ROLES = ["admin", "program_manager"];
+const isHttp = (u?: string) => !u || /^https?:\/\//i.test(u);
 
 // Create a new procedure (admin/manager/facilitator only)
 export async function createProcedure(data: {
@@ -19,9 +23,10 @@ export async function createProcedure(data: {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
     const role = (session.user as any).role;
-    if (!["admin", "manager", "facilitator", "program_manager"].includes(role)) {
+    if (![...WRITE_ROLES, "facilitator"].includes(role)) {
         throw new Error("Unauthorized");
     }
+    if (!isHttp(data.fileUrl)) throw new Error("Liên kết không hợp lệ");
 
     const procedure = await prisma.procedure.create({
         data: {
@@ -49,6 +54,8 @@ export async function getProcedures() {
     const role = (session.user as any).role;
     const userId = session.user.id!;
     const isAdmin = ["admin", "manager", "facilitator", "program_manager"].includes(role);
+    // Facilitator chỉ thấy bài nộp của mentee thuộc phạm vi được giao
+    const scope = role === "facilitator" ? await visibleMenteeIds(userId, role) : null;
 
     const where: any = {};
     if (!isAdmin) {
@@ -63,6 +70,7 @@ export async function getProcedures() {
         where,
         include: {
             submissions: isAdmin ? {
+                ...(scope ? { where: { userId: { in: scope } } } : {}),
                 include: {
                     procedure: { select: { title: true } },
                 }
@@ -85,6 +93,12 @@ export async function submitProcedure(procedureId: string, data: {
 }) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
+    const role = (session.user as any).role;
+
+    const proc = await prisma.procedure.findUnique({ where: { id: procedureId }, select: { targetRole: true } });
+    if (!proc || (proc.targetRole !== "both" && proc.targetRole !== role)) throw new Error("Không tìm thấy thủ tục");
+    if (!isHttp(data.fileUrl)) throw new Error("Liên kết không hợp lệ");
+    if ((data.note?.length ?? 0) > 5000 || (data.formData?.length ?? 0) > 50000) throw new Error("Nội dung quá dài");
 
     const submission = await prisma.procedureSubmission.upsert({
         where: {
@@ -123,9 +137,12 @@ export async function reviewSubmission(submissionId: string, data: {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
     const role = (session.user as any).role;
-    if (!["admin", "manager", "facilitator", "program_manager"].includes(role)) {
+    if (![...WRITE_ROLES, "facilitator"].includes(role)) {
         throw new Error("Unauthorized");
     }
+    const target = await prisma.procedureSubmission.findUnique({ where: { id: submissionId }, select: { userId: true } });
+    if (!target) throw new Error("Không tìm thấy bài nộp");
+    if (role === "facilitator" && !(await canViewMentee(session.user.id!, role, target.userId))) throw new Error("Unauthorized");
 
     const updated = await prisma.procedureSubmission.update({
         where: { id: submissionId },
@@ -146,7 +163,7 @@ export async function deleteProcedure(id: string) {
     const session = await auth();
     if (!session?.user) throw new Error("Unauthorized");
     const role = (session.user as any).role;
-    if (!["admin", "manager", "facilitator", "program_manager"].includes(role)) {
+    if (!WRITE_ROLES.includes(role)) {
         throw new Error("Unauthorized");
     }
 

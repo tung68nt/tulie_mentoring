@@ -4,9 +4,21 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 
+// Các khoá hiển thị công khai (trang đăng nhập, favicon...). Mọi khoá khác (SMTP...) chỉ admin đọc được.
+const PUBLIC_SETTING_KEYS = ["site_name", "auth_logo", "sidebar_logo", "favicon"];
+
 export async function getSystemSettings() {
     try {
-        const settings = await prisma.systemSetting.findMany();
+        // auth() dùng headers() nên sẽ ném lỗi khi prerender tĩnh: khi đó coi như không phải admin
+        let isAdmin = false;
+        try {
+            isAdmin = ((await auth())?.user as any)?.role === "admin";
+        } catch {
+            isAdmin = false;
+        }
+        const settings = await prisma.systemSetting.findMany(
+            isAdmin ? undefined : { where: { key: { in: PUBLIC_SETTING_KEYS } } }
+        );
         return settings.reduce((acc: Record<string, string>, curr: { key: string; value: string }) => {
             acc[curr.key] = curr.value;
             return acc;

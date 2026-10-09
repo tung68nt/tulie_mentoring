@@ -47,11 +47,11 @@ export const MEETING_STATUSES = [
 export type MeetingStatusType = (typeof MEETING_STATUSES)[number];
 
 export const MEETING_TRANSITIONS: TransitionRule[] = [
-    { from: "scheduled", to: "ongoing", allowedRoles: ["admin", "program_manager", "mentor", "mentee"] },
-    { from: "scheduled", to: "completed", allowedRoles: ["admin", "program_manager", "mentor", "mentee"] },
-    { from: "scheduled", to: "cancelled", allowedRoles: ["admin", "program_manager", "mentor", "mentee"] },
-    { from: "ongoing", to: "completed", allowedRoles: ["admin", "program_manager", "mentor", "mentee"] },
-    { from: "ongoing", to: "cancelled", allowedRoles: ["admin", "program_manager", "mentor", "mentee"] },
+    { from: "scheduled", to: "ongoing", allowedRoles: ["admin", "program_manager", "mentor"] },
+    { from: "scheduled", to: "completed", allowedRoles: ["admin", "program_manager", "mentor"] },
+    { from: "scheduled", to: "cancelled", allowedRoles: ["admin", "program_manager", "mentor"] },
+    { from: "ongoing", to: "completed", allowedRoles: ["admin", "program_manager", "mentor"] },
+    { from: "ongoing", to: "cancelled", allowedRoles: ["admin", "program_manager", "mentor"] },
     // completed and cancelled are terminal states
 ];
 

@@ -206,6 +206,44 @@ export async function GET(request: Request) {
             }
         }
 
+        // ─── 3. Câu hỏi của mentee chưa được mentor trả lời > 24h ─────────
+        let ticketReminders = 0;
+        const unanswered = await prisma.supportTicket.findMany({
+            where: { category: "mentor", firstResponseAt: null, status: { in: ["open", "in_progress"] }, createdAt: { lte: addHours(now, -24) }, assignedToId: { not: null } },
+            select: { id: true, title: true, assignedToId: true },
+            take: 100,
+        });
+        for (const t of unanswered) {
+            const link = `/tickets/${t.id}`;
+            const dup = await prisma.notification.findFirst({ where: { userId: t.assignedToId!, link, title: { startsWith: "Câu hỏi chờ trả lời" }, createdAt: { gte: addHours(now, -23) } } });
+            if (dup) continue;
+            const n = await sendNotification({ userId: t.assignedToId!, title: `Câu hỏi chờ trả lời: ${t.title}`.slice(0, 120), message: "Mentee đã hỏi hơn 24 giờ trước và chưa nhận được phản hồi.", type: "ticket", link });
+            if (n) ticketReminders++;
+        }
+
+        // ─── 4. Mentee chưa nộp thu hoạch sau buổi họp 24–72h trước ────────
+        let reflectionReminders = 0;
+        const recentMeetings = await prisma.meeting.findMany({
+            where: { scheduledAt: { gte: addHours(now, -72), lte: addHours(now, -24) }, status: { not: "cancelled" }, mentorshipId: { not: null }, meetingType: "session" },
+            select: {
+                id: true, title: true,
+                mentorship: { select: { mentees: { select: { menteeId: true } } } },
+                sessionReflections: { where: { status: { not: "draft" } }, select: { menteeId: true } },
+            },
+            take: 200,
+        });
+        for (const m of recentMeetings) {
+            const done = new Set(m.sessionReflections.map((r) => r.menteeId));
+            for (const { menteeId } of m.mentorship?.mentees ?? []) {
+                if (done.has(menteeId)) continue;
+                const link = "/reflections";
+                const dup = await prisma.notification.findFirst({ where: { userId: menteeId, link, title: `Nhắc nộp thu hoạch: ${m.title}`.slice(0, 120), createdAt: { gte: addHours(now, -47) } } });
+                if (dup) continue;
+                const n = await sendNotification({ userId: menteeId, title: `Nhắc nộp thu hoạch: ${m.title}`.slice(0, 120), message: "Bạn chưa nộp thu hoạch cho buổi họp này. Hạn nộp là 48 giờ sau buổi họp.", type: "system", link });
+                if (n) reflectionReminders++;
+            }
+        }
+
         return NextResponse.json({
             ok: true,
             timestamp: now.toISOString(),
@@ -213,6 +251,8 @@ export async function GET(request: Request) {
                 meetingReminders,
                 taskReminders,
                 emailsSent,
+                ticketReminders,
+                reflectionReminders,
                 upcomingMeetings: upcomingMeetings.length,
                 upcomingTasks: upcomingTasks.length,
             },

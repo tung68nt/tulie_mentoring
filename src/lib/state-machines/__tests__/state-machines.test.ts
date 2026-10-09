@@ -97,12 +97,12 @@ describe('Mentorship State Machine', () => {
 
 describe('Meeting State Machine', () => {
     it('mentor can start a scheduled meeting', () => {
-        const result = validateTransition(MEETING_TRANSITIONS, 'scheduled', 'in_progress', 'mentor');
+        const result = validateTransition(MEETING_TRANSITIONS, 'scheduled', 'ongoing', 'mentor');
         expect(result.valid).toBe(true);
     });
 
     it('mentor can complete an in-progress meeting', () => {
-        const result = validateTransition(MEETING_TRANSITIONS, 'in_progress', 'completed', 'mentor');
+        const result = validateTransition(MEETING_TRANSITIONS, 'ongoing', 'completed', 'mentor');
         expect(result.valid).toBe(true);
     });
 
@@ -117,13 +117,13 @@ describe('Meeting State Machine', () => {
     });
 
     it('mentee cannot change meeting status', () => {
-        const result = validateTransition(MEETING_TRANSITIONS, 'scheduled', 'in_progress', 'mentee');
+        const result = validateTransition(MEETING_TRANSITIONS, 'scheduled', 'ongoing', 'mentee');
         expect(result.valid).toBe(false);
     });
 
-    it('cannot skip from scheduled to completed', () => {
+    it('allows completing a scheduled meeting directly (QR manager "end meeting")', () => {
         const result = validateTransition(MEETING_TRANSITIONS, 'scheduled', 'completed', 'admin');
-        expect(result.valid).toBe(false);
+        expect(result.valid).toBe(true);
     });
 });
 

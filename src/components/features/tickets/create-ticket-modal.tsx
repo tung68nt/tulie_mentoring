@@ -49,7 +49,7 @@ export function CreateTicketModal({ userRole }: { userRole?: string }) {
             title: "",
             description: "",
             priority: "medium",
-            category: userRole === "mentee" ? "system" : "admin_help",
+            category: userRole === "mentee" ? "mentor" : "admin_help",
         },
     });
 

@@ -18,7 +18,7 @@ export function AttachmentPicker({
     onChange,
     max = 5,
 }: {
-    purpose: "reflection" | "submission";
+    purpose: "reflection" | "submission" | "resource";
     value: PickedFile[];
     onChange: (files: PickedFile[]) => void;
     max?: number;

@@ -18,6 +18,10 @@ import {
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { FileChips, type FileInfo } from "@/components/features/files/file-chips";
+import { togglePinResource } from "@/lib/actions/resource";
+import { Pin } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Resource {
     id: string;
@@ -28,6 +32,8 @@ interface Resource {
     fileUrl: string | null;
     category: string;
     visibility: string;
+    pinned?: boolean;
+    files?: FileInfo[];
     createdAt: Date;
     uploadedBy: { firstName: string; lastName: string };
 }
@@ -38,6 +44,7 @@ interface ResourceListProps {
 }
 
 export function ResourceList({ resources, categories }: ResourceListProps) {
+    const router = useRouter();
     const [search, setSearch] = useState("");
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
@@ -194,19 +201,19 @@ export function ResourceList({ resources, categories }: ResourceListProps) {
                                                 <span className="text-[10px] text-muted-foreground">{formatDate(res.createdAt)}</span>
                                             </div>
                                             <div className="flex items-center gap-2 pt-3">
-                                                {res.type === "link" ? (
+                                                {res.type === "link" && res.linkUrl ? (
                                                     <Button variant="outline" size="sm" className="h-7 text-[11px] font-medium px-3" asChild>
-                                                        <a href={res.linkUrl!} target="_blank" rel="noopener noreferrer">
+                                                        <a href={res.linkUrl} target="_blank" rel="noopener noreferrer nofollow">
                                                             <ExternalLink className="w-3 h-3 mr-1.5" />
                                                             Truy cập
                                                         </a>
                                                     </Button>
-                                                ) : (
-                                                    <Button variant="outline" size="sm" className="h-7 text-[11px] font-medium px-3">
-                                                        <Download className="w-3 h-3 mr-1.5" />
-                                                        Tải xuống
-                                                    </Button>
-                                                )}
+                                                ) : res.type === "file" ? (
+                                                    <FileChips files={res.files ?? []} />
+                                                ) : null}
+                                                <Button variant="ghost" size="xs" aria-label="Ghim" onClick={async () => { await togglePinResource(res.id).catch(() => {}); router.refresh(); }}>
+                                                    <Pin className={cn("w-3.5 h-3.5", res.pinned && "fill-current")} />
+                                                </Button>
                                             </div>
                                         </div>
                                     </Card>

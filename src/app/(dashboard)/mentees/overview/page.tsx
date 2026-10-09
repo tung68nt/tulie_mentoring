@@ -9,6 +9,12 @@ import { Card } from "@/components/ui/card";
 import { getMenteeOverview } from "@/lib/actions/mentee-tracking";
 import { formatDate } from "@/lib/utils";
 
+const STALE_MS = 7 * 86_400_000;
+const atRisk = (m: any) =>
+    (m.meetingsHeld >= 2 && m.score < 40) ||
+    (!m.lastActiveAt || Date.now() - new Date(m.lastActiveAt).getTime() > STALE_MS) ||
+    (m.meetingsHeld >= 2 && m.present === 0);
+
 const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : "–");
 
 export default async function MenteeOverviewPage() {
@@ -26,7 +32,7 @@ export default async function MenteeOverviewPage() {
                 <div className="space-y-1">
                     <h1 className="text-2xl font-semibold text-foreground">Theo dõi mentee</h1>
                     <p className="text-sm text-muted-foreground max-w-xl">
-                        Chuyên cần, thu hoạch, bài nộp và mức độ hoạt động. Điểm nhiệt tình (0–100) = 40% chuyên cần, 30% thu hoạch đúng hạn, 20% hoạt động 14 ngày, 10% bài nộp 30 ngày.
+                        Chuyên cần, thu hoạch, bài nộp và mức độ hoạt động. Nhãn "Cần chú ý": điểm dưới 40, vắng liên tiếp hoặc không hoạt động quá 7 ngày. Điểm nhiệt tình (0–100) = 40% chuyên cần, 30% thu hoạch đúng hạn, 20% hoạt động 14 ngày, 10% bài nộp 30 ngày.
                     </p>
                 </div>
                 {canExport && (
@@ -61,7 +67,7 @@ export default async function MenteeOverviewPage() {
                                     <Link href={`/mentees/m/${r.mentee.id}`} className="flex items-center gap-3">
                                         <Avatar firstName={r.mentee.firstName} lastName={r.mentee.lastName} src={r.mentee.avatar} size="sm" />
                                         <span>
-                                            <span className="block font-medium text-foreground">{r.mentee.firstName} {r.mentee.lastName}</span>
+                                            <span className="flex items-center gap-2 font-medium text-foreground">{r.mentee.firstName} {r.mentee.lastName}{atRisk(r.metrics) && <Badge variant="error">Cần chú ý</Badge>}</span>
                                             <span className="block text-xs text-muted-foreground">{r.mentee.menteeProfile?.studentId || r.mentee.email}</span>
                                         </span>
                                     </Link>

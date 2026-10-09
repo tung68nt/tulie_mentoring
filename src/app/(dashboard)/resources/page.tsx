@@ -26,7 +26,7 @@ export default async function ResourcesPage() {
                         <h1 className="text-2xl font-semibold text-foreground no-uppercase">Thư viện Tài nguyên</h1>
                         <p className="text-sm text-muted-foreground/60 no-uppercase font-medium">Tổng hợp tài liệu, biểu mẫu và hướng dẫn chương trình</p>
                     </div>
-                    {(role === "admin" || role === "mentor") && (
+                    {role !== "manager" && (
                         <Button asChild className="rounded-xl shadow-none">
                             <Link href="/resources/new">
                                 <Plus className="w-4 h-4 mr-2" />

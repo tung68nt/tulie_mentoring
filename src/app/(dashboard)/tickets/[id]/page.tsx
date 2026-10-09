@@ -2,14 +2,15 @@
 
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
-import { getTicketDetail, addTicketComment, updateTicketStatus } from "@/lib/actions/ticket";
+import { getTicketDetail, addTicketComment, updateTicketStatus, setMyTicketState, publishTicketToWiki } from "@/lib/actions/ticket";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
-import { Clock, MessageSquare, Send, CheckCircle, Zap } from "lucide-react";
+import { Clock, MessageSquare, Send, CheckCircle, Zap, BookMarked, RotateCcw } from "lucide-react";
 import { revalidatePath } from "next/cache";
 
 export default async function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,6 +44,21 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
         revalidatePath(`/tickets/${id}`);
     }
 
+    async function handleMyState(state: "resolved" | "reopen") {
+        "use server";
+        await setMyTicketState(id, state);
+        revalidatePath(`/tickets/${id}`);
+    }
+
+    async function handlePublishWiki() {
+        "use server";
+        await publishTicketToWiki(id);
+        revalidatePath(`/tickets/${id}`);
+    }
+
+    const isOwner = ticket.user.id === session.user.id;
+    const canPublish = role !== "mentee" && ticket.category === "mentor" && !ticket.wikiPageId && ticket.comments.length > 0;
+
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-10 animate-fade-in">
             {/* Ticket Header */}
@@ -60,6 +76,28 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
                         <span>Đã tạo {formatDate(ticket.createdAt, "dd/MM/yyyy HH:mm")}</span>
                     </div>
                 </div>
+
+                {isOwner && ["answered", "resolved"].includes(ticket.status) && (
+                    <div className="flex gap-2">
+                        {ticket.status === "answered" && (
+                            <form action={() => handleMyState("resolved")}>
+                                <Button size="sm" className="gap-2"><CheckCircle className="w-4 h-4" />Đã hiểu, đóng câu hỏi</Button>
+                            </form>
+                        )}
+                        <form action={() => handleMyState("reopen")}>
+                            <Button size="sm" variant="outline" className="gap-2"><RotateCcw className="w-4 h-4" />Hỏi thêm</Button>
+                        </form>
+                    </div>
+                )}
+
+                {canPublish && (
+                    <form action={handlePublishWiki}>
+                        <Button size="sm" variant="outline" className="gap-2"><BookMarked className="w-4 h-4" />Đăng lên Wiki</Button>
+                    </form>
+                )}
+                {ticket.wikiPageId && (
+                    <Badge variant="success">Đã đăng lên Wiki</Badge>
+                )}
 
                 {canManage && (
                     <div className="flex gap-2">

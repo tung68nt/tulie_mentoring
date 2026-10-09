@@ -52,6 +52,7 @@ const statusConfig: Record<
   offline: { variant: "secondary", label: "Ngoại tuyến" },
   draft: { variant: "secondary", label: "Nháp" },
   open: { variant: "secondary", label: "Đang mở" },
+  answered: { variant: "secondary", label: "Đã trả lời" },
   resolved: { variant: "primary", label: "Đã giải quyết" },
   closed: { variant: "outline", label: "Đã đóng" },
   archived: { variant: "outline", label: "Lưu trữ" },

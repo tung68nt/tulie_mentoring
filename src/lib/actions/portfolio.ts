@@ -68,6 +68,14 @@ export async function updatePortfolio(data: {
     if (!session?.user) throw new Error("Unauthorized");
 
     const userId = session.user.id!;
+    // Chỉ lấy các trường được phép, tránh mass-assignment (menteeId, id...)
+    const KEYS = ["personalityMbti", "personalityDisc", "personalityHolland", "shortTermGoals", "longTermGoals", "strengths", "weaknesses", "challenges", "startupIdeas", "personalNotes"] as const;
+    const clean: Record<string, string> = {};
+    for (const k of KEYS) {
+        const v = (data as any)?.[k];
+        if (typeof v === "string") clean[k] = v.slice(0, 5000);
+    }
+    data = clean;
 
     // Update MenteeProfile as well for shared access
     if (data.strengths || data.weaknesses || data.challenges || data.startupIdeas || data.personalNotes) {

@@ -51,6 +51,8 @@ export async function setAvailability(slots: {
 const dayNames = ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"];
 
 export async function getMentorAvailableSlots(mentorId: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
     const slots = await prisma.availability.findMany({
         where: { userId: mentorId, isActive: true },
         orderBy: { dayOfWeek: "asc" },
