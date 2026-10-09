@@ -1,8 +1,23 @@
+-- ==============================================================================
+-- TULIE MENTORING - SUPABASE DATABASE INITIALIZATION SCRIPT
+-- ==============================================================================
+-- LƯU Ý KHI GẶP LỖI "relation already exists":
+-- Nếu bạn muốn XÓA SẠCH để cài đặt mới từ đầu (Khuyên dùng khi bắt đầu chính thức),
+-- hãy BỎ DẤU COMMENT (--) ở 6 dòng bên dưới rồi nhấn RUN:
+--
+-- DROP SCHEMA IF EXISTS "public" CASCADE;
+-- CREATE SCHEMA "public";
+-- GRANT ALL ON SCHEMA "public" TO postgres;
+-- GRANT ALL ON SCHEMA "public" TO anon;
+-- GRANT ALL ON SCHEMA "public" TO authenticated;
+-- GRANT ALL ON SCHEMA "public" TO service_role;
+-- ==============================================================================
+
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateTable
-CREATE TABLE "User" (
+CREATE TABLE IF NOT EXISTS "User" (
     "id" TEXT NOT NULL,
     "email" TEXT,
     "passwordHash" TEXT,
@@ -22,7 +37,7 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "Account" (
+CREATE TABLE IF NOT EXISTS "Account" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
@@ -40,7 +55,7 @@ CREATE TABLE "Account" (
 );
 
 -- CreateTable
-CREATE TABLE "MentorProfile" (
+CREATE TABLE IF NOT EXISTS "MentorProfile" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "company" TEXT,
@@ -56,7 +71,7 @@ CREATE TABLE "MentorProfile" (
 );
 
 -- CreateTable
-CREATE TABLE "MenteeProfile" (
+CREATE TABLE IF NOT EXISTS "MenteeProfile" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "studentId" TEXT,
@@ -84,7 +99,7 @@ CREATE TABLE "MenteeProfile" (
 );
 
 -- CreateTable
-CREATE TABLE "ProgramCycle" (
+CREATE TABLE IF NOT EXISTS "ProgramCycle" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
@@ -98,7 +113,7 @@ CREATE TABLE "ProgramCycle" (
 );
 
 -- CreateTable
-CREATE TABLE "Mentorship" (
+CREATE TABLE IF NOT EXISTS "Mentorship" (
     "id" TEXT NOT NULL,
     "mentorId" TEXT NOT NULL,
     "type" TEXT NOT NULL DEFAULT 'one_on_one',
@@ -113,7 +128,7 @@ CREATE TABLE "Mentorship" (
 );
 
 -- CreateTable
-CREATE TABLE "MentorshipMentee" (
+CREATE TABLE IF NOT EXISTS "MentorshipMentee" (
     "id" TEXT NOT NULL,
     "mentorshipId" TEXT NOT NULL,
     "menteeId" TEXT NOT NULL,
@@ -124,7 +139,7 @@ CREATE TABLE "MentorshipMentee" (
 );
 
 -- CreateTable
-CREATE TABLE "Meeting" (
+CREATE TABLE IF NOT EXISTS "Meeting" (
     "id" TEXT NOT NULL,
     "mentorshipId" TEXT,
     "creatorId" TEXT NOT NULL,
@@ -148,7 +163,7 @@ CREATE TABLE "Meeting" (
 );
 
 -- CreateTable
-CREATE TABLE "Attendance" (
+CREATE TABLE IF NOT EXISTS "Attendance" (
     "id" TEXT NOT NULL,
     "meetingId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -169,7 +184,7 @@ CREATE TABLE "Attendance" (
 );
 
 -- CreateTable
-CREATE TABLE "MeetingMinutes" (
+CREATE TABLE IF NOT EXISTS "MeetingMinutes" (
     "id" TEXT NOT NULL,
     "meetingId" TEXT NOT NULL,
     "authorId" TEXT NOT NULL,
@@ -188,7 +203,7 @@ CREATE TABLE "MeetingMinutes" (
 );
 
 -- CreateTable
-CREATE TABLE "Goal" (
+CREATE TABLE IF NOT EXISTS "Goal" (
     "id" TEXT NOT NULL,
     "mentorshipId" TEXT NOT NULL,
     "creatorId" TEXT NOT NULL,
@@ -210,7 +225,7 @@ CREATE TABLE "Goal" (
 );
 
 -- CreateTable
-CREATE TABLE "SubGoal" (
+CREATE TABLE IF NOT EXISTS "SubGoal" (
     "id" TEXT NOT NULL,
     "goalId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -223,7 +238,7 @@ CREATE TABLE "SubGoal" (
 );
 
 -- CreateTable
-CREATE TABLE "ProgressNote" (
+CREATE TABLE IF NOT EXISTS "ProgressNote" (
     "id" TEXT NOT NULL,
     "goalId" TEXT NOT NULL,
     "note" TEXT NOT NULL,
@@ -234,7 +249,7 @@ CREATE TABLE "ProgressNote" (
 );
 
 -- CreateTable
-CREATE TABLE "Feedback" (
+CREATE TABLE IF NOT EXISTS "Feedback" (
     "id" TEXT NOT NULL,
     "mentorshipId" TEXT NOT NULL,
     "fromUserId" TEXT NOT NULL,
@@ -254,7 +269,7 @@ CREATE TABLE "Feedback" (
 );
 
 -- CreateTable
-CREATE TABLE "Resource" (
+CREATE TABLE IF NOT EXISTS "Resource" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -277,7 +292,7 @@ CREATE TABLE "Resource" (
 );
 
 -- CreateTable
-CREATE TABLE "Portfolio" (
+CREATE TABLE IF NOT EXISTS "Portfolio" (
     "id" TEXT NOT NULL,
     "menteeId" TEXT NOT NULL,
     "personalityMbti" TEXT,
@@ -298,7 +313,7 @@ CREATE TABLE "Portfolio" (
 );
 
 -- CreateTable
-CREATE TABLE "PortfolioEntry" (
+CREATE TABLE IF NOT EXISTS "PortfolioEntry" (
     "id" TEXT NOT NULL,
     "portfolioId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -311,7 +326,7 @@ CREATE TABLE "PortfolioEntry" (
 );
 
 -- CreateTable
-CREATE TABLE "PortfolioSnapshot" (
+CREATE TABLE IF NOT EXISTS "PortfolioSnapshot" (
     "id" TEXT NOT NULL,
     "portfolioId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -322,7 +337,7 @@ CREATE TABLE "PortfolioSnapshot" (
 );
 
 -- CreateTable
-CREATE TABLE "Availability" (
+CREATE TABLE IF NOT EXISTS "Availability" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "dayOfWeek" INTEGER NOT NULL,
@@ -337,7 +352,7 @@ CREATE TABLE "Availability" (
 );
 
 -- CreateTable
-CREATE TABLE "Notification" (
+CREATE TABLE IF NOT EXISTS "Notification" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -353,7 +368,7 @@ CREATE TABLE "Notification" (
 );
 
 -- CreateTable
-CREATE TABLE "SessionReflection" (
+CREATE TABLE IF NOT EXISTS "SessionReflection" (
     "id" TEXT NOT NULL,
     "meetingId" TEXT NOT NULL,
     "menteeId" TEXT NOT NULL,
@@ -372,7 +387,7 @@ CREATE TABLE "SessionReflection" (
 );
 
 -- CreateTable
-CREATE TABLE "TodoItem" (
+CREATE TABLE IF NOT EXISTS "TodoItem" (
     "id" TEXT NOT NULL,
     "reflectionId" TEXT,
     "menteeId" TEXT NOT NULL,
@@ -397,7 +412,7 @@ CREATE TABLE "TodoItem" (
 );
 
 -- CreateTable
-CREATE TABLE "ActivityLog" (
+CREATE TABLE IF NOT EXISTS "ActivityLog" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "action" TEXT NOT NULL,
@@ -410,7 +425,7 @@ CREATE TABLE "ActivityLog" (
 );
 
 -- CreateTable
-CREATE TABLE "SupportTicket" (
+CREATE TABLE IF NOT EXISTS "SupportTicket" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -429,7 +444,7 @@ CREATE TABLE "SupportTicket" (
 );
 
 -- CreateTable
-CREATE TABLE "TicketComment" (
+CREATE TABLE IF NOT EXISTS "TicketComment" (
     "id" TEXT NOT NULL,
     "ticketId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -440,7 +455,7 @@ CREATE TABLE "TicketComment" (
 );
 
 -- CreateTable
-CREATE TABLE "WikiCategory" (
+CREATE TABLE IF NOT EXISTS "WikiCategory" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -454,7 +469,7 @@ CREATE TABLE "WikiCategory" (
 );
 
 -- CreateTable
-CREATE TABLE "Wiki" (
+CREATE TABLE IF NOT EXISTS "Wiki" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -471,7 +486,7 @@ CREATE TABLE "Wiki" (
 );
 
 -- CreateTable
-CREATE TABLE "WikiPage" (
+CREATE TABLE IF NOT EXISTS "WikiPage" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -490,7 +505,7 @@ CREATE TABLE "WikiPage" (
 );
 
 -- CreateTable
-CREATE TABLE "WikiPageShare" (
+CREATE TABLE IF NOT EXISTS "WikiPageShare" (
     "id" TEXT NOT NULL,
     "wikiPageId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -500,7 +515,7 @@ CREATE TABLE "WikiPageShare" (
 );
 
 -- CreateTable
-CREATE TABLE "Whiteboard" (
+CREATE TABLE IF NOT EXISTS "Whiteboard" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -515,7 +530,7 @@ CREATE TABLE "Whiteboard" (
 );
 
 -- CreateTable
-CREATE TABLE "Artboard" (
+CREATE TABLE IF NOT EXISTS "Artboard" (
     "id" TEXT NOT NULL,
     "whiteboardId" TEXT NOT NULL,
     "order" INTEGER NOT NULL DEFAULT 0,
@@ -529,7 +544,7 @@ CREATE TABLE "Artboard" (
 );
 
 -- CreateTable
-CREATE TABLE "Slide" (
+CREATE TABLE IF NOT EXISTS "Slide" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -545,7 +560,7 @@ CREATE TABLE "Slide" (
 );
 
 -- CreateTable
-CREATE TABLE "Habit" (
+CREATE TABLE IF NOT EXISTS "Habit" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -559,7 +574,7 @@ CREATE TABLE "Habit" (
 );
 
 -- CreateTable
-CREATE TABLE "HabitLog" (
+CREATE TABLE IF NOT EXISTS "HabitLog" (
     "id" TEXT NOT NULL,
     "habitId" TEXT NOT NULL,
     "date" DATE NOT NULL,
@@ -571,7 +586,7 @@ CREATE TABLE "HabitLog" (
 );
 
 -- CreateTable
-CREATE TABLE "DailyDiary" (
+CREATE TABLE IF NOT EXISTS "DailyDiary" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "date" DATE NOT NULL,
@@ -584,7 +599,7 @@ CREATE TABLE "DailyDiary" (
 );
 
 -- CreateTable
-CREATE TABLE "FacilitatorAssignment" (
+CREATE TABLE IF NOT EXISTS "FacilitatorAssignment" (
     "id" TEXT NOT NULL,
     "facilitatorId" TEXT NOT NULL,
     "programCycleId" TEXT,
@@ -595,7 +610,7 @@ CREATE TABLE "FacilitatorAssignment" (
 );
 
 -- CreateTable
-CREATE TABLE "EvaluationForm" (
+CREATE TABLE IF NOT EXISTS "EvaluationForm" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -607,7 +622,7 @@ CREATE TABLE "EvaluationForm" (
 );
 
 -- CreateTable
-CREATE TABLE "EvaluationQuestion" (
+CREATE TABLE IF NOT EXISTS "EvaluationQuestion" (
     "id" TEXT NOT NULL,
     "formId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
@@ -620,7 +635,7 @@ CREATE TABLE "EvaluationQuestion" (
 );
 
 -- CreateTable
-CREATE TABLE "EvaluationResponse" (
+CREATE TABLE IF NOT EXISTS "EvaluationResponse" (
     "id" TEXT NOT NULL,
     "formId" TEXT NOT NULL,
     "submitterId" TEXT NOT NULL,
@@ -631,7 +646,7 @@ CREATE TABLE "EvaluationResponse" (
 );
 
 -- CreateTable
-CREATE TABLE "QuestionAnswer" (
+CREATE TABLE IF NOT EXISTS "QuestionAnswer" (
     "id" TEXT NOT NULL,
     "responseId" TEXT NOT NULL,
     "questionId" TEXT NOT NULL,
@@ -642,7 +657,7 @@ CREATE TABLE "QuestionAnswer" (
 );
 
 -- CreateTable
-CREATE TABLE "MenteeRanking" (
+CREATE TABLE IF NOT EXISTS "MenteeRanking" (
     "id" TEXT NOT NULL,
     "menteeId" TEXT NOT NULL,
     "programCycleId" TEXT NOT NULL,
@@ -655,7 +670,7 @@ CREATE TABLE "MenteeRanking" (
 );
 
 -- CreateTable
-CREATE TABLE "SystemSetting" (
+CREATE TABLE IF NOT EXISTS "SystemSetting" (
     "id" TEXT NOT NULL,
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,
@@ -667,7 +682,7 @@ CREATE TABLE "SystemSetting" (
 );
 
 -- CreateTable
-CREATE TABLE "Post" (
+CREATE TABLE IF NOT EXISTS "Post" (
     "id" TEXT NOT NULL,
     "authorId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
@@ -683,7 +698,7 @@ CREATE TABLE "Post" (
 );
 
 -- CreateTable
-CREATE TABLE "Comment" (
+CREATE TABLE IF NOT EXISTS "Comment" (
     "id" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
     "authorId" TEXT NOT NULL,
@@ -696,7 +711,7 @@ CREATE TABLE "Comment" (
 );
 
 -- CreateTable
-CREATE TABLE "PostReaction" (
+CREATE TABLE IF NOT EXISTS "PostReaction" (
     "id" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -707,7 +722,7 @@ CREATE TABLE "PostReaction" (
 );
 
 -- CreateTable
-CREATE TABLE "PostAttachment" (
+CREATE TABLE IF NOT EXISTS "PostAttachment" (
     "id" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
@@ -720,7 +735,7 @@ CREATE TABLE "PostAttachment" (
 );
 
 -- CreateTable
-CREATE TABLE "ChatRoom" (
+CREATE TABLE IF NOT EXISTS "ChatRoom" (
     "id" TEXT NOT NULL,
     "name" TEXT,
     "type" TEXT NOT NULL DEFAULT 'direct',
@@ -733,7 +748,7 @@ CREATE TABLE "ChatRoom" (
 );
 
 -- CreateTable
-CREATE TABLE "ChatParticipant" (
+CREATE TABLE IF NOT EXISTS "ChatParticipant" (
     "roomId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "joinedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -743,7 +758,7 @@ CREATE TABLE "ChatParticipant" (
 );
 
 -- CreateTable
-CREATE TABLE "ChatMessage" (
+CREATE TABLE IF NOT EXISTS "ChatMessage" (
     "id" TEXT NOT NULL,
     "roomId" TEXT NOT NULL,
     "senderId" TEXT NOT NULL,
@@ -755,7 +770,7 @@ CREATE TABLE "ChatMessage" (
 );
 
 -- CreateTable
-CREATE TABLE "Procedure" (
+CREATE TABLE IF NOT EXISTS "Procedure" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -774,7 +789,7 @@ CREATE TABLE "Procedure" (
 );
 
 -- CreateTable
-CREATE TABLE "ProcedureSubmission" (
+CREATE TABLE IF NOT EXISTS "ProcedureSubmission" (
     "id" TEXT NOT NULL,
     "procedureId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -793,7 +808,7 @@ CREATE TABLE "ProcedureSubmission" (
 );
 
 -- CreateTable
-CREATE TABLE "ProgramMilestone" (
+CREATE TABLE IF NOT EXISTS "ProgramMilestone" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -808,7 +823,7 @@ CREATE TABLE "ProgramMilestone" (
 );
 
 -- CreateTable
-CREATE TABLE "MentorNote" (
+CREATE TABLE IF NOT EXISTS "MentorNote" (
     "id" TEXT NOT NULL,
     "mentorshipId" TEXT NOT NULL,
     "authorId" TEXT NOT NULL,
@@ -822,7 +837,7 @@ CREATE TABLE "MentorNote" (
 );
 
 -- CreateTable
-CREATE TABLE "AuditLog" (
+CREATE TABLE IF NOT EXISTS "AuditLog" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "action" TEXT NOT NULL,
@@ -838,7 +853,7 @@ CREATE TABLE "AuditLog" (
 );
 
 -- CreateTable
-CREATE TABLE "FileAsset" (
+CREATE TABLE IF NOT EXISTS "FileAsset" (
     "id" TEXT NOT NULL,
     "ownerId" TEXT NOT NULL,
     "purpose" TEXT NOT NULL,
@@ -856,7 +871,7 @@ CREATE TABLE "FileAsset" (
 );
 
 -- CreateTable
-CREATE TABLE "Submission" (
+CREATE TABLE IF NOT EXISTS "Submission" (
     "id" TEXT NOT NULL,
     "menteeId" TEXT NOT NULL,
     "mentorshipId" TEXT NOT NULL,
@@ -875,658 +890,1026 @@ CREATE TABLE "Submission" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE INDEX "User_role_idx" ON "User"("role");
+CREATE INDEX IF NOT EXISTS "User_role_idx" ON "User"("role");
 
 -- CreateIndex
-CREATE INDEX "User_email_idx" ON "User"("email");
+CREATE INDEX IF NOT EXISTS "User_email_idx" ON "User"("email");
 
 -- CreateIndex
-CREATE INDEX "Account_userId_idx" ON "Account"("userId");
+CREATE INDEX IF NOT EXISTS "Account_userId_idx" ON "Account"("userId");
 
 -- CreateIndex
-CREATE INDEX "Account_provider_idx" ON "Account"("provider");
+CREATE INDEX IF NOT EXISTS "Account_provider_idx" ON "Account"("provider");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
+CREATE UNIQUE INDEX IF NOT EXISTS "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MentorProfile_userId_key" ON "MentorProfile"("userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "MentorProfile_userId_key" ON "MentorProfile"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MenteeProfile_userId_key" ON "MenteeProfile"("userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "MenteeProfile_userId_key" ON "MenteeProfile"("userId");
 
 -- CreateIndex
-CREATE INDEX "Mentorship_mentorId_idx" ON "Mentorship"("mentorId");
+CREATE INDEX IF NOT EXISTS "Mentorship_mentorId_idx" ON "Mentorship"("mentorId");
 
 -- CreateIndex
-CREATE INDEX "Mentorship_programCycleId_idx" ON "Mentorship"("programCycleId");
+CREATE INDEX IF NOT EXISTS "Mentorship_programCycleId_idx" ON "Mentorship"("programCycleId");
 
 -- CreateIndex
-CREATE INDEX "Mentorship_status_idx" ON "Mentorship"("status");
+CREATE INDEX IF NOT EXISTS "Mentorship_status_idx" ON "Mentorship"("status");
 
 -- CreateIndex
-CREATE INDEX "MentorshipMentee_menteeId_idx" ON "MentorshipMentee"("menteeId");
+CREATE INDEX IF NOT EXISTS "MentorshipMentee_menteeId_idx" ON "MentorshipMentee"("menteeId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MentorshipMentee_mentorshipId_menteeId_key" ON "MentorshipMentee"("mentorshipId", "menteeId");
+CREATE UNIQUE INDEX IF NOT EXISTS "MentorshipMentee_mentorshipId_menteeId_key" ON "MentorshipMentee"("mentorshipId", "menteeId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Meeting_qrToken_key" ON "Meeting"("qrToken");
+CREATE UNIQUE INDEX IF NOT EXISTS "Meeting_qrToken_key" ON "Meeting"("qrToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Meeting_checkInCode_key" ON "Meeting"("checkInCode");
+CREATE UNIQUE INDEX IF NOT EXISTS "Meeting_checkInCode_key" ON "Meeting"("checkInCode");
 
 -- CreateIndex
-CREATE INDEX "Meeting_mentorshipId_idx" ON "Meeting"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "Meeting_mentorshipId_idx" ON "Meeting"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "Meeting_scheduledAt_idx" ON "Meeting"("scheduledAt");
+CREATE INDEX IF NOT EXISTS "Meeting_scheduledAt_idx" ON "Meeting"("scheduledAt");
 
 -- CreateIndex
-CREATE INDEX "Meeting_status_idx" ON "Meeting"("status");
+CREATE INDEX IF NOT EXISTS "Meeting_status_idx" ON "Meeting"("status");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Attendance_selfieFileId_key" ON "Attendance"("selfieFileId");
+CREATE UNIQUE INDEX IF NOT EXISTS "Attendance_selfieFileId_key" ON "Attendance"("selfieFileId");
 
 -- CreateIndex
-CREATE INDEX "Attendance_userId_idx" ON "Attendance"("userId");
+CREATE INDEX IF NOT EXISTS "Attendance_userId_idx" ON "Attendance"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Attendance_meetingId_userId_key" ON "Attendance"("meetingId", "userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "Attendance_meetingId_userId_key" ON "Attendance"("meetingId", "userId");
 
 -- CreateIndex
-CREATE INDEX "MeetingMinutes_meetingId_idx" ON "MeetingMinutes"("meetingId");
+CREATE INDEX IF NOT EXISTS "MeetingMinutes_meetingId_idx" ON "MeetingMinutes"("meetingId");
 
 -- CreateIndex
-CREATE INDEX "Goal_mentorshipId_idx" ON "Goal"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "Goal_mentorshipId_idx" ON "Goal"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "Goal_status_idx" ON "Goal"("status");
+CREATE INDEX IF NOT EXISTS "Goal_status_idx" ON "Goal"("status");
 
 -- CreateIndex
-CREATE INDEX "SubGoal_goalId_idx" ON "SubGoal"("goalId");
+CREATE INDEX IF NOT EXISTS "SubGoal_goalId_idx" ON "SubGoal"("goalId");
 
 -- CreateIndex
-CREATE INDEX "ProgressNote_goalId_idx" ON "ProgressNote"("goalId");
+CREATE INDEX IF NOT EXISTS "ProgressNote_goalId_idx" ON "ProgressNote"("goalId");
 
 -- CreateIndex
-CREATE INDEX "Feedback_mentorshipId_idx" ON "Feedback"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "Feedback_mentorshipId_idx" ON "Feedback"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "Feedback_fromUserId_idx" ON "Feedback"("fromUserId");
+CREATE INDEX IF NOT EXISTS "Feedback_fromUserId_idx" ON "Feedback"("fromUserId");
 
 -- CreateIndex
-CREATE INDEX "Feedback_toUserId_idx" ON "Feedback"("toUserId");
+CREATE INDEX IF NOT EXISTS "Feedback_toUserId_idx" ON "Feedback"("toUserId");
 
 -- CreateIndex
-CREATE INDEX "Resource_mentorshipId_idx" ON "Resource"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "Resource_mentorshipId_idx" ON "Resource"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "Resource_category_idx" ON "Resource"("category");
+CREATE INDEX IF NOT EXISTS "Resource_category_idx" ON "Resource"("category");
 
 -- CreateIndex
-CREATE INDEX "Resource_uploadedById_idx" ON "Resource"("uploadedById");
+CREATE INDEX IF NOT EXISTS "Resource_uploadedById_idx" ON "Resource"("uploadedById");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Portfolio_menteeId_key" ON "Portfolio"("menteeId");
+CREATE UNIQUE INDEX IF NOT EXISTS "Portfolio_menteeId_key" ON "Portfolio"("menteeId");
 
 -- CreateIndex
-CREATE INDEX "Portfolio_menteeId_idx" ON "Portfolio"("menteeId");
+CREATE INDEX IF NOT EXISTS "Portfolio_menteeId_idx" ON "Portfolio"("menteeId");
 
 -- CreateIndex
-CREATE INDEX "PortfolioEntry_portfolioId_idx" ON "PortfolioEntry"("portfolioId");
+CREATE INDEX IF NOT EXISTS "PortfolioEntry_portfolioId_idx" ON "PortfolioEntry"("portfolioId");
 
 -- CreateIndex
-CREATE INDEX "PortfolioSnapshot_portfolioId_idx" ON "PortfolioSnapshot"("portfolioId");
+CREATE INDEX IF NOT EXISTS "PortfolioSnapshot_portfolioId_idx" ON "PortfolioSnapshot"("portfolioId");
 
 -- CreateIndex
-CREATE INDEX "Availability_userId_idx" ON "Availability"("userId");
+CREATE INDEX IF NOT EXISTS "Availability_userId_idx" ON "Availability"("userId");
 
 -- CreateIndex
-CREATE INDEX "Notification_userId_isRead_idx" ON "Notification"("userId", "isRead");
+CREATE INDEX IF NOT EXISTS "Notification_userId_isRead_idx" ON "Notification"("userId", "isRead");
 
 -- CreateIndex
-CREATE INDEX "Notification_createdAt_idx" ON "Notification"("createdAt");
+CREATE INDEX IF NOT EXISTS "Notification_createdAt_idx" ON "Notification"("createdAt");
 
 -- CreateIndex
-CREATE INDEX "SessionReflection_menteeId_idx" ON "SessionReflection"("menteeId");
+CREATE INDEX IF NOT EXISTS "SessionReflection_menteeId_idx" ON "SessionReflection"("menteeId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SessionReflection_meetingId_menteeId_key" ON "SessionReflection"("meetingId", "menteeId");
+CREATE UNIQUE INDEX IF NOT EXISTS "SessionReflection_meetingId_menteeId_key" ON "SessionReflection"("meetingId", "menteeId");
 
 -- CreateIndex
-CREATE INDEX "TodoItem_menteeId_idx" ON "TodoItem"("menteeId");
+CREATE INDEX IF NOT EXISTS "TodoItem_menteeId_idx" ON "TodoItem"("menteeId");
 
 -- CreateIndex
-CREATE INDEX "TodoItem_reflectionId_idx" ON "TodoItem"("reflectionId");
+CREATE INDEX IF NOT EXISTS "TodoItem_reflectionId_idx" ON "TodoItem"("reflectionId");
 
 -- CreateIndex
-CREATE INDEX "TodoItem_status_idx" ON "TodoItem"("status");
+CREATE INDEX IF NOT EXISTS "TodoItem_status_idx" ON "TodoItem"("status");
 
 -- CreateIndex
-CREATE INDEX "TodoItem_dueDate_idx" ON "TodoItem"("dueDate");
+CREATE INDEX IF NOT EXISTS "TodoItem_dueDate_idx" ON "TodoItem"("dueDate");
 
 -- CreateIndex
-CREATE INDEX "ActivityLog_userId_idx" ON "ActivityLog"("userId");
+CREATE INDEX IF NOT EXISTS "ActivityLog_userId_idx" ON "ActivityLog"("userId");
 
 -- CreateIndex
-CREATE INDEX "ActivityLog_createdAt_idx" ON "ActivityLog"("createdAt");
+CREATE INDEX IF NOT EXISTS "ActivityLog_createdAt_idx" ON "ActivityLog"("createdAt");
 
 -- CreateIndex
-CREATE INDEX "SupportTicket_userId_idx" ON "SupportTicket"("userId");
+CREATE INDEX IF NOT EXISTS "SupportTicket_userId_idx" ON "SupportTicket"("userId");
 
 -- CreateIndex
-CREATE INDEX "SupportTicket_status_idx" ON "SupportTicket"("status");
+CREATE INDEX IF NOT EXISTS "SupportTicket_status_idx" ON "SupportTicket"("status");
 
 -- CreateIndex
-CREATE INDEX "TicketComment_ticketId_idx" ON "TicketComment"("ticketId");
+CREATE INDEX IF NOT EXISTS "TicketComment_ticketId_idx" ON "TicketComment"("ticketId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "WikiCategory_slug_key" ON "WikiCategory"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "WikiCategory_slug_key" ON "WikiCategory"("slug");
 
 -- CreateIndex
-CREATE INDEX "WikiCategory_order_idx" ON "WikiCategory"("order");
+CREATE INDEX IF NOT EXISTS "WikiCategory_order_idx" ON "WikiCategory"("order");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Wiki_slug_key" ON "Wiki"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "Wiki_slug_key" ON "Wiki"("slug");
 
 -- CreateIndex
-CREATE INDEX "Wiki_categoryId_idx" ON "Wiki"("categoryId");
+CREATE INDEX IF NOT EXISTS "Wiki_categoryId_idx" ON "Wiki"("categoryId");
 
 -- CreateIndex
-CREATE INDEX "Wiki_authorId_idx" ON "Wiki"("authorId");
+CREATE INDEX IF NOT EXISTS "Wiki_authorId_idx" ON "Wiki"("authorId");
 
 -- CreateIndex
-CREATE INDEX "Wiki_order_idx" ON "Wiki"("order");
+CREATE INDEX IF NOT EXISTS "Wiki_order_idx" ON "Wiki"("order");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "WikiPage_slug_key" ON "WikiPage"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "WikiPage_slug_key" ON "WikiPage"("slug");
 
 -- CreateIndex
-CREATE INDEX "WikiPage_authorId_idx" ON "WikiPage"("authorId");
+CREATE INDEX IF NOT EXISTS "WikiPage_authorId_idx" ON "WikiPage"("authorId");
 
 -- CreateIndex
-CREATE INDEX "WikiPage_wikiId_idx" ON "WikiPage"("wikiId");
+CREATE INDEX IF NOT EXISTS "WikiPage_wikiId_idx" ON "WikiPage"("wikiId");
 
 -- CreateIndex
-CREATE INDEX "WikiPage_mentorshipId_idx" ON "WikiPage"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "WikiPage_mentorshipId_idx" ON "WikiPage"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "WikiPage_visibility_idx" ON "WikiPage"("visibility");
+CREATE INDEX IF NOT EXISTS "WikiPage_visibility_idx" ON "WikiPage"("visibility");
 
 -- CreateIndex
-CREATE INDEX "WikiPage_order_idx" ON "WikiPage"("order");
+CREATE INDEX IF NOT EXISTS "WikiPage_order_idx" ON "WikiPage"("order");
 
 -- CreateIndex
-CREATE INDEX "WikiPageShare_userId_idx" ON "WikiPageShare"("userId");
+CREATE INDEX IF NOT EXISTS "WikiPageShare_userId_idx" ON "WikiPageShare"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "WikiPageShare_wikiPageId_userId_key" ON "WikiPageShare"("wikiPageId", "userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "WikiPageShare_wikiPageId_userId_key" ON "WikiPageShare"("wikiPageId", "userId");
 
 -- CreateIndex
-CREATE INDEX "Whiteboard_creatorId_idx" ON "Whiteboard"("creatorId");
+CREATE INDEX IF NOT EXISTS "Whiteboard_creatorId_idx" ON "Whiteboard"("creatorId");
 
 -- CreateIndex
-CREATE INDEX "Whiteboard_status_idx" ON "Whiteboard"("status");
+CREATE INDEX IF NOT EXISTS "Whiteboard_status_idx" ON "Whiteboard"("status");
 
 -- CreateIndex
-CREATE INDEX "Whiteboard_mentorshipId_idx" ON "Whiteboard"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "Whiteboard_mentorshipId_idx" ON "Whiteboard"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "Artboard_whiteboardId_idx" ON "Artboard"("whiteboardId");
+CREATE INDEX IF NOT EXISTS "Artboard_whiteboardId_idx" ON "Artboard"("whiteboardId");
 
 -- CreateIndex
-CREATE INDEX "Artboard_order_idx" ON "Artboard"("order");
+CREATE INDEX IF NOT EXISTS "Artboard_order_idx" ON "Artboard"("order");
 
 -- CreateIndex
-CREATE INDEX "Slide_creatorId_idx" ON "Slide"("creatorId");
+CREATE INDEX IF NOT EXISTS "Slide_creatorId_idx" ON "Slide"("creatorId");
 
 -- CreateIndex
-CREATE INDEX "Slide_mentorshipId_idx" ON "Slide"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "Slide_mentorshipId_idx" ON "Slide"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "Habit_userId_idx" ON "Habit"("userId");
+CREATE INDEX IF NOT EXISTS "Habit_userId_idx" ON "Habit"("userId");
 
 -- CreateIndex
-CREATE INDEX "HabitLog_habitId_idx" ON "HabitLog"("habitId");
+CREATE INDEX IF NOT EXISTS "HabitLog_habitId_idx" ON "HabitLog"("habitId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "HabitLog_habitId_date_key" ON "HabitLog"("habitId", "date");
+CREATE UNIQUE INDEX IF NOT EXISTS "HabitLog_habitId_date_key" ON "HabitLog"("habitId", "date");
 
 -- CreateIndex
-CREATE INDEX "DailyDiary_userId_idx" ON "DailyDiary"("userId");
+CREATE INDEX IF NOT EXISTS "DailyDiary_userId_idx" ON "DailyDiary"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "DailyDiary_userId_date_key" ON "DailyDiary"("userId", "date");
+CREATE UNIQUE INDEX IF NOT EXISTS "DailyDiary_userId_date_key" ON "DailyDiary"("userId", "date");
 
 -- CreateIndex
-CREATE INDEX "FacilitatorAssignment_facilitatorId_idx" ON "FacilitatorAssignment"("facilitatorId");
+CREATE INDEX IF NOT EXISTS "FacilitatorAssignment_facilitatorId_idx" ON "FacilitatorAssignment"("facilitatorId");
 
 -- CreateIndex
-CREATE INDEX "FacilitatorAssignment_programCycleId_idx" ON "FacilitatorAssignment"("programCycleId");
+CREATE INDEX IF NOT EXISTS "FacilitatorAssignment_programCycleId_idx" ON "FacilitatorAssignment"("programCycleId");
 
 -- CreateIndex
-CREATE INDEX "FacilitatorAssignment_mentorshipId_idx" ON "FacilitatorAssignment"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "FacilitatorAssignment_mentorshipId_idx" ON "FacilitatorAssignment"("mentorshipId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "FacilitatorAssignment_facilitatorId_programCycleId_mentorsh_key" ON "FacilitatorAssignment"("facilitatorId", "programCycleId", "mentorshipId");
+CREATE UNIQUE INDEX IF NOT EXISTS "FacilitatorAssignment_facilitatorId_programCycleId_mentorsh_key" ON "FacilitatorAssignment"("facilitatorId", "programCycleId", "mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "EvaluationQuestion_formId_idx" ON "EvaluationQuestion"("formId");
+CREATE INDEX IF NOT EXISTS "EvaluationQuestion_formId_idx" ON "EvaluationQuestion"("formId");
 
 -- CreateIndex
-CREATE INDEX "EvaluationResponse_formId_idx" ON "EvaluationResponse"("formId");
+CREATE INDEX IF NOT EXISTS "EvaluationResponse_formId_idx" ON "EvaluationResponse"("formId");
 
 -- CreateIndex
-CREATE INDEX "EvaluationResponse_submitterId_idx" ON "EvaluationResponse"("submitterId");
+CREATE INDEX IF NOT EXISTS "EvaluationResponse_submitterId_idx" ON "EvaluationResponse"("submitterId");
 
 -- CreateIndex
-CREATE INDEX "EvaluationResponse_targetMenteeId_idx" ON "EvaluationResponse"("targetMenteeId");
+CREATE INDEX IF NOT EXISTS "EvaluationResponse_targetMenteeId_idx" ON "EvaluationResponse"("targetMenteeId");
 
 -- CreateIndex
-CREATE INDEX "QuestionAnswer_responseId_idx" ON "QuestionAnswer"("responseId");
+CREATE INDEX IF NOT EXISTS "QuestionAnswer_responseId_idx" ON "QuestionAnswer"("responseId");
 
 -- CreateIndex
-CREATE INDEX "QuestionAnswer_questionId_idx" ON "QuestionAnswer"("questionId");
+CREATE INDEX IF NOT EXISTS "QuestionAnswer_questionId_idx" ON "QuestionAnswer"("questionId");
 
 -- CreateIndex
-CREATE INDEX "MenteeRanking_menteeId_idx" ON "MenteeRanking"("menteeId");
+CREATE INDEX IF NOT EXISTS "MenteeRanking_menteeId_idx" ON "MenteeRanking"("menteeId");
 
 -- CreateIndex
-CREATE INDEX "MenteeRanking_programCycleId_idx" ON "MenteeRanking"("programCycleId");
+CREATE INDEX IF NOT EXISTS "MenteeRanking_programCycleId_idx" ON "MenteeRanking"("programCycleId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MenteeRanking_menteeId_programCycleId_key" ON "MenteeRanking"("menteeId", "programCycleId");
+CREATE UNIQUE INDEX IF NOT EXISTS "MenteeRanking_menteeId_programCycleId_key" ON "MenteeRanking"("menteeId", "programCycleId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SystemSetting_key_key" ON "SystemSetting"("key");
+CREATE UNIQUE INDEX IF NOT EXISTS "SystemSetting_key_key" ON "SystemSetting"("key");
 
 -- CreateIndex
-CREATE INDEX "Post_authorId_idx" ON "Post"("authorId");
+CREATE INDEX IF NOT EXISTS "Post_authorId_idx" ON "Post"("authorId");
 
 -- CreateIndex
-CREATE INDEX "Post_programCycleId_idx" ON "Post"("programCycleId");
+CREATE INDEX IF NOT EXISTS "Post_programCycleId_idx" ON "Post"("programCycleId");
 
 -- CreateIndex
-CREATE INDEX "Comment_postId_idx" ON "Comment"("postId");
+CREATE INDEX IF NOT EXISTS "Comment_postId_idx" ON "Comment"("postId");
 
 -- CreateIndex
-CREATE INDEX "Comment_authorId_idx" ON "Comment"("authorId");
+CREATE INDEX IF NOT EXISTS "Comment_authorId_idx" ON "Comment"("authorId");
 
 -- CreateIndex
-CREATE INDEX "PostReaction_postId_idx" ON "PostReaction"("postId");
+CREATE INDEX IF NOT EXISTS "PostReaction_postId_idx" ON "PostReaction"("postId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PostReaction_postId_userId_type_key" ON "PostReaction"("postId", "userId", "type");
+CREATE UNIQUE INDEX IF NOT EXISTS "PostReaction_postId_userId_type_key" ON "PostReaction"("postId", "userId", "type");
 
 -- CreateIndex
-CREATE INDEX "PostAttachment_postId_idx" ON "PostAttachment"("postId");
+CREATE INDEX IF NOT EXISTS "PostAttachment_postId_idx" ON "PostAttachment"("postId");
 
 -- CreateIndex
-CREATE INDEX "ChatRoom_mentorshipId_idx" ON "ChatRoom"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "ChatRoom_mentorshipId_idx" ON "ChatRoom"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "ChatRoom_programCycleId_idx" ON "ChatRoom"("programCycleId");
+CREATE INDEX IF NOT EXISTS "ChatRoom_programCycleId_idx" ON "ChatRoom"("programCycleId");
 
 -- CreateIndex
-CREATE INDEX "ChatParticipant_userId_idx" ON "ChatParticipant"("userId");
+CREATE INDEX IF NOT EXISTS "ChatParticipant_userId_idx" ON "ChatParticipant"("userId");
 
 -- CreateIndex
-CREATE INDEX "ChatMessage_roomId_idx" ON "ChatMessage"("roomId");
+CREATE INDEX IF NOT EXISTS "ChatMessage_roomId_idx" ON "ChatMessage"("roomId");
 
 -- CreateIndex
-CREATE INDEX "ChatMessage_senderId_idx" ON "ChatMessage"("senderId");
+CREATE INDEX IF NOT EXISTS "ChatMessage_senderId_idx" ON "ChatMessage"("senderId");
 
 -- CreateIndex
-CREATE INDEX "ChatMessage_roomId_createdAt_idx" ON "ChatMessage"("roomId", "createdAt");
+CREATE INDEX IF NOT EXISTS "ChatMessage_roomId_createdAt_idx" ON "ChatMessage"("roomId", "createdAt");
 
 -- CreateIndex
-CREATE INDEX "Procedure_targetRole_idx" ON "Procedure"("targetRole");
+CREATE INDEX IF NOT EXISTS "Procedure_targetRole_idx" ON "Procedure"("targetRole");
 
 -- CreateIndex
-CREATE INDEX "Procedure_programCycleId_idx" ON "Procedure"("programCycleId");
+CREATE INDEX IF NOT EXISTS "Procedure_programCycleId_idx" ON "Procedure"("programCycleId");
 
 -- CreateIndex
-CREATE INDEX "ProcedureSubmission_userId_idx" ON "ProcedureSubmission"("userId");
+CREATE INDEX IF NOT EXISTS "ProcedureSubmission_userId_idx" ON "ProcedureSubmission"("userId");
 
 -- CreateIndex
-CREATE INDEX "ProcedureSubmission_status_idx" ON "ProcedureSubmission"("status");
+CREATE INDEX IF NOT EXISTS "ProcedureSubmission_status_idx" ON "ProcedureSubmission"("status");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProcedureSubmission_procedureId_userId_key" ON "ProcedureSubmission"("procedureId", "userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "ProcedureSubmission_procedureId_userId_key" ON "ProcedureSubmission"("procedureId", "userId");
 
 -- CreateIndex
-CREATE INDEX "ProgramMilestone_programCycleId_idx" ON "ProgramMilestone"("programCycleId");
+CREATE INDEX IF NOT EXISTS "ProgramMilestone_programCycleId_idx" ON "ProgramMilestone"("programCycleId");
 
 -- CreateIndex
-CREATE INDEX "ProgramMilestone_date_idx" ON "ProgramMilestone"("date");
+CREATE INDEX IF NOT EXISTS "ProgramMilestone_date_idx" ON "ProgramMilestone"("date");
 
 -- CreateIndex
-CREATE INDEX "MentorNote_mentorshipId_idx" ON "MentorNote"("mentorshipId");
+CREATE INDEX IF NOT EXISTS "MentorNote_mentorshipId_idx" ON "MentorNote"("mentorshipId");
 
 -- CreateIndex
-CREATE INDEX "MentorNote_authorId_idx" ON "MentorNote"("authorId");
+CREATE INDEX IF NOT EXISTS "MentorNote_authorId_idx" ON "MentorNote"("authorId");
 
 -- CreateIndex
-CREATE INDEX "MentorNote_aboutUserId_idx" ON "MentorNote"("aboutUserId");
+CREATE INDEX IF NOT EXISTS "MentorNote_aboutUserId_idx" ON "MentorNote"("aboutUserId");
 
 -- CreateIndex
-CREATE INDEX "MentorNote_mentorshipId_aboutUserId_idx" ON "MentorNote"("mentorshipId", "aboutUserId");
+CREATE INDEX IF NOT EXISTS "MentorNote_mentorshipId_aboutUserId_idx" ON "MentorNote"("mentorshipId", "aboutUserId");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_userId_idx" ON "AuditLog"("userId");
+CREATE INDEX IF NOT EXISTS "AuditLog_userId_idx" ON "AuditLog"("userId");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_action_idx" ON "AuditLog"("action");
+CREATE INDEX IF NOT EXISTS "AuditLog_action_idx" ON "AuditLog"("action");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_severity_idx" ON "AuditLog"("severity");
+CREATE INDEX IF NOT EXISTS "AuditLog_severity_idx" ON "AuditLog"("severity");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_entityType_entityId_idx" ON "AuditLog"("entityType", "entityId");
+CREATE INDEX IF NOT EXISTS "AuditLog_entityType_entityId_idx" ON "AuditLog"("entityType", "entityId");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_createdAt_idx" ON "AuditLog"("createdAt");
+CREATE INDEX IF NOT EXISTS "AuditLog_createdAt_idx" ON "AuditLog"("createdAt");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "FileAsset_path_key" ON "FileAsset"("path");
+CREATE UNIQUE INDEX IF NOT EXISTS "FileAsset_path_key" ON "FileAsset"("path");
 
 -- CreateIndex
-CREATE INDEX "FileAsset_ownerId_idx" ON "FileAsset"("ownerId");
+CREATE INDEX IF NOT EXISTS "FileAsset_ownerId_idx" ON "FileAsset"("ownerId");
 
 -- CreateIndex
-CREATE INDEX "FileAsset_reflectionId_idx" ON "FileAsset"("reflectionId");
+CREATE INDEX IF NOT EXISTS "FileAsset_reflectionId_idx" ON "FileAsset"("reflectionId");
 
 -- CreateIndex
-CREATE INDEX "FileAsset_submissionId_idx" ON "FileAsset"("submissionId");
+CREATE INDEX IF NOT EXISTS "FileAsset_submissionId_idx" ON "FileAsset"("submissionId");
 
 -- CreateIndex
-CREATE INDEX "FileAsset_status_createdAt_idx" ON "FileAsset"("status", "createdAt");
+CREATE INDEX IF NOT EXISTS "FileAsset_status_createdAt_idx" ON "FileAsset"("status", "createdAt");
 
 -- CreateIndex
-CREATE INDEX "Submission_menteeId_idx" ON "Submission"("menteeId");
+CREATE INDEX IF NOT EXISTS "Submission_menteeId_idx" ON "Submission"("menteeId");
 
 -- CreateIndex
-CREATE INDEX "Submission_mentorshipId_status_idx" ON "Submission"("mentorshipId", "status");
+CREATE INDEX IF NOT EXISTS "Submission_mentorshipId_status_idx" ON "Submission"("mentorshipId", "status");
 
 -- AddForeignKey
-ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MentorProfile" ADD CONSTRAINT "MentorProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MentorProfile" ADD CONSTRAINT "MentorProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MenteeProfile" ADD CONSTRAINT "MenteeProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MenteeProfile" ADD CONSTRAINT "MenteeProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Mentorship" ADD CONSTRAINT "Mentorship_mentorId_fkey" FOREIGN KEY ("mentorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Mentorship" ADD CONSTRAINT "Mentorship_mentorId_fkey" FOREIGN KEY ("mentorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Mentorship" ADD CONSTRAINT "Mentorship_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Mentorship" ADD CONSTRAINT "Mentorship_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MentorshipMentee" ADD CONSTRAINT "MentorshipMentee_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MentorshipMentee" ADD CONSTRAINT "MentorshipMentee_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MentorshipMentee" ADD CONSTRAINT "MentorshipMentee_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MentorshipMentee" ADD CONSTRAINT "MentorshipMentee_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Meeting" ADD CONSTRAINT "Meeting_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Meeting" ADD CONSTRAINT "Meeting_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Meeting" ADD CONSTRAINT "Meeting_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Meeting" ADD CONSTRAINT "Meeting_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_meetingId_fkey" FOREIGN KEY ("meetingId") REFERENCES "Meeting"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_meetingId_fkey" FOREIGN KEY ("meetingId") REFERENCES "Meeting"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_selfieFileId_fkey" FOREIGN KEY ("selfieFileId") REFERENCES "FileAsset"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_selfieFileId_fkey" FOREIGN KEY ("selfieFileId") REFERENCES "FileAsset"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MeetingMinutes" ADD CONSTRAINT "MeetingMinutes_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MeetingMinutes" ADD CONSTRAINT "MeetingMinutes_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MeetingMinutes" ADD CONSTRAINT "MeetingMinutes_meetingId_fkey" FOREIGN KEY ("meetingId") REFERENCES "Meeting"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MeetingMinutes" ADD CONSTRAINT "MeetingMinutes_meetingId_fkey" FOREIGN KEY ("meetingId") REFERENCES "Meeting"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Goal" ADD CONSTRAINT "Goal_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Goal" ADD CONSTRAINT "Goal_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Goal" ADD CONSTRAINT "Goal_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Goal" ADD CONSTRAINT "Goal_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "SubGoal" ADD CONSTRAINT "SubGoal_goalId_fkey" FOREIGN KEY ("goalId") REFERENCES "Goal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "SubGoal" ADD CONSTRAINT "SubGoal_goalId_fkey" FOREIGN KEY ("goalId") REFERENCES "Goal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ProgressNote" ADD CONSTRAINT "ProgressNote_goalId_fkey" FOREIGN KEY ("goalId") REFERENCES "Goal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ProgressNote" ADD CONSTRAINT "ProgressNote_goalId_fkey" FOREIGN KEY ("goalId") REFERENCES "Goal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_toUserId_fkey" FOREIGN KEY ("toUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_toUserId_fkey" FOREIGN KEY ("toUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Resource" ADD CONSTRAINT "Resource_uploadedById_fkey" FOREIGN KEY ("uploadedById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Resource" ADD CONSTRAINT "Resource_uploadedById_fkey" FOREIGN KEY ("uploadedById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Resource" ADD CONSTRAINT "Resource_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Resource" ADD CONSTRAINT "Resource_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Portfolio" ADD CONSTRAINT "Portfolio_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Portfolio" ADD CONSTRAINT "Portfolio_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "PortfolioEntry" ADD CONSTRAINT "PortfolioEntry_portfolioId_fkey" FOREIGN KEY ("portfolioId") REFERENCES "Portfolio"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "PortfolioEntry" ADD CONSTRAINT "PortfolioEntry_portfolioId_fkey" FOREIGN KEY ("portfolioId") REFERENCES "Portfolio"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "PortfolioSnapshot" ADD CONSTRAINT "PortfolioSnapshot_portfolioId_fkey" FOREIGN KEY ("portfolioId") REFERENCES "Portfolio"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "PortfolioSnapshot" ADD CONSTRAINT "PortfolioSnapshot_portfolioId_fkey" FOREIGN KEY ("portfolioId") REFERENCES "Portfolio"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Availability" ADD CONSTRAINT "Availability_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Availability" ADD CONSTRAINT "Availability_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "SessionReflection" ADD CONSTRAINT "SessionReflection_meetingId_fkey" FOREIGN KEY ("meetingId") REFERENCES "Meeting"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "SessionReflection" ADD CONSTRAINT "SessionReflection_meetingId_fkey" FOREIGN KEY ("meetingId") REFERENCES "Meeting"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "SessionReflection" ADD CONSTRAINT "SessionReflection_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "SessionReflection" ADD CONSTRAINT "SessionReflection_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TodoItem" ADD CONSTRAINT "TodoItem_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TodoItem" ADD CONSTRAINT "TodoItem_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TodoItem" ADD CONSTRAINT "TodoItem_reflectionId_fkey" FOREIGN KEY ("reflectionId") REFERENCES "SessionReflection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TodoItem" ADD CONSTRAINT "TodoItem_reflectionId_fkey" FOREIGN KEY ("reflectionId") REFERENCES "SessionReflection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "SupportTicket" ADD CONSTRAINT "SupportTicket_assignedToId_fkey" FOREIGN KEY ("assignedToId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "SupportTicket" ADD CONSTRAINT "SupportTicket_assignedToId_fkey" FOREIGN KEY ("assignedToId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "SupportTicket" ADD CONSTRAINT "SupportTicket_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "SupportTicket" ADD CONSTRAINT "SupportTicket_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TicketComment" ADD CONSTRAINT "TicketComment_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES "SupportTicket"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TicketComment" ADD CONSTRAINT "TicketComment_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES "SupportTicket"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "TicketComment" ADD CONSTRAINT "TicketComment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "TicketComment" ADD CONSTRAINT "TicketComment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "WikiCategory"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "WikiCategory"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "WikiPage" ADD CONSTRAINT "WikiPage_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "WikiPage" ADD CONSTRAINT "WikiPage_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "WikiPage" ADD CONSTRAINT "WikiPage_wikiId_fkey" FOREIGN KEY ("wikiId") REFERENCES "Wiki"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "WikiPage" ADD CONSTRAINT "WikiPage_wikiId_fkey" FOREIGN KEY ("wikiId") REFERENCES "Wiki"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "WikiPage" ADD CONSTRAINT "WikiPage_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "WikiPage" ADD CONSTRAINT "WikiPage_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "WikiPageShare" ADD CONSTRAINT "WikiPageShare_wikiPageId_fkey" FOREIGN KEY ("wikiPageId") REFERENCES "WikiPage"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "WikiPageShare" ADD CONSTRAINT "WikiPageShare_wikiPageId_fkey" FOREIGN KEY ("wikiPageId") REFERENCES "WikiPage"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "WikiPageShare" ADD CONSTRAINT "WikiPageShare_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "WikiPageShare" ADD CONSTRAINT "WikiPageShare_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Whiteboard" ADD CONSTRAINT "Whiteboard_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Whiteboard" ADD CONSTRAINT "Whiteboard_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Whiteboard" ADD CONSTRAINT "Whiteboard_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Whiteboard" ADD CONSTRAINT "Whiteboard_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Artboard" ADD CONSTRAINT "Artboard_whiteboardId_fkey" FOREIGN KEY ("whiteboardId") REFERENCES "Whiteboard"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Artboard" ADD CONSTRAINT "Artboard_whiteboardId_fkey" FOREIGN KEY ("whiteboardId") REFERENCES "Whiteboard"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Slide" ADD CONSTRAINT "Slide_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Slide" ADD CONSTRAINT "Slide_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Slide" ADD CONSTRAINT "Slide_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Slide" ADD CONSTRAINT "Slide_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Habit" ADD CONSTRAINT "Habit_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Habit" ADD CONSTRAINT "Habit_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "HabitLog" ADD CONSTRAINT "HabitLog_habitId_fkey" FOREIGN KEY ("habitId") REFERENCES "Habit"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "HabitLog" ADD CONSTRAINT "HabitLog_habitId_fkey" FOREIGN KEY ("habitId") REFERENCES "Habit"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "DailyDiary" ADD CONSTRAINT "DailyDiary_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "DailyDiary" ADD CONSTRAINT "DailyDiary_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "FacilitatorAssignment" ADD CONSTRAINT "FacilitatorAssignment_facilitatorId_fkey" FOREIGN KEY ("facilitatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "FacilitatorAssignment" ADD CONSTRAINT "FacilitatorAssignment_facilitatorId_fkey" FOREIGN KEY ("facilitatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "FacilitatorAssignment" ADD CONSTRAINT "FacilitatorAssignment_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "FacilitatorAssignment" ADD CONSTRAINT "FacilitatorAssignment_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "FacilitatorAssignment" ADD CONSTRAINT "FacilitatorAssignment_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "FacilitatorAssignment" ADD CONSTRAINT "FacilitatorAssignment_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "EvaluationQuestion" ADD CONSTRAINT "EvaluationQuestion_formId_fkey" FOREIGN KEY ("formId") REFERENCES "EvaluationForm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "EvaluationQuestion" ADD CONSTRAINT "EvaluationQuestion_formId_fkey" FOREIGN KEY ("formId") REFERENCES "EvaluationForm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "EvaluationResponse" ADD CONSTRAINT "EvaluationResponse_formId_fkey" FOREIGN KEY ("formId") REFERENCES "EvaluationForm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "EvaluationResponse" ADD CONSTRAINT "EvaluationResponse_formId_fkey" FOREIGN KEY ("formId") REFERENCES "EvaluationForm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "EvaluationResponse" ADD CONSTRAINT "EvaluationResponse_submitterId_fkey" FOREIGN KEY ("submitterId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "EvaluationResponse" ADD CONSTRAINT "EvaluationResponse_submitterId_fkey" FOREIGN KEY ("submitterId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "EvaluationResponse" ADD CONSTRAINT "EvaluationResponse_targetMenteeId_fkey" FOREIGN KEY ("targetMenteeId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "EvaluationResponse" ADD CONSTRAINT "EvaluationResponse_targetMenteeId_fkey" FOREIGN KEY ("targetMenteeId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "QuestionAnswer" ADD CONSTRAINT "QuestionAnswer_responseId_fkey" FOREIGN KEY ("responseId") REFERENCES "EvaluationResponse"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "QuestionAnswer" ADD CONSTRAINT "QuestionAnswer_responseId_fkey" FOREIGN KEY ("responseId") REFERENCES "EvaluationResponse"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "QuestionAnswer" ADD CONSTRAINT "QuestionAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "EvaluationQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "QuestionAnswer" ADD CONSTRAINT "QuestionAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "EvaluationQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MenteeRanking" ADD CONSTRAINT "MenteeRanking_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MenteeRanking" ADD CONSTRAINT "MenteeRanking_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MenteeRanking" ADD CONSTRAINT "MenteeRanking_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MenteeRanking" ADD CONSTRAINT "MenteeRanking_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Post" ADD CONSTRAINT "Post_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Post" ADD CONSTRAINT "Post_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Comment" ADD CONSTRAINT "Comment_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "PostReaction" ADD CONSTRAINT "PostReaction_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "PostReaction" ADD CONSTRAINT "PostReaction_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "PostReaction" ADD CONSTRAINT "PostReaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "PostReaction" ADD CONSTRAINT "PostReaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "PostAttachment" ADD CONSTRAINT "PostAttachment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "PostAttachment" ADD CONSTRAINT "PostAttachment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ChatRoom" ADD CONSTRAINT "ChatRoom_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ChatRoom" ADD CONSTRAINT "ChatRoom_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ChatRoom" ADD CONSTRAINT "ChatRoom_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ChatRoom" ADD CONSTRAINT "ChatRoom_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ChatParticipant" ADD CONSTRAINT "ChatParticipant_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ChatParticipant" ADD CONSTRAINT "ChatParticipant_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ChatParticipant" ADD CONSTRAINT "ChatParticipant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ChatParticipant" ADD CONSTRAINT "ChatParticipant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Procedure" ADD CONSTRAINT "Procedure_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Procedure" ADD CONSTRAINT "Procedure_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ProcedureSubmission" ADD CONSTRAINT "ProcedureSubmission_procedureId_fkey" FOREIGN KEY ("procedureId") REFERENCES "Procedure"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ProcedureSubmission" ADD CONSTRAINT "ProcedureSubmission_procedureId_fkey" FOREIGN KEY ("procedureId") REFERENCES "Procedure"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "ProgramMilestone" ADD CONSTRAINT "ProgramMilestone_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "ProgramMilestone" ADD CONSTRAINT "ProgramMilestone_programCycleId_fkey" FOREIGN KEY ("programCycleId") REFERENCES "ProgramCycle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MentorNote" ADD CONSTRAINT "MentorNote_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MentorNote" ADD CONSTRAINT "MentorNote_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MentorNote" ADD CONSTRAINT "MentorNote_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MentorNote" ADD CONSTRAINT "MentorNote_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "MentorNote" ADD CONSTRAINT "MentorNote_aboutUserId_fkey" FOREIGN KEY ("aboutUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "MentorNote" ADD CONSTRAINT "MentorNote_aboutUserId_fkey" FOREIGN KEY ("aboutUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_resourceId_fkey" FOREIGN KEY ("resourceId") REFERENCES "Resource"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_resourceId_fkey" FOREIGN KEY ("resourceId") REFERENCES "Resource"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_reflectionId_fkey" FOREIGN KEY ("reflectionId") REFERENCES "SessionReflection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_reflectionId_fkey" FOREIGN KEY ("reflectionId") REFERENCES "SessionReflection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "Submission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "FileAsset" ADD CONSTRAINT "FileAsset_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "Submission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Submission" ADD CONSTRAINT "Submission_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Submission" ADD CONSTRAINT "Submission_menteeId_fkey" FOREIGN KEY ("menteeId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Submission" ADD CONSTRAINT "Submission_reviewedById_fkey" FOREIGN KEY ("reviewedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Submission" ADD CONSTRAINT "Submission_reviewedById_fkey" FOREIGN KEY ("reviewedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "Submission" ADD CONSTRAINT "Submission_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "Submission" ADD CONSTRAINT "Submission_mentorshipId_fkey" FOREIGN KEY ("mentorshipId") REFERENCES "Mentorship"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 
 -- ==========================================
