@@ -62,3 +62,25 @@ gpg --decrypt backup-YYYYMMDD.sql.gz.gpg | gunzip | psql "$DATABASE_URL"
 ```
 
 Lưu ý: file lưu trên Supabase Storage (selfie, tệp nộp) không nằm trong bản dump này. Cần sao lưu bucket riêng nếu muốn đầy đủ.
+
+## 8. Triển khai trên Vercel
+
+1. Vercel → Add New Project → import repo `tung68nt/tulie_mentoring`. Framework: Next.js (tự nhận). Production Branch: `main`; các nhánh khác tự có bản Preview.
+2. Settings → Environment Variables (đặt cho Production và Preview):
+
+| Biến | Ghi chú |
+|---|---|
+| `DATABASE_URL` | Supabase **Transaction pooler** (cổng 6543, thêm `?pgbouncer=true`) |
+| `DIRECT_URL` | Session pooler (cổng 5432), dùng cho `prisma db push` |
+| `AUTH_SECRET`, `NEXTAUTH_URL` | `NEXTAUTH_URL` là domain Vercel/domain chính thức |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | publishable key (public) |
+| `SUPABASE_URL` | cùng giá trị `NEXT_PUBLIC_SUPABASE_URL` |
+| `SUPABASE_SERVICE_ROLE_KEY` | secret key, **chỉ nhập trong Vercel, không đưa vào chat/code** |
+| `SUPABASE_STORAGE_BUCKET` | `tulie-files` |
+| `CRON_SECRET` | Vercel Cron tự gửi `Authorization: Bearer <CRON_SECRET>` |
+| `SMTP_*`, `AUTH_GOOGLE_ID/SECRET` | như hiện có |
+
+3. `vercel.json` đã khai báo cron: keepalive (chống Supabase pause) và nhắc việc, mỗi ngày một lần (giới hạn gói Hobby).
+4. Áp schema một lần từ máy có `.env`: `npx prisma db push`.
+5. Lưu ý: whiteboard dùng Socket.IO cần server riêng, không chạy được trên Vercel; phần còn lại của app hoạt động bình thường.

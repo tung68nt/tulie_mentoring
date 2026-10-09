@@ -32,7 +32,7 @@ export async function uploadFile(
     if ("error" in req) return { error: req.error ?? "Không thể tải lên." };
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const anon = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!url || !anon) return { error: "Storage chưa được cấu hình." };
 
     const supabase = createClient(url, anon, { auth: { persistSession: false, autoRefreshToken: false } });
