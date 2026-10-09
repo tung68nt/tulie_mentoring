@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, Printer } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,9 @@ export default async function MenteeOverviewPage() {
                     <p className="text-sm text-muted-foreground max-w-xl">
                         Chuyên cần, thu hoạch, bài nộp và mức độ hoạt động. Nhãn "Cần chú ý": điểm dưới 40, vắng liên tiếp hoặc không hoạt động quá 7 ngày. Điểm nhiệt tình (0–100) = 40% chuyên cần, 30% thu hoạch đúng hạn, 20% hoạt động 14 ngày, 10% bài nộp 30 ngày.
                     </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" asChild><Link href="/mentees/overview/print"><Printer className="w-4 h-4" />Báo cáo PDF</Link></Button>
                 </div>
                 {canExport && (
                     <div className="flex gap-2">

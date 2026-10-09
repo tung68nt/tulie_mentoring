@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { searchWikiPages } from "@/lib/actions/wiki";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -88,6 +89,16 @@ function CategoryGroup({ category }: { category: any }) {
 /* ── Main Landing Component ── */
 export function WikiLanding({ structure, role }: WikiLandingProps) {
     const [searchQuery, setSearchQuery] = useState("");
+    const [hits, setHits] = useState<any[]>([]);
+
+    // Tìm trong nội dung / tag của các trang (debounce)
+    useEffect(() => {
+        if (searchQuery.trim().length < 2) { setHits([]); return; }
+        const t = setTimeout(async () => {
+            try { setHits(await searchWikiPages(searchQuery)); } catch { setHits([]); }
+        }, 300);
+        return () => clearTimeout(t);
+    }, [searchQuery]);
 
     // Filter
     const filteredStructure = useMemo(() => {
@@ -120,8 +131,21 @@ export function WikiLanding({ structure, role }: WikiLandingProps) {
                 </div>
             </div>
 
+            {hits.length > 0 && (
+                <div className="rounded-lg border border-border divide-y divide-border">
+                    <p className="px-4 py-2 text-xs text-muted-foreground">{hits.length} trang khớp trong tiêu đề, tag hoặc nội dung</p>
+                    {hits.map((h) => (
+                        <Link key={h.id} href={h.wikiSlug ? `/wiki/${h.wikiSlug}/${h.slug}` : `/wiki`} className="block px-4 py-3 hover:bg-muted/40">
+                            <p className="text-sm font-medium text-foreground">{h.title}{h.wikiTitle ? <span className="text-muted-foreground font-normal"> · {h.wikiTitle}</span> : null}</p>
+                            {h.snippet && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">…{h.snippet}…</p>}
+                            {h.tags.length > 0 && <p className="text-xs text-muted-foreground mt-1">{h.tags.map((t: string) => `#${t}`).join(" ")}</p>}
+                        </Link>
+                    ))}
+                </div>
+            )}
+
             {/* Content */}
-            {!hasContent ? (
+            {!hasContent && hits.length === 0 ? (
                 <div className="py-20">
                     <EmptyState
                         icon={<BookOpen className="w-6 h-6" />}

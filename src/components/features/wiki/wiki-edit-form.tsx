@@ -37,6 +37,7 @@ export function WikiEditForm({ page, wikiSlug }: WikiEditFormProps) {
     const [title, setTitle] = useState(page.title);
     const [visibility, setVisibility] = useState<string>(page.visibility || "private");
     const [coverImage, setCoverImage] = useState(page.coverImage || "");
+    const [tags, setTags] = useState<string>(page.tags ? String(page.tags).split(",").join(", ") : "");
     const [content, setContent] = useState(page.content);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -87,6 +88,7 @@ export function WikiEditForm({ page, wikiSlug }: WikiEditFormProps) {
                 wikiId: page.wikiId,
                 visibility,
                 coverImage,
+                tags,
                 shareWithUserIds: visibility === "selected" ? selectedUsers.map(u => u.id) : [],
             });
             toast.success("Đã cập nhật trang Wiki");
@@ -202,6 +204,17 @@ export function WikiEditForm({ page, wikiSlug }: WikiEditFormProps) {
                                 value={coverImage}
                                 onChange={(e) => setCoverImage(e.target.value)}
                                 placeholder="https://..."
+                                className="rounded-lg border-border/40 bg-background"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-medium text-muted-foreground">Tag (cách nhau bằng dấu phẩy)</label>
+                            <Input
+                                value={tags}
+                                onChange={(e) => setTags(e.target.value)}
+                                placeholder="vd: cv, phỏng vấn, kỹ năng mềm"
+                                maxLength={200}
                                 className="rounded-lg border-border/40 bg-background"
                             />
                         </div>

@@ -218,7 +218,7 @@ export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName =
 
     return (
         <aside className={cn(
-            "fixed top-0 left-0 h-screen bg-background border-r border-border transition-all duration-300 z-50 flex flex-col",
+            "print:hidden fixed top-0 left-0 h-screen bg-background border-r border-border transition-all duration-300 z-50 flex flex-col",
             isMobileOpen ? "translate-x-0 w-[280px]" : "-translate-x-full lg:translate-x-0",
             !isMobileOpen && (isCollapsed ? "lg:w-[80px]" : "lg:w-[280px]")
         )} style={(!isCollapsed || isMobileOpen) ? { "--sidebar-width": "280px" } as React.CSSProperties : { "--sidebar-width": "80px" } as React.CSSProperties}>

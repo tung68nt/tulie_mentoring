@@ -39,7 +39,7 @@ export function Header({ userName, userRole, avatar, onMenuClick, notifications 
 
     return (
         <>
-            <header className="fixed top-0 right-0 left-0 lg:left-[var(--sidebar-width)] h-16 bg-background/80 backdrop-blur-md border-b border-border z-40 transition-all">
+            <header className="print:hidden fixed top-0 right-0 left-0 lg:left-[var(--sidebar-width)] h-16 bg-background/80 backdrop-blur-md border-b border-border z-40 transition-all">
                 <div className="h-16 px-3 sm:px-6 flex items-center justify-between max-w-[1400px] mx-auto">
                     {/* Left: Menu + Search */}
                     <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">

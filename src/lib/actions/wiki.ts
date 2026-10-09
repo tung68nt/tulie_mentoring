@@ -278,12 +278,20 @@ export async function getWikiStructure() {
 
 // ─── WikiPage CRUD (updated) ────────────────────────────────────
 
+/** Chuẩn hoá tag: chữ thường, bỏ trùng, tối đa 10 tag, mỗi tag ≤ 30 ký tự. */
+function normalizeTags(raw: unknown): string | null {
+    if (typeof raw !== "string") return null;
+    const tags = [...new Set(raw.split(",").map((t) => t.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 30)).filter(Boolean))].slice(0, 10);
+    return tags.length ? tags.join(",") : null;
+}
+
 export async function createWikiPage(data: {
     title: string;
     content: string;
     wikiId?: string;
     visibility?: "private" | "mentorship" | "public" | "selected";
     coverImage?: string;
+    tags?: string;
     shareWithUserIds?: string[];
 }) {
     const session = await auth();
@@ -320,6 +328,7 @@ export async function createWikiPage(data: {
             wikiId: data.wikiId || null,
             visibility: data.visibility || "private",
             coverImage: data.coverImage,
+            tags: normalizeTags(data.tags),
             authorId: session.user.id!,
             mentorshipId,
             order: maxOrder,
@@ -533,7 +542,7 @@ export async function updateWikiPage(id: string, data: any) {
         throw new Error("Permission denied: Only the author or admin can update this page");
     }
 
-    const { title, content, wikiId, visibility, coverImage, shareWithUserIds } = data;
+    const { title, content, wikiId, visibility, coverImage, shareWithUserIds, tags } = data;
 
     const updatedPage = await prisma.wikiPage.update({
         where: { id },
@@ -543,6 +552,7 @@ export async function updateWikiPage(id: string, data: any) {
             wikiId: wikiId || null,
             visibility,
             coverImage,
+            ...(tags !== undefined && { tags: normalizeTags(tags) }),
             updatedAt: new Date()
         }
     });
@@ -687,4 +697,52 @@ export async function getWikiCategories() {
     });
 
     return JSON.parse(JSON.stringify(categories));
+}
+
+
+function plainText(content: string | null): string {
+    if (!content) return "";
+    try {
+        const walk = (n: any): string =>
+            Array.isArray(n) ? n.map(walk).join(" ")
+            : n && typeof n === "object" ? [typeof n.text === "string" ? n.text : "", walk(n.content), walk(n.children)].join(" ")
+            : typeof n === "string" ? n : "";
+        return walk(JSON.parse(content));
+    } catch {
+        return content;
+    }
+}
+
+/** Tìm trong các trang người dùng được phép xem: theo tiêu đề, tag và nội dung. */
+export async function searchWikiPages(query: string) {
+    const session = await auth();
+    if (!session?.user) throw new Error("Unauthorized");
+    const q = String(query ?? "").trim().toLowerCase().slice(0, 100);
+    if (q.length < 2) return [];
+
+    const { myPages, sharedPages, communityPages } = await getWikiPages();
+    const all = [...myPages, ...sharedPages, ...communityPages] as any[];
+    const ids = [...new Set(all.map((p) => p.id))];
+    // getWikiPages không trả content/tags đầy đủ ở mọi nhánh → lấy lại theo id (đã qua bộ lọc quyền)
+    const rows = await prisma.wikiPage.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, title: true, slug: true, tags: true, content: true, wiki: { select: { slug: true, title: true } } },
+        take: 500,
+    });
+
+    const hits = [];
+    for (const r of rows) {
+        const text = plainText(r.content).toLowerCase();
+        const inTitle = r.title.toLowerCase().includes(q);
+        const inTags = (r.tags ?? "").split(",").some((t) => t.includes(q));
+        const at = text.indexOf(q);
+        if (!inTitle && !inTags && at < 0) continue;
+        hits.push({
+            id: r.id, title: r.title, slug: r.slug, wikiSlug: r.wiki?.slug ?? null, wikiTitle: r.wiki?.title ?? null,
+            tags: r.tags ? r.tags.split(",") : [],
+            snippet: at >= 0 ? plainText(r.content).slice(Math.max(0, at - 40), at + 100).replace(/\s+/g, " ").trim() : "",
+            score: (inTitle ? 3 : 0) + (inTags ? 2 : 0) + (at >= 0 ? 1 : 0),
+        });
+    }
+    return hits.sort((a, b) => b.score - a.score).slice(0, 20);
 }

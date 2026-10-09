@@ -28,6 +28,7 @@ export function NewWikiPageForm({ wikiSlug, wikiId, wikiTitle }: NewWikiPageForm
     const [title, setTitle] = useState("");
     const [visibility, setVisibility] = useState("private");
     const [coverImage, setCoverImage] = useState("");
+    const [tags, setTags] = useState("");
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -78,6 +79,7 @@ export function NewWikiPageForm({ wikiSlug, wikiId, wikiTitle }: NewWikiPageForm
                 wikiId,
                 visibility: visibility as any,
                 coverImage,
+                tags,
                 shareWithUserIds: visibility === "selected" ? selectedUsers.map(u => u.id) : undefined,
             });
             toast.success("Đã tạo trang Wiki thành công");
@@ -157,6 +159,17 @@ export function NewWikiPageForm({ wikiSlug, wikiId, wikiTitle }: NewWikiPageForm
                                 value={coverImage}
                                 onChange={(e) => setCoverImage(e.target.value)}
                                 placeholder="https://..."
+                                className="rounded-lg border-border/40 bg-background"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-medium text-muted-foreground">Tag (cách nhau bằng dấu phẩy)</label>
+                            <Input
+                                value={tags}
+                                onChange={(e) => setTags(e.target.value)}
+                                placeholder="vd: cv, phỏng vấn, kỹ năng mềm"
+                                maxLength={200}
                                 className="rounded-lg border-border/40 bg-background"
                             />
                         </div>

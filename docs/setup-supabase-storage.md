@@ -47,3 +47,18 @@ GitHub sẽ tắt workflow theo lịch nếu repo không có commit nào trong 6
 
 Mặc định bất kỳ tài khoản Google nào cũng được tự tạo thành mentee. Nếu chương trình đóng, đặt `GOOGLE_AUTO_CREATE=false`
 (thêm vào docker-compose.prod.yml) để chỉ cho email đã được admin tạo trước.
+
+## 7. Sao lưu database
+
+Workflow `.github/workflows/db-backup.yml` chạy mỗi ngày, dump schema `public`, nén và mã hoá AES-256 rồi lưu làm artifact 14 ngày.
+Secrets cần thêm:
+- `BACKUP_DATABASE_URL`: chuỗi kết nối **Session pooler** của Supabase (cổng 5432 trên host `pooler.supabase.com`). Không dùng host trực tiếp `db.<ref>.supabase.co` vì chỉ có IPv6 nên runner GitHub không kết nối được.
+- `BACKUP_PASSPHRASE`: chuỗi ngẫu nhiên dài. **Hãy lưu riêng ở nơi an toàn**: mất chuỗi này thì không giải mã được bản sao lưu.
+
+Giải mã và khôi phục:
+
+```
+gpg --decrypt backup-YYYYMMDD.sql.gz.gpg | gunzip | psql "$DATABASE_URL"
+```
+
+Lưu ý: file lưu trên Supabase Storage (selfie, tệp nộp) không nằm trong bản dump này. Cần sao lưu bucket riêng nếu muốn đầy đủ.

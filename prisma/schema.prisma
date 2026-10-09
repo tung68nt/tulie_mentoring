@@ -608,6 +608,7 @@ model WikiPage {
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   coverImage   String?
+  tags         String?
   author       User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
   wiki         Wiki?           @relation(fields: [wikiId], references: [id], onDelete: SetNull)
   mentorship   Mentorship?     @relation(fields: [mentorshipId], references: [id])
