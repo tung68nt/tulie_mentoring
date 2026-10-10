@@ -13,7 +13,7 @@ import { Captcha } from "./captcha";
 import { useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
-export function LoginForm({ logoUrl, siteName = "IMP 2026" }: { logoUrl?: string; siteName?: string }) {
+export function LoginForm({ logoUrl, siteName = "IMP" }: { logoUrl?: string; siteName?: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/";

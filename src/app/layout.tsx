@@ -18,8 +18,8 @@ import { getSystemSettings } from "@/lib/actions/settings";
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSystemSettings();
   return {
-    title: settings.site_name || "Tulie Mentoring",
-    description: "Tulie TSS Mentoring Management System",
+    title: settings.site_name || "IMP - ISME Mentoring Program",
+    description: "IMP - ISME Mentoring Program Management System",
     icons: {
       icon: settings.favicon || "/favicon.png",
       apple: "/apple-touch-icon.png",

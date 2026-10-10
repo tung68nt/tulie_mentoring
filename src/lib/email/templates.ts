@@ -36,7 +36,7 @@ const baseLayout = (content: string) => `
       ${content}
     </div>
     <div class="footer">
-      Tulie Mentoring · Bạn nhận được email này vì là thành viên của chương trình mentoring.
+      IMP (ISME Mentoring Program) · Bạn nhận được email này vì là thành viên của chương trình mentoring.
     </div>
   </div>
 </body>

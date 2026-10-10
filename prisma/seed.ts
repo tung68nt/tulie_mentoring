@@ -22,7 +22,7 @@ async function main() {
         update: { status: "active" },
         create: {
             id: "seed-cycle-id",
-            name: "Tulie Mentoring 2026",
+            name: "IMP 2026",
             description: "Chương trình mentoring chính thức",
             startDate: new Date("2026-01-01"),
             endDate: new Date("2026-12-31"),
@@ -201,7 +201,7 @@ async function main() {
     // 9. SYSTEM SETTINGS
     console.log("Seeding System Settings...");
     const settings = [
-        { key: "site_name", value: "Tulie Mentoring" },
+        { key: "site_name", value: "IMP" },
         { key: "favicon", value: "" },
         { key: "sidebar_logo", value: "" },
         { key: "auth_logo", value: "" }

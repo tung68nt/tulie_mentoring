@@ -56,7 +56,7 @@ interface MenuSection {
     items: MenuItem[];
 }
 
-export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName = "Tulie Mentoring" }: SidebarProps) {
+export function Sidebar({ role, isMobileOpen, onMobileClose, logoUrl, siteName = "IMP" }: SidebarProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);

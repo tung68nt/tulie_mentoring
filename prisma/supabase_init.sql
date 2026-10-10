@@ -1,5 +1,5 @@
 -- ==============================================================================
--- TULIE MENTORING - SUPABASE DATABASE INITIALIZATION SCRIPT
+-- IMP (ISME MENTORING PROGRAM) - SUPABASE DATABASE INITIALIZATION SCRIPT
 -- ==============================================================================
 -- LƯU Ý KHI GẶP LỖI "relation already exists":
 -- Nếu bạn muốn XÓA SẠCH để cài đặt mới từ đầu (Khuyên dùng khi bắt đầu chính thức),
@@ -1925,7 +1925,7 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO "ProgramCycle" ("id", "name", "description", "startDate", "endDate", "status", "createdAt", "updatedAt")
 VALUES (
     'seed-cycle-id',
-    'Tulie Mentoring 2026',
+    'IMP 2026',
     'Chương trình mentoring chính thức',
     '2026-01-01 00:00:00',
     '2026-12-31 23:59:59',
@@ -2019,7 +2019,7 @@ ON CONFLICT ("id") DO NOTHING;
 -- 5. System Settings
 INSERT INTO "SystemSetting" ("id", "key", "value", "description", "createdAt", "updatedAt")
 VALUES 
-    (gen_random_uuid()::text, 'site_name', 'Tulie Mentoring', 'Tên hệ thống', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (gen_random_uuid()::text, 'site_name', 'IMP', 'Tên hệ thống', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (gen_random_uuid()::text, 'favicon', '', 'Biểu tượng trang web', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (gen_random_uuid()::text, 'sidebar_logo', '', 'Logo thanh bên', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (gen_random_uuid()::text, 'auth_logo', '', 'Logo trang đăng nhập', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)

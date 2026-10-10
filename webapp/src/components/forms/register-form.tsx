@@ -13,7 +13,7 @@ import { Captcha } from "./captcha";
 import { useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
-export function RegisterForm({ logoUrl, siteName = "IMP 2026" }: { logoUrl?: string; siteName?: string }) {
+export function RegisterForm({ logoUrl, siteName = "IMP" }: { logoUrl?: string; siteName?: string }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

@@ -56,7 +56,7 @@ async function getSmtpConfig() {
         port: parseInt(db.smtp_port || process.env.SMTP_PORT || "587"),
         user: db.smtp_user || process.env.SMTP_USER || "",
         pass: db.smtp_password || process.env.SMTP_PASSWORD || "",
-        from: db.smtp_from || process.env.SMTP_FROM || "Tulie Mentoring <noreply@tulie.vn>",
+        from: db.smtp_from || process.env.SMTP_FROM || "IMP (ISME Mentoring Program) <noreply@tulie.vn>",
     };
 }
 

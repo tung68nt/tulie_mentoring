@@ -10,7 +10,7 @@ import { Image as ImageIcon, Globe, Sidebar as SidebarIcon, Lock, Save, Loader2,
 
 export default function AdminSettingsPage() {
     const [settings, setSettings] = useState<Record<string, string>>({
-        site_name: "Tulie Mentoring",
+        site_name: "IMP",
         favicon: "",
         sidebar_logo: "",
         auth_logo: "",
