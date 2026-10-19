@@ -94,7 +94,7 @@ export function MentorshipForm({ programs, mentors, mentees }: MentorshipFormPro
                         label="Loại Mentorship"
                         options={[
                             { value: "one_on_one", label: "Cá nhân 1:1" },
-                            { value: "group", label: "Nhóm (tối đa 6 mentees)" },
+                            { value: "group", label: "Nhóm (không giới hạn số mentee)" },
                         ]}
                         {...register("type")}
                         error={errors.type?.message}

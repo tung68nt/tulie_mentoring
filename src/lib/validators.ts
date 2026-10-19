@@ -120,7 +120,7 @@ export const mentorshipSchema = z.object({
     mentorId: z.string().min(1, "Vui lòng chọn mentor"),
     type: z.enum(["one_on_one", "group"]),
     programCycleId: z.string().min(1, "Vui lòng chọn chương trình"),
-    maxMentees: z.coerce.number().min(1).max(20).default(1),
+    maxMentees: z.coerce.number().min(1).optional(),
     menteeIds: z.array(z.string()).min(1, "Vui lòng chọn ít nhất 1 mentee"),
 });
 
